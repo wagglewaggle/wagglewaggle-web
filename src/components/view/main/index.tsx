@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Block, SearchInput } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
+import SuggestData from './SuggestData';
 import { placeDataType, pageType } from 'types/typeBundle';
 
 const useStyles = makeStyles(() => ({
@@ -21,10 +22,16 @@ const useStyles = makeStyles(() => ({
 const Main = () => {
   const [currentPage, setCurrentPage] = useState<pageType>('main');
   const [placeData, setPlaceData] = useState<placeDataType[]>([]);
+  const [searchValue, setSearchValue] = useState<string>('');
   const classes = useStyles();
 
   const handleCurrentPageChange = (newPage: pageType) => {
     setCurrentPage(newPage);
+  };
+
+  const handleSearchValueChange = (newValue: string) => {
+    setSearchValue(newValue);
+    setCurrentPage(newValue.length === 0 ? 'search' : 'suggestion');
   };
 
   useEffect(() => {
@@ -38,8 +45,19 @@ const Main = () => {
   return (
     <div className={classes.wrap}>
       <Block />
-      <SearchInput currentPage={currentPage} handleCurrentPageChange={handleCurrentPageChange} />
-      {currentPage === 'main' ? <PlaceData placeData={placeData} /> : <SearchData />}
+      <SearchInput
+        currentPage={currentPage}
+        searchValue={searchValue}
+        handleSearchValueChange={handleSearchValueChange}
+        handleCurrentPageChange={handleCurrentPageChange}
+      />
+      {currentPage === 'main' ? (
+        <PlaceData placeData={placeData} />
+      ) : currentPage === 'search' ? (
+        <SearchData />
+      ) : (
+        <SuggestData placeData={placeData} searchValue={searchValue} />
+      )}
       <footer className={classes.footer}>
         <Block blockHeight='28px' blockColor='#79afff' />
       </footer>

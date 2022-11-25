@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { ChangeEvent } from 'react';
 import { TextField, IconButton, InputAdornment } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
@@ -26,6 +26,8 @@ const useStyles = makeStyles(() => ({
       display: 'none',
     },
     '& svg': {
+      width: 29,
+      height: 29,
       color: '#000',
     },
   },
@@ -33,20 +35,25 @@ const useStyles = makeStyles(() => ({
 
 interface propsType {
   currentPage: pageType;
+  searchValue: string;
+  handleSearchValueChange: (newValue: string) => void;
   handleCurrentPageChange: (newPage: pageType) => void;
 }
 
 const SearchInput = (props: propsType) => {
-  const { currentPage, handleCurrentPageChange } = props;
-  const [value, setValue] = useState<string>('');
+  const { currentPage, searchValue, handleSearchValueChange, handleCurrentPageChange } = props;
   const classes = useStyles();
 
   const handleArrowLeftClick = () => {
     handleCurrentPageChange('main');
   };
 
-  const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+  const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    handleSearchValueChange(e.target.value);
+  };
+
+  const handleInputFocus = () => {
+    handleCurrentPageChange(searchValue.length === 0 ? 'search' : 'suggestion');
   };
 
   return (
@@ -65,9 +72,9 @@ const SearchInput = (props: propsType) => {
       <TextField
         className={classes.input}
         type='text'
-        value={value}
-        onChange={handleChangeValue}
-        onFocus={() => handleCurrentPageChange('search')}
+        value={searchValue}
+        onChange={handleValueChange}
+        onFocus={handleInputFocus}
         placeholder={currentPage === 'main' ? 'Search' : '검색어를 입력하세요.'}
         InputProps={{
           startAdornment: (

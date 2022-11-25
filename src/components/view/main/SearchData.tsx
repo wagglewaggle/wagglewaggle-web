@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '@mui/icons-material/Close';
@@ -51,24 +51,30 @@ const SearchData = () => {
   const [searchList, setSearchList] = useState<searchWordList[]>([]);
   const [popularList, setPopularList] = useState<searchWordList[]>([]);
   const classes = useStyles();
-  const LATEST_SEARCH_LIST: searchWordList[] = [
-    { id: 0, word: '어나더오피스 패딩어나더오피스 패딩어나더오피스 패딩어나더오피스 패딩' },
-    { id: 1, word: '갈색 가디건' },
-    { id: 2, word: '단추' },
-    { id: 3, word: '진주 귀걸이' },
-    { id: 4, word: '진주 미니 귀걸이' },
-  ];
-  const POPULAR_SEARCH_LIST: searchWordList[] = [
-    { id: 0, word: '니트' },
-    { id: 1, word: '패딩' },
-    { id: 2, word: '맨투맨' },
-    { id: 3, word: '머플러' },
-    { id: 4, word: '장갑' },
-    { id: 5, word: '시엔느' },
-    { id: 6, word: '어그' },
-    { id: 7, word: '프라이탁' },
-    { id: 8, word: '무스탕' },
-  ];
+  const LATEST_SEARCH_LIST: searchWordList[] = useMemo(
+    () => [
+      { id: 0, word: '어나더오피스 패딩어나더오피스 패딩어나더오피스 패딩어나더오피스 패딩' },
+      { id: 1, word: '갈색 가디건' },
+      { id: 2, word: '단추' },
+      { id: 3, word: '진주 귀걸이' },
+      { id: 4, word: '진주 미니 귀걸이' },
+    ],
+    []
+  );
+  const POPULAR_SEARCH_LIST: searchWordList[] = useMemo(
+    () => [
+      { id: 0, word: '니트' },
+      { id: 1, word: '패딩' },
+      { id: 2, word: '맨투맨' },
+      { id: 3, word: '머플러' },
+      { id: 4, word: '장갑' },
+      { id: 5, word: '시엔느' },
+      { id: 6, word: '어그' },
+      { id: 7, word: '프라이탁' },
+      { id: 8, word: '무스탕' },
+    ],
+    []
+  );
 
   const handleClickRemoveAll = () => {
     setSearchList([]);
@@ -88,7 +94,7 @@ const SearchData = () => {
   useEffect(() => {
     setSearchList([...LATEST_SEARCH_LIST]);
     setPopularList([...POPULAR_SEARCH_LIST]);
-  }, []);
+  }, [LATEST_SEARCH_LIST, POPULAR_SEARCH_LIST]);
 
   return (
     <div className={classes.wrap}>
@@ -100,10 +106,8 @@ const SearchData = () => {
           </button>
         </div>
         {searchList.map((list: searchWordList, idx: number) => (
-          <div className={classes.listWrap}>
-            <div key={`search-list-${idx}`} className={classes.list}>
-              {list.word}
-            </div>
+          <div key={`search-list-${idx}`} className={classes.listWrap}>
+            <div className={classes.list}>{list.word}</div>
             <IconButton
               sx={{
                 marginLeft: '5px',
