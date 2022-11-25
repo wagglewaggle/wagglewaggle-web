@@ -9,4 +9,4 @@ export interface searchWordList {
   word: string;
 }
 
-export type pageType = 'main' | 'search' | 'suggestion';
+export type pageType = 'main' | 'search' | 'suggestion' | 'result';

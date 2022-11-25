@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, KeyboardEvent } from 'react';
 import { TextField, IconButton, InputAdornment } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
@@ -53,7 +53,15 @@ const SearchInput = (props: propsType) => {
   };
 
   const handleInputFocus = () => {
-    handleCurrentPageChange(searchValue.length === 0 ? 'search' : 'suggestion');
+    if (searchValue.length === 0) {
+      handleCurrentPageChange('search');
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleCurrentPageChange('result');
+    }
   };
 
   return (
@@ -75,6 +83,7 @@ const SearchInput = (props: propsType) => {
         value={searchValue}
         onChange={handleValueChange}
         onFocus={handleInputFocus}
+        onKeyDown={handleKeyDown}
         placeholder={currentPage === 'main' ? 'Search' : '검색어를 입력하세요.'}
         InputProps={{
           startAdornment: (

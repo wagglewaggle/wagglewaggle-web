@@ -4,6 +4,7 @@ import { Block, SearchInput } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
 import SuggestData from './SuggestData';
+import ResultData from './ResultData';
 import { placeDataType, pageType } from 'types/typeBundle';
 
 const useStyles = makeStyles(() => ({
@@ -55,8 +56,10 @@ const Main = () => {
         <PlaceData placeData={placeData} />
       ) : currentPage === 'search' ? (
         <SearchData />
-      ) : (
+      ) : currentPage === 'suggestion' ? (
         <SuggestData placeData={placeData} searchValue={searchValue} />
+      ) : (
+        <ResultData placeData={placeData} searchValue={searchValue} />
       )}
       <footer className={classes.footer}>
         <Block blockHeight='28px' blockColor='#79afff' />
