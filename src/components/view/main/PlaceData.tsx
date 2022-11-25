@@ -52,6 +52,7 @@ const useStyles = makeStyles(() => ({
     },
   },
   listTitle: {
+    margin: 0,
     fontSize: 24,
     fontWeight: 700,
   },
@@ -124,7 +125,7 @@ const PlaceData = (props: propsType) => {
 
   return (
     <div className={classes.wrap}>
-      <div className={classes.listTitle}>List Title</div>
+      <h1 className={classes.listTitle}>List Title</h1>
       <ScrollContainer className={classes.chipsWrap} horizontal>
         {DUMMY_CHIPS.map((chip: string, idx: number) => (
           <div

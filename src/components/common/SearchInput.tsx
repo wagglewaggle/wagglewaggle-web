@@ -1,8 +1,9 @@
 import { useState, ChangeEvent } from 'react';
-import { TextField, InputAdornment } from '@mui/material';
+import { TextField, IconButton, InputAdornment } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
 import { pageType } from 'types/typeBundle';
+import leftArrowIcon from 'assets/left-arrow.svg';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -31,13 +32,18 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface propsType {
+  currentPage: pageType;
   handleCurrentPageChange: (newPage: pageType) => void;
 }
 
 const SearchInput = (props: propsType) => {
-  const { handleCurrentPageChange } = props;
+  const { currentPage, handleCurrentPageChange } = props;
   const [value, setValue] = useState<string>('');
   const classes = useStyles();
+
+  const handleArrowLeftClick = () => {
+    handleCurrentPageChange('main');
+  };
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -45,13 +51,24 @@ const SearchInput = (props: propsType) => {
 
   return (
     <div className={classes.wrap}>
+      {currentPage === 'search' && (
+        <IconButton
+          onClick={handleArrowLeftClick}
+          sx={{
+            padding: 0,
+            marginRight: '24px',
+          }}
+        >
+          <img src={leftArrowIcon} alt='left-arrow' />
+        </IconButton>
+      )}
       <TextField
         className={classes.input}
         type='text'
         value={value}
         onChange={handleChangeValue}
         onFocus={() => handleCurrentPageChange('search')}
-        placeholder='Search'
+        placeholder={currentPage === 'main' ? 'Search' : '검색어를 입력하세요.'}
         InputProps={{
           startAdornment: (
             <InputAdornment position='start'>

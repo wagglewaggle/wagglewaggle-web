@@ -4,4 +4,9 @@ export interface placeDataType {
   status: string;
 }
 
+export interface searchWordList {
+  id: number;
+  word: string;
+}
+
 export type pageType = 'main' | 'search';

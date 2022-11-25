@@ -38,12 +38,8 @@ const Main = () => {
   return (
     <div className={classes.wrap}>
       <Block />
-      <SearchInput handleCurrentPageChange={handleCurrentPageChange} />
-      {currentPage === 'main' ? (
-        <PlaceData placeData={placeData} />
-      ) : (
-        <SearchData handleCurrentPageChange={handleCurrentPageChange} />
-      )}
+      <SearchInput currentPage={currentPage} handleCurrentPageChange={handleCurrentPageChange} />
+      {currentPage === 'main' ? <PlaceData placeData={placeData} /> : <SearchData />}
       <footer className={classes.footer}>
         <Block blockHeight='28px' blockColor='#79afff' />
       </footer>
