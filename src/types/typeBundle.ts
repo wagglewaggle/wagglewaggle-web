@@ -3,3 +3,5 @@ export interface placeDataType {
   category: string;
   status: string;
 }
+
+export type pageType = 'main' | 'search';

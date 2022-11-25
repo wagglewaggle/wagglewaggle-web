@@ -2,6 +2,7 @@ import { useState, ChangeEvent } from 'react';
 import { TextField, InputAdornment } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
+import { pageType } from 'types/typeBundle';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -29,7 +30,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SearchInput = () => {
+interface propsType {
+  handleCurrentPageChange: (newPage: pageType) => void;
+}
+
+const SearchInput = (props: propsType) => {
+  const { handleCurrentPageChange } = props;
   const [value, setValue] = useState<string>('');
   const classes = useStyles();
 
@@ -44,6 +50,7 @@ const SearchInput = () => {
         type='text'
         value={value}
         onChange={handleChangeValue}
+        onFocus={() => handleCurrentPageChange('search')}
         placeholder='Search'
         InputProps={{
           startAdornment: (
