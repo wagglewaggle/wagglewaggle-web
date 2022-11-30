@@ -1,4 +1,5 @@
 export interface placeDataType {
+  id: number;
   name: string;
   category: string;
   status: string;

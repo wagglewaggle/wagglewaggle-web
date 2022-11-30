@@ -37,8 +37,8 @@ const Main = () => {
 
   useEffect(() => {
     const dummyPlaceData: placeDataType[] = [
-      { name: 'test1', category: 'category1', status: '복잡' },
-      { name: 'test2', category: 'category2', status: '여유' },
+      { id: 0, name: 'test1', category: 'category1', status: '복잡' },
+      { id: 1, name: 'test2', category: 'category2', status: '여유' },
     ];
     setPlaceData(dummyPlaceData);
   }, []);

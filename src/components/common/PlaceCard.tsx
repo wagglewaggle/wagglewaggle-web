@@ -10,6 +10,7 @@ const useStyles = makeStyles(() => ({
     width: 'calc(100% - 20px)',
     height: 'fit-content',
     backgroundColor: '#d9d9d9',
+    cursor: 'pointer',
   },
   placeLeft: {
     display: 'flex',
@@ -46,14 +47,15 @@ const useStyles = makeStyles(() => ({
 
 interface propsType {
   place: placeDataType;
+  onClick?: (place: placeDataType) => void;
 }
 
 const PlaceCard = (props: propsType) => {
-  const { place } = props;
+  const { place, onClick = () => {} } = props;
   const classes = useStyles();
 
   return (
-    <div className={classes.placeCard}>
+    <div className={classes.placeCard} onClick={() => onClick(place)}>
       <div className={classes.placeLeft}>
         <div className={classes.placeTitle}>
           <span className={classes.placeName}>{place.name}</span>

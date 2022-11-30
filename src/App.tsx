@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { Main } from './components/view';
+import { Main, Detail } from './components/view';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -23,7 +23,8 @@ const App = () => {
       <div className={classes.serviceWrap}>
         <BrowserRouter>
           <Routes>
-            <Route path='/main' element={<Main />} />
+            <Route path='/main/*' element={<Main />} />
+            <Route path='/detail/*' element={<Detail />} />
             <Route path='/' element={<Navigate to='/main' />} />
           </Routes>
         </BrowserRouter>
