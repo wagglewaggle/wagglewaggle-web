@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { SearchInput } from 'components/common';
 import PlaceData from './PlaceData';
@@ -25,9 +26,16 @@ const Main = () => {
   const [placeData, setPlaceData] = useState<placeDataType[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const classes = useStyles();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleCurrentPageChange = (newPage: pageType) => {
     setCurrentPage(newPage);
+    if (newPage === 'result') {
+      navigate(`/main?search=${searchValue}`);
+    } else if (currentPage === 'result') {
+      navigate('/main');
+    }
   };
 
   const handleSearchValueChange = (newValue: string) => {
@@ -42,6 +50,20 @@ const Main = () => {
     ];
     setPlaceData(dummyPlaceData);
   }, []);
+
+  useEffect(() => {
+    const query: string = location.search.replace('?', '');
+    const queryList: string[] = query.split('&');
+    const queryObject: { [key: string]: string } = {};
+    queryList.forEach((list: string) => {
+      const [key, value] = list.split('=');
+      queryObject[key] = value;
+    });
+    if (queryObject?.search) {
+      setCurrentPage('result');
+      setSearchValue(queryObject.search);
+    }
+  }, [location.search]);
 
   return (
     <div className={classes.wrap}>

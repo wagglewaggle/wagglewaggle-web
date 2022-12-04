@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceCard } from 'components/common';
 import { placeDataType } from 'types/typeBundle';
+import { palette } from 'constants/palette';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -9,6 +10,7 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'center',
     margin: '5px 20px 35px',
+    color: palette.white,
   },
   emptyImg: {
     margin: 15,
@@ -40,7 +42,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    gap: 10,
   },
   header: {
     display: 'flex',

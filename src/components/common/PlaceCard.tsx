@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import homeImage from 'assets/symbols/white-roof-house.svg';
 import { placeDataType } from 'types/typeBundle';
@@ -53,15 +54,19 @@ const useStyles = makeStyles(() => ({
 
 interface propsType {
   place: placeDataType;
-  onClick?: (place: placeDataType) => void;
 }
 
 const PlaceCard = (props: propsType) => {
-  const { place, onClick = () => {} } = props;
+  const { place } = props;
   const classes = useStyles();
+  const navigate = useNavigate();
+
+  const handlePlaceCardClick = () => {
+    navigate(`/detail/${place.id}`);
+  };
 
   return (
-    <div className={classes.placeCard} onClick={() => onClick(place)}>
+    <div className={classes.placeCard} onClick={handlePlaceCardClick}>
       <div className={classes.placeLeft}>
         <div className={classes.placeImage}>
           <img src={homeImage} alt='home' />

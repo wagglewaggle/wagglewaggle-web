@@ -1,5 +1,4 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
 import { PlaceCard } from 'components/common';
@@ -57,15 +56,10 @@ const SuggestData = (props: propsType) => {
   const { placeData, searchValue } = props;
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
-  const navigate = useNavigate();
 
   const getSuggestionList = useCallback(() => {
     setSuggestionList(placeData.filter((data: placeDataType) => data.name.includes(searchValue)));
   }, [placeData, searchValue]);
-
-  const handleClickPlaceCard = (place: placeDataType) => {
-    navigate(`/detail/${place.id}`);
-  };
 
   useEffect(() => {
     getSuggestionList();
@@ -87,7 +81,7 @@ const SuggestData = (props: propsType) => {
       )}
       <div className={classes.cardWrap}>
         {suggestionList.map((place: placeDataType, idx: number) => (
-          <PlaceCard key={`place-card-${idx}`} place={place} onClick={handleClickPlaceCard} />
+          <PlaceCard key={`place-card-${idx}`} place={place} />
         ))}
       </div>
     </div>

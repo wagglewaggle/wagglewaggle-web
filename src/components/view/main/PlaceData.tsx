@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Select, MenuItem, SelectChangeEvent, InputAdornment, Icon } from '@mui/material';
+import { Select, MenuItem, SelectChangeEvent, Icon } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard } from 'components/common';
@@ -83,7 +82,6 @@ const PlaceData = (props: propsType) => {
   const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
   const [selectedTitle, setSelectedTitle] = useState<string>('전체');
   const classes = useStyles();
-  const navigate = useNavigate();
   const DUMMY_CHIPS: string[] = ['전체', '한강 공원', '백화점', '크리스마스 축제'];
 
   const handleClickChip = (chip: string) => {
@@ -92,10 +90,6 @@ const PlaceData = (props: propsType) => {
 
   const handleChangeSelect = (e: SelectChangeEvent) => {
     setPlaceOrder(e.target.value);
-  };
-
-  const handleClickPlaceCard = (place: placeDataType) => {
-    navigate(`/detail/${place.id}`);
   };
 
   return (
@@ -135,7 +129,7 @@ const PlaceData = (props: propsType) => {
         </Select>
       </div>
       {placeData.map((place: placeDataType, idx: number) => (
-        <PlaceCard key={`place-card-${idx}`} place={place} onClick={handleClickPlaceCard} />
+        <PlaceCard key={`place-card-${idx}`} place={place} />
       ))}
     </div>
   );
