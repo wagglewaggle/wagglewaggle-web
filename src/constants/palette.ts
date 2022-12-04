@@ -1,10 +1,11 @@
 export const palette = {
   white: '#fff',
   black: '#000',
-  blue: '1b86ff',
+  blue: '#1b86ff',
   green: '#07be75',
   orange: '#ff8934',
   red: '#ff4e79',
+  yellow: '#ffca0d',
   burgundy: 'rgb(76, 23, 36)',
   grey: {
     100: '#fafafa',
@@ -16,5 +17,5 @@ export const palette = {
     700: '#1c1c1c',
     800: '#111',
   },
-  transparent: 'transparent'
+  transparent: 'transparent',
 };

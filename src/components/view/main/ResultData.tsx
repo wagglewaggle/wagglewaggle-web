@@ -70,17 +70,17 @@ const ResultData = (props: propsType) => {
   const classes = useStyles();
   const DUMMY_RELATED_DATA: placeDataType[] = useMemo(
     () => [
-      { id: 2, name: 'test7', category: 'category7', status: '복잡' },
-      { id: 3, name: 'test8', category: 'category8', status: '여유' },
-      { id: 4, name: 'test9', category: 'category9', status: '여유' },
-      { id: 5, name: 'test10', category: 'category10', status: '여유' },
+      { id: 2, name: 'test7', category: 'category7', status: 'crowded' },
+      { id: 3, name: 'test8', category: 'category8', status: 'very crowded' },
+      { id: 4, name: 'test9', category: 'category9', status: 'normal' },
+      { id: 5, name: 'test10', category: 'category10', status: 'very uncrowded' },
     ],
     []
   );
   const DUMMY_SUGGESTED_DATA: placeDataType[] = useMemo(
     () => [
-      { id: 6, name: '여의나루역', category: 'category7', status: '복잡' },
-      { id: 7, name: 'IFC몰', category: 'category8', status: '여유' },
+      { id: 6, name: '여의나루역', category: 'category7', status: 'crowded' },
+      { id: 7, name: 'IFC몰', category: 'category8', status: 'uncrowded' },
     ],
     []
   );

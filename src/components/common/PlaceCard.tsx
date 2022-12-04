@@ -50,6 +50,21 @@ const useStyles = makeStyles(() => ({
     fontSize: 12,
     fontWeight: 500,
   },
+  veryUncrowded: {
+    color: palette.blue,
+  },
+  uncrowded: {
+    color: palette.green,
+  },
+  normal: {
+    color: palette.yellow,
+  },
+  crowded: {
+    color: palette.orange,
+  },
+  veryCrowded: {
+    color: palette.red,
+  },
 }));
 
 interface propsType {
@@ -60,6 +75,18 @@ const PlaceCard = (props: propsType) => {
   const { place } = props;
   const classes = useStyles();
   const navigate = useNavigate();
+  const statusElement: JSX.Element =
+    place.status === 'very uncrowded' ? (
+      <span className={classes.veryUncrowded}>매우 여유</span>
+    ) : place.status === 'uncrowded' ? (
+      <span className={classes.uncrowded}>여유</span>
+    ) : place.status === 'normal' ? (
+      <span className={classes.normal}>보통</span>
+    ) : place.status === 'crowded' ? (
+      <span className={classes.crowded}>붐빔</span>
+    ) : (
+      <span className={classes.veryCrowded}>매우 붐빔</span>
+    );
 
   const handlePlaceCardClick = () => {
     navigate(`/detail/${place.id}`);
@@ -76,7 +103,7 @@ const PlaceCard = (props: propsType) => {
           <span className={classes.placeCategory}>{place.category}</span>
         </div>
       </div>
-      <div className={classes.placeStatus}>{place.status}</div>
+      <div className={classes.placeStatus}>{statusElement}</div>
     </div>
   );
 };
