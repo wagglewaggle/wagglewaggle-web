@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { Block, SearchInput } from 'components/common';
+import { SearchInput } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
 import SuggestData from './SuggestData';
@@ -45,7 +45,6 @@ const Main = () => {
 
   return (
     <div className={classes.wrap}>
-      <Block />
       <SearchInput
         currentPage={currentPage}
         searchValue={searchValue}
@@ -61,9 +60,6 @@ const Main = () => {
       ) : (
         <ResultData placeData={placeData} searchValue={searchValue} />
       )}
-      <footer className={classes.footer}>
-        <Block blockHeight='28px' blockColor='#79afff' />
-      </footer>
     </div>
   );
 };

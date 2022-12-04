@@ -1,5 +1,4 @@
 import makeStyles from '@mui/styles/makeStyles';
-import { Block } from 'components/common';
 import DetailHeader from './DetailHeader';
 import DetailContent from './DetailContent';
 import DetailPrediction from './DetailPrediction';
@@ -26,9 +25,6 @@ const Detail = () => {
       <DetailHeader />
       <DetailContent />
       <DetailPrediction />
-      <footer className={classes.footer}>
-        <Block blockHeight='28px' blockColor='#ff7979' />
-      </footer>
     </div>
   );
 };
