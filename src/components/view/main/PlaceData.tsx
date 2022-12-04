@@ -59,7 +59,7 @@ const useStyles = makeStyles(() => ({
       fontWeight: 500,
     },
     '& span': {
-      transform: 'translateX(10px)'
+      transform: 'translateX(10px)',
     },
     '& fieldset': {
       display: 'none',

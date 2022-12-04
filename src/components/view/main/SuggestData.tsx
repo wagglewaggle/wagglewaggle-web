@@ -1,8 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { Fragment, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
 import { PlaceCard } from 'components/common';
 import { placeDataType } from 'types/typeBundle';
+import { palette } from 'constants/palette';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -13,35 +15,36 @@ const useStyles = makeStyles(() => ({
   listWrap: {
     display: 'flex',
     alignItems: 'center',
-    margin: '0 5px',
-    borderTop: '3px solid #d9d9d9',
+    padding: '14px 24px',
+    gap: 8,
+    color: palette.white,
     '& svg': {
-      margin: '5px 15px',
-      width: 29,
-      height: 29,
-      color: '#000',
-    },
-    '&:first-child': {
-      border: 0,
+      width: 24,
+      height: 24,
     },
   },
   list: {
     flexGrow: 1,
     height: 24,
-    fontSize: 16,
-    fontWeight: 500,
+    fontSize: 14,
+    fontWeight: 400,
   },
   divider: {
     border: 0,
     width: '100%',
     height: 8,
-    backgroundColor: '#d9d9d9',
+    backgroundColor: palette.black,
+  },
+  title: {
+    margin: '32px 20px 0',
+    color: palette.white,
+    fontSize: 18,
+    fontWeight: 600,
   },
   cardWrap: {
     display: 'flex',
     flexDirection: 'column',
-    margin: '30px 20px 35px',
-    gap: 10,
+    margin: '30px 24px 35px',
   },
 }));
 
@@ -54,10 +57,15 @@ const SuggestData = (props: propsType) => {
   const { placeData, searchValue } = props;
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
+  const navigate = useNavigate();
 
   const getSuggestionList = useCallback(() => {
     setSuggestionList(placeData.filter((data: placeDataType) => data.name.includes(searchValue)));
   }, [placeData, searchValue]);
+
+  const handleClickPlaceCard = (place: placeDataType) => {
+    navigate(`/detail/${place.id}`);
+  };
 
   useEffect(() => {
     getSuggestionList();
@@ -71,10 +79,15 @@ const SuggestData = (props: propsType) => {
           <span className={classes.list}>{list.name}</span>
         </div>
       ))}
-      <hr className={classes.divider} />
+      {suggestionList.length > 0 && (
+        <Fragment>
+          <hr className={classes.divider} />
+          <span className={classes.title}>관련 장소 현황</span>
+        </Fragment>
+      )}
       <div className={classes.cardWrap}>
         {suggestionList.map((place: placeDataType, idx: number) => (
-          <PlaceCard key={`place-card-${idx}`} place={place} />
+          <PlaceCard key={`place-card-${idx}`} place={place} onClick={handleClickPlaceCard} />
         ))}
       </div>
     </div>
