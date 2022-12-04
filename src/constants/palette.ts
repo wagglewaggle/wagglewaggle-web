@@ -16,4 +16,5 @@ export const palette = {
     700: '#1c1c1c',
     800: '#111',
   },
+  transparent: 'transparent'
 };
