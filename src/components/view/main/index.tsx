@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
-import { Block, SearchInput } from 'components/common';
+import { SearchInput } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
 import SuggestData from './SuggestData';
@@ -25,9 +26,16 @@ const Main = () => {
   const [placeData, setPlaceData] = useState<placeDataType[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const classes = useStyles();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleCurrentPageChange = (newPage: pageType) => {
+  const handleCurrentPageChange = (newPage: pageType, searchWord?: string) => {
     setCurrentPage(newPage);
+    if (newPage === 'result') {
+      navigate(`/main?search=${searchWord || searchValue}`);
+    } else if (currentPage === 'result') {
+      navigate('/main');
+    }
   };
 
   const handleSearchValueChange = (newValue: string) => {
@@ -37,15 +45,28 @@ const Main = () => {
 
   useEffect(() => {
     const dummyPlaceData: placeDataType[] = [
-      { name: 'test1', category: 'category1', status: '복잡' },
-      { name: 'test2', category: 'category2', status: '여유' },
+      { id: 0, name: 'test1', category: 'category1', status: 'crowded' },
+      { id: 1, name: 'test2', category: 'category2', status: 'uncrowded' },
     ];
     setPlaceData(dummyPlaceData);
   }, []);
 
+  useEffect(() => {
+    const query: string = location.search.replace('?', '');
+    const queryList: string[] = query.split('&');
+    const queryObject: { [key: string]: string } = {};
+    queryList.forEach((list: string) => {
+      const [key, value] = list.split('=');
+      queryObject[key] = value;
+    });
+    if (queryObject?.search) {
+      setCurrentPage('result');
+      setSearchValue(decodeURI(queryObject.search));
+    }
+  }, [location.search]);
+
   return (
     <div className={classes.wrap}>
-      <Block />
       <SearchInput
         currentPage={currentPage}
         searchValue={searchValue}
@@ -55,15 +76,12 @@ const Main = () => {
       {currentPage === 'main' ? (
         <PlaceData placeData={placeData} />
       ) : currentPage === 'search' ? (
-        <SearchData />
+        <SearchData handleCurrentPageChange={handleCurrentPageChange} />
       ) : currentPage === 'suggestion' ? (
         <SuggestData placeData={placeData} searchValue={searchValue} />
       ) : (
         <ResultData placeData={placeData} searchValue={searchValue} />
       )}
-      <footer className={classes.footer}>
-        <Block blockHeight='28px' blockColor='#79afff' />
-      </footer>
     </div>
   );
 };

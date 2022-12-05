@@ -1,7 +1,8 @@
 export interface placeDataType {
+  id: number;
   name: string;
   category: string;
-  status: string;
+  status: statusType;
 }
 
 export interface searchWordList {
@@ -10,3 +11,5 @@ export interface searchWordList {
 }
 
 export type pageType = 'main' | 'search' | 'suggestion' | 'result';
+
+export type statusType = 'very crowded' | 'crowded' | 'normal' | 'uncrowded' | 'very uncrowded';

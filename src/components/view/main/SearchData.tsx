@@ -3,6 +3,7 @@ import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '@mui/icons-material/Close';
 import { searchWordList } from 'types/typeBundle';
+import { palette } from 'constants/palette';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -13,6 +14,7 @@ const useStyles = makeStyles(() => ({
   subComponent: {
     display: 'flex',
     flexDirection: 'column',
+    marginBottom: 24,
   },
   header: {
     display: 'flex',
@@ -20,12 +22,19 @@ const useStyles = makeStyles(() => ({
     padding: '15px 0',
   },
   title: {
+    color: palette.white,
     fontSize: 14,
     fontWeight: 700,
+  },
+  listWrap: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   list: {
     flexGrow: 1,
     padding: '5px 0',
+    color: palette.white,
     fontSize: 12,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -34,20 +43,73 @@ const useStyles = makeStyles(() => ({
   removeButton: {
     border: 0,
     padding: 0,
-    backgroundColor: '#fff',
-    color: 'rgba(0, 0, 0, 0.54)',
+    backgroundColor: palette.transparent,
+    color: palette.white,
     fontSize: 11,
     fontWeight: 500,
     cursor: 'pointer',
   },
-  listWrap: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
 }));
 
-const SearchData = () => {
+interface blockPropsType {
+  title: string;
+  blockList: searchWordList[];
+  onClickRemoveAll: () => void;
+  onClickRemoveOne: (listId: number, type: 'search' | 'popular') => void;
+  handleCurrentPageChange: (newPage: 'result', searchWord?: string) => void;
+}
+
+const SearchBlock = (props: blockPropsType) => {
+  const { title, blockList, onClickRemoveAll, onClickRemoveOne, handleCurrentPageChange } = props;
+  const classes = useStyles();
+  const BLOCK_TYPE: 'search' | 'popular' = title === '최근검색어' ? 'search' : 'popular';
+
+  const handleWordClick = (word: string) => {
+    handleCurrentPageChange('result', word);
+  };
+
+  return (
+    <div className={classes.subComponent}>
+      <div className={classes.header}>
+        <span className={classes.title}>{title}</span>
+        <button className={classes.removeButton} onClick={onClickRemoveAll}>
+          모두 지우기
+        </button>
+      </div>
+      {blockList.map((list: searchWordList, idx: number) => (
+        <div key={`search-list-${idx}`} className={classes.listWrap}>
+          <div className={classes.list} onClick={() => handleWordClick(list.word)}>
+            {list.word}
+          </div>
+          <IconButton
+            sx={{
+              marginLeft: '5px',
+              width: '16px',
+              height: '16px',
+              backgroundColor: palette.grey[600],
+            }}
+            onClick={() => onClickRemoveOne(list.id, BLOCK_TYPE)}
+          >
+            <CloseIcon
+              sx={{
+                width: '11px',
+                height: '11px',
+                color: palette.black,
+              }}
+            />
+          </IconButton>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+interface propsType {
+  handleCurrentPageChange: (newPage: 'result', searchWord?: string) => void;
+}
+
+const SearchData = (props: propsType) => {
+  const { handleCurrentPageChange } = props;
   const [searchList, setSearchList] = useState<searchWordList[]>([]);
   const [popularList, setPopularList] = useState<searchWordList[]>([]);
   const classes = useStyles();
@@ -76,19 +138,25 @@ const SearchData = () => {
     []
   );
 
-  const handleClickRemoveAll = () => {
+  const handleRemoveAllSearchList = () => {
     setSearchList([]);
   };
 
-  const handleClickRemove = (listId: number) => {
-    const selectedList: searchWordList | undefined = searchList.find(
+  const handleRemoveAllPopularList = () => {
+    setPopularList([]);
+  };
+
+  const handleRemoveList = (listId: number, type: 'search' | 'popular') => {
+    const newList: searchWordList[] = JSON.parse(
+      JSON.stringify(type === 'search' ? searchList : popularList)
+    );
+    const selectedList: searchWordList | undefined = newList.find(
       (list: searchWordList) => list.id === listId
     );
     if (!selectedList) return;
-    const selectedIdx: number = searchList.indexOf(selectedList);
-    const newSearchList: searchWordList[] = JSON.parse(JSON.stringify(searchList));
-    newSearchList.splice(selectedIdx, 1);
-    setSearchList(newSearchList);
+    const selectedIdx: number = newList.indexOf(selectedList);
+    newList.splice(selectedIdx, 1);
+    type === 'search' ? setSearchList(newList) : setPopularList(newList);
   };
 
   useEffect(() => {
@@ -98,46 +166,20 @@ const SearchData = () => {
 
   return (
     <div className={classes.wrap}>
-      <div className={classes.subComponent}>
-        <div className={classes.header}>
-          <span className={classes.title}>최근검색어</span>
-          <button className={classes.removeButton} onClick={handleClickRemoveAll}>
-            모두 지우기
-          </button>
-        </div>
-        {searchList.map((list: searchWordList, idx: number) => (
-          <div key={`search-list-${idx}`} className={classes.listWrap}>
-            <div className={classes.list}>{list.word}</div>
-            <IconButton
-              sx={{
-                marginLeft: '5px',
-                width: '16px',
-                height: '16px',
-                backgroundColor: '#d9d9d9',
-              }}
-              onClick={() => handleClickRemove(list.id)}
-            >
-              <CloseIcon
-                sx={{
-                  width: '11px',
-                  height: '11px',
-                  color: 'rgba(0, 0, 0, 0.4)',
-                }}
-              />
-            </IconButton>
-          </div>
-        ))}
-      </div>
-      <div className={classes.subComponent}>
-        <div className={classes.header}>
-          <span className={classes.title}>인기검색어</span>
-        </div>
-        {popularList.map((list: searchWordList, idx: number) => (
-          <div key={`popular-list-${idx}`} className={classes.list}>
-            {list.word}
-          </div>
-        ))}
-      </div>
+      <SearchBlock
+        title='최근검색어'
+        blockList={searchList}
+        onClickRemoveOne={handleRemoveList}
+        onClickRemoveAll={handleRemoveAllSearchList}
+        handleCurrentPageChange={handleCurrentPageChange}
+      />
+      <SearchBlock
+        title='인기검색어'
+        blockList={popularList}
+        onClickRemoveOne={handleRemoveList}
+        onClickRemoveAll={handleRemoveAllPopularList}
+        handleCurrentPageChange={handleCurrentPageChange}
+      />
     </div>
   );
 };

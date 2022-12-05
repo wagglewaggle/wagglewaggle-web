@@ -1,56 +1,64 @@
 import { useState } from 'react';
-import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Select, MenuItem, SelectChangeEvent, Icon } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard } from 'components/common';
 import { placeDataType } from 'types/typeBundle';
-import ScrollContainer from 'react-indiana-drag-scroll';
+import { palette } from 'constants/palette';
+import downIcon from 'assets/icons/down-icon.svg';
 
 const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
     flexDirection: 'column',
-    margin: '20px 20px 35px',
-    gap: 10,
-  },
-  listTitle: {
-    margin: 0,
-    fontSize: 24,
-    fontWeight: 700,
+    margin: '20px 24px 35px',
   },
   chipsWrap: {
     display: 'flex',
-    margin: '16px 0 20px',
-    height: 33,
+    padding: '16px 0',
+    height: 32,
     gap: 10,
     cursor: 'pointer',
   },
   chip: {
     display: 'flex',
     alignItems: 'center',
-    border: '2px solid #d9d9d9',
+    border: `2px solid ${palette.grey[600]}`,
     borderRadius: 29,
     padding: '8px 12px',
     whiteSpace: 'nowrap',
+    color: palette.grey[400],
+    fontSize: 12,
+    fontWeight: 500,
   },
   selectedChip: {
-    border: '2px solid #000',
+    border: `2px solid ${palette.white}`,
+    color: palette.black,
+    backgroundColor: palette.white,
   },
   subHeader: {
     display: 'flex',
     justifyContent: 'space-between',
+    marginBottom: 16,
   },
   subLeft: {
-    fontSize: 14,
-    fontWeight: 500,
+    display: 'flex',
+    alignItems: 'center',
+    color: palette.white,
+    fontSize: 18,
+    fontWeight: 600,
   },
   subLength: {
     marginLeft: 5,
-    fontWeight: 700,
   },
   select: {
     '& div': {
-      fontSize: 14,
-      fontWeight: 400,
+      color: palette.grey[400],
+      fontSize: 12,
+      fontWeight: 500,
+    },
+    '& span': {
+      transform: 'translateX(10px)',
     },
     '& fieldset': {
       display: 'none',
@@ -86,7 +94,6 @@ const PlaceData = (props: propsType) => {
 
   return (
     <div className={classes.wrap}>
-      <h1 className={classes.listTitle}>List Title</h1>
       <ScrollContainer className={classes.chipsWrap} horizontal>
         {DUMMY_CHIPS.map((chip: string, idx: number) => (
           <div
@@ -103,7 +110,17 @@ const PlaceData = (props: propsType) => {
           장소
           <span className={classes.subLength}>{placeData.length}</span>
         </span>
-        <Select className={classes.select} onChange={handleChangeSelect} value={placeOrder}>
+        <Select
+          className={classes.select}
+          onChange={handleChangeSelect}
+          value={placeOrder}
+          SelectDisplayProps={{ style: { paddingRight: '24px' } }}
+          IconComponent={(props) => (
+            <Icon {...props} sx={{ '& img': { width: '16px', height: '16px', opacity: 0.7 } }}>
+              <img src={downIcon} alt='down-icon' />
+            </Icon>
+          )}
+        >
           {['복잡한 순', '여유로운 순', '인기 순'].map((menu: string, idx: number) => (
             <MenuItem key={`menu-${idx}`} className={classes.menuItem} value={menu} dense>
               {menu}

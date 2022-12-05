@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceCard } from 'components/common';
 import { placeDataType } from 'types/typeBundle';
+import { palette } from 'constants/palette';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -9,6 +10,7 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'center',
     margin: '5px 20px 35px',
+    color: palette.white,
   },
   emptyImg: {
     margin: 15,
@@ -40,7 +42,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    gap: 10,
   },
   header: {
     display: 'flex',
@@ -69,17 +70,17 @@ const ResultData = (props: propsType) => {
   const classes = useStyles();
   const DUMMY_RELATED_DATA: placeDataType[] = useMemo(
     () => [
-      { name: 'test7', category: 'category7', status: '복잡' },
-      { name: 'test8', category: 'category8', status: '여유' },
-      { name: 'test9', category: 'category9', status: '여유' },
-      { name: 'test10', category: 'category10', status: '여유' },
+      { id: 2, name: 'test7', category: 'category7', status: 'crowded' },
+      { id: 3, name: 'test8', category: 'category8', status: 'very crowded' },
+      { id: 4, name: 'test9', category: 'category9', status: 'normal' },
+      { id: 5, name: 'test10', category: 'category10', status: 'very uncrowded' },
     ],
     []
   );
   const DUMMY_SUGGESTED_DATA: placeDataType[] = useMemo(
     () => [
-      { name: '여의나루역', category: 'category7', status: '복잡' },
-      { name: 'IFC몰', category: 'category8', status: '여유' },
+      { id: 6, name: '여의나루역', category: 'category7', status: 'crowded' },
+      { id: 7, name: 'IFC몰', category: 'category8', status: 'uncrowded' },
     ],
     []
   );
