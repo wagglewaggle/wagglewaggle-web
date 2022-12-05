@@ -1,30 +1,47 @@
+import { useState, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import DetailHeader from './DetailHeader';
 import DetailContent from './DetailContent';
-import DetailPrediction from './DetailPrediction';
+import { statusType } from 'types/typeBundle';
+import { palette } from 'constants/palette';
 
 const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
     flexDirection: 'column',
-    margin: '48px 0 35px',
+    marginBottom: 35,
     width: '100%',
+    color: palette.white,
   },
-  footer: {
-    position: 'fixed',
-    width: '100%',
-    bottom: 0,
+  veryUncrowded: {
+    color: palette.blue,
+  },
+  uncrowded: {
+    color: palette.green,
+  },
+  normal: {
+    color: palette.yellow,
+  },
+  crowded: {
+    color: palette.orange,
+  },
+  veryCrowded: {
+    color: palette.red,
   },
 }));
 
 const Detail = () => {
+  const [status, setStatus] = useState<statusType>('normal');
   const classes = useStyles();
+
+  useEffect(() => {
+    setStatus('normal');
+  }, []);
 
   return (
     <div className={classes.wrap}>
-      <DetailHeader />
-      <DetailContent />
-      <DetailPrediction />
+      <DetailHeader status={status} rootClasses={classes} />
+      <DetailContent status={status} rootClasses={classes} />
     </div>
   );
 };
