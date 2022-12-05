@@ -56,12 +56,17 @@ interface blockPropsType {
   blockList: searchWordList[];
   onClickRemoveAll: () => void;
   onClickRemoveOne: (listId: number, type: 'search' | 'popular') => void;
+  handleCurrentPageChange: (newPage: 'result', searchWord?: string) => void;
 }
 
 const SearchBlock = (props: blockPropsType) => {
-  const { title, blockList, onClickRemoveAll, onClickRemoveOne } = props;
+  const { title, blockList, onClickRemoveAll, onClickRemoveOne, handleCurrentPageChange } = props;
   const classes = useStyles();
   const BLOCK_TYPE: 'search' | 'popular' = title === '최근검색어' ? 'search' : 'popular';
+
+  const handleWordClick = (word: string) => {
+    handleCurrentPageChange('result', word);
+  };
 
   return (
     <div className={classes.subComponent}>
@@ -73,7 +78,9 @@ const SearchBlock = (props: blockPropsType) => {
       </div>
       {blockList.map((list: searchWordList, idx: number) => (
         <div key={`search-list-${idx}`} className={classes.listWrap}>
-          <div className={classes.list}>{list.word}</div>
+          <div className={classes.list} onClick={() => handleWordClick(list.word)}>
+            {list.word}
+          </div>
           <IconButton
             sx={{
               marginLeft: '5px',
@@ -97,7 +104,12 @@ const SearchBlock = (props: blockPropsType) => {
   );
 };
 
-const SearchData = () => {
+interface propsType {
+  handleCurrentPageChange: (newPage: 'result', searchWord?: string) => void;
+}
+
+const SearchData = (props: propsType) => {
+  const { handleCurrentPageChange } = props;
   const [searchList, setSearchList] = useState<searchWordList[]>([]);
   const [popularList, setPopularList] = useState<searchWordList[]>([]);
   const classes = useStyles();
@@ -159,12 +171,14 @@ const SearchData = () => {
         blockList={searchList}
         onClickRemoveOne={handleRemoveList}
         onClickRemoveAll={handleRemoveAllSearchList}
+        handleCurrentPageChange={handleCurrentPageChange}
       />
       <SearchBlock
         title='인기검색어'
         blockList={popularList}
         onClickRemoveOne={handleRemoveList}
         onClickRemoveAll={handleRemoveAllPopularList}
+        handleCurrentPageChange={handleCurrentPageChange}
       />
     </div>
   );

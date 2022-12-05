@@ -29,10 +29,10 @@ const Main = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleCurrentPageChange = (newPage: pageType) => {
+  const handleCurrentPageChange = (newPage: pageType, searchWord?: string) => {
     setCurrentPage(newPage);
     if (newPage === 'result') {
-      navigate(`/main?search=${searchValue}`);
+      navigate(`/main?search=${searchWord || searchValue}`);
     } else if (currentPage === 'result') {
       navigate('/main');
     }
@@ -61,7 +61,7 @@ const Main = () => {
     });
     if (queryObject?.search) {
       setCurrentPage('result');
-      setSearchValue(queryObject.search);
+      setSearchValue(decodeURI(queryObject.search));
     }
   }, [location.search]);
 
@@ -76,7 +76,7 @@ const Main = () => {
       {currentPage === 'main' ? (
         <PlaceData placeData={placeData} />
       ) : currentPage === 'search' ? (
-        <SearchData />
+        <SearchData handleCurrentPageChange={handleCurrentPageChange} />
       ) : currentPage === 'suggestion' ? (
         <SuggestData placeData={placeData} searchValue={searchValue} />
       ) : (
