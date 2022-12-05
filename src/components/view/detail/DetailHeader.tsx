@@ -81,7 +81,7 @@ const DetailHeader = (props: propsType) => {
     } else if (status === 'very crowded') {
       setDescriptionElement(<span className={rootClasses.veryCrowded}>너무 많아요.</span>);
     }
-  }, [status]);
+  }, [status, rootClasses]);
 
   return (
     <div className={classes.wrap}>
