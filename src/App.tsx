@@ -13,7 +13,8 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
-    height: '100vh',
+    height: 'fit-content',
+    minHeight: '100vh',
     backgroundColor: palette.grey[800],
   },
 }));
@@ -28,7 +29,7 @@ const App = () => {
           <Routes>
             <Route path='/main/*' element={<Main />} />
             <Route path='/detail/*' element={<Detail />} />
-            <Route path='/' element={<Navigate to='/main' />} />
+            <Route path='/*' element={<Navigate to='/main' />} />
           </Routes>
         </BrowserRouter>
       </div>

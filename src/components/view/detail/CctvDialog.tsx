@@ -14,7 +14,7 @@ const CctvDialog = (props: propsType) => {
         <iframe
           title='CCTV Dialog'
           src='https://data.seoul.go.kr/SeoulRtd/cctv?src=http://210.179.218.51:1935/live/71.stream/playlist.m3u8&cctvname=L010069'
-          width={320}
+          width={280}
           height={240}
           frameBorder={0}
         />
