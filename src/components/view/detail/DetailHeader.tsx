@@ -1,7 +1,7 @@
-import { Fragment, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconButton, ClassNameMap } from '@mui/material';
+import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { PlaceStatus } from 'components/common';
 import backgroundImage from 'assets/dummy-result-image.png';
 import leftIcon from 'assets/icons/left-icon.svg';
 import { statusType } from 'types/typeBundle';
@@ -42,46 +42,20 @@ const useStyles = makeStyles(() => ({
     fontSize: 24,
     fontWeight: 700,
   },
-  dateWrap: {
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: 14,
-    fontWeight: 400,
-    '& button': {
-      marginRight: 5,
-    },
-    '& svg': {},
-  },
 }));
 
 interface propsType {
   status: statusType;
-  rootClasses: ClassNameMap<'veryUncrowded' | 'uncrowded' | 'normal' | 'crowded' | 'veryCrowded'>;
 }
 
 const DetailHeader = (props: propsType) => {
-  const { status, rootClasses } = props;
-  const [descriptionElement, setDescriptionElement] = useState<JSX.Element>(<Fragment />);
+  const { status } = props;
   const classes = useStyles();
   const navigate = useNavigate();
 
   const handleBackClick = () => {
     navigate('/main');
   };
-
-  useEffect(() => {
-    if (status === 'very uncrowded') {
-      setDescriptionElement(<span className={rootClasses.veryUncrowded}>거의 없어요.</span>);
-    } else if (status === 'uncrowded') {
-      setDescriptionElement(<span className={rootClasses.uncrowded}>조금 있어요.</span>);
-    } else if (status === 'normal') {
-      setDescriptionElement(<span className={rootClasses.normal}>적당해요.</span>);
-    } else if (status === 'crowded') {
-      setDescriptionElement(<span className={rootClasses.crowded}>많아요.</span>);
-    } else if (status === 'very crowded') {
-      setDescriptionElement(<span className={rootClasses.veryCrowded}>너무 많아요.</span>);
-    }
-  }, [status, rootClasses]);
 
   return (
     <div className={classes.wrap}>
@@ -95,7 +69,16 @@ const DetailHeader = (props: propsType) => {
         <div className={classes.status}>
           {`지금 명동 남산타워에
           사람이 `}
-          {descriptionElement}
+          <PlaceStatus
+            status={status}
+            comments={{
+              'very uncrowded': '거의 없어요.',
+              uncrowded: '조금 있어요.',
+              normal: '적당해요.',
+              crowded: '많아요.',
+              'very crowded': '너무 많아요.',
+            }}
+          />
         </div>
       </div>
     </div>

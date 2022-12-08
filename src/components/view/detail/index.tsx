@@ -35,13 +35,13 @@ const Detail = () => {
   const classes = useStyles();
 
   useEffect(() => {
-    setStatus('normal');
+    setStatus('very uncrowded');
   }, []);
 
   return (
     <div className={classes.wrap}>
-      <DetailHeader status={status} rootClasses={classes} />
-      <DetailContent status={status} rootClasses={classes} />
+      <DetailHeader status={status} />
+      <DetailContent status={status} />
     </div>
   );
 };
