@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import DetailHeader from './DetailHeader';
-import DetailContent from './DetailContent';
+import DetailedCongestion from './DetailedCongestion';
+import LocationInformation from './LocationInformation';
+import RelatedLocations from './RelatedLocations';
 import { statusType } from 'types/typeBundle';
 import { palette } from 'constants/palette';
 
@@ -41,7 +43,9 @@ const Detail = () => {
   return (
     <div className={classes.wrap}>
       <DetailHeader status={status} />
-      <DetailContent status={status} />
+      <DetailedCongestion status={status} />
+      <LocationInformation />
+      <RelatedLocations />
     </div>
   );
 };

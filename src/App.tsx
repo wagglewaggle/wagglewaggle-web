@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { Main, Detail } from './components/view';
@@ -15,12 +16,18 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     height: 'fit-content',
     minHeight: '100vh',
-    backgroundColor: palette.grey[800],
+    backgroundColor: palette.black,
   },
 }));
 
 const App = () => {
   const classes = useStyles();
+
+  const registerKakaoAppKey = () => {};
+
+  useEffect(() => {
+    registerKakaoAppKey();
+  }, []);
 
   return (
     <div className={classes.wrap}>

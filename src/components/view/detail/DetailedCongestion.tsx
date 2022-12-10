@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: 24,
-    marginTop: 12,
+    backgroundColor: palette.grey[700],
   },
   header: {
     display: 'flex',
@@ -26,12 +26,15 @@ const useStyles = makeStyles(() => ({
       fontSize: 18,
       fontWeight: 600,
     },
-    '& button': {
-      color: palette.grey[400],
-      '& img': {
-        color: palette.grey[400],
-      },
-    },
+  },
+  buttonArea: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4,
+  },
+  iconImage: {
+    width: 16,
+    height: 16,
   },
   statusCard: {
     display: 'flex',
@@ -83,7 +86,7 @@ interface propsType {
   status: statusType;
 }
 
-const DetailContent = (props: propsType) => {
+const DetailedCongestion = (props: propsType) => {
   const { status } = props;
   const [open, setOpen] = useState<boolean>(false);
   const classes = useStyles();
@@ -107,9 +110,12 @@ const DetailContent = (props: propsType) => {
     <div className={classes.wrap}>
       <div className={classes.header}>
         <span>실시간 인구 현황</span>
-        <IconButton>
-          <img src={refreshIcon} alt='refresh' />
-        </IconButton>
+        <div className={classes.buttonArea}>
+          <IconButton sx={{ padding: 0 }}>
+            <img className={classes.iconImage} src={refreshIcon} alt='refresh' />
+          </IconButton>
+          5시간 전
+        </div>
       </div>
       <div className={classes.statusCard}>
         <div className={classes.statusLeft}>
@@ -147,4 +153,4 @@ const DetailContent = (props: propsType) => {
   );
 };
 
-export default DetailContent;
+export default DetailedCongestion;
