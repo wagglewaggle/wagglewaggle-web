@@ -91,8 +91,6 @@ const ResultData = observer((props: propsType) => {
     ],
     []
   );
-  const EMPTY_DATA_COMMENT: string = `검색 결과가 없어요 ;(
-    대신 최근에 사람들이 많이 찾아본 여기는 어떠세요?`;
 
   const getSuggestionList = useCallback(() => {
     setResultData(placeData.filter((data: placeDataType) => data.name.includes(searchWord)));
