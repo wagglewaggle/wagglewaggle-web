@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     padding: '12px 24px',
-    width: 352,
+    width: 'calc(100% - 48px)',
     height: 32,
   },
   logo: {

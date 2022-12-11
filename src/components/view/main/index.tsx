@@ -141,6 +141,8 @@ const Main = () => {
     setOpenDrawer(newDrawerState);
     setIncludeInput(!newDrawerState);
     setCurrentPage(newDrawerState ? <Detail /> : <Fragment />);
+    setSearchValue(newDrawerState ? searchValue : '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
   useEffect(() => {
