@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useResizeObserver from 'use-resize-observer';
 import makeStyles from '@mui/styles/makeStyles';
 import { Main, NotFound } from './components/view';
@@ -47,6 +47,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path='/main/*' element={<Main />} />
+              <Route path='/' element={<Navigate to='/main' />} />
               <Route path='/*' element={<NotFound />} />
             </Routes>
           </BrowserRouter>
