@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    margin: '5px 20px 35px',
+    padding: '5px 24px 35px',
     color: palette.white,
   },
   emptyImg: {

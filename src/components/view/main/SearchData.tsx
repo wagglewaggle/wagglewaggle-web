@@ -10,7 +10,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     padding: '5px 24px 35px',
-    // width: 352,
   },
 }));
 
