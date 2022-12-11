@@ -1,6 +1,9 @@
 import { Fragment, useState, useEffect, useCallback, useMemo } from 'react';
+import { observer } from 'mobx-react';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceCard } from 'components/common';
+import { useStore } from 'stores';
 import { placeDataType } from 'types/typeBundle';
 import { palette } from 'constants/palette';
 import emptyImage from 'assets/error-image.png';
@@ -47,16 +50,13 @@ const useStyles = makeStyles(() => ({
   },
   header: {
     display: 'flex',
-    padding: '15px 0 5px',
+    paddingBottom: 5,
     fontSize: 14,
   },
   title: {
+    margin: '32px 0 24px',
     fontSize: 18,
     fontWeight: 600,
-  },
-  dataLength: {
-    marginLeft: 5,
-    fontWeight: 700,
   },
 }));
 
@@ -65,12 +65,16 @@ interface propsType {
   searchWord: string;
 }
 
-const ResultData = (props: propsType) => {
+const ResultData = observer((props: propsType) => {
   const { placeData, searchWord } = props;
   const [resultData, setResultData] = useState<placeDataType[]>([]);
   const [relatedData, setRelatedData] = useState<placeDataType[]>([]);
   const [suggestedData, setSuggestedData] = useState<placeDataType[]>([]);
   const classes = useStyles();
+  const { ScreenSizeStore } = useStore().MobxStore;
+  const WRAP_BOX_STYLE: { width: number } = {
+    width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth - 48 : 352,
+  };
   const DUMMY_RELATED_DATA: placeDataType[] = useMemo(
     () => [
       { id: 2, name: 'test7', category: 'category7', status: 'crowded' },
@@ -107,7 +111,7 @@ const ResultData = (props: propsType) => {
   }, [DUMMY_RELATED_DATA]);
 
   return (
-    <div className={classes.wrap}>
+    <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
       {resultData.length === 0 ? (
         <Fragment>
           <div className={classes.emptyImg}>
@@ -128,8 +132,7 @@ const ResultData = (props: propsType) => {
         <Fragment>
           <div className={classes.subComponent}>
             <div className={classes.header}>
-              <span className={classes.title}>검색 결과</span>
-              <span className={classes.dataLength}>{resultData.length}</span>
+              <span className={classes.title}>{`검색 결과 ${resultData.length}`}</span>
             </div>
             {resultData.map((data: placeDataType, idx: number) => (
               <PlaceCard key={`result-data-${idx}`} place={data} />
@@ -137,7 +140,7 @@ const ResultData = (props: propsType) => {
           </div>
           <div className={classes.subComponent}>
             <div className={classes.header}>
-              <span className={classes.title}>관련 검색 결과</span>
+              <span className={classes.title}>관련 장소 현황</span>
             </div>
             {relatedData.map((data: placeDataType, idx: number) => (
               <PlaceCard key={`related-data-${idx}`} place={data} />
@@ -145,8 +148,8 @@ const ResultData = (props: propsType) => {
           </div>
         </Fragment>
       )}
-    </div>
+    </Box>
   );
-};
+});
 
 export default ResultData;

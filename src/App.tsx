@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import useResizeObserver from 'use-resize-observer';
 import makeStyles from '@mui/styles/makeStyles';
 import { Main, NotFound } from './components/view';
-import { RootStore } from 'stores';
+import { CreateStore, RootStore } from 'stores';
 import { screenType } from 'types/typeBundle';
 import { palette } from 'constants/palette';
 
@@ -37,18 +37,21 @@ const App = () => {
     if (!width) return;
     const screenType: screenType = width < 768 ? 'mobile' : width < 1024 ? 'tablet' : 'pc';
     ScreenSizeStore.setScreenType(screenType);
+    ScreenSizeStore.setScreenWidth(width);
   }, [ScreenSizeStore, width]);
 
   return (
     <div className={classes.wrap}>
-      <div className={classes.serviceWrap} ref={ref}>
-        <BrowserRouter>
-          <Routes>
-            <Route path='/main/*' element={<Main />} />
-            <Route path='/*' element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </div>
+      <CreateStore.Provider value={{ MobxStore }}>
+        <div className={classes.serviceWrap} ref={ref}>
+          <BrowserRouter>
+            <Routes>
+              <Route path='/main/*' element={<Main />} />
+              <Route path='/*' element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
+      </CreateStore.Provider>
     </div>
   );
 };

@@ -1,5 +1,8 @@
+import { observer } from 'mobx-react';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { SearchBlock } from 'components/common';
+import { useStore } from 'stores';
 import { searchWordList } from 'types/typeBundle';
 
 const useStyles = makeStyles(() => ({
@@ -7,7 +10,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     padding: '5px 24px 35px',
-    width: 352,
+    // width: 352,
   },
 }));
 
@@ -19,7 +22,7 @@ interface propsType {
   handlePopularListChange: (newList: searchWordList[]) => void;
 }
 
-const SearchData = (props: propsType) => {
+const SearchData = observer((props: propsType) => {
   const {
     latestSearchList,
     popularSearchList,
@@ -28,6 +31,10 @@ const SearchData = (props: propsType) => {
     handlePopularListChange,
   } = props;
   const classes = useStyles();
+  const { ScreenSizeStore } = useStore().MobxStore;
+  const WRAP_BOX_STYLE: { width: number } = {
+    width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth - 48 : 352,
+  };
 
   const handleRemoveLatestList = (listId: number) => {
     const newList: searchWordList[] = JSON.parse(JSON.stringify(latestSearchList));
@@ -49,7 +56,7 @@ const SearchData = (props: propsType) => {
   };
 
   return (
-    <div className={classes.wrap}>
+    <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
       <SearchBlock
         title='최근 검색어'
         blockList={latestSearchList}
@@ -63,8 +70,8 @@ const SearchData = (props: propsType) => {
         onClickRemoveAll={handleRemoveAllPopularList}
         handleWordClick={handleWordClick}
       />
-    </div>
+    </Box>
   );
-};
+});
 
 export default SearchData;

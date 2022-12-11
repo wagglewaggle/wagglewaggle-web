@@ -137,13 +137,10 @@ const Main = () => {
   }, []);
 
   useEffect(() => {
-    if (location.search.length === 0) {
-      setIncludeInput(true);
-      return;
-    }
-    setCurrentPage(<Detail />);
-    setOpenDrawer(true);
-    setIncludeInput(false);
+    const newDrawerState: boolean = location.search.length !== 0;
+    setOpenDrawer(newDrawerState);
+    setIncludeInput(!newDrawerState);
+    setCurrentPage(newDrawerState ? <Detail /> : <Fragment />);
   }, [location.search]);
 
   useEffect(() => {

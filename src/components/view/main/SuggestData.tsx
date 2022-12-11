@@ -1,7 +1,10 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
+import { observer } from 'mobx-react';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
 import { PlaceCard, SearchBlock } from 'components/common';
+import { useStore } from 'stores';
 import { placeDataType, searchWordList } from 'types/typeBundle';
 import { palette } from 'constants/palette';
 
@@ -10,7 +13,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     margin: '5px 0 35px',
-    width: 400,
   },
   listWrap: {
     display: 'flex',
@@ -68,7 +70,7 @@ interface propsType {
   handlePopularListChange: (newList: searchWordList[]) => void;
 }
 
-const SuggestData = (props: propsType) => {
+const SuggestData = observer((props: propsType) => {
   const {
     placeData,
     searchValue,
@@ -80,6 +82,10 @@ const SuggestData = (props: propsType) => {
   } = props;
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
+  const { ScreenSizeStore } = useStore().MobxStore;
+  const WRAP_BOX_STYLE: { width: number } = {
+    width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 400,
+  };
 
   const handleRemoveLatestList = (listId: number) => {
     const newList: searchWordList[] = JSON.parse(JSON.stringify(latestSearchList));
@@ -113,7 +119,7 @@ const SuggestData = (props: propsType) => {
   }, [searchValue, getSuggestionList]);
 
   return (
-    <div className={classes.wrap}>
+    <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
       {suggestionList.map((list: placeDataType, idx: number) => (
         <div
           key={`suggest-data-${idx}`}
@@ -154,8 +160,8 @@ const SuggestData = (props: propsType) => {
           />
         </div>
       )}
-    </div>
+    </Box>
   );
-};
+});
 
 export default SuggestData;

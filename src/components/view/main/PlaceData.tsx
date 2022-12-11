@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Select, MenuItem, SelectChangeEvent, Icon } from '@mui/material';
+import { observer } from 'mobx-react';
+import { Box, Select, MenuItem, SelectChangeEvent, Icon } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard } from 'components/common';
+import { useStore } from 'stores';
 import { placeDataType } from 'types/typeBundle';
 import { palette } from 'constants/palette';
 import downIcon from 'assets/icons/down-icon.svg';
@@ -67,13 +69,36 @@ const useStyles = makeStyles(() => ({
       padding: 0,
     },
   },
+  menu: {
+    '& ul': {
+      display: 'flex',
+      flexDirection: 'column',
+      padding: 0,
+      margin: '20px 24px',
+      gap: 4,
+    },
+    '& li': {
+      padding: '0 5px',
+      width: 96,
+    },
+    '& .MuiPaper-root': {
+      display: 'flex',
+      alignItems: 'center',
+      width: 144,
+      height: 'auto',
+      color: palette.grey[400],
+      backgroundColor: palette.grey[700],
+    },
+    '& .Mui-selected': {
+      color: palette.white,
+    },
+  },
   menuItem: {
     fontSize: 14,
     fontWeight: 400,
   },
   placesWrap: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 476px), 1fr))',
     justifyContent: 'space-between',
     columnGap: 24,
     minWidth: 'fit-content',
@@ -84,12 +109,17 @@ interface propsType {
   placeData: placeDataType[];
 }
 
-const PlaceData = (props: propsType) => {
+const PlaceData = observer((props: propsType) => {
   const { placeData } = props;
   const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
   const [selectedTitle, setSelectedTitle] = useState<string>('전체');
   const classes = useStyles();
+  const { ScreenSizeStore } = useStore().MobxStore;
   const DUMMY_CHIPS: string[] = ['전체', '한강 공원', '백화점', '크리스마스 축제'];
+  const PLACE_BOX_STYLE: { gridTemplateColumns: string } = {
+    gridTemplateColumns:
+      ScreenSizeStore.screenType === 'mobile' ? '100%' : 'repeat(auto-fit, minmax(348px, 1fr))',
+  };
 
   const handleClickChip = (chip: string) => {
     setSelectedTitle(chip);
@@ -122,6 +152,7 @@ const PlaceData = (props: propsType) => {
           onChange={handleChangeSelect}
           value={placeOrder}
           SelectDisplayProps={{ style: { paddingRight: '24px' } }}
+          MenuProps={{ classes: { root: classes.menu } }}
           IconComponent={(props) => (
             <Icon {...props} sx={{ '& img': { width: '16px', height: '16px', opacity: 0.7 } }}>
               <img src={downIcon} alt='down-icon' />
@@ -135,13 +166,13 @@ const PlaceData = (props: propsType) => {
           ))}
         </Select>
       </div>
-      <div className={classes.placesWrap}>
+      <Box className={classes.placesWrap} sx={PLACE_BOX_STYLE}>
         {placeData.map((place: placeDataType, idx: number) => (
           <PlaceCard key={`place-card-${idx}`} place={place} />
         ))}
-      </div>
+      </Box>
     </div>
   );
-};
+});
 
 export default PlaceData;

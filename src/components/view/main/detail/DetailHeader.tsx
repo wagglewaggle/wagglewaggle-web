@@ -14,7 +14,9 @@ const useStyles = makeStyles(() => ({
     padding: '0 24px',
     height: 448,
     backgroundImage: `url(${backgroundImage})`,
-    backgroundSize: 'cover',
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    backgroundPositionX: 'center',
     // 아래 background-color는 임시 이미지 용으로 추후 삭제 필요
     backgroundColor: '#112258',
   },
