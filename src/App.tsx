@@ -13,7 +13,6 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     minWidth: 360,
     backgroundColor: palette.black,
-    overflow: 'hidden',
   },
   serviceWrap: {
     display: 'flex',
