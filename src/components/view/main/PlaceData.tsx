@@ -71,6 +71,13 @@ const useStyles = makeStyles(() => ({
     fontSize: 14,
     fontWeight: 400,
   },
+  placesWrap: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 476px), 1fr))',
+    justifyContent: 'space-between',
+    columnGap: 24,
+    minWidth: 'fit-content',
+  },
 }));
 
 interface propsType {
@@ -128,9 +135,11 @@ const PlaceData = (props: propsType) => {
           ))}
         </Select>
       </div>
-      {placeData.map((place: placeDataType, idx: number) => (
-        <PlaceCard key={`place-card-${idx}`} place={place} />
-      ))}
+      <div className={classes.placesWrap}>
+        {placeData.map((place: placeDataType, idx: number) => (
+          <PlaceCard key={`place-card-${idx}`} place={place} />
+        ))}
+      </div>
     </div>
   );
 };

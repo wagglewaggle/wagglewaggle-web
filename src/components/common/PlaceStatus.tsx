@@ -42,7 +42,7 @@ const PlaceStatus = (props: propsType) => {
   const classes = useStyles();
 
   return (
-    <Box sx={sx} component='span'>
+    <Box sx={{ ...sx, minWidth: 'fit-content' }} component='span'>
       {status === 'very uncrowded' ? (
         <span className={classes.veryUncrowded}>{comments[status]}</span>
       ) : status === 'uncrowded' ? (

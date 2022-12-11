@@ -8,15 +8,16 @@ const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
     justifyContent: 'center',
+    backgroundColor: palette.black,
   },
   serviceWrap: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
+    maxWidth: 1024,
     height: 'fit-content',
     minHeight: '100vh',
-    backgroundColor: palette.black,
   },
 }));
 
