@@ -10,8 +10,6 @@ export interface searchWordList {
   word: string;
 }
 
-export type pageType = 'main' | 'search' | 'suggestion' | 'result';
-
 export type statusType = 'very crowded' | 'crowded' | 'normal' | 'uncrowded' | 'very uncrowded';
 
 export type screenType = 'mobile' | 'tablet' | 'pc';

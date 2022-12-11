@@ -57,7 +57,7 @@ const PlaceCard = (props: propsType) => {
   const navigate = useNavigate();
 
   const handlePlaceCardClick = () => {
-    navigate(`/detail/${place.id}`);
+    navigate(`/main/detail?place-id=${place.id}`);
   };
 
   return (

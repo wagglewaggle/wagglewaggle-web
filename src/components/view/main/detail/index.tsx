@@ -12,7 +12,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     marginBottom: 35,
-    width: '100%',
+    width: 640,
     color: palette.white,
   },
   veryUncrowded: {

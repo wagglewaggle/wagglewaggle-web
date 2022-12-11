@@ -1,11 +1,8 @@
 import { ChangeEvent, KeyboardEvent } from 'react';
-import { Box, TextField, IconButton, InputAdornment, Icon } from '@mui/material';
+import { Box, TextField, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { pageType } from 'types/typeBundle';
 import { palette } from 'constants/palette';
-import logo from 'assets/temp-logo.png';
 import leftArrowIcon from 'assets/icons/left-icon.svg';
-import searchIcon from 'assets/icons/search-icon.svg';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -13,7 +10,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     padding: '12px 24px',
-    width: 'calc(100% - 48px)',
+    width: 352,
     height: 32,
   },
   logo: {
@@ -44,67 +41,42 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface propsType {
-  currentPage: pageType;
   searchValue: string;
+  handleSearchEnter: (searchWord: string) => void;
+  handleDrawerClose: () => void;
   handleSearchValueChange: (newValue: string) => void;
-  handleCurrentPageChange: (newPage: pageType) => void;
 }
 
 const SearchInput = (props: propsType) => {
-  const { currentPage, searchValue, handleSearchValueChange, handleCurrentPageChange } = props;
+  const { searchValue, handleSearchEnter, handleDrawerClose, handleSearchValueChange } = props;
   const classes = useStyles();
 
   const handleArrowLeftClick = () => {
-    handleSearchValueChange('');
-    handleCurrentPageChange('main');
+    handleDrawerClose();
   };
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     handleSearchValueChange(e.target.value);
   };
 
-  const handleInputFocus = () => {
-    if (searchValue.length === 0) {
-      handleCurrentPageChange('search');
-    }
-  };
-
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleCurrentPageChange('result');
+    if (searchValue !== '' && e.key === 'Enter') {
+      handleSearchEnter(searchValue);
     }
   };
 
   return (
-    <Box
-      className={classes.wrap}
-      sx={{ borderBottom: currentPage !== 'main' ? `1px solid ${palette.grey[600]}` : '' }}
-    >
-      {currentPage !== 'main' && (
-        <IconButton onClick={handleArrowLeftClick} sx={{ padding: 0 }}>
-          <img src={leftArrowIcon} alt='left-arrow' />
-        </IconButton>
-      )}
-      {currentPage === 'main' && <img className={classes.logo} src={logo} alt='logo' />}
+    <Box className={classes.wrap}>
+      <IconButton onClick={handleArrowLeftClick} sx={{ padding: 0 }}>
+        <img src={leftArrowIcon} alt='left-arrow' />
+      </IconButton>
       <TextField
         className={classes.input}
         type='text'
         value={searchValue}
         onChange={handleValueChange}
-        onFocus={handleInputFocus}
         onKeyDown={handleKeyDown}
-        placeholder={currentPage === 'main' ? '' : "'여의도'를 검색해보세요"}
-        InputProps={{
-          endAdornment: currentPage === 'main' && (
-            <InputAdornment position='start'>
-              <Icon
-                sx={{ width: '32px', height: '32px', '& img': { width: '32px', height: '32px' } }}
-              >
-                <img src={searchIcon} alt='search' />
-              </Icon>
-            </InputAdornment>
-          ),
-        }}
+        placeholder="'여의도'를 입력해보세요"
       />
     </Box>
   );

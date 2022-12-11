@@ -59,11 +59,11 @@ const useStyles = makeStyles(() => ({
 
 interface propsType {
   placeData: placeDataType[];
-  searchValue: string;
+  searchWord: string;
 }
 
 const ResultData = (props: propsType) => {
-  const { placeData, searchValue } = props;
+  const { placeData, searchWord } = props;
   const [resultData, setResultData] = useState<placeDataType[]>([]);
   const [relatedData, setRelatedData] = useState<placeDataType[]>([]);
   const [suggestedData, setSuggestedData] = useState<placeDataType[]>([]);
@@ -88,8 +88,8 @@ const ResultData = (props: propsType) => {
     대신 최근에 사람들이 많이 찾아본 여기는 어떠세요?`;
 
   const getSuggestionList = useCallback(() => {
-    setResultData(placeData.filter((data: placeDataType) => data.name.includes(searchValue)));
-  }, [placeData, searchValue]);
+    setResultData(placeData.filter((data: placeDataType) => data.name.includes(searchWord)));
+  }, [placeData, searchWord]);
 
   useEffect(() => {
     setSuggestedData([...DUMMY_SUGGESTED_DATA]);
@@ -107,7 +107,7 @@ const ResultData = (props: propsType) => {
     <div className={classes.wrap}>
       {resultData.length === 0 ? (
         <Fragment>
-          <div className={classes.emptyImg} />
+          <div className={classes.emptyImg}></div>
           <div className={classes.emptyComment}>{EMPTY_DATA_COMMENT}</div>
           <h3 className={classes.emptyTitle}>추천 장소</h3>
           <div className={classes.listWrap}>

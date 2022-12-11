@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useResizeObserver from 'use-resize-observer';
 import makeStyles from '@mui/styles/makeStyles';
-import { Main, Detail } from './components/view';
+import { Main } from './components/view';
 import { RootStore } from 'stores';
 import { screenType } from 'types/typeBundle';
 import { palette } from 'constants/palette';
@@ -11,7 +11,9 @@ const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
     justifyContent: 'center',
+    minWidth: 360,
     backgroundColor: palette.black,
+    overflow: 'hidden',
   },
   serviceWrap: {
     display: 'flex',
@@ -43,7 +45,6 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path='/main/*' element={<Main />} />
-            <Route path='/detail/*' element={<Detail />} />
             <Route path='/*' element={<Navigate to='/main' />} />
           </Routes>
         </BrowserRouter>
