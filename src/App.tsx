@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useResizeObserver from 'use-resize-observer';
 import makeStyles from '@mui/styles/makeStyles';
-import { Main } from './components/view';
+import { Main, NotFound } from './components/view';
 import { RootStore } from 'stores';
 import { screenType } from 'types/typeBundle';
 import { palette } from 'constants/palette';
@@ -45,7 +45,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path='/main/*' element={<Main />} />
-            <Route path='/*' element={<Navigate to='/main' />} />
+            <Route path='/*' element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </div>

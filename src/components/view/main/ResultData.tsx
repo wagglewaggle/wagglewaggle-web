@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { PlaceCard } from 'components/common';
 import { placeDataType } from 'types/typeBundle';
 import { palette } from 'constants/palette';
+import emptyImage from 'assets/error-image.png';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -13,24 +14,25 @@ const useStyles = makeStyles(() => ({
     color: palette.white,
   },
   emptyImg: {
-    margin: 15,
-    width: 84,
-    height: 84,
-    backgroundColor: '#d9d9d9',
+    margin: '40px 0 24px',
+    width: 120,
+    height: 120,
   },
   emptyComment: {
+    fontSize: 18,
+    fontWeight: 600,
+  },
+  emptySuggestion: {
+    margin: '8px 0 64px',
+    color: palette.grey[400],
     fontSize: 14,
-    fontWeight: 500,
-    lineHeight: '146.52%',
-    wordBreak: 'break-word',
-    textAlign: 'center',
-    whiteSpace: 'pre-line',
+    fontWeight: 400,
   },
   emptyTitle: {
-    marginTop: 40,
+    marginTop: 32,
     width: '100%',
-    fontSize: 16,
-    fontWeight: 400,
+    fontSize: 18,
+    fontWeight: 600,
   },
   listWrap: {
     display: 'flex',
@@ -49,7 +51,8 @@ const useStyles = makeStyles(() => ({
     fontSize: 14,
   },
   title: {
-    fontWeight: 500,
+    fontSize: 18,
+    fontWeight: 600,
   },
   dataLength: {
     marginLeft: 5,
@@ -107,9 +110,14 @@ const ResultData = (props: propsType) => {
     <div className={classes.wrap}>
       {resultData.length === 0 ? (
         <Fragment>
-          <div className={classes.emptyImg}></div>
-          <div className={classes.emptyComment}>{EMPTY_DATA_COMMENT}</div>
-          <h3 className={classes.emptyTitle}>추천 장소</h3>
+          <div className={classes.emptyImg}>
+            <img src={emptyImage} alt='empty' />
+          </div>
+          <div className={classes.emptyComment}>검색 결과가 없어요.</div>
+          <span className={classes.emptySuggestion}>
+            최근 사람들이 많이 검색한 인기 장소는 어떠신가요?
+          </span>
+          <h3 className={classes.emptyTitle}>인기 장소 현황</h3>
           <div className={classes.listWrap}>
             {suggestedData.map((data: placeDataType, idx: number) => (
               <PlaceCard key={`suggested-data-${idx}`} place={data} />
