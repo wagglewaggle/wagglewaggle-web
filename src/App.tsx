@@ -33,6 +33,22 @@ const App = () => {
   const { ScreenSizeStore } = MobxStore;
   const { ref, width } = useResizeObserver();
 
+  const disableIosInputAutoZoom = () => {
+    const metaEl = document.querySelector('meta[name=viewport]');
+    if (!metaEl) return;
+    const newContentArr: string[] = (metaEl as unknown as { content: string }).content.split(', ');
+    const maximumScaleContent: string = 'maximum-scale=1';
+    if (newContentArr.includes(maximumScaleContent)) return;
+    newContentArr.push(maximumScaleContent);
+    metaEl.setAttribute('content', newContentArr.join(', '));
+  };
+
+  useEffect(() => {
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      disableIosInputAutoZoom();
+    }
+  }, []);
+
   useEffect(() => {
     if (!width) return;
     const screenType: screenType = width < 768 ? 'mobile' : width < 1024 ? 'tablet' : 'pc';
