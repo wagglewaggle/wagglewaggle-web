@@ -1,8 +1,11 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
+import { observer } from 'mobx-react';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
-import { PlaceCard } from 'components/common';
-import { placeDataType } from 'types/typeBundle';
+import { PlaceCard, SearchBlock } from 'components/common';
+import { useStore } from 'stores';
+import { placeDataType, searchWordList } from 'types/typeBundle';
 import { palette } from 'constants/palette';
 
 const useStyles = makeStyles(() => ({
@@ -17,6 +20,7 @@ const useStyles = makeStyles(() => ({
     padding: '14px 24px',
     gap: 8,
     color: palette.white,
+    cursor: 'pointer',
     '& svg': {
       width: 24,
       height: 24,
@@ -27,6 +31,9 @@ const useStyles = makeStyles(() => ({
     height: 24,
     fontSize: 14,
     fontWeight: 400,
+  },
+  includedPart: {
+    color: palette.orange,
   },
   divider: {
     border: 0,
@@ -45,17 +52,63 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     margin: '30px 24px 35px',
   },
+  emptySuggestionWrap: {
+    padding: '0 24px',
+    color: palette.grey[400],
+    fontSize: 14,
+    fontWeight: 400,
+  },
 }));
 
 interface propsType {
   placeData: placeDataType[];
   searchValue: string;
+  latestSearchList: searchWordList[];
+  popularSearchList: searchWordList[];
+  handleWordClick: (searchWord: string) => void;
+  handleLatestListChange: (newList: searchWordList[]) => void;
+  handlePopularListChange: (newList: searchWordList[]) => void;
 }
 
-const SuggestData = (props: propsType) => {
-  const { placeData, searchValue } = props;
+const SuggestData = observer((props: propsType) => {
+  const {
+    placeData,
+    searchValue,
+    latestSearchList,
+    popularSearchList,
+    handleWordClick,
+    handleLatestListChange,
+    handlePopularListChange,
+  } = props;
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
+  const { ScreenSizeStore } = useStore().MobxStore;
+  const WRAP_BOX_STYLE: { width: number } = {
+    width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 400,
+  };
+
+  const handleRemoveLatestList = (listId: number) => {
+    const newList: searchWordList[] = JSON.parse(JSON.stringify(latestSearchList));
+    const selectedList: searchWordList | undefined = newList.find(
+      (list: searchWordList) => list.id === listId
+    );
+    if (!selectedList) return;
+    const selectedIdx: number = newList.indexOf(selectedList);
+    newList.splice(selectedIdx, 1);
+    handleLatestListChange(newList);
+  };
+
+  const handleRemoveAllLatestList = () => {
+    handleLatestListChange([]);
+  };
+
+  const handleRemoveAllPopularList = () => {
+    handlePopularListChange([]);
+  };
+
+  const handleListClick = (searchWord: string) => {
+    handleWordClick(searchWord);
+  };
 
   const getSuggestionList = useCallback(() => {
     setSuggestionList(placeData.filter((data: placeDataType) => data.name.includes(searchValue)));
@@ -66,26 +119,49 @@ const SuggestData = (props: propsType) => {
   }, [searchValue, getSuggestionList]);
 
   return (
-    <div className={classes.wrap}>
+    <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
       {suggestionList.map((list: placeDataType, idx: number) => (
-        <div key={`suggest-data-${idx}`} className={classes.listWrap}>
+        <div
+          key={`suggest-data-${idx}`}
+          className={classes.listWrap}
+          onClick={() => handleListClick(list.name)}
+        >
           <SearchIcon />
-          <span className={classes.list}>{list.name}</span>
+          <span className={classes.list}>
+            <span className={classes.includedPart}>{searchValue}</span>
+            {list.name.replace(searchValue, '')}
+          </span>
         </div>
       ))}
-      {suggestionList.length > 0 && (
+      {suggestionList.length > 0 ? (
         <Fragment>
           <hr className={classes.divider} />
           <span className={classes.title}>관련 장소 현황</span>
+          <div className={classes.cardWrap}>
+            {suggestionList.map((place: placeDataType, idx: number) => (
+              <PlaceCard key={`place-card-${idx}`} place={place} />
+            ))}
+          </div>
         </Fragment>
+      ) : (
+        <div className={classes.emptySuggestionWrap}>
+          <SearchBlock
+            title='최근 검색어'
+            blockList={[]}
+            onClickRemoveAll={handleRemoveAllLatestList}
+            onClickRemoveOne={handleRemoveLatestList}
+            handleWordClick={handleWordClick}
+          />
+          <SearchBlock
+            title='인기 검색어'
+            blockList={popularSearchList}
+            onClickRemoveAll={handleRemoveAllPopularList}
+            handleWordClick={handleWordClick}
+          />
+        </div>
       )}
-      <div className={classes.cardWrap}>
-        {suggestionList.map((place: placeDataType, idx: number) => (
-          <PlaceCard key={`place-card-${idx}`} place={place} />
-        ))}
-      </div>
-    </div>
+    </Box>
   );
-};
+});
 
 export default SuggestData;

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Button, IconButton, ClassNameMap } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CctvDialog from './CctvDialog';
+import { PlaceStatus } from 'components/common';
 import { statusType } from 'types/typeBundle';
 import { palette } from 'constants/palette';
 import refreshIcon from 'assets/icons/refresh-icon.svg';
@@ -14,7 +15,7 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: 24,
-    marginTop: 12,
+    backgroundColor: palette.grey[700],
   },
   header: {
     display: 'flex',
@@ -25,12 +26,15 @@ const useStyles = makeStyles(() => ({
       fontSize: 18,
       fontWeight: 600,
     },
-    '& button': {
-      color: palette.grey[400],
-      '& img': {
-        color: palette.grey[400],
-      },
-    },
+  },
+  buttonArea: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4,
+  },
+  iconImage: {
+    width: 16,
+    height: 16,
   },
   statusCard: {
     display: 'flex',
@@ -80,34 +84,18 @@ const useStyles = makeStyles(() => ({
 
 interface propsType {
   status: statusType;
-  rootClasses: ClassNameMap<'veryUncrowded' | 'uncrowded' | 'normal' | 'crowded' | 'veryCrowded'>;
 }
 
-const DetailContent = (props: propsType) => {
-  const { status, rootClasses } = props;
+const DetailedCongestion = (props: propsType) => {
+  const { status } = props;
   const [open, setOpen] = useState<boolean>(false);
   const classes = useStyles();
-  const ELEMENTS_BY_STATUS: { [key: string]: { comment: string; element: JSX.Element } } = {
-    veryUncrowded: {
-      comment: '날아다닐 수 있어요',
-      element: <span className={`${classes.status} ${rootClasses.veryUncrowded}`}>매우 여유</span>,
-    },
-    uncrowded: {
-      comment: '여유롭게 이동할 수 있어요',
-      element: <span className={`${classes.status} ${rootClasses.uncrowded}`}>여유</span>,
-    },
-    normal: {
-      comment: '이동하기 불편하지 않아요',
-      element: <span className={`${classes.status} ${rootClasses.normal}`}>보통</span>,
-    },
-    crowded: {
-      comment: '이동 시 기다림이 필요해요',
-      element: <span className={`${classes.status} ${rootClasses.crowded}`}>붐빔</span>,
-    },
-    veryCrowded: {
-      comment: '이동하기 힘들어요',
-      element: <span className={`${classes.status} ${rootClasses.veryCrowded}`}>매우 붐빔</span>,
-    },
+  const COMMENTS_BY_STATUS: { [key: string]: string } = {
+    'very uncrowded': '날아다닐 수 있어요',
+    uncrowded: '여유롭게 이동할 수 있어요',
+    normal: '이동하기 불편하지 않아요',
+    crowded: '이동 시 기다림이 필요해요',
+    'very crowded': '이동하기 힘들어요',
   };
 
   const handleOpenDialog = () => {
@@ -122,19 +110,30 @@ const DetailContent = (props: propsType) => {
     <div className={classes.wrap}>
       <div className={classes.header}>
         <span>실시간 인구 현황</span>
-        <IconButton>
-          <img src={refreshIcon} alt='refresh' />
-        </IconButton>
+        <div className={classes.buttonArea}>
+          <IconButton sx={{ padding: 0 }}>
+            <img className={classes.iconImage} src={refreshIcon} alt='refresh' />
+          </IconButton>
+          5시간 전
+        </div>
       </div>
       <div className={classes.statusCard}>
         <div className={classes.statusLeft}>
           <img src={personIcon} alt='person' />
           <div className={classes.statusDesc}>
             <span>인구 현황</span>
-            <span>{ELEMENTS_BY_STATUS[status].comment}</span>
+            <span>{COMMENTS_BY_STATUS[status]}</span>
           </div>
         </div>
-        {ELEMENTS_BY_STATUS[status].element}
+        <PlaceStatus
+          status={status}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: 14,
+            fontWeight: 400,
+          }}
+        />
       </div>
       <hr className={classes.divider} />
       <Button
@@ -154,4 +153,4 @@ const DetailContent = (props: propsType) => {
   );
 };
 
-export default DetailContent;
+export default DetailedCongestion;
