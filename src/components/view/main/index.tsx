@@ -23,6 +23,9 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     padding: '0 24px',
     height: 56,
+    '& img': {
+      cursor: 'pointer',
+    },
   },
   searchBox: {
     flexGrow: 1,
@@ -40,7 +43,7 @@ const Main = () => {
   const [popularList, setPopularList] = useState<searchWordList[]>([]);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
   const classes = useStyles();
-  const { CustomDialogStore } = useStore().MobxStore;
+  const { CustomDialogStore, ErrorStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
   const LATEST_SEARCH_LIST: searchWordList[] = useMemo(
@@ -130,10 +133,15 @@ const Main = () => {
     setCurrentPage(<Fragment />);
   };
 
+  const navigateToHome = () => {
+    navigate('/main');
+  };
+
   useEffect(() => {
     const dummyPlaceData: placeDataType[] = [
       { id: 0, name: 'test1', category: '테마파크', status: 'CROWDED' },
       { id: 1, name: 'test2', category: '쇼핑몰', status: 'RELAXATION' },
+      { id: 2, name: 'test3', category: '쇼핑몰, 테마파크', status: 'VERY_CROWDED' },
     ];
     setPlaceData(dummyPlaceData);
     CustomDialogStore.setOpen(location.search === '');
@@ -150,6 +158,11 @@ const Main = () => {
   }, [location.search]);
 
   useEffect(() => {
+    if (!ErrorStore.statusCode) return;
+    navigate(ErrorStore.statusCode === 404 ? '/not-found' : '/error');
+  }, [ErrorStore.statusCode, navigate]);
+
+  useEffect(() => {
     setLatestList([...LATEST_SEARCH_LIST]);
     setPopularList([...POPULAR_SEARCH_LIST]);
   }, [LATEST_SEARCH_LIST, POPULAR_SEARCH_LIST]);
@@ -157,9 +170,9 @@ const Main = () => {
   return (
     <div className={classes.wrap}>
       <div className={classes.search}>
-        <img src={logo} alt='logo' />
+        <img src={logo} alt='logo' onClick={navigateToHome} />
         <div className={classes.searchBox} onClick={handleSearchClick} />
-        <img src={searchIcon} alt='search' />
+        <img src={searchIcon} alt='search' onClick={handleSearchClick} />
       </div>
       <PlaceData placeData={placeData} />
       <CustomDrawer

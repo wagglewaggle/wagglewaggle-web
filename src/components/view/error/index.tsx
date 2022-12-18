@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { useStore } from 'stores';
 import { palette } from 'constants/';
 import errorImage from 'assets/error-image.png';
 import logo from 'assets/temp-logo.png';
@@ -68,8 +71,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const NotFound = () => {
+const Error = observer(() => {
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const classes = useStyles();
+  const { ErrorStore } = useStore().MobxStore;
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -81,6 +86,18 @@ const NotFound = () => {
     navigate('/main');
   };
 
+  useEffect(() => {
+    setErrorMessage(
+      ErrorStore.statusCode === 404 ? '페이지를 찾을 수 없어요.' : '잠시 뒤에 새로 고침해주세요.'
+    );
+  }, [ErrorStore.statusCode]);
+
+  useEffect(() => {
+    const pathname: string = location.pathname;
+    if (pathname === '/error') return;
+    ErrorStore.setStatusCode(pathname === '/not-found' ? 404 : null);
+  }, [ErrorStore, location.pathname]);
+
   return (
     <div className={classes.wrap}>
       <div className={classes.search}>
@@ -90,16 +107,18 @@ const NotFound = () => {
       </div>
       <div className={classes.error}>
         <img className={classes.errorImage} src={errorImage} alt='not-found' />
-        <div className={classes.title}>페이지를 찾을 수 없어요.</div>
-        <span className={classes.errorCode}>에러 코드:404</span>
+        <div className={classes.title}>{errorMessage}</div>
+        <span className={classes.errorCode}>{`에러 코드:${ErrorStore.statusCode}`}</span>
       </div>
       <div className={classes.buttons}>
-        <div onClick={handleRefresh}>
-          새로 고침
-          <IconButton>
-            <img src={refreshIcon} alt='refresh' />
-          </IconButton>
-        </div>
+        {ErrorStore.statusCode !== 404 && (
+          <div onClick={handleRefresh}>
+            새로 고침
+            <IconButton>
+              <img src={refreshIcon} alt='refresh' />
+            </IconButton>
+          </div>
+        )}
         <div onClick={handleMoveHome}>
           홈으로 이동
           <IconButton>
@@ -109,6 +128,6 @@ const NotFound = () => {
       </div>
     </div>
   );
-};
+});
 
-export default NotFound;
+export default Error;

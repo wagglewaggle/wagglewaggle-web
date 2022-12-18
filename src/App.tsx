@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useResizeObserver from 'use-resize-observer';
 import makeStyles from '@mui/styles/makeStyles';
 import { CustomDialog } from 'components/common';
-import { Main, NotFound } from './components/view';
+import { Main, Error } from './components/view';
 import { CreateStore, RootStore } from 'stores';
 import { screenType } from 'types/typeBundle';
 import { palette } from 'constants/';
@@ -63,8 +63,10 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path='/main/*' element={<Main />} />
+              <Route path='/not-found' element={<Error />} />
+              <Route path='/error' element={<Error />} />
               <Route path='/' element={<Navigate to='/main' />} />
-              <Route path='/*' element={<NotFound />} />
+              <Route path='/*' element={<Navigate to='/not-found' />} />
             </Routes>
           </BrowserRouter>
         </div>

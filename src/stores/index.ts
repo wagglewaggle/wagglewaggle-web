@@ -4,3 +4,4 @@ export { useStore } from './useStore';
 
 export { ScreenSizeStore } from './ScreenSizeStore';
 export { CustomDialogStore } from './CustomDialogStore';
+export { ErrorStore } from './ErrorStore';
