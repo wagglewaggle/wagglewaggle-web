@@ -77,17 +77,17 @@ const ResultData = observer((props: propsType) => {
   };
   const DUMMY_RELATED_DATA: placeDataType[] = useMemo(
     () => [
-      { id: 2, name: 'test7', category: 'category7', status: 'CROWDED' },
-      { id: 3, name: 'test8', category: 'category8', status: 'VERY_CROWDED' },
-      { id: 4, name: 'test9', category: 'category9', status: 'NORMAL' },
-      { id: 5, name: 'test10', category: 'category10', status: 'VERY_RELAXATION' },
+      { id: 2, name: 'test7', category: '지하철', status: 'CROWDED' },
+      { id: 3, name: 'test8', category: '골목·거리', status: 'VERY_CROWDED' },
+      { id: 4, name: 'test9', category: '골목·거리', status: 'NORMAL' },
+      { id: 5, name: 'test10', category: '궁궐', status: 'VERY_RELAXATION' },
     ],
     []
   );
   const DUMMY_SUGGESTED_DATA: placeDataType[] = useMemo(
     () => [
-      { id: 6, name: '여의나루역', category: 'category7', status: 'CROWDED' },
-      { id: 7, name: 'IFC몰', category: 'category8', status: 'RELAXATION' },
+      { id: 6, name: '여의나루역', category: '쇼핑몰', status: 'CROWDED' },
+      { id: 7, name: 'IFC몰', category: '한강·공원, 마을', status: 'RELAXATION' },
     ],
     []
   );

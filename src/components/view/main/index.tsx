@@ -132,8 +132,8 @@ const Main = () => {
 
   useEffect(() => {
     const dummyPlaceData: placeDataType[] = [
-      { id: 0, name: 'test1', category: 'category1', status: 'CROWDED' },
-      { id: 1, name: 'test2', category: 'category2', status: 'RELAXATION' },
+      { id: 0, name: 'test1', category: '테마파크', status: 'CROWDED' },
+      { id: 1, name: 'test2', category: '쇼핑몰', status: 'RELAXATION' },
     ];
     setPlaceData(dummyPlaceData);
     CustomDialogStore.setOpen(location.search === '');

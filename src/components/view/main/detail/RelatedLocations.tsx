@@ -26,11 +26,11 @@ const RelatedLocations = () => {
   const classes = useStyles();
   const TEMP_PLACES: placeDataType[] = useMemo(
     () => [
-      { id: 8, name: '장소8', category: '백화점', status: 'VERY_CROWDED' },
-      { id: 9, name: '장소9', category: '공원', status: 'CROWDED' },
-      { id: 10, name: '장소10', category: '지하철역', status: 'NORMAL' },
-      { id: 11, name: '장소11', category: '지하철역', status: 'RELAXATION' },
-      { id: 12, name: '장소12', category: '백화점', status: 'VERY_RELAXATION' },
+      { id: 8, name: '장소8', category: '쇼핑몰, 크리스마스 핫플', status: 'VERY_CROWDED' },
+      { id: 9, name: '장소9', category: '한강·공원', status: 'CROWDED' },
+      { id: 10, name: '장소10', category: '지하철', status: 'NORMAL' },
+      { id: 11, name: '장소11', category: '지하철', status: 'RELAXATION' },
+      { id: 12, name: '장소12', category: '쇼핑몰', status: 'VERY_RELAXATION' },
     ],
     []
   );

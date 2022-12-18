@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
-import homeImage from 'assets/symbols/white-roof-house.svg';
+import { symbols } from 'constants/';
 import { placeDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
 
@@ -64,22 +64,14 @@ const PlaceCard = (props: propsType) => {
     <div className={classes.placeCard} onClick={handlePlaceCardClick}>
       <div className={classes.placeLeft}>
         <div className={classes.placeImage}>
-          <img src={homeImage} alt='home' />
+          <img src={symbols[place.category.split(',')[0]]} alt='category-symbol' />
         </div>
         <div className={classes.placeTitle}>
           <span className={classes.placeName}>{place.name}</span>
           <span className={classes.placeCategory}>{place.category}</span>
         </div>
       </div>
-      <PlaceStatus
-        status={place.status}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          fontSize: 12,
-          fontWeight: 500,
-        }}
-      />
+      <PlaceStatus status={place.status} />
     </div>
   );
 };
