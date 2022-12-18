@@ -5,7 +5,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
 import { placeDataType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 import emptyImage from 'assets/error-image.png';
 
 const useStyles = makeStyles(() => ({
@@ -77,17 +77,17 @@ const ResultData = observer((props: propsType) => {
   };
   const DUMMY_RELATED_DATA: placeDataType[] = useMemo(
     () => [
-      { id: 2, name: 'test7', category: 'category7', status: 'crowded' },
-      { id: 3, name: 'test8', category: 'category8', status: 'very crowded' },
-      { id: 4, name: 'test9', category: 'category9', status: 'normal' },
-      { id: 5, name: 'test10', category: 'category10', status: 'very uncrowded' },
+      { id: 2, name: 'test7', category: 'category7', status: 'CROWDED' },
+      { id: 3, name: 'test8', category: 'category8', status: 'VERY_CROWDED' },
+      { id: 4, name: 'test9', category: 'category9', status: 'NORMAL' },
+      { id: 5, name: 'test10', category: 'category10', status: 'VERY_RELAXATION' },
     ],
     []
   );
   const DUMMY_SUGGESTED_DATA: placeDataType[] = useMemo(
     () => [
-      { id: 6, name: '여의나루역', category: 'category7', status: 'crowded' },
-      { id: 7, name: 'IFC몰', category: 'category8', status: 'uncrowded' },
+      { id: 6, name: '여의나루역', category: 'category7', status: 'CROWDED' },
+      { id: 7, name: 'IFC몰', category: 'category8', status: 'RELAXATION' },
     ],
     []
   );

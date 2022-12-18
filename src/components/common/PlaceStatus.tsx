@@ -1,7 +1,8 @@
+import { Fragment } from 'react';
 import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { statusType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   veryUncrowded: {
@@ -22,7 +23,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface propsType {
-  status: statusType;
+  status?: statusType;
   comments?: { [key: string]: string };
   sx?: object;
 }
@@ -31,11 +32,11 @@ const PlaceStatus = (props: propsType) => {
   const {
     status,
     comments = {
-      'very uncrowded': '매우 여유',
-      uncrowded: '여유',
-      normal: '보통',
-      crowded: '붐빔',
-      'very crowded': '매우 붐빔',
+      VERY_RELAXATION: '매우 여유',
+      RELAXATION: '여유',
+      NORMAL: '보통',
+      CROWDED: '붐빔',
+      VERY_CROWDED: '매우 붐빔',
     },
     sx = {},
   } = props;
@@ -43,16 +44,18 @@ const PlaceStatus = (props: propsType) => {
 
   return (
     <Box sx={{ ...sx, minWidth: 'fit-content' }} component='span'>
-      {status === 'very uncrowded' ? (
+      {status === 'VERY_RELAXATION' ? (
         <span className={classes.veryUncrowded}>{comments[status]}</span>
-      ) : status === 'uncrowded' ? (
+      ) : status === 'RELAXATION' ? (
         <span className={classes.uncrowded}>{comments[status]}</span>
-      ) : status === 'normal' ? (
+      ) : status === 'NORMAL' ? (
         <span className={classes.normal}>{comments[status]}</span>
-      ) : status === 'crowded' ? (
+      ) : status === 'CROWDED' ? (
         <span className={classes.crowded}>{comments[status]}</span>
-      ) : (
+      ) : status === 'VERY_CROWDED' ? (
         <span className={classes.veryCrowded}>{comments[status]}</span>
+      ) : (
+        <Fragment />
       )}
     </Box>
   );

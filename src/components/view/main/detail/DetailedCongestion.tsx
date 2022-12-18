@@ -3,8 +3,8 @@ import { Button, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CctvDialog from './CctvDialog';
 import { PlaceStatus } from 'components/common';
-import { statusType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { locationDataType } from 'types/typeBundle';
+import { palette } from 'constants/';
 import refreshIcon from 'assets/icons/refresh-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import rightIcon from 'assets/icons/right-icon.svg';
@@ -83,19 +83,19 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface propsType {
-  status: statusType;
+  locationData: locationDataType | null;
 }
 
 const DetailedCongestion = (props: propsType) => {
-  const { status } = props;
+  const { locationData } = props;
   const [open, setOpen] = useState<boolean>(false);
   const classes = useStyles();
   const COMMENTS_BY_STATUS: { [key: string]: string } = {
-    'very uncrowded': '날아다닐 수 있어요',
-    uncrowded: '여유롭게 이동할 수 있어요',
-    normal: '이동하기 불편하지 않아요',
-    crowded: '이동 시 기다림이 필요해요',
-    'very crowded': '이동하기 힘들어요',
+    VERY_RELAXATION: '날아다닐 수 있어요',
+    RELAXATION: '여유롭게 이동할 수 있어요',
+    NORMAL: '이동하기 불편하지 않아요',
+    CROWDED: '이동 시 기다림이 필요해요',
+    VERY_CROWDED: '이동하기 힘들어요',
   };
 
   const handleOpenDialog = () => {
@@ -122,11 +122,11 @@ const DetailedCongestion = (props: propsType) => {
           <img src={personIcon} alt='person' />
           <div className={classes.statusDesc}>
             <span>인구 현황</span>
-            <span>{COMMENTS_BY_STATUS[status]}</span>
+            <span>{COMMENTS_BY_STATUS[locationData?.level || 'NORMAL']}</span>
           </div>
         </div>
         <PlaceStatus
-          status={status}
+          status={locationData?.level || undefined}
           sx={{
             display: 'flex',
             alignItems: 'center',

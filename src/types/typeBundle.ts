@@ -33,9 +33,11 @@ export interface locationDataType {
   name: string;
   x: number;
   y: number;
+  category: string;
+  level: statusType;
   accidents: accidentType[];
 }
 
-export type statusType = 'very crowded' | 'crowded' | 'normal' | 'uncrowded' | 'very uncrowded';
+export type statusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
 
 export type screenType = 'mobile' | 'tablet' | 'pc';

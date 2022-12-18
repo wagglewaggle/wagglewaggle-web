@@ -4,8 +4,8 @@ import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
 import backgroundImage from 'assets/dummy-result-image.png';
 import leftIcon from 'assets/icons/left-icon.svg';
-import { statusType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { locationDataType } from 'types/typeBundle';
+import { palette, locationNames } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -47,11 +47,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface propsType {
-  status: statusType;
+  locationData: locationDataType | null;
 }
 
 const DetailHeader = (props: propsType) => {
-  const { status } = props;
+  const { locationData } = props;
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -66,19 +66,19 @@ const DetailHeader = (props: propsType) => {
           <img src={leftIcon} alt='left' />
         </IconButton>
       </div>
-      <div className={classes.categoryName}>카테고리명</div>
+      <div className={classes.categoryName}>{locationData?.category}</div>
       <div className={classes.statusWrap}>
         <div className={classes.status}>
-          {`지금 명동 남산타워에
+          {`지금 ${locationNames[locationData?.name || ''] || locationData?.name}에
           사람이 `}
           <PlaceStatus
-            status={status}
+            status={locationData?.level || undefined}
             comments={{
-              'very uncrowded': '거의 없어요.',
-              uncrowded: '조금 있어요.',
-              normal: '적당해요.',
-              crowded: '많아요.',
-              'very crowded': '너무 많아요.',
+              VERY_RELAXATION: '거의 없어요.',
+              RELAXATION: '조금 있어요.',
+              NORMAL: '적당해요.',
+              CROWDED: '많아요.',
+              VERY_CROWDED: '너무 많아요.',
             }}
           />
         </div>
