@@ -5,6 +5,7 @@ export class CustomDialogStore {
   open: boolean = false;
   variant: 'intro' | 'accident' | 'cctv' = 'intro';
   accidentList: accidentType[] = [];
+  cctvList: string[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -20,8 +21,9 @@ export class CustomDialogStore {
     this.open = true;
   };
 
-  openCctvDialog = () => {
+  openCctvDialog = (newCctvLists: string[]) => {
     this.variant = 'cctv';
+    this.cctvList = newCctvLists;
     this.open = true;
   };
 }

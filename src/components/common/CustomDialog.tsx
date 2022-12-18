@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Dialog, DialogTitle, DialogContent, Box, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -16,9 +16,6 @@ const useStyles = makeStyles(() => ({
       borderRadius: 8,
       height: 492,
       backgroundColor: 'transparent',
-    },
-    '& .MuiDialogContent-root': {
-      width: 360,
     },
     '& ::-webkit-scrollbar': {
       color: palette.grey[500],
@@ -77,14 +74,57 @@ const useStyles = makeStyles(() => ({
     fontSize: 14,
     fontWeight: 400,
     backgroundColor: palette.grey[700],
-    '& div:last-of-type': {
-      margin: 0,
-    },
   },
   footerImage: {
     backgroundColor: palette.grey[700],
   },
+  cctvWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 18,
+  },
+  pageCircleWrap: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: 8,
+    width: '100%',
+    gap: 8,
+  },
+  pageCircle: {
+    borderRadius: '50%',
+    width: 10,
+    height: 10,
+    backgroundColor: palette.grey[600],
+  },
+  selectedCircle: {
+    backgroundColor: palette.white,
+  },
 }));
+
+interface titlePropsType {
+  variant: 'intro' | 'accident' | 'cctv';
+  dialogWidth: number;
+}
+
+const TitlePart = (props: titlePropsType) => {
+  const { variant, dialogWidth } = props;
+  const classes = useStyles();
+
+  return (
+    <DialogTitle
+      className={classes.header}
+      sx={{
+        padding: variant !== 'cctv' ? '36px 28px' : 'auto',
+        width: `${dialogWidth - 48}px`,
+      }}
+    >
+      {variant === 'intro' && <img className={classes.logo} src={logo} alt='logo' />}
+      {variant === 'accident' && (
+        <img className={classes.accidentIcon} src={accidentIcon} alt='accident' />
+      )}
+    </DialogTitle>
+  );
+};
 
 const IntroContent = () => {
   const classes = useStyles();
@@ -129,21 +169,85 @@ const AccidentContent = () => {
   );
 };
 
-const CustomDialog = observer(() => {
+const CctvContent = observer(() => {
+  const [cctvIdx, setCctvIdx] = useState<number>(0);
   const classes = useStyles();
   const { ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
-  const dialogWidth: number = ScreenSizeStore.screenType === 'mobile' ? 295 : 400;
+
+  const handleCircleClick = (idx: number) => {
+    setCctvIdx(idx);
+  };
+
+  return (
+    <div className={classes.cctvWrap}>
+      <iframe
+        title='CCTV Dialog'
+        src={CustomDialogStore.cctvList[cctvIdx]}
+        width={320 - (ScreenSizeStore.screenType === 'mobile' ? 48 : 0)}
+        height={190}
+        frameBorder={0}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          background: palette.grey[500],
+        }}
+      />
+      <span className={classes.content}>CCTV 이름</span>
+      <div className={classes.pageCircleWrap}>
+        {CustomDialogStore.cctvList.map((_: string, idx: number) => (
+          <div
+            key={`cctv-page-${idx}`}
+            className={`${classes.pageCircle} ${
+              cctvIdx === idx ? classes.selectedCircle : undefined
+            }`}
+            onClick={() => handleCircleClick(idx)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+});
+
+const CustomDialog = observer(() => {
+  const [dialogWidth, setDialogWidth] = useState<number>(408);
+  const [dialogHeight, setDialogHeight] = useState<number>(408);
+  const classes = useStyles();
+  const { ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
 
   const closeDialog = () => {
     CustomDialogStore.setOpen(false);
   };
+
+  useEffect(() => {
+    if (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'cctv') {
+      setDialogWidth(320);
+      return;
+    }
+    setDialogWidth(
+      (ScreenSizeStore.screenType === 'mobile' ? 295 : 408) -
+        (CustomDialogStore.variant === 'cctv' ? 40 : 0)
+    );
+  }, [ScreenSizeStore.screenType, CustomDialogStore.variant]);
+
+  useEffect(() => {
+    setDialogHeight(
+      CustomDialogStore.variant === 'intro'
+        ? 492
+        : CustomDialogStore.variant === 'accident'
+        ? 408
+        : 360
+    );
+  }, [CustomDialogStore.variant]);
 
   return (
     <Dialog
       className={classes.wrap}
       sx={{
         '& .MuiPaper-root': {
-          maxHeight: `${CustomDialogStore.variant === 'intro' ? 492 : 408}px`,
+          maxHeight: `${dialogHeight}px`,
+        },
+        '& .MuiDialogContent-root': {
+          width: `${dialogWidth - (CustomDialogStore.variant !== 'cctv' ? 40 : 48)}px`,
         },
       }}
       open={CustomDialogStore.open}
@@ -154,27 +258,28 @@ const CustomDialog = observer(() => {
           <img src={closeIcon} alt='close' />
         </IconButton>
       </Box>
-      <DialogTitle
-        className={classes.header}
-        sx={{ padding: '36px 28px', width: `${dialogWidth - 48}px` }}
-      >
-        {CustomDialogStore.variant === 'intro' && (
-          <img className={classes.logo} src={logo} alt='logo' />
-        )}
-        {CustomDialogStore.variant === 'accident' && (
-          <img className={classes.accidentIcon} src={accidentIcon} alt='accident' />
-        )}
-      </DialogTitle>
+      <TitlePart variant={CustomDialogStore.variant} dialogWidth={dialogWidth} />
       <DialogContent
         className={classes.content}
         sx={{
           width: `${dialogWidth - 48}px`,
           height: CustomDialogStore.variant === 'intro' ? 'auto' : '200px',
+          '& div:last-of-type': {
+            marginBottom: `${CustomDialogStore.variant === 'intro' ? 16 : 0}px`,
+          },
         }}
       >
-        {CustomDialogStore.variant === 'intro' ? <IntroContent /> : <AccidentContent />}
+        {CustomDialogStore.variant === 'intro' ? (
+          <IntroContent />
+        ) : CustomDialogStore.variant === 'accident' ? (
+          <AccidentContent />
+        ) : (
+          <CctvContent />
+        )}
       </DialogContent>
-      <Box sx={{ height: '20px', width: '100%', backgroundColor: palette.grey[700] }} />
+      {CustomDialogStore.variant === 'accident' && (
+        <Box sx={{ height: '20px', width: '100%', backgroundColor: palette.grey[700] }} />
+      )}
       {CustomDialogStore.variant === 'intro' && (
         <img className={classes.footerImage} src={footerImage} alt='footer' />
       )}

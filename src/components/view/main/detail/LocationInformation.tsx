@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { palette, geometry } from 'constants/';
-import { useStore } from 'stores';
 import { locationDataType } from 'types/typeBundle';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
 
@@ -77,7 +76,6 @@ const LocationInformation = (props: propsType) => {
   const [locationAddress, setLocationAddress] = useState<string | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const classes = useStyles();
-  const { CustomDialogStore } = useStore().MobxStore;
 
   const processGeometryCoordinates = (
     coordinates: [number, number][][],
