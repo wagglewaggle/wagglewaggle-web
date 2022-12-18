@@ -7,8 +7,8 @@ import DetailedCongestion from './DetailedCongestion';
 import LocationInformation from './LocationInformation';
 import RelatedLocations from './RelatedLocations';
 import { useStore } from 'stores';
-import { statusType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { locationDataType } from 'types/typeBundle';
+import { palette, dataSample } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Detail = observer(() => {
-  const [status, setStatus] = useState<statusType>('normal');
+  const [locationData, setLocationData] = useState<locationDataType | null>(null);
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
   const BOX_STYLE: { width: number } = {
@@ -43,14 +43,14 @@ const Detail = observer(() => {
   };
 
   useEffect(() => {
-    setStatus('very uncrowded');
+    setLocationData(dataSample);
   }, []);
 
   return (
     <Box className={classes.wrap} sx={BOX_STYLE}>
-      <DetailHeader status={status} />
-      <DetailedCongestion status={status} />
-      <LocationInformation />
+      <DetailHeader locationData={locationData} />
+      <DetailedCongestion locationData={locationData} />
+      <LocationInformation locationData={locationData} />
       <RelatedLocations />
     </Box>
   );

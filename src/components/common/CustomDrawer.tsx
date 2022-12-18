@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { Drawer } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   wrap: {

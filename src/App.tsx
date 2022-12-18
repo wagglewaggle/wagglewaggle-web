@@ -6,7 +6,7 @@ import { CustomDialog } from 'components/common';
 import { Main, NotFound } from './components/view';
 import { CreateStore, RootStore } from 'stores';
 import { screenType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   wrap: {

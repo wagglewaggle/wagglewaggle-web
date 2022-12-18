@@ -6,7 +6,7 @@ import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
 import { placeDataType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 import downIcon from 'assets/icons/down-icon.svg';
 
 const useStyles = makeStyles(() => ({

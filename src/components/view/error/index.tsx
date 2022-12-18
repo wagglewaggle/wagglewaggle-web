@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 import errorImage from 'assets/error-image.png';
 import logo from 'assets/temp-logo.png';
 import searchIcon from 'assets/icons/search-icon.svg';

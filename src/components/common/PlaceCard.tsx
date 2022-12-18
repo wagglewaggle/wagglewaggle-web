@@ -3,7 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
 import homeImage from 'assets/symbols/white-roof-house.svg';
 import { placeDataType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   placeCard: {

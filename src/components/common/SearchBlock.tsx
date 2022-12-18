@@ -3,7 +3,7 @@ import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '@mui/icons-material/Close';
 import { searchWordList } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   subComponent: {

@@ -6,7 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { PlaceCard, SearchBlock } from 'components/common';
 import { useStore } from 'stores';
 import { placeDataType, searchWordList } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   wrap: {

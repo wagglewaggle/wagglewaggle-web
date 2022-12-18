@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { palette } from 'constants/palette';
-import { geometry } from 'constants/geometry';
-import { dataSample } from 'constants/dataSample';
+import { palette, geometry } from 'constants/';
 import { useStore } from 'stores';
 import { locationDataType } from 'types/typeBundle';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
@@ -70,8 +68,12 @@ declare global {
   }
 }
 
-const LocationInformation = () => {
-  const [locationData, setLocationData] = useState<locationDataType | null>(null);
+interface propsType {
+  locationData: locationDataType | null;
+}
+
+const LocationInformation = (props: propsType) => {
+  const { locationData } = props;
   const [locationAddress, setLocationAddress] = useState<string | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const classes = useStyles();
@@ -160,10 +162,6 @@ const LocationInformation = () => {
     mapScript.addEventListener('load', getKakaoMap);
     return () => mapScript.removeEventListener('load', getKakaoMap);
   }, [locationData, setAccidentLists, getKakaoMap]);
-
-  useEffect(() => {
-    setLocationData(dataSample);
-  }, []);
 
   return (
     <div className={classes.wrap}>
