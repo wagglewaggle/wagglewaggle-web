@@ -5,7 +5,7 @@ export const dataSample: locationDataType = {
   name: '명동 관광특구',
   x: 37.56465036784218,
   y: 126.98208332061768,
-  category: '골목·거리, 크리스마스 핫플',
+  category: '골목 및 거리, 크리스마스 핫플',
   level: 'RELAXATION',
   accidents: [
     {

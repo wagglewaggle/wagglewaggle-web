@@ -8,9 +8,9 @@ import village from 'assets/symbols/village.svg';
 
 export const symbols: { [key: string]: string } = {
   궁궐: palace,
-  '한강·공원': park,
+  공원: park,
   쇼핑몰: shopping,
-  '골목·거리': street,
+  '골목 및 거리': street,
   지하철: subway,
   테마파크: themePark,
   마을: village,

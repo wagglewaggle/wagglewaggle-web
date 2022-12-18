@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Box, Select, MenuItem, SelectChangeEvent, Icon } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -91,6 +91,7 @@ const useStyles = makeStyles(() => ({
     },
     '& .Mui-selected': {
       color: palette.white,
+      backgroundColor: 'transparent !important',
     },
   },
   menuItem: {
@@ -111,16 +112,17 @@ interface propsType {
 
 const PlaceData = observer((props: propsType) => {
   const { placeData } = props;
+  const [renderData, setRenderData] = useState<placeDataType[]>([]);
   const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
-  const [selectedTitle, setSelectedTitle] = useState<string>('전체');
+  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
   const CHIPS: string[] = [
     '전체',
-    '크리스마스 핫플',
+    '크리스마스 핫플레이스',
     '쇼핑몰',
-    '한강·공원',
-    '골목·거리',
+    '공원',
+    '골목 및 거리',
     '지하철',
     '궁궐',
     '테마파크',
@@ -132,12 +134,26 @@ const PlaceData = observer((props: propsType) => {
   };
 
   const handleClickChip = (chip: string) => {
-    setSelectedTitle(chip);
+    setSelectedCategory(chip);
   };
 
   const handleChangeSelect = (e: SelectChangeEvent) => {
     setPlaceOrder(e.target.value);
   };
+
+  useEffect(() => {
+    setRenderData(placeData);
+  }, [placeData]);
+
+  useEffect(() => {
+    const newRenderData: placeDataType[] = JSON.parse(JSON.stringify(placeData));
+    setRenderData(
+      newRenderData.filter(
+        (place: placeDataType) =>
+          selectedCategory === '전체' || place.category.split(',').includes(selectedCategory)
+      )
+    );
+  }, [selectedCategory]);
 
   return (
     <div className={classes.wrap}>
@@ -145,7 +161,7 @@ const PlaceData = observer((props: propsType) => {
         {CHIPS.map((chip: string, idx: number) => (
           <div
             key={`chip-${idx}`}
-            className={`${classes.chip} ${selectedTitle === chip && classes.selectedChip}`}
+            className={`${classes.chip} ${selectedCategory === chip && classes.selectedChip}`}
             onClick={() => handleClickChip(chip)}
           >
             {chip}
@@ -155,7 +171,7 @@ const PlaceData = observer((props: propsType) => {
       <div className={classes.subHeader}>
         <span className={classes.subLeft}>
           장소
-          <span className={classes.subLength}>{placeData.length}</span>
+          <span className={classes.subLength}>{renderData.length}</span>
         </span>
         <Select
           className={classes.select}
@@ -177,7 +193,7 @@ const PlaceData = observer((props: propsType) => {
         </Select>
       </div>
       <Box className={classes.placesWrap} sx={PLACE_BOX_STYLE}>
-        {placeData.map((place: placeDataType, idx: number) => (
+        {renderData.map((place: placeDataType, idx: number) => (
           <PlaceCard key={`place-card-${idx}`} place={place} />
         ))}
       </Box>

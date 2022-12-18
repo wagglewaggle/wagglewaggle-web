@@ -13,6 +13,10 @@ export class CustomDialogStore {
 
   setOpen = (newStatus: boolean) => {
     this.open = newStatus;
+    if (!this.open) {
+      this.accidentList = [];
+      this.cctvList = [];
+    }
   };
 
   openAccidentDialog = (newAccidentLists: accidentType[]) => {
