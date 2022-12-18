@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Dialog, DialogTitle, DialogContent, Box, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useStore } from 'stores';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 import logo from 'assets/temp-logo.png';
 import closeIcon from 'assets/icons/close-icon.svg';
 import accidentIcon from 'assets/icons/accident-icon.svg';
@@ -14,8 +14,24 @@ const useStyles = makeStyles(() => ({
   wrap: {
     '& .MuiPaper-root': {
       borderRadius: 8,
-      maxHeight: 408,
+      height: 492,
       backgroundColor: 'transparent',
+    },
+    '& .MuiDialogContent-root': {
+      width: 360,
+    },
+    '& ::-webkit-scrollbar': {
+      color: palette.grey[500],
+      background: palette.grey[700],
+      width: 10,
+    },
+    '& ::-webkit-scrollbar-thumb': {
+      borderLeft: '2px solid transparent',
+      boxShadow: `inset 0 0 10px 10px ${palette.grey[700]}`,
+      background: palette.grey[500],
+    },
+    '& ::-webkit-scrollbar-track': {
+      background: palette.grey[700],
     },
   },
   closeButtonWrap: {
@@ -61,6 +77,9 @@ const useStyles = makeStyles(() => ({
     fontSize: 14,
     fontWeight: 400,
     backgroundColor: palette.grey[700],
+    '& div:last-of-type': {
+      margin: 0,
+    },
   },
   footerImage: {
     backgroundColor: palette.grey[700],
@@ -72,11 +91,15 @@ const IntroContent = () => {
 
   return (
     <Fragment>
-      <div className={classes.title}>와글와글에 오신 것을 환영합니다.</div>
-      텍스트만 변경될거에요 텍스트만 변경될거에요텍스트만 변경될거에요텍스트만 변경될거에요텍스트만
-      변경될거에요텍스트만 변경될거에요텍스트만 변경될거에요텍스트만 변경될거에요텍스트만
-      변경될거에요텍스트만 변경될거에요텍스트만 변경될거에요텍스트만 변경될거에요텍스트만
-      변경될거에요텍스트만
+      <Box className={classes.title} sx={{ marginBottom: '16px' }}>
+        와글와글에 오신 것을 환영합니다.
+      </Box>
+      ‘와글와글’은 SKT와 KT에서 제공하는 인구 혼잡도 데이터를 기반으로, 서울 및 경기도 내 주요 공간
+      별 인구 혼잡도 현황을 알려드립니다. 보고싶은 위치를 선택하여 그곳의 실시간 인구 혼잡도를
+      확인해보세요.
+      <br />
+      <br />
+      Merry Christmas 🎄
     </Fragment>
   );
 };
@@ -91,10 +114,7 @@ const AccidentContent = () => {
         const infoArr: string[] = accident.info.split('|');
         return (
           <Fragment key={`accident-list-${idx}`}>
-            <Box
-              className={classes.title}
-              sx={{ marginBottom: CustomDialogStore.variant === 'intro' ? '16px' : '8px' }}
-            >
+            <Box className={classes.title} sx={{ marginBottom: '8px' }}>
               {infoArr[0]}
             </Box>
             <div className={classes.times}>
@@ -119,7 +139,16 @@ const CustomDialog = observer(() => {
   };
 
   return (
-    <Dialog className={classes.wrap} open={CustomDialogStore.open} onClose={closeDialog}>
+    <Dialog
+      className={classes.wrap}
+      sx={{
+        '& .MuiPaper-root': {
+          maxHeight: `${CustomDialogStore.variant === 'intro' ? 492 : 408}px`,
+        },
+      }}
+      open={CustomDialogStore.open}
+      onClose={closeDialog}
+    >
       <Box className={classes.closeButtonWrap} sx={{ width: `${dialogWidth}px` }}>
         <IconButton onClick={closeDialog}>
           <img src={closeIcon} alt='close' />
@@ -136,9 +165,16 @@ const CustomDialog = observer(() => {
           <img className={classes.accidentIcon} src={accidentIcon} alt='accident' />
         )}
       </DialogTitle>
-      <DialogContent className={classes.content} sx={{ width: `${dialogWidth - 48}px` }}>
+      <DialogContent
+        className={classes.content}
+        sx={{
+          width: `${dialogWidth - 48}px`,
+          height: CustomDialogStore.variant === 'intro' ? 'auto' : '200px',
+        }}
+      >
         {CustomDialogStore.variant === 'intro' ? <IntroContent /> : <AccidentContent />}
       </DialogContent>
+      <Box sx={{ height: '20px', width: '100%', backgroundColor: palette.grey[700] }} />
       {CustomDialogStore.variant === 'intro' && (
         <img className={classes.footerImage} src={footerImage} alt='footer' />
       )}
