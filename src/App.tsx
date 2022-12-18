@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useResizeObserver from 'use-resize-observer';
 import makeStyles from '@mui/styles/makeStyles';
+import { CustomDialog } from 'components/common';
 import { Main, NotFound } from './components/view';
 import { CreateStore, RootStore } from 'stores';
 import { screenType } from 'types/typeBundle';
@@ -67,6 +68,7 @@ const App = () => {
             </Routes>
           </BrowserRouter>
         </div>
+        <CustomDialog />
       </CreateStore.Provider>
     </div>
   );

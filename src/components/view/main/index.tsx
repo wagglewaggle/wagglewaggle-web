@@ -8,6 +8,7 @@ import SuggestData from './SuggestData';
 import ResultData from './ResultData';
 import { Detail } from 'components/view';
 import { placeDataType, searchWordList } from 'types/typeBundle';
+import { useStore } from 'stores';
 import logo from 'assets/temp-logo.png';
 import searchIcon from 'assets/icons/search-icon.svg';
 
@@ -39,6 +40,7 @@ const Main = () => {
   const [popularList, setPopularList] = useState<searchWordList[]>([]);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
   const classes = useStyles();
+  const { CustomDialogStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
   const LATEST_SEARCH_LIST: searchWordList[] = useMemo(
@@ -134,6 +136,8 @@ const Main = () => {
       { id: 1, name: 'test2', category: 'category2', status: 'uncrowded' },
     ];
     setPlaceData(dummyPlaceData);
+    CustomDialogStore.setOpen(location.search === '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
