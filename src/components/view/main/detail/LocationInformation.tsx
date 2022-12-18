@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { palette, geometry } from 'constants/';
+import { palette, geometry, urlPaths } from 'constants/';
 import { locationDataType } from 'types/typeBundle';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
 
@@ -145,6 +145,10 @@ const LocationInformation = (props: propsType) => {
     });
   }, [highlightMap, locationData]);
 
+  const handleNavigationClick = () => {
+    window.open(`https://place.map.kakao.com/${urlPaths[locationData?.name || '']}`, '_blank');
+  };
+
   useEffect(() => {
     const mapScript = document.createElement('script');
     mapScript.async = true;
@@ -165,7 +169,10 @@ const LocationInformation = (props: propsType) => {
             <div className={classes.name}>{locationData?.name}</div>
             <div className={classes.address}>{locationAddress || ''}</div>
           </div>
-          <IconButton sx={{ border: `1px solid ${palette.white}`, padding: '3px' }}>
+          <IconButton
+            sx={{ border: `1px solid ${palette.white}`, padding: '3px' }}
+            onClick={handleNavigationClick}
+          >
             <img className={classes.navigationIcon} src={navigationIcon} alt='navigation' />
           </IconButton>
         </div>

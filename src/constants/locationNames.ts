@@ -5,4 +5,5 @@ export const locationNames: { [key: string]: string } = {
   '명동 관광특구': '명동',
   '이태원 관광특구': '이태원',
   '동대문 관광특구': '동대문',
+  'DMC(디지털미디어시티)': '디지털미디어시티',
 };
