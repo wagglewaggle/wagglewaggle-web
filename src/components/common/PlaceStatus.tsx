@@ -1,10 +1,16 @@
 import { Fragment } from 'react';
-import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { statusType } from 'types/typeBundle';
 import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
+  wrap: {
+    display: 'flex',
+    alignItems: 'center',
+    minWidth: 'fit-content',
+    fontSize: 14,
+    fontWeight: 600,
+  },
   veryUncrowded: {
     color: palette.blue,
   },
@@ -25,7 +31,6 @@ const useStyles = makeStyles(() => ({
 interface propsType {
   status?: statusType;
   comments?: { [key: string]: string };
-  sx?: object;
 }
 
 const PlaceStatus = (props: propsType) => {
@@ -38,12 +43,11 @@ const PlaceStatus = (props: propsType) => {
       CROWDED: '붐빔',
       VERY_CROWDED: '매우 붐빔',
     },
-    sx = {},
   } = props;
   const classes = useStyles();
 
   return (
-    <Box sx={{ ...sx, minWidth: 'fit-content' }} component='span'>
+    <Fragment>
       {status === 'VERY_RELAXATION' ? (
         <span className={classes.veryUncrowded}>{comments[status]}</span>
       ) : status === 'RELAXATION' ? (
@@ -57,7 +61,7 @@ const PlaceStatus = (props: propsType) => {
       ) : (
         <Fragment />
       )}
-    </Box>
+    </Fragment>
   );
 };
 

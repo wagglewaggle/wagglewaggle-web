@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: 24,
+    padding: '32px 24px 16px',
     backgroundColor: palette.grey[700],
   },
   header: {
@@ -59,6 +59,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     fontSize: 14,
     fontWeight: 600,
+    lineHeight: '20px',
     '& span:last-child': {
       color: palette.grey[400],
       fontWeight: 400,
@@ -133,6 +134,7 @@ const DetailedCongestion = (props: propsType) => {
           padding: '12px 0',
           width: '100%',
           color: palette.white,
+          fontWeight: 600,
         }}
         onClick={handleOpenDialog}
       >

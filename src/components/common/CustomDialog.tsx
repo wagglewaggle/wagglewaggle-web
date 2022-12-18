@@ -68,6 +68,7 @@ const useStyles = makeStyles(() => ({
   },
   times: {
     marginBottom: 24,
+    lineHeight: '20px',
   },
   content: {
     color: palette.white,
@@ -183,7 +184,7 @@ const CctvContent = observer(() => {
       <iframe
         title='CCTV Dialog'
         src={CustomDialogStore.cctvList[cctvIdx]}
-        width={320 - (ScreenSizeStore.screenType === 'mobile' ? 48 : 0)}
+        width={320 - (ScreenSizeStore.screenType === 'mobile' ? 68 : 0)}
         height={190}
         frameBorder={0}
         style={{
@@ -220,7 +221,7 @@ const CustomDialog = observer(() => {
 
   useEffect(() => {
     if (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'cctv') {
-      setDialogWidth(320);
+      setDialogWidth(300);
       return;
     }
     setDialogWidth(

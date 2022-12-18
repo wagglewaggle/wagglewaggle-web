@@ -30,8 +30,8 @@ const useStyles = makeStyles(() => ({
     padding: '8px 12px',
     whiteSpace: 'nowrap',
     color: palette.grey[400],
-    fontSize: 12,
-    fontWeight: 500,
+    fontSize: 14,
+    fontWeight: 600,
   },
   selectedChip: {
     border: `2px solid ${palette.white}`,
@@ -115,7 +115,17 @@ const PlaceData = observer((props: propsType) => {
   const [selectedTitle, setSelectedTitle] = useState<string>('전체');
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
-  const DUMMY_CHIPS: string[] = ['전체', '한강 공원', '백화점', '크리스마스 축제'];
+  const CHIPS: string[] = [
+    '전체',
+    '크리스마스 핫플',
+    '쇼핑몰',
+    '한강·공원',
+    '골목·거리',
+    '지하철',
+    '궁궐',
+    '테마파크',
+    '마을',
+  ];
   const PLACE_BOX_STYLE: { gridTemplateColumns: string } = {
     gridTemplateColumns:
       ScreenSizeStore.screenType === 'mobile' ? '100%' : 'repeat(auto-fit, minmax(348px, 1fr))',
@@ -132,7 +142,7 @@ const PlaceData = observer((props: propsType) => {
   return (
     <div className={classes.wrap}>
       <ScrollContainer className={classes.chipsWrap} horizontal>
-        {DUMMY_CHIPS.map((chip: string, idx: number) => (
+        {CHIPS.map((chip: string, idx: number) => (
           <div
             key={`chip-${idx}`}
             className={`${classes.chip} ${selectedTitle === chip && classes.selectedChip}`}

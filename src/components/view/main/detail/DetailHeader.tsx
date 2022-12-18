@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
     },
   },
   categoryName: {
-    marginBottom: 8,
+    margin: '8px 0',
     color: palette.grey[400],
     fontSize: 12,
     fontWeight: 500,
@@ -39,10 +39,11 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'space-between',
     whiteSpace: 'pre-line',
+    lineHeight: '32px',
   },
   status: {
     fontSize: 24,
-    fontWeight: 700,
+    fontWeight: 600,
   },
 }));
 

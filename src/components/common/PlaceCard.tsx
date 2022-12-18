@@ -19,6 +19,7 @@ const useStyles = makeStyles(() => ({
   },
   placeLeft: {
     display: 'flex',
+    alignItems: 'center',
     flexGrow: 1,
   },
   placeImage: {
@@ -34,16 +35,23 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     marginLeft: 8,
+    lineHeight: '20px',
   },
   placeName: {
     color: palette.white,
-    fontSize: 18,
-    fontWeight: 500,
+    fontSize: 14,
+    fontWeight: 600,
   },
   placeCategory: {
-    fontSize: 12,
-    fontWeight: 500,
+    fontSize: 14,
+    fontWeight: 400,
     color: palette.grey[400],
+  },
+  statusWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: 14,
+    fontWeight: 600,
   },
 }));
 
@@ -71,7 +79,9 @@ const PlaceCard = (props: propsType) => {
           <span className={classes.placeCategory}>{place.category}</span>
         </div>
       </div>
-      <PlaceStatus status={place.status} />
+      <div className={classes.statusWrap}>
+        <PlaceStatus status={place.status} />
+      </div>
     </div>
   );
 };

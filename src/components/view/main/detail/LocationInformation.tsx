@@ -46,6 +46,7 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     flexGrow: 1,
     fontSize: 14,
+    lineHeight: '20px',
   },
   name: {
     color: palette.white,
