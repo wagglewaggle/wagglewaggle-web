@@ -146,14 +146,7 @@ const LocationInformation = (props: propsType) => {
     });
   }, [highlightMap, locationData]);
 
-  const setAccidentLists = useCallback(() => {
-    if (locationData && locationData.accidents.length > 0) {
-      CustomDialogStore.openAccidentDialog(locationData.accidents);
-    }
-  }, [CustomDialogStore, locationData]);
-
   useEffect(() => {
-    setAccidentLists();
     const mapScript = document.createElement('script');
     mapScript.async = true;
     mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_MAP_APP_KEY}&autoload=false&libraries=services`;
@@ -161,7 +154,7 @@ const LocationInformation = (props: propsType) => {
 
     mapScript.addEventListener('load', getKakaoMap);
     return () => mapScript.removeEventListener('load', getKakaoMap);
-  }, [locationData, setAccidentLists, getKakaoMap]);
+  }, [locationData, getKakaoMap]);
 
   return (
     <div className={classes.wrap}>

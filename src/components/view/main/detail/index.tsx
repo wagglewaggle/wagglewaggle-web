@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -37,14 +37,24 @@ const useStyles = makeStyles(() => ({
 const Detail = observer(() => {
   const [locationData, setLocationData] = useState<locationDataType | null>(null);
   const classes = useStyles();
-  const { ScreenSizeStore } = useStore().MobxStore;
+  const { ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
   const BOX_STYLE: { width: number } = {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 640,
   };
 
+  const setAccidentLists = useCallback(() => {
+    if (locationData && locationData?.accidents?.length > 0) {
+      CustomDialogStore.openAccidentDialog(locationData.accidents);
+    }
+  }, [CustomDialogStore, locationData]);
+
   useEffect(() => {
     setLocationData(dataSample);
   }, []);
+
+  useEffect(() => {
+    setAccidentLists();
+  }, [locationData, setAccidentLists]);
 
   return (
     <Box className={classes.wrap} sx={BOX_STYLE}>
