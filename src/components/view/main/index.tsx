@@ -7,7 +7,7 @@ import SearchData from './SearchData';
 import SuggestData from './SuggestData';
 import ResultData from './ResultData';
 import { Detail } from 'components/view';
-import { placeDataType, searchWordList } from 'types/typeBundle';
+import { placeDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import logo from 'assets/temp-logo.png';
 import searchIcon from 'assets/icons/search-icon.svg';
@@ -39,44 +39,16 @@ const Main = () => {
   const [placeData, setPlaceData] = useState<placeDataType[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
-  const [latestList, setLatestList] = useState<searchWordList[]>([]);
-  const [popularList, setPopularList] = useState<searchWordList[]>([]);
+  const [latestList, setLatestList] = useState<string[]>([]);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
   const classes = useStyles();
   const { CustomDialogStore, ErrorStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
-  const LATEST_SEARCH_LIST: searchWordList[] = useMemo(
-    () => [
-      { id: 0, word: '어나더오피스 패딩' },
-      { id: 1, word: '갈색 가디건' },
-      { id: 2, word: '단추' },
-      { id: 3, word: '진주 귀걸이' },
-      { id: 4, word: '진주 미니 귀걸이' },
-    ],
-    []
-  );
-  const POPULAR_SEARCH_LIST: searchWordList[] = useMemo(
-    () => [
-      { id: 0, word: '니트' },
-      { id: 1, word: '패딩' },
-      { id: 2, word: '맨투맨' },
-      { id: 3, word: '머플러' },
-      { id: 4, word: '장갑' },
-      { id: 5, word: '시엔느' },
-      { id: 6, word: '어그' },
-      { id: 7, word: '프라이탁' },
-      { id: 8, word: '무스탕' },
-    ],
-    []
-  );
 
-  const handleLatestListChange = (newList: searchWordList[]) => {
+  const handleLatestListChange = (newList: string[]) => {
     setLatestList(newList);
-  };
-
-  const handlePopularListChange = (newList: searchWordList[]) => {
-    setPopularList(newList);
+    localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
   };
 
   const handleWordClick = (searchWord: string) => {
@@ -94,20 +66,16 @@ const Main = () => {
       newValue.length === 0 ? (
         <SearchData
           latestSearchList={latestList}
-          popularSearchList={popularList}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
-          handlePopularListChange={handlePopularListChange}
         />
       ) : (
         <SuggestData
           placeData={placeData}
           searchValue={newValue}
           latestSearchList={latestList}
-          popularSearchList={popularList}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
-          handlePopularListChange={handlePopularListChange}
         />
       )
     );
@@ -118,10 +86,8 @@ const Main = () => {
     setCurrentPage(
       <SearchData
         latestSearchList={latestList}
-        popularSearchList={popularList}
         handleWordClick={handleWordClick}
         handleLatestListChange={handleLatestListChange}
-        handlePopularListChange={handlePopularListChange}
       />
     );
   };
@@ -163,9 +129,8 @@ const Main = () => {
   }, [ErrorStore.statusCode, navigate]);
 
   useEffect(() => {
-    setLatestList([...LATEST_SEARCH_LIST]);
-    setPopularList([...POPULAR_SEARCH_LIST]);
-  }, [LATEST_SEARCH_LIST, POPULAR_SEARCH_LIST]);
+    setLatestList(JSON.parse(localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'));
+  }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
 
   return (
     <div className={classes.wrap}>

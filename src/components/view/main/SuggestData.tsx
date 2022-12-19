@@ -5,7 +5,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
 import { PlaceCard, SearchBlock } from 'components/common';
 import { useStore } from 'stores';
-import { placeDataType, searchWordList } from 'types/typeBundle';
+import { placeDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
@@ -63,23 +63,14 @@ const useStyles = makeStyles(() => ({
 interface propsType {
   placeData: placeDataType[];
   searchValue: string;
-  latestSearchList: searchWordList[];
-  popularSearchList: searchWordList[];
+  latestSearchList: string[];
   handleWordClick: (searchWord: string) => void;
-  handleLatestListChange: (newList: searchWordList[]) => void;
-  handlePopularListChange: (newList: searchWordList[]) => void;
+  handleLatestListChange: (newList: string[]) => void;
 }
 
 const SuggestData = observer((props: propsType) => {
-  const {
-    placeData,
-    searchValue,
-    latestSearchList,
-    popularSearchList,
-    handleWordClick,
-    handleLatestListChange,
-    handlePopularListChange,
-  } = props;
+  const { placeData, searchValue, latestSearchList, handleWordClick, handleLatestListChange } =
+    props;
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
@@ -87,23 +78,19 @@ const SuggestData = observer((props: propsType) => {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 400,
   };
 
-  const handleRemoveLatestList = (listId: number) => {
-    const newList: searchWordList[] = JSON.parse(JSON.stringify(latestSearchList));
-    const selectedList: searchWordList | undefined = newList.find(
-      (list: searchWordList) => list.id === listId
-    );
-    if (!selectedList) return;
-    const selectedIdx: number = newList.indexOf(selectedList);
-    newList.splice(selectedIdx, 1);
-    handleLatestListChange(newList);
+  const handleRemoveLatestList = (list: string) => {
+    // const newList: string[] = JSON.parse(JSON.stringify(latestSearchList));
+    // const selectedList: string | undefined = newList.find(
+    //   (list: string) => list.id === listId
+    // );
+    // if (!selectedList) return;
+    // const selectedIdx: number = newList.indexOf(selectedList);
+    // newList.splice(selectedIdx, 1);
+    // handleLatestListChange(newList);
   };
 
   const handleRemoveAllLatestList = () => {
     handleLatestListChange([]);
-  };
-
-  const handleRemoveAllPopularList = () => {
-    handlePopularListChange([]);
   };
 
   const handleListClick = (searchWord: string) => {
@@ -150,12 +137,6 @@ const SuggestData = observer((props: propsType) => {
             blockList={[]}
             onClickRemoveAll={handleRemoveAllLatestList}
             onClickRemoveOne={handleRemoveLatestList}
-            handleWordClick={handleWordClick}
-          />
-          <SearchBlock
-            title='인기 검색어'
-            blockList={popularSearchList}
-            onClickRemoveAll={handleRemoveAllPopularList}
             handleWordClick={handleWordClick}
           />
         </div>

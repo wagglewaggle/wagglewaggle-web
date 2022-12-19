@@ -5,11 +5,6 @@ export interface placeDataType {
   status: statusType;
 }
 
-export interface searchWordList {
-  id: number;
-  word: string;
-}
-
 export interface locationInfoType {
   [key: string]: {
     type: 'Polygon' | 'MultiPolygon';

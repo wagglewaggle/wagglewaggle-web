@@ -97,6 +97,16 @@ const ResultData = observer((props: propsType) => {
   }, [placeData, searchWord]);
 
   useEffect(() => {
+    const newSearchedList: string[] = JSON.parse(
+      localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
+    );
+    if (!newSearchedList.includes(searchWord)) {
+      newSearchedList.push(searchWord);
+    }
+    localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newSearchedList));
+  }, [searchWord]);
+
+  useEffect(() => {
     setSuggestedData([...DUMMY_SUGGESTED_DATA]);
   }, [DUMMY_SUGGESTED_DATA]);
 
