@@ -153,7 +153,7 @@ const PlaceData = observer((props: propsType) => {
           selectedCategory === '전체' || place.category.split(',').includes(selectedCategory)
       )
     );
-  }, [selectedCategory]);
+  }, [placeData, selectedCategory]);
 
   return (
     <div className={classes.wrap}>
@@ -185,7 +185,7 @@ const PlaceData = observer((props: propsType) => {
             </Icon>
           )}
         >
-          {['복잡한 순', '여유로운 순', '인기 순'].map((menu: string, idx: number) => (
+          {['복잡한 순', '여유로운 순'].map((menu: string, idx: number) => (
             <MenuItem key={`menu-${idx}`} className={classes.menuItem} value={menu} dense>
               {menu}
             </MenuItem>
