@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Box, Select, MenuItem, SelectChangeEvent, Icon } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -6,7 +6,7 @@ import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
 import { placeDataType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 import downIcon from 'assets/icons/down-icon.svg';
 
 const useStyles = makeStyles(() => ({
@@ -30,8 +30,8 @@ const useStyles = makeStyles(() => ({
     padding: '8px 12px',
     whiteSpace: 'nowrap',
     color: palette.grey[400],
-    fontSize: 12,
-    fontWeight: 500,
+    fontSize: 14,
+    fontWeight: 600,
   },
   selectedChip: {
     border: `2px solid ${palette.white}`,
@@ -91,6 +91,7 @@ const useStyles = makeStyles(() => ({
     },
     '& .Mui-selected': {
       color: palette.white,
+      backgroundColor: 'transparent !important',
     },
   },
   menuItem: {
@@ -111,31 +112,56 @@ interface propsType {
 
 const PlaceData = observer((props: propsType) => {
   const { placeData } = props;
+  const [renderData, setRenderData] = useState<placeDataType[]>([]);
   const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
-  const [selectedTitle, setSelectedTitle] = useState<string>('전체');
+  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
-  const DUMMY_CHIPS: string[] = ['전체', '한강 공원', '백화점', '크리스마스 축제'];
+  const CHIPS: string[] = [
+    '전체',
+    '크리스마스 핫플레이스',
+    '쇼핑몰',
+    '공원',
+    '골목 및 거리',
+    '지하철',
+    '궁궐',
+    '테마파크',
+    '마을',
+  ];
   const PLACE_BOX_STYLE: { gridTemplateColumns: string } = {
     gridTemplateColumns:
       ScreenSizeStore.screenType === 'mobile' ? '100%' : 'repeat(auto-fit, minmax(348px, 1fr))',
   };
 
   const handleClickChip = (chip: string) => {
-    setSelectedTitle(chip);
+    setSelectedCategory(chip);
   };
 
   const handleChangeSelect = (e: SelectChangeEvent) => {
     setPlaceOrder(e.target.value);
   };
 
+  useEffect(() => {
+    setRenderData(placeData);
+  }, [placeData]);
+
+  useEffect(() => {
+    const newRenderData: placeDataType[] = JSON.parse(JSON.stringify(placeData));
+    setRenderData(
+      newRenderData.filter(
+        (place: placeDataType) =>
+          selectedCategory === '전체' || place.category.split(',').includes(selectedCategory)
+      )
+    );
+  }, [placeData, selectedCategory]);
+
   return (
     <div className={classes.wrap}>
       <ScrollContainer className={classes.chipsWrap} horizontal>
-        {DUMMY_CHIPS.map((chip: string, idx: number) => (
+        {CHIPS.map((chip: string, idx: number) => (
           <div
             key={`chip-${idx}`}
-            className={`${classes.chip} ${selectedTitle === chip && classes.selectedChip}`}
+            className={`${classes.chip} ${selectedCategory === chip && classes.selectedChip}`}
             onClick={() => handleClickChip(chip)}
           >
             {chip}
@@ -145,7 +171,7 @@ const PlaceData = observer((props: propsType) => {
       <div className={classes.subHeader}>
         <span className={classes.subLeft}>
           장소
-          <span className={classes.subLength}>{placeData.length}</span>
+          <span className={classes.subLength}>{renderData.length}</span>
         </span>
         <Select
           className={classes.select}
@@ -159,7 +185,7 @@ const PlaceData = observer((props: propsType) => {
             </Icon>
           )}
         >
-          {['복잡한 순', '여유로운 순', '인기 순'].map((menu: string, idx: number) => (
+          {['복잡한 순', '여유로운 순'].map((menu: string, idx: number) => (
             <MenuItem key={`menu-${idx}`} className={classes.menuItem} value={menu} dense>
               {menu}
             </MenuItem>
@@ -167,7 +193,7 @@ const PlaceData = observer((props: propsType) => {
         </Select>
       </div>
       <Box className={classes.placesWrap} sx={PLACE_BOX_STYLE}>
-        {placeData.map((place: placeDataType, idx: number) => (
+        {renderData.map((place: placeDataType, idx: number) => (
           <PlaceCard key={`place-card-${idx}`} place={place} />
         ))}
       </Box>

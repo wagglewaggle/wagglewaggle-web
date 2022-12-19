@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
-import homeImage from 'assets/symbols/white-roof-house.svg';
+import { symbols } from 'constants/';
 import { placeDataType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   placeCard: {
@@ -19,6 +19,7 @@ const useStyles = makeStyles(() => ({
   },
   placeLeft: {
     display: 'flex',
+    alignItems: 'center',
     flexGrow: 1,
   },
   placeImage: {
@@ -34,16 +35,23 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     marginLeft: 8,
+    lineHeight: '20px',
   },
   placeName: {
     color: palette.white,
-    fontSize: 18,
-    fontWeight: 500,
+    fontSize: 14,
+    fontWeight: 600,
   },
   placeCategory: {
-    fontSize: 12,
-    fontWeight: 500,
+    fontSize: 14,
+    fontWeight: 400,
     color: palette.grey[400],
+  },
+  statusWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: 14,
+    fontWeight: 600,
   },
 }));
 
@@ -64,22 +72,16 @@ const PlaceCard = (props: propsType) => {
     <div className={classes.placeCard} onClick={handlePlaceCardClick}>
       <div className={classes.placeLeft}>
         <div className={classes.placeImage}>
-          <img src={homeImage} alt='home' />
+          <img src={symbols[place.category.split(',')[0]]} alt='category-symbol' />
         </div>
         <div className={classes.placeTitle}>
           <span className={classes.placeName}>{place.name}</span>
           <span className={classes.placeCategory}>{place.category}</span>
         </div>
       </div>
-      <PlaceStatus
-        status={place.status}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          fontSize: 12,
-          fontWeight: 500,
-        }}
-      />
+      <div className={classes.statusWrap}>
+        <PlaceStatus status={place.status} />
+      </div>
     </div>
   );
 };

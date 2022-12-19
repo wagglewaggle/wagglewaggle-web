@@ -1,7 +1,7 @@
 import { ChangeEvent, KeyboardEvent } from 'react';
 import { Box, TextField, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { palette } from 'constants/palette';
+import { palette } from 'constants/';
 import leftArrowIcon from 'assets/icons/left-icon.svg';
 
 const useStyles = makeStyles(() => ({

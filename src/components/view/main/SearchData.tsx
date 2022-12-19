@@ -24,10 +24,10 @@ interface propsType {
 const SearchData = observer((props: propsType) => {
   const {
     latestSearchList,
-    popularSearchList,
+    // popularSearchList,
     handleWordClick,
     handleLatestListChange,
-    handlePopularListChange,
+    // handlePopularListChange,
   } = props;
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
@@ -50,9 +50,10 @@ const SearchData = observer((props: propsType) => {
     handleLatestListChange([]);
   };
 
-  const handleRemoveAllPopularList = () => {
-    handlePopularListChange([]);
-  };
+  // 인기 검색어 블록은 추후 구현 가능할 때 재구현 예정
+  // const handleRemoveAllPopularList = () => {
+  //   handlePopularListChange([]);
+  // };
 
   return (
     <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
@@ -63,12 +64,13 @@ const SearchData = observer((props: propsType) => {
         onClickRemoveAll={handleRemoveAllLatestList}
         handleWordClick={handleWordClick}
       />
+      {/* 인기 검색어 블록은 추후 구현 가능할 때 재구현 예정
       <SearchBlock
         title='인기 검색어'
         blockList={popularSearchList}
         onClickRemoveAll={handleRemoveAllPopularList}
         handleWordClick={handleWordClick}
-      />
+      /> */}
     </Box>
   );
 });

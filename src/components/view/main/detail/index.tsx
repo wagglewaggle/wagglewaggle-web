@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -7,8 +7,8 @@ import DetailedCongestion from './DetailedCongestion';
 import LocationInformation from './LocationInformation';
 import RelatedLocations from './RelatedLocations';
 import { useStore } from 'stores';
-import { statusType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { locationDataType } from 'types/typeBundle';
+import { palette, dataSample } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -35,22 +35,32 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Detail = observer(() => {
-  const [status, setStatus] = useState<statusType>('normal');
+  const [locationData, setLocationData] = useState<locationDataType | null>(null);
   const classes = useStyles();
-  const { ScreenSizeStore } = useStore().MobxStore;
+  const { ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
   const BOX_STYLE: { width: number } = {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 640,
   };
 
+  const setAccidentLists = useCallback(() => {
+    if (locationData && locationData?.accidents?.length > 0) {
+      CustomDialogStore.openAccidentDialog(locationData.accidents);
+    }
+  }, [CustomDialogStore, locationData]);
+
   useEffect(() => {
-    setStatus('very uncrowded');
+    setLocationData(dataSample);
   }, []);
+
+  useEffect(() => {
+    setAccidentLists();
+  }, [locationData, setAccidentLists]);
 
   return (
     <Box className={classes.wrap} sx={BOX_STYLE}>
-      <DetailHeader status={status} />
-      <DetailedCongestion status={status} />
-      <LocationInformation />
+      <DetailHeader locationData={locationData} />
+      <DetailedCongestion locationData={locationData} />
+      <LocationInformation locationData={locationData} />
       <RelatedLocations />
     </Box>
   );

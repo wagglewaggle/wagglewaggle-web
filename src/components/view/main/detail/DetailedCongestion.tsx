@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { Button, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import CctvDialog from './CctvDialog';
 import { PlaceStatus } from 'components/common';
-import { statusType } from 'types/typeBundle';
-import { palette } from 'constants/palette';
+import { useStore } from 'stores';
+import { locationDataType } from 'types/typeBundle';
+import { palette } from 'constants/';
 import refreshIcon from 'assets/icons/refresh-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import rightIcon from 'assets/icons/right-icon.svg';
@@ -14,7 +13,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: 24,
+    padding: '32px 24px 16px',
     backgroundColor: palette.grey[700],
   },
   header: {
@@ -57,8 +56,10 @@ const useStyles = makeStyles(() => ({
   statusDesc: {
     display: 'flex',
     flexDirection: 'column',
-    fontsize: 14,
+    justifyContent: 'center',
+    fontSize: 14,
     fontWeight: 600,
+    lineHeight: '20px',
     '& span:last-child': {
       color: palette.grey[400],
       fontWeight: 400,
@@ -83,27 +84,26 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface propsType {
-  status: statusType;
+  locationData: locationDataType | null;
 }
 
 const DetailedCongestion = (props: propsType) => {
-  const { status } = props;
-  const [open, setOpen] = useState<boolean>(false);
+  const { locationData } = props;
   const classes = useStyles();
+  const { CustomDialogStore } = useStore().MobxStore;
   const COMMENTS_BY_STATUS: { [key: string]: string } = {
-    'very uncrowded': '날아다닐 수 있어요',
-    uncrowded: '여유롭게 이동할 수 있어요',
-    normal: '이동하기 불편하지 않아요',
-    crowded: '이동 시 기다림이 필요해요',
-    'very crowded': '이동하기 힘들어요',
+    VERY_RELAXATION: '날아다닐 수 있어요',
+    RELAXATION: '여유롭게 이동할 수 있어요',
+    NORMAL: '이동하기 불편하지 않아요',
+    CROWDED: '이동 시 기다림이 필요해요',
+    VERY_CROWDED: '이동하기 힘들어요',
   };
 
   const handleOpenDialog = () => {
-    setOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpen(false);
+    CustomDialogStore.openCctvDialog([
+      'https://data.seoul.go.kr/SeoulRtd/cctv?src=http://210.179.218.51:1935/live/71.stream/playlist.m3u8&cctvname=L010069',
+      'https://data.seoul.go.kr/SeoulRtd/cctv?src=http://210.179.218.52:1935/live/149.stream/playlist.m3u8&cctvname=L010126',
+    ]);
   };
 
   return (
@@ -122,18 +122,10 @@ const DetailedCongestion = (props: propsType) => {
           <img src={personIcon} alt='person' />
           <div className={classes.statusDesc}>
             <span>인구 현황</span>
-            <span>{COMMENTS_BY_STATUS[status]}</span>
+            <span>{COMMENTS_BY_STATUS[locationData?.level || 'NORMAL']}</span>
           </div>
         </div>
-        <PlaceStatus
-          status={status}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: 14,
-            fontWeight: 400,
-          }}
-        />
+        <PlaceStatus status={locationData?.level || undefined} />
       </div>
       <hr className={classes.divider} />
       <Button
@@ -142,13 +134,13 @@ const DetailedCongestion = (props: propsType) => {
           padding: '12px 0',
           width: '100%',
           color: palette.white,
+          fontWeight: 600,
         }}
         onClick={handleOpenDialog}
       >
         CCTV
         <img src={rightIcon} alt='right' />
       </Button>
-      <CctvDialog open={open} handleCloseDialog={handleCloseDialog} />
     </div>
   );
 };
