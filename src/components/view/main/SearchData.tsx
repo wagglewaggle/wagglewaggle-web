@@ -29,7 +29,7 @@ const SearchData = observer((props: propsType) => {
   };
 
   const handleRemoveLatestList = (list: string) => {
-    const newList: string[] = JSON.parse(JSON.stringify(latestSearchList));
+    const newList: string[] = JSON.parse(JSON.stringify(searchBlockList));
     const selectedList: string | undefined = newList.find(
       (selectedWord: string) => list === selectedWord
     );
