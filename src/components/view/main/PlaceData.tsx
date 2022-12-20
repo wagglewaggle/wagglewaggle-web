@@ -120,7 +120,7 @@ const PlaceData = observer((props: propsType) => {
   const { ScreenSizeStore } = useStore().MobxStore;
   const CHIPS: string[] = [
     '전체',
-    '크리스마스 핫플레이스',
+    '크리스마스 핫플',
     '쇼핑몰',
     '공원',
     '골목 및 거리',

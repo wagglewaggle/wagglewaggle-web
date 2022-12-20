@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'center',
     minWidth: 360,
-    backgroundColor: palette.black,
+    backgroundColor: palette.grey[800],
   },
   serviceWrap: {
     display: 'flex',

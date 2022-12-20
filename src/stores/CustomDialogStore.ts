@@ -1,11 +1,11 @@
 import { makeAutoObservable } from 'mobx';
-import { accidentType } from 'types/typeBundle';
+import { accidentType, cctvType } from 'types/typeBundle';
 
 export class CustomDialogStore {
   open: boolean = false;
   variant: 'intro' | 'accident' | 'cctv' = 'intro';
   accidentList: accidentType[] = [];
-  cctvList: string[] = [];
+  cctvList: cctvType[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -25,7 +25,7 @@ export class CustomDialogStore {
     this.open = true;
   };
 
-  openCctvDialog = (newCctvLists: string[]) => {
+  openCctvDialog = (newCctvLists: cctvType[]) => {
     this.variant = 'cctv';
     this.cctvList = newCctvLists;
     this.open = true;

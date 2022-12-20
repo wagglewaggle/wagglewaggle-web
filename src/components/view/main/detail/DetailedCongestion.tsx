@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Button, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
-import { locationDataType, cctvType } from 'types/typeBundle';
+import { locationDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
 import refreshIcon from 'assets/icons/refresh-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
@@ -44,6 +44,11 @@ const useStyles = makeStyles(() => ({
     padding: 20,
     marginTop: 24,
     width: '100%',
+    fontSize: 14,
+    fontWeight: 600,
+  },
+  trafficStatusCard: {
+    margin: 0,
   },
   statusLeft: {
     display: 'flex',
@@ -110,9 +115,7 @@ const DetailedCongestion = (props: propsType) => {
   };
 
   const handleOpenDialog = () => {
-    CustomDialogStore.openCctvDialog(
-      (locationData?.cctvs || []).map((cctv: cctvType) => `https://data.seoul.go.kr${cctv.src}`)
-    );
+    CustomDialogStore.openCctvDialog(locationData?.cctvs || []);
   };
 
   useEffect(() => {
@@ -146,7 +149,7 @@ const DetailedCongestion = (props: propsType) => {
         </div>
         <PlaceStatus status={locationData?.populations[0].level || undefined} />
       </div>
-      <div className={classes.statusCard}>
+      <div className={`${classes.statusCard} ${classes.trafficStatusCard}`}>
         <div className={classes.statusLeft}>
           <img src={carIcon} alt='car' />
           <div className={classes.statusDesc}>
@@ -159,21 +162,23 @@ const DetailedCongestion = (props: propsType) => {
           comments={{ 원활: '원활', 서행: '서행', 정체: '정체' }}
         />
       </div>
-      <hr className={classes.divider} />
       {(locationData?.cctvs || []).length > 0 && (
-        <Button
-          sx={{
-            justifyContent: 'space-between',
-            padding: '12px 0',
-            width: '100%',
-            color: palette.white,
-            fontWeight: 600,
-          }}
-          onClick={handleOpenDialog}
-        >
-          CCTV
-          <img src={rightIcon} alt='right' />
-        </Button>
+        <Fragment>
+          <hr className={classes.divider} />
+          <Button
+            sx={{
+              justifyContent: 'space-between',
+              padding: '12px 0',
+              width: '100%',
+              color: palette.white,
+              fontWeight: 600,
+            }}
+            onClick={handleOpenDialog}
+          >
+            CCTV
+            <img src={rightIcon} alt='right' />
+          </Button>
+        </Fragment>
       )}
     </div>
   );
