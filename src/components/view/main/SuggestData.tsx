@@ -6,7 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { PlaceCard, SearchBlock } from 'components/common';
 import { useStore } from 'stores';
 import { placeDataType } from 'types/typeBundle';
-import { palette } from 'constants/';
+import { palette, locationNames } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -27,6 +27,8 @@ const useStyles = makeStyles(() => ({
     },
   },
   list: {
+    display: 'flex',
+    alignItems: 'center',
     flexGrow: 1,
     height: 24,
     fontSize: 14,
@@ -71,6 +73,7 @@ interface propsType {
 const SuggestData = observer((props: propsType) => {
   const { placeData, searchValue, latestSearchList, handleWordClick, handleLatestListChange } =
     props;
+  const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
@@ -79,17 +82,19 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const handleRemoveLatestList = (list: string) => {
-    // const newList: string[] = JSON.parse(JSON.stringify(latestSearchList));
-    // const selectedList: string | undefined = newList.find(
-    //   (list: string) => list.id === listId
-    // );
-    // if (!selectedList) return;
-    // const selectedIdx: number = newList.indexOf(selectedList);
-    // newList.splice(selectedIdx, 1);
-    // handleLatestListChange(newList);
+    const newList: string[] = JSON.parse(JSON.stringify(latestSearchList));
+    const selectedList: string | undefined = newList.find(
+      (selectedWord: string) => list === selectedWord
+    );
+    if (!selectedList) return;
+    const selectedIdx: number = newList.indexOf(selectedList);
+    newList.splice(selectedIdx, 1);
+    setSearchBlockList(newList);
+    handleLatestListChange(newList);
   };
 
   const handleRemoveAllLatestList = () => {
+    setSearchBlockList([]);
     handleLatestListChange([]);
   };
 
@@ -98,8 +103,16 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const getSuggestionList = useCallback(() => {
-    setSuggestionList(placeData.filter((data: placeDataType) => data.name.includes(searchValue)));
+    setSuggestionList(
+      placeData.filter((data: placeDataType) =>
+        (locationNames[data.name] || data.name).startsWith(searchValue)
+      )
+    );
   }, [placeData, searchValue]);
+
+  useEffect(() => {
+    setSearchBlockList([...latestSearchList]);
+  }, [latestSearchList]);
 
   useEffect(() => {
     getSuggestionList();
@@ -134,7 +147,7 @@ const SuggestData = observer((props: propsType) => {
         <div className={classes.emptySuggestionWrap}>
           <SearchBlock
             title='최근 검색어'
-            blockList={[]}
+            blockList={searchBlockList}
             onClickRemoveAll={handleRemoveAllLatestList}
             onClickRemoveOne={handleRemoveLatestList}
             handleWordClick={handleWordClick}

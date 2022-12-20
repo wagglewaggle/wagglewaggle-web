@@ -1,11 +1,14 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
+import { palette, locationNames } from 'constants/';
+import { locationDataType } from 'types/typeBundle';
+import { useStore } from 'stores';
 import backgroundImage from 'assets/dummy-result-image.png';
 import leftIcon from 'assets/icons/left-icon.svg';
-import { locationDataType } from 'types/typeBundle';
-import { palette, locationNames } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -51,14 +54,21 @@ interface propsType {
   locationData: locationDataType | null;
 }
 
-const DetailHeader = (props: propsType) => {
+const DetailHeader = observer((props: propsType) => {
   const { locationData } = props;
+  const [categories, setCategories] = useState<string>('');
   const classes = useStyles();
+  const { LocationStore } = useStore().MobxStore;
   const navigate = useNavigate();
 
   const handleBackClick = () => {
     navigate('/main');
   };
+
+  useEffect(() => {
+    if (!LocationStore.categories) return;
+    setCategories(LocationStore.categories.join(', '));
+  }, [LocationStore.categories]);
 
   return (
     <div className={classes.wrap}>
@@ -67,13 +77,13 @@ const DetailHeader = (props: propsType) => {
           <img src={leftIcon} alt='left' />
         </IconButton>
       </div>
-      <div className={classes.categoryName}>{locationData?.category}</div>
+      <div className={classes.categoryName}>{categories}</div>
       <div className={classes.statusWrap}>
         <div className={classes.status}>
-          {`지금 ${locationNames[locationData?.name || ''] || locationData?.name}에
+          {`지금 ${locationNames[locationData?.name || ''] || locationData?.name || ''}에
           사람이 `}
           <PlaceStatus
-            status={locationData?.level || undefined}
+            status={locationData?.populations[0].level || undefined}
             comments={{
               VERY_RELAXATION: '거의 없어요.',
               RELAXATION: '조금 있어요.',
@@ -86,6 +96,6 @@ const DetailHeader = (props: propsType) => {
       </div>
     </div>
   );
-};
+});
 
 export default DetailHeader;
