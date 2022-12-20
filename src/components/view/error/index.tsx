@@ -79,10 +79,12 @@ const Error = observer(() => {
   const navigate = useNavigate();
 
   const handleRefresh = () => {
+    ErrorStore.setStatusCode(null);
     navigate(`${location.pathname}${location.search}`);
   };
 
   const handleMoveHome = () => {
+    ErrorStore.setStatusCode(null);
     navigate('/main');
   };
 
