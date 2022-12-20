@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { palette, geometry, urlPaths } from 'constants/';
+import { palette, geometry, urlPaths, locationNames, locationRequestTypes } from 'constants/';
 import { locationDataType } from 'types/typeBundle';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
 
@@ -90,8 +90,11 @@ const LocationInformation = (props: propsType) => {
   };
 
   const highlightMap = useCallback(() => {
-    if (!locationData) return;
+    if (!locationData) return null;
     const locationName = locationData.name;
+    if (locationRequestTypes.skt.includes(locationNames[locationData.name] || locationData.name)) {
+      return null;
+    }
     const coordinates: [number, number][][] | [number, number][][][] =
       geometry[locationName].coordinates;
     const geometryType: 'Polygon' | 'MultiPolygon' = geometry[locationName].type;
@@ -139,7 +142,10 @@ const LocationInformation = (props: propsType) => {
         position: new window.kakao.maps.LatLng(latitude, longitude),
       });
       marker.setMap(map);
-      highlightMap().setMap(map);
+      const polygon = highlightMap();
+      if (polygon) {
+        polygon.setMap(map);
+      }
       const centerCoords = map.getCenter();
       getAddress(centerCoords.getLng(), centerCoords.getLat());
     });
@@ -166,7 +172,9 @@ const LocationInformation = (props: propsType) => {
         <div className={classes.map} ref={mapRef} />
         <div className={classes.description}>
           <div className={classes.textArea}>
-            <div className={classes.name}>{locationData?.name}</div>
+            <div className={classes.name}>
+              {locationNames[locationData?.name || ''] || locationData?.name}
+            </div>
             <div className={classes.address}>{locationAddress || ''}</div>
           </div>
           <IconButton

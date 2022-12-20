@@ -1,8 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { observer } from 'mobx-react';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceCard } from 'components/common';
 import { placeDataType } from 'types/typeBundle';
-import { palette } from 'constants/';
+import { palette, districts } from 'constants/';
+import { useStore } from 'stores';
+import axiosRequest from 'api/axiosRequest';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -21,24 +24,24 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const RelatedLocations = () => {
+const RelatedLocations = observer(() => {
   const [places, setPlaces] = useState<placeDataType[]>([]);
   const classes = useStyles();
-  const TEMP_PLACES: placeDataType[] = useMemo(
-    () => [
-      { id: 8, name: '장소8', category: '쇼핑몰, 크리스마스 핫플', status: 'VERY_CROWDED' },
-      { id: 9, name: '장소9', category: '공원', status: 'CROWDED' },
-      { id: 10, name: '장소10', category: '지하철', status: 'NORMAL' },
-      { id: 11, name: '장소11', category: '지하철', status: 'RELAXATION' },
-      { id: 12, name: '장소12', category: '쇼핑몰', status: 'VERY_RELAXATION' },
-    ],
-    []
-  );
+  const { LocationStore } = useStore().MobxStore;
+
+  const initRelatedLocations = useCallback(async () => {
+    if (!LocationStore.placeName || !districts[LocationStore.placeName]) return;
+    type responseType = { data: { ktPlaces: placeDataType[]; sktPlaces: placeDataType[] } };
+    const response: responseType | undefined = await axiosRequest(
+      `location/${districts[LocationStore.placeName]}`
+    );
+    if (!response) return;
+    setPlaces([...response.data.ktPlaces, ...response.data.sktPlaces]);
+  }, [LocationStore.placeName]);
 
   useEffect(() => {
-    // 임시 데이터 할당
-    setPlaces(TEMP_PLACES);
-  }, [TEMP_PLACES]);
+    initRelatedLocations();
+  }, [LocationStore.placeName, initRelatedLocations]);
 
   return (
     <div className={classes.wrap}>
@@ -48,6 +51,6 @@ const RelatedLocations = () => {
       ))}
     </div>
   );
-};
+});
 
 export default RelatedLocations;

@@ -3,4 +3,5 @@ export { geometry } from './geometry';
 export { locationNames } from './locationNames';
 export { symbols } from './symbols';
 export { urlPaths } from './urlPaths';
-export { dataSample } from './dataSample';
+export { locationRequestTypes } from './locationRequestTypes';
+export { districts } from './districts';

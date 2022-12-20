@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -8,7 +9,8 @@ import LocationInformation from './LocationInformation';
 import RelatedLocations from './RelatedLocations';
 import { useStore } from 'stores';
 import { locationDataType } from 'types/typeBundle';
-import { palette, dataSample } from 'constants/';
+import { palette, locationNames, locationRequestTypes } from 'constants/';
+import axiosRequest from 'api/axiosRequest';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -37,7 +39,8 @@ const useStyles = makeStyles(() => ({
 const Detail = observer(() => {
   const [locationData, setLocationData] = useState<locationDataType | null>(null);
   const classes = useStyles();
-  const { ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
+  const location = useLocation();
+  const { ScreenSizeStore, CustomDialogStore, LocationStore } = useStore().MobxStore;
   const BOX_STYLE: { width: number } = {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 640,
   };
@@ -48,9 +51,23 @@ const Detail = observer(() => {
     }
   }, [CustomDialogStore, locationData]);
 
+  const initLocationData = useCallback(async () => {
+    const placeName: string = LocationStore.placeName as string;
+    const requestType: string = locationRequestTypes.skt.includes(
+      locationNames[placeName] || placeName
+    )
+      ? 'skt-place'
+      : 'kt-place';
+    const response: { data: locationDataType } | undefined = await axiosRequest(
+      `${requestType}/${location.search.replace('?place-id=', '')}`
+    );
+    if (!response) return;
+    setLocationData(response.data);
+  }, [LocationStore.placeName, location.search]);
+
   useEffect(() => {
-    setLocationData(dataSample);
-  }, []);
+    initLocationData();
+  }, [initLocationData, LocationStore.placeName]);
 
   useEffect(() => {
     setAccidentLists();
@@ -59,7 +76,7 @@ const Detail = observer(() => {
   return (
     <Box className={classes.wrap} sx={BOX_STYLE}>
       <DetailHeader locationData={locationData} />
-      <DetailedCongestion locationData={locationData} />
+      <DetailedCongestion locationData={locationData} initLocationData={initLocationData} />
       <LocationInformation locationData={locationData} />
       <RelatedLocations />
     </Box>
