@@ -5,7 +5,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
-import { placeDataType } from 'types/typeBundle';
+import { categoryType, placeDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
 import downIcon from 'assets/icons/down-icon.svg';
 
@@ -41,7 +41,7 @@ const useStyles = makeStyles(() => ({
   subHeader: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    margin: '16px 0',
   },
   subLeft: {
     display: 'flex',
@@ -148,10 +148,12 @@ const PlaceData = observer((props: propsType) => {
   useEffect(() => {
     const newRenderData: placeDataType[] = JSON.parse(JSON.stringify(placeData));
     setRenderData(
-      newRenderData.filter(
-        (place: placeDataType) =>
-          selectedCategory === '전체' || place.category.split(',').includes(selectedCategory)
-      )
+      newRenderData.filter((place: placeDataType) => {
+        const categories: string[] = place.categories.map(
+          (category: categoryType) => category.type
+        );
+        return selectedCategory === '전체' || categories.includes(selectedCategory);
+      })
     );
   }, [placeData, selectedCategory]);
 

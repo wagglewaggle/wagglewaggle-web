@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface propsType {
-  status?: statusType;
+  status?: statusType | string;
   comments?: { [key: string]: string };
 }
 
@@ -48,15 +48,15 @@ const PlaceStatus = (props: propsType) => {
 
   return (
     <Fragment>
-      {status === 'VERY_RELAXATION' ? (
+      {status === 'VERY_RELAXATION' || status === '원활' ? (
         <span className={classes.veryUncrowded}>{comments[status]}</span>
       ) : status === 'RELAXATION' ? (
         <span className={classes.uncrowded}>{comments[status]}</span>
-      ) : status === 'NORMAL' ? (
+      ) : status === 'NORMAL' || status === '서행' ? (
         <span className={classes.normal}>{comments[status]}</span>
       ) : status === 'CROWDED' ? (
         <span className={classes.crowded}>{comments[status]}</span>
-      ) : status === 'VERY_CROWDED' ? (
+      ) : status === 'VERY_CROWDED' || status === '정체' ? (
         <span className={classes.veryCrowded}>{comments[status]}</span>
       ) : (
         <Fragment />

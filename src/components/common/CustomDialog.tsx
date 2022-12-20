@@ -65,6 +65,7 @@ const useStyles = makeStyles(() => ({
     fontSize: 18,
     fontWeight: 600,
     wordBreak: 'keep-all',
+    lineHeight: '24px',
   },
   times: {
     marginBottom: 24,
@@ -135,12 +136,14 @@ const IntroContent = () => {
       <Box className={classes.title} sx={{ marginBottom: '16px' }}>
         와글와글에 오신 것을 환영합니다.
       </Box>
-      ‘와글와글’은 SKT와 KT에서 제공하는 인구 혼잡도 데이터를 기반으로, 서울 및 경기도 내 주요 공간
-      별 인구 혼잡도 현황을 알려드립니다. 보고싶은 위치를 선택하여 그곳의 실시간 인구 혼잡도를
-      확인해보세요.
-      <br />
-      <br />
-      Merry Christmas 🎄
+      <Box sx={{ lineHeight: '20px' }}>
+        ‘와글와글’은 SKT와 KT에서 제공하는 인구 혼잡도 데이터를 기반으로, 서울 및 경기도 내 주요
+        공간 별 인구 혼잡도 현황을 알려드립니다. 보고싶은 위치를 선택하여 그곳의 실시간 인구
+        혼잡도를 확인해보세요.
+        <br />
+        <br />
+        Merry Christmas 🎄
+      </Box>
     </Fragment>
   );
 };

@@ -1,11 +1,11 @@
-import { Fragment, useState, useEffect, useCallback, useMemo } from 'react';
+import { Fragment, useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
 import { placeDataType } from 'types/typeBundle';
-import { palette } from 'constants/';
+import { palette, locationNames } from 'constants/';
 import emptyImage from 'assets/error-image.png';
 
 const useStyles = makeStyles(() => ({
@@ -68,45 +68,36 @@ interface propsType {
 const ResultData = observer((props: propsType) => {
   const { placeData, searchWord } = props;
   const [resultData, setResultData] = useState<placeDataType[]>([]);
-  const [relatedData, setRelatedData] = useState<placeDataType[]>([]);
-  const [suggestedData, setSuggestedData] = useState<placeDataType[]>([]);
+  // const [relatedData, setRelatedData] = useState<placeDataType[]>([]);
+  // const [suggestedData, setSuggestedData] = useState<placeDataType[]>([]);
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
   const WRAP_BOX_STYLE: { width: number } = {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth - 48 : 352,
   };
-  const DUMMY_RELATED_DATA: placeDataType[] = useMemo(
-    () => [
-      { id: 2, name: 'test7', category: '지하철', status: 'CROWDED' },
-      { id: 3, name: 'test8', category: '골목 및 거리', status: 'VERY_CROWDED' },
-      { id: 4, name: 'test9', category: '골목 및 거리', status: 'NORMAL' },
-      { id: 5, name: 'test10', category: '궁궐', status: 'VERY_RELAXATION' },
-    ],
-    []
-  );
-  const DUMMY_SUGGESTED_DATA: placeDataType[] = useMemo(
-    () => [
-      { id: 6, name: '여의나루역', category: '쇼핑몰', status: 'CROWDED' },
-      { id: 7, name: 'IFC몰', category: '공원, 마을', status: 'RELAXATION' },
-    ],
-    []
-  );
 
-  const getSuggestionList = useCallback(() => {
-    setResultData(placeData.filter((data: placeDataType) => data.name.includes(searchWord)));
+  const getSuggestionList = useCallback(async () => {
+    // const response = axiosRequest(`location/${placeData.name}`);
+    setResultData(
+      placeData.filter((data: placeDataType) =>
+        (locationNames[data.name] || data.name).startsWith(searchWord)
+      )
+    );
   }, [placeData, searchWord]);
 
   useEffect(() => {
-    setSuggestedData([...DUMMY_SUGGESTED_DATA]);
-  }, [DUMMY_SUGGESTED_DATA]);
+    const newSearchedList: string[] = JSON.parse(
+      localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
+    );
+    if (!newSearchedList.includes(searchWord)) {
+      newSearchedList.push(searchWord);
+    }
+    localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newSearchedList));
+  }, [searchWord]);
 
   useEffect(() => {
     getSuggestionList();
   }, [getSuggestionList]);
-
-  useEffect(() => {
-    setRelatedData([...DUMMY_RELATED_DATA]);
-  }, [DUMMY_RELATED_DATA]);
 
   return (
     <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
@@ -119,12 +110,6 @@ const ResultData = observer((props: propsType) => {
           <span className={classes.emptySuggestion}>
             최근 사람들이 많이 검색한 인기 장소는 어떠신가요?
           </span>
-          <h3 className={classes.emptyTitle}>인기 장소 현황</h3>
-          <div className={classes.listWrap}>
-            {suggestedData.map((data: placeDataType, idx: number) => (
-              <PlaceCard key={`suggested-data-${idx}`} place={data} />
-            ))}
-          </div>
         </Fragment>
       ) : (
         <Fragment>
@@ -138,11 +123,11 @@ const ResultData = observer((props: propsType) => {
           </div>
           <div className={classes.subComponent}>
             <div className={classes.header}>
-              <span className={classes.title}>관련 장소 현황</span>
+              <span className={classes.title}>주변 장소 현황</span>
             </div>
-            {relatedData.map((data: placeDataType, idx: number) => (
+            {/* {relatedData.map((data: placeDataType, idx: number) => (
               <PlaceCard key={`related-data-${idx}`} place={data} />
-            ))}
+            ))} */}
           </div>
         </Fragment>
       )}

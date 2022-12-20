@@ -76,7 +76,7 @@ const SearchInput = (props: propsType) => {
         value={searchValue}
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}
-        placeholder="'여의도'를 입력해보세요"
+        placeholder="'강남역'를 입력해보세요"
       />
     </Box>
   );

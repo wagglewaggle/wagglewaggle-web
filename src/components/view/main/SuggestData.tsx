@@ -5,8 +5,8 @@ import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
 import { PlaceCard, SearchBlock } from 'components/common';
 import { useStore } from 'stores';
-import { placeDataType, searchWordList } from 'types/typeBundle';
-import { palette } from 'constants/';
+import { placeDataType } from 'types/typeBundle';
+import { palette, locationNames } from 'constants/';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -27,6 +27,8 @@ const useStyles = makeStyles(() => ({
     },
   },
   list: {
+    display: 'flex',
+    alignItems: 'center',
     flexGrow: 1,
     height: 24,
     fontSize: 14,
@@ -63,23 +65,15 @@ const useStyles = makeStyles(() => ({
 interface propsType {
   placeData: placeDataType[];
   searchValue: string;
-  latestSearchList: searchWordList[];
-  popularSearchList: searchWordList[];
+  latestSearchList: string[];
   handleWordClick: (searchWord: string) => void;
-  handleLatestListChange: (newList: searchWordList[]) => void;
-  handlePopularListChange: (newList: searchWordList[]) => void;
+  handleLatestListChange: (newList: string[]) => void;
 }
 
 const SuggestData = observer((props: propsType) => {
-  const {
-    placeData,
-    searchValue,
-    latestSearchList,
-    popularSearchList,
-    handleWordClick,
-    handleLatestListChange,
-    handlePopularListChange,
-  } = props;
+  const { placeData, searchValue, latestSearchList, handleWordClick, handleLatestListChange } =
+    props;
+  const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
@@ -87,23 +81,21 @@ const SuggestData = observer((props: propsType) => {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 400,
   };
 
-  const handleRemoveLatestList = (listId: number) => {
-    const newList: searchWordList[] = JSON.parse(JSON.stringify(latestSearchList));
-    const selectedList: searchWordList | undefined = newList.find(
-      (list: searchWordList) => list.id === listId
+  const handleRemoveLatestList = (list: string) => {
+    const newList: string[] = JSON.parse(JSON.stringify(latestSearchList));
+    const selectedList: string | undefined = newList.find(
+      (selectedWord: string) => list === selectedWord
     );
     if (!selectedList) return;
     const selectedIdx: number = newList.indexOf(selectedList);
     newList.splice(selectedIdx, 1);
+    setSearchBlockList(newList);
     handleLatestListChange(newList);
   };
 
   const handleRemoveAllLatestList = () => {
+    setSearchBlockList([]);
     handleLatestListChange([]);
-  };
-
-  const handleRemoveAllPopularList = () => {
-    handlePopularListChange([]);
   };
 
   const handleListClick = (searchWord: string) => {
@@ -111,8 +103,16 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const getSuggestionList = useCallback(() => {
-    setSuggestionList(placeData.filter((data: placeDataType) => data.name.includes(searchValue)));
+    setSuggestionList(
+      placeData.filter((data: placeDataType) =>
+        (locationNames[data.name] || data.name).startsWith(searchValue)
+      )
+    );
   }, [placeData, searchValue]);
+
+  useEffect(() => {
+    setSearchBlockList([...latestSearchList]);
+  }, [latestSearchList]);
 
   useEffect(() => {
     getSuggestionList();
@@ -147,15 +147,9 @@ const SuggestData = observer((props: propsType) => {
         <div className={classes.emptySuggestionWrap}>
           <SearchBlock
             title='최근 검색어'
-            blockList={[]}
+            blockList={searchBlockList}
             onClickRemoveAll={handleRemoveAllLatestList}
             onClickRemoveOne={handleRemoveLatestList}
-            handleWordClick={handleWordClick}
-          />
-          <SearchBlock
-            title='인기 검색어'
-            blockList={popularSearchList}
-            onClickRemoveAll={handleRemoveAllPopularList}
             handleWordClick={handleWordClick}
           />
         </div>
