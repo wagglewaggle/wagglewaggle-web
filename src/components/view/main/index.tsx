@@ -101,7 +101,11 @@ const Main = () => {
   };
 
   const navigateToHome = () => {
-    navigate('/main');
+    onDrawerClose();
+  };
+
+  const handlePlaceDataChange = (newPlaceData: placeDataType[]) => {
+    setPlaceData(JSON.parse(JSON.stringify(newPlaceData)));
   };
 
   const initPlaceData = async () => {
@@ -115,7 +119,24 @@ const Main = () => {
       params
     );
     if (!ktData || !sktData) return;
-    setPlaceData([...ktData.data.list, ...sktData.data.list]);
+    const statusArr: string[] = [
+      'VERY_RELAXATION',
+      'RELAXATION',
+      'NORMAL',
+      'CROWDED',
+      'VERY_CROWDED',
+    ];
+    setPlaceData(
+      [...ktData.data.list, ...sktData.data.list].sort(
+        (prev: placeDataType, next: placeDataType) => {
+          const prevLevel = statusArr.indexOf(prev.populations[0].level);
+          const nextLevel = statusArr.indexOf(next.populations[0].level);
+          if (prevLevel > nextLevel) return -1;
+          else if (nextLevel > prevLevel) return 1;
+          return 0;
+        }
+      )
+    );
   };
 
   useEffect(() => {
@@ -150,7 +171,7 @@ const Main = () => {
         <div className={classes.searchBox} onClick={handleSearchClick} />
         <img src={searchIcon} alt='search' onClick={handleSearchClick} />
       </div>
-      <PlaceData placeData={placeData} />
+      <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
       <CustomDrawer
         open={openDrawer}
         onClose={onDrawerClose}

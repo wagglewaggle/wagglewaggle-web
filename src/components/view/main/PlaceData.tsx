@@ -108,10 +108,11 @@ const useStyles = makeStyles(() => ({
 
 interface propsType {
   placeData: placeDataType[];
+  handlePlaceDataChange: (newPlaceData: placeDataType[]) => void;
 }
 
 const PlaceData = observer((props: propsType) => {
-  const { placeData } = props;
+  const { placeData, handlePlaceDataChange } = props;
   const [renderData, setRenderData] = useState<placeDataType[]>([]);
   const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
@@ -127,6 +128,7 @@ const PlaceData = observer((props: propsType) => {
     '궁궐',
     '테마파크',
     '마을',
+    '한강',
   ];
   const PLACE_BOX_STYLE: { gridTemplateColumns: string } = {
     gridTemplateColumns:
@@ -139,6 +141,22 @@ const PlaceData = observer((props: propsType) => {
 
   const handleChangeSelect = (e: SelectChangeEvent) => {
     setPlaceOrder(e.target.value);
+    const statusArr: string[] = [
+      'VERY_RELAXATION',
+      'RELAXATION',
+      'NORMAL',
+      'CROWDED',
+      'VERY_CROWDED',
+    ];
+    handlePlaceDataChange(
+      placeData.sort((prev: placeDataType, next: placeDataType) => {
+        const prevLevel = statusArr.indexOf(prev.populations[0].level);
+        const nextLevel = statusArr.indexOf(next.populations[0].level);
+        if (prevLevel > nextLevel) return e.target.value === '복잡한 순' ? -1 : 1;
+        else if (nextLevel > prevLevel) return e.target.value === '복잡한 순' ? 1 : -1;
+        return 0;
+      })
+    );
   };
 
   useEffect(() => {
