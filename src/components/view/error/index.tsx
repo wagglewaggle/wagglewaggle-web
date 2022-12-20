@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
-import errorImage from 'assets/error-image.png';
+import lottie from 'lottie-web';
+import ErrorLottie from 'assets/lottie/Error.json';
 import logo from 'assets/temp-logo.png';
 import searchIcon from 'assets/icons/search-icon.svg';
 import refreshIcon from 'assets/icons/refresh-icon.svg';
@@ -32,11 +33,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-  },
-  errorImage: {
-    margin: '40px 0 24px',
-    width: 120,
-    height: 120,
   },
   title: {
     fontSize: 18,
@@ -69,10 +65,17 @@ const useStyles = makeStyles(() => ({
       height: 16,
     },
   },
+  lottie: {
+    margin: '40px 0 24px',
+    width: 120,
+    height: 120,
+    overflow: 'hidden',
+  },
 }));
 
 const Error = observer(() => {
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
   const { ErrorStore } = useStore().MobxStore;
   const location = useLocation();
@@ -87,6 +90,17 @@ const Error = observer(() => {
     ErrorStore.setStatusCode(null);
     navigate('/main');
   };
+
+  useEffect(() => {
+    if (!lottieContainer.current) return;
+    lottie.loadAnimation({
+      container: lottieContainer.current,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: ErrorLottie,
+    });
+  }, [lottieContainer.current]);
 
   useEffect(() => {
     setErrorMessage(
@@ -108,7 +122,7 @@ const Error = observer(() => {
         <img src={searchIcon} alt='search' />
       </div>
       <div className={classes.error}>
-        <img className={classes.errorImage} src={errorImage} alt='not-found' />
+        <div className={classes.lottie} ref={lottieContainer}></div>
         <div className={classes.title}>{errorMessage}</div>
         <span className={classes.errorCode}>{`에러 코드:${ErrorStore.statusCode}`}</span>
       </div>

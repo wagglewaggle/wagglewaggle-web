@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import { CustomDrawer, SearchInput } from 'components/common';
@@ -7,6 +7,8 @@ import SearchData from './SearchData';
 import SuggestData from './SuggestData';
 import ResultData from './ResultData';
 import { Detail } from 'components/view';
+import lottie from 'lottie-web';
+import MainLottie from 'assets/lottie/Main.json';
 import { placeDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
@@ -18,6 +20,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
+    zIndex: 2,
   },
   search: {
     display: 'flex',
@@ -33,6 +36,16 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     cursor: 'pointer',
   },
+  lottie: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: 1720,
+    height: '100%',
+    overflow: 'hidden',
+    zIndex: 1,
+    opacity: 0.7,
+  },
 }));
 
 const Main = () => {
@@ -42,6 +55,7 @@ const Main = () => {
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [latestList, setLatestList] = useState<string[]>([]);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
+  const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
   const { CustomDialogStore, ErrorStore } = useStore().MobxStore;
   const navigate = useNavigate();
@@ -146,6 +160,17 @@ const Main = () => {
   }, []);
 
   useEffect(() => {
+    if (!lottieContainer.current) return;
+    lottie.loadAnimation({
+      container: lottieContainer.current,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: MainLottie,
+    });
+  }, [lottieContainer.current]);
+
+  useEffect(() => {
     const newDrawerState: boolean = location.search.length !== 0;
     setOpenDrawer(newDrawerState);
     setIncludeInput(!newDrawerState);
@@ -165,29 +190,32 @@ const Main = () => {
   }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
 
   return (
-    <div className={classes.wrap}>
-      <div className={classes.search}>
-        <img src={logo} alt='logo' onClick={navigateToHome} />
-        <div className={classes.searchBox} onClick={handleSearchClick} />
-        <img src={searchIcon} alt='search' onClick={handleSearchClick} />
+    <Fragment>
+      <div className={classes.wrap}>
+        <div className={classes.search}>
+          <img src={logo} alt='logo' onClick={navigateToHome} />
+          <div className={classes.searchBox} onClick={handleSearchClick} />
+          <img src={searchIcon} alt='search' onClick={handleSearchClick} />
+        </div>
+        <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
+        <CustomDrawer
+          open={openDrawer}
+          onClose={onDrawerClose}
+          searchInput={
+            includeInput ? (
+              <SearchInput
+                searchValue={searchValue}
+                handleSearchEnter={handleSearchEnter}
+                handleDrawerClose={onDrawerClose}
+                handleSearchValueChange={handleSearchValueChange}
+              />
+            ) : undefined
+          }
+          component={currentPage}
+        />
       </div>
-      <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
-      <CustomDrawer
-        open={openDrawer}
-        onClose={onDrawerClose}
-        searchInput={
-          includeInput ? (
-            <SearchInput
-              searchValue={searchValue}
-              handleSearchEnter={handleSearchEnter}
-              handleDrawerClose={onDrawerClose}
-              handleSearchValueChange={handleSearchValueChange}
-            />
-          ) : undefined
-        }
-        component={currentPage}
-      />
-    </div>
+      <div className={classes.lottie} ref={lottieContainer}></div>
+    </Fragment>
   );
 };
 
