@@ -5,7 +5,7 @@ import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
 import { palette, locationNames } from 'constants/';
-import { locationDataType } from 'types/typeBundle';
+import { categoryType, locationDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import backgroundImage from 'assets/dummy-result-image.png';
 import leftIcon from 'assets/icons/left-icon.svg';
@@ -66,9 +66,13 @@ const DetailHeader = observer((props: propsType) => {
   };
 
   useEffect(() => {
-    if (!LocationStore.categories) return;
-    setCategories(LocationStore.categories.join(', '));
-  }, [LocationStore.categories]);
+    if (!locationData?.name || !LocationStore.categories[locationData.name]) return;
+    setCategories(
+      LocationStore.categories[locationData.name]
+        .map((category: categoryType) => category.type)
+        .join(', ')
+    );
+  }, [locationData?.name, LocationStore.categories]);
 
   return (
     <div className={classes.wrap}>

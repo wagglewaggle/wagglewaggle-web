@@ -59,7 +59,7 @@ const Main = () => {
   const [includeInput, setIncludeInput] = useState<boolean>(false);
   const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
-  const { CustomDialogStore, ErrorStore } = useStore().MobxStore;
+  const { LocationStore, CustomDialogStore, ErrorStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -153,6 +153,9 @@ const Main = () => {
         }
       )
     );
+    [...ktData.data.list, ...sktData.data.list].forEach((data: placeDataType) => {
+      LocationStore.setCategories(data.name, data.categories);
+    });
   };
 
   useEffect(() => {

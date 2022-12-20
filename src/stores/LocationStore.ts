@@ -1,8 +1,9 @@
 import { makeAutoObservable } from 'mobx';
+import { categoryType } from 'types/typeBundle';
 
 export class LocationStore {
   placeName: string | null = null;
-  categories: string[] | null = null;
+  categories: { [key: string]: categoryType[] } = {};
 
   constructor() {
     makeAutoObservable(this);
@@ -12,7 +13,7 @@ export class LocationStore {
     this.placeName = newPlaceName;
   };
 
-  setCategories = (newCategories: string[]) => {
-    this.categories = newCategories;
+  setCategories = (key: string, categories: categoryType[]) => {
+    this.categories[key] = categories;
   };
 }
