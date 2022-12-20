@@ -173,7 +173,7 @@ const Main = () => {
       autoplay: true,
       animationData: MainLottie,
     });
-  }, [lottieContainer.current]);
+  }, []);
 
   useEffect(() => {
     const newDrawerState: boolean = location.search.length !== 0;

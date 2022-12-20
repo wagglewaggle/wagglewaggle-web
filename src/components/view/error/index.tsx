@@ -104,7 +104,7 @@ const Error = observer(() => {
       autoplay: true,
       animationData: ErrorLottie,
     });
-  }, [lottieContainer.current]);
+  }, []);
 
   useEffect(() => {
     setErrorMessage(

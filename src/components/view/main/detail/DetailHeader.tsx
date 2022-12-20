@@ -69,7 +69,7 @@ const DetailHeader = observer((props: propsType) => {
         locationData?.populations[0].level || 'NORMAL'
       }.png`)})`
     );
-  }, [locationData?.name, locationData?.populations[0].level]);
+  }, [locationData?.name, locationData?.populations]);
 
   useEffect(() => {
     if (!locationData?.name || !LocationStore.categories[locationData.name]) return;

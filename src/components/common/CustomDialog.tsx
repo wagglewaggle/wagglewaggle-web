@@ -238,7 +238,7 @@ const CustomDialog = observer(() => {
       autoplay: true,
       animationData: ScreenSizeStore.screenType === 'mobile' ? NoticeLottieMobile : NoticeLottie,
     });
-  }, [lottieContainer.current, ScreenSizeStore.screenType]);
+  }, [ScreenSizeStore.screenType]);
 
   useEffect(() => {
     if (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'cctv') {

@@ -131,7 +131,7 @@ const ResultData = observer((props: propsType) => {
       autoplay: true,
       animationData: SearchLottie,
     });
-  }, [lottieContainer.current]);
+  }, []);
 
   useEffect(() => {
     getRelatedData();
