@@ -82,7 +82,7 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const handleRemoveLatestList = (list: string) => {
-    const newList: string[] = JSON.parse(JSON.stringify(latestSearchList));
+    const newList: string[] = JSON.parse(JSON.stringify(searchBlockList));
     const selectedList: string | undefined = newList.find(
       (selectedWord: string) => list === selectedWord
     );
@@ -129,7 +129,7 @@ const SuggestData = observer((props: propsType) => {
           <SearchIcon />
           <span className={classes.list}>
             <span className={classes.includedPart}>{searchValue}</span>
-            {list.name.replace(searchValue, '')}
+            {(locationNames[list.name] || list.name).replace(searchValue, '')}
           </span>
         </div>
       ))}

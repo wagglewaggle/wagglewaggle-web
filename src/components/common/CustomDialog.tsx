@@ -1,14 +1,16 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { Dialog, DialogTitle, DialogContent, Box, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
-import logo from 'assets/temp-logo.png';
+import lottie from 'lottie-web';
+import logo from 'assets/icons/logo-filled-icon.svg';
+import NoticeLottie from 'assets/lottie/Notice.json';
+import NoticeLottieMobile from 'assets/lottie/Notice-mobile.json';
 import closeIcon from 'assets/icons/close-icon.svg';
 import accidentIcon from 'assets/icons/accident-icon.svg';
-import footerImage from 'assets/intro-footer-image.png';
-import { accidentType } from 'types/typeBundle';
+import { accidentType, cctvType } from 'types/typeBundle';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -43,11 +45,7 @@ const useStyles = makeStyles(() => ({
       height: '32px',
     },
   },
-  logo: {
-    width: 56,
-    height: 32,
-  },
-  accidentIcon: {
+  icon: {
     width: 48,
     height: 48,
   },
@@ -60,6 +58,13 @@ const useStyles = makeStyles(() => ({
     fontSize: 18,
     fontWeight: 600,
     backgroundColor: palette.grey[700],
+  },
+  type: {
+    marginBottom: 8,
+    color: palette.grey[400],
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: '20px',
   },
   title: {
     fontSize: 18,
@@ -101,6 +106,16 @@ const useStyles = makeStyles(() => ({
   selectedCircle: {
     backgroundColor: palette.white,
   },
+  lottie: {
+    position: 'absolute',
+    bottom: 0,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+    width: '100%',
+    height: 'calc(100% - 48px)',
+    zIndex: 10000,
+    overflow: 'hidden',
+  },
 }));
 
 interface titlePropsType {
@@ -120,10 +135,8 @@ const TitlePart = (props: titlePropsType) => {
         width: `${dialogWidth - 48}px`,
       }}
     >
-      {variant === 'intro' && <img className={classes.logo} src={logo} alt='logo' />}
-      {variant === 'accident' && (
-        <img className={classes.accidentIcon} src={accidentIcon} alt='accident' />
-      )}
+      {variant === 'intro' && <img className={classes.icon} src={logo} alt='logo' />}
+      {variant === 'accident' && <img className={classes.icon} src={accidentIcon} alt='accident' />}
     </DialogTitle>
   );
 };
@@ -154,21 +167,14 @@ const AccidentContent = () => {
 
   return (
     <Fragment>
-      {CustomDialogStore.accidentList.map((accident: accidentType, idx: number) => {
-        const infoArr: string[] = accident.info.split('|');
-        return (
-          <Fragment key={`accident-list-${idx}`}>
-            <Box className={classes.title} sx={{ marginBottom: '8px' }}>
-              {infoArr[0]}
-            </Box>
-            <div className={classes.times}>
-              발생일시: {infoArr[1]}
-              <br />
-              완료예정: {infoArr[2]}
-            </div>
-          </Fragment>
-        );
-      })}
+      {CustomDialogStore.accidentList.map((accident: accidentType, idx: number) => (
+        <Fragment key={`accident-list-${idx}`}>
+          <div className={classes.type}>{accident.type}</div>
+          <Box className={classes.title} sx={{ marginBottom: '24px' }}>
+            {accident.info}
+          </Box>
+        </Fragment>
+      ))}
     </Fragment>
   );
 };
@@ -186,7 +192,7 @@ const CctvContent = observer(() => {
     <div className={classes.cctvWrap}>
       <iframe
         title='CCTV Dialog'
-        src={CustomDialogStore.cctvList[cctvIdx]}
+        src={`https://data.seoul.go.kr${CustomDialogStore?.cctvList[cctvIdx]?.src || ''}`}
         width={320 - (ScreenSizeStore.screenType === 'mobile' ? 68 : 0)}
         height={190}
         frameBorder={0}
@@ -196,9 +202,9 @@ const CctvContent = observer(() => {
           background: palette.grey[500],
         }}
       />
-      <span className={classes.content}>CCTV 이름</span>
+      <span className={classes.content}>{CustomDialogStore?.cctvList[cctvIdx]?.cctvname}</span>
       <div className={classes.pageCircleWrap}>
-        {CustomDialogStore.cctvList.map((_: string, idx: number) => (
+        {CustomDialogStore.cctvList.map((_: cctvType, idx: number) => (
           <div
             key={`cctv-page-${idx}`}
             className={`${classes.pageCircle} ${
@@ -215,12 +221,24 @@ const CctvContent = observer(() => {
 const CustomDialog = observer(() => {
   const [dialogWidth, setDialogWidth] = useState<number>(408);
   const [dialogHeight, setDialogHeight] = useState<number>(408);
+  const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
   const { ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
 
   const closeDialog = () => {
     CustomDialogStore.setOpen(false);
   };
+
+  useEffect(() => {
+    if (!lottieContainer.current) return;
+    lottie.loadAnimation({
+      container: lottieContainer.current,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: ScreenSizeStore.screenType === 'mobile' ? NoticeLottieMobile : NoticeLottie,
+    });
+  }, [ScreenSizeStore.screenType]);
 
   useEffect(() => {
     if (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'cctv') {
@@ -248,25 +266,43 @@ const CustomDialog = observer(() => {
       className={classes.wrap}
       sx={{
         '& .MuiPaper-root': {
-          maxHeight: `${dialogHeight}px`,
+          maxHeight: `${
+            dialogHeight -
+            (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'intro'
+              ? 12
+              : 0)
+          }px`,
         },
         '& .MuiDialogContent-root': {
-          width: `${dialogWidth - (CustomDialogStore.variant !== 'cctv' ? 40 : 48)}px`,
+          width: `${
+            dialogWidth -
+            (CustomDialogStore.variant === 'cctv'
+              ? 48
+              : CustomDialogStore.variant === 'intro'
+              ? 56
+              : 40)
+          }px`,
         },
       }}
       open={CustomDialogStore.open}
       onClose={closeDialog}
     >
-      <Box className={classes.closeButtonWrap} sx={{ width: `${dialogWidth}px` }}>
+      <Box
+        className={classes.closeButtonWrap}
+        sx={{ width: `${dialogWidth - (CustomDialogStore.variant === 'intro' ? 8 : 0)}px` }}
+      >
         <IconButton onClick={closeDialog}>
           <img src={closeIcon} alt='close' />
         </IconButton>
       </Box>
-      <TitlePart variant={CustomDialogStore.variant} dialogWidth={dialogWidth} />
+      <TitlePart
+        variant={CustomDialogStore.variant}
+        dialogWidth={dialogWidth - (CustomDialogStore.variant === 'intro' ? 16 : 0)}
+      />
       <DialogContent
         className={classes.content}
         sx={{
-          width: `${dialogWidth - 48}px`,
+          width: `${dialogWidth - 48 - (CustomDialogStore.variant === 'intro' ? 16 : 0)}px`,
           height: CustomDialogStore.variant === 'intro' ? 'auto' : '200px',
           '& div:last-of-type': {
             marginBottom: `${CustomDialogStore.variant === 'intro' ? 16 : 0}px`,
@@ -285,7 +321,7 @@ const CustomDialog = observer(() => {
         <Box sx={{ height: '20px', width: '100%', backgroundColor: palette.grey[700] }} />
       )}
       {CustomDialogStore.variant === 'intro' && (
-        <img className={classes.footerImage} src={footerImage} alt='footer' />
+        <Box className={classes.lottie} ref={lottieContainer} />
       )}
     </Dialog>
   );

@@ -90,7 +90,7 @@ const PlaceCard = (props: propsType) => {
     });
     categoryList.forEach((category: string) => {
       if (addedSymbol.length > 0) return;
-      if (category !== '크리스마스 핫플레이스') {
+      if (category !== '크리스마스 핫플') {
         addedSymbol.push(category);
         setSymbol(category);
       }
