@@ -202,7 +202,7 @@ const CctvContent = observer(() => {
           background: palette.grey[500],
         }}
       />
-      <span className={classes.content}>CCTV 이름</span>
+      <span className={classes.content}>{CustomDialogStore?.cctvList[cctvIdx]?.cctvname}</span>
       <div className={classes.pageCircleWrap}>
         {CustomDialogStore.cctvList.map((_: cctvType, idx: number) => (
           <div

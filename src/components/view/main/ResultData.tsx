@@ -112,7 +112,6 @@ const ResultData = observer((props: propsType) => {
     const newPlaces: string[] = [];
     resultData.forEach(async (data: placeDataType, idx: number) => {
       if (!districts[data.name]) return;
-      console.log(districts[data.name]);
       const response = await axiosRequest(`location/${districts[data.name]}`);
       if (!response?.data?.ktPlaces || !response?.data?.sktPlaces) return;
       pushPlaceData(response.data.ktPlaces, newPlaces, newRelatedData);
@@ -172,14 +171,16 @@ const ResultData = observer((props: propsType) => {
               <PlaceCard key={`result-data-${idx}`} place={data} />
             ))}
           </div>
-          <div className={classes.subComponent}>
-            <div className={classes.header}>
-              <span className={classes.title}>관련 장소 현황</span>
+          {relatedData.length > 0 && (
+            <div className={classes.subComponent}>
+              <div className={classes.header}>
+                <span className={classes.title}>관련 장소 현황</span>
+              </div>
+              {relatedData.map((data: placeDataType, idx: number) => (
+                <PlaceCard key={`related-data-${idx}`} place={data} />
+              ))}
             </div>
-            {relatedData.map((data: placeDataType, idx: number) => (
-              <PlaceCard key={`related-data-${idx}`} place={data} />
-            ))}
-          </div>
+          )}
         </Fragment>
       )}
     </Box>

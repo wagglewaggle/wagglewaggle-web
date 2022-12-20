@@ -129,7 +129,7 @@ const SuggestData = observer((props: propsType) => {
           <SearchIcon />
           <span className={classes.list}>
             <span className={classes.includedPart}>{searchValue}</span>
-            {list.name.replace(searchValue, '')}
+            {(locationNames[list.name] || list.name).replace(searchValue, '')}
           </span>
         </div>
       ))}

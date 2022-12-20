@@ -51,6 +51,7 @@ const Detail = observer(() => {
   }, [CustomDialogStore, locationData]);
 
   const initLocationData = useCallback(async () => {
+    if (location.search.length === 0) return;
     const placeName: string = LocationStore.placeName as string;
     const requestType: string = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName

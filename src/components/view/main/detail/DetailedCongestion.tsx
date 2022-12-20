@@ -149,19 +149,21 @@ const DetailedCongestion = (props: propsType) => {
         </div>
         <PlaceStatus status={locationData?.populations[0].level || undefined} />
       </div>
-      <div className={`${classes.statusCard} ${classes.trafficStatusCard}`}>
-        <div className={classes.statusLeft}>
-          <img src={carIcon} alt='car' />
-          <div className={classes.statusDesc}>
-            <span>도로 현황</span>
-            <span>{TRAFFIC_TO_COMMENTS[locationData?.roadTraffic?.type || '서행']}</span>
+      {locationData?.roadTraffic?.type && (
+        <div className={`${classes.statusCard} ${classes.trafficStatusCard}`}>
+          <div className={classes.statusLeft}>
+            <img src={carIcon} alt='car' />
+            <div className={classes.statusDesc}>
+              <span>도로 현황</span>
+              <span>{TRAFFIC_TO_COMMENTS[locationData?.roadTraffic?.type || '서행']}</span>
+            </div>
           </div>
+          <PlaceStatus
+            status={locationData?.roadTraffic?.type || undefined}
+            comments={{ 원활: '원활', 서행: '서행', 정체: '정체' }}
+          />
         </div>
-        <PlaceStatus
-          status={locationData?.roadTraffic?.type || undefined}
-          comments={{ 원활: '원활', 서행: '서행', 정체: '정체' }}
-        />
-      </div>
+      )}
       {(locationData?.cctvs || []).length > 0 && (
         <Fragment>
           <hr className={classes.divider} />
