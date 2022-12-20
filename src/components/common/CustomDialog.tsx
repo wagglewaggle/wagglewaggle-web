@@ -5,7 +5,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 import lottie from 'lottie-web';
-import logo from 'assets/temp-logo.png';
+import logo from 'assets/icons/logo-filled-icon.svg';
 import NoticeLottie from 'assets/lottie/Notice.json';
 import NoticeLottieMobile from 'assets/lottie/Notice-mobile.json';
 import closeIcon from 'assets/icons/close-icon.svg';
@@ -45,11 +45,7 @@ const useStyles = makeStyles(() => ({
       height: '32px',
     },
   },
-  logo: {
-    width: 56,
-    height: 32,
-  },
-  accidentIcon: {
+  icon: {
     width: 48,
     height: 48,
   },
@@ -139,10 +135,8 @@ const TitlePart = (props: titlePropsType) => {
         width: `${dialogWidth - 48}px`,
       }}
     >
-      {variant === 'intro' && <img className={classes.logo} src={logo} alt='logo' />}
-      {variant === 'accident' && (
-        <img className={classes.accidentIcon} src={accidentIcon} alt='accident' />
-      )}
+      {variant === 'intro' && <img className={classes.icon} src={logo} alt='logo' />}
+      {variant === 'accident' && <img className={classes.icon} src={accidentIcon} alt='accident' />}
     </DialogTitle>
   );
 };

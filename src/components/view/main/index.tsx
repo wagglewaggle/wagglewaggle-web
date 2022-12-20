@@ -12,7 +12,7 @@ import MainLottie from 'assets/lottie/Main.json';
 import { placeDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import logo from 'assets/temp-logo.png';
+import logo from 'assets/icons/logo-icon.svg';
 import searchIcon from 'assets/icons/search-icon.svg';
 
 const useStyles = makeStyles(() => ({
@@ -28,6 +28,8 @@ const useStyles = makeStyles(() => ({
     padding: '0 24px',
     height: 56,
     '& img': {
+      width: 32,
+      height: 32,
       cursor: 'pointer',
     },
   },

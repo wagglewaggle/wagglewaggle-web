@@ -7,7 +7,7 @@ import { useStore } from 'stores';
 import { palette } from 'constants/';
 import lottie from 'lottie-web';
 import ErrorLottie from 'assets/lottie/Error.json';
-import logo from 'assets/temp-logo.png';
+import logo from 'assets/icons/logo-icon.svg';
 import searchIcon from 'assets/icons/search-icon.svg';
 import refreshIcon from 'assets/icons/refresh-icon.svg';
 import rightIcon from 'assets/icons/right-icon.svg';
@@ -24,6 +24,10 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     padding: '0 24px',
     height: 56,
+    '& img': {
+      width: 32,
+      height: 32,
+    },
   },
   searchBox: {
     flexGrow: 1,
