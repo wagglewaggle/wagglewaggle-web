@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
-import { palette, locationNames } from 'constants/';
+import { palette, locationNames, bgPaths } from 'constants/';
 import { categoryType, locationDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
-import backgroundImage from 'assets/dummy-result-image.png';
 import leftIcon from 'assets/icons/left-icon.svg';
 
 const useStyles = makeStyles(() => ({
@@ -16,12 +15,9 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     padding: '0 24px',
     height: 448,
-    backgroundImage: `url(${backgroundImage})`,
-    backgroundSize: 'contain',
+    backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundPositionX: 'center',
-    // 아래 background-color는 임시 이미지 용으로 추후 삭제 필요
-    backgroundColor: '#112258',
   },
   buttonArea: {
     padding: '12px 0',
@@ -57,6 +53,7 @@ interface propsType {
 const DetailHeader = observer((props: propsType) => {
   const { locationData } = props;
   const [categories, setCategories] = useState<string>('');
+  const [bgPath, setBgPath] = useState<string>('');
   const classes = useStyles();
   const { LocationStore } = useStore().MobxStore;
   const navigate = useNavigate();
@@ -64,6 +61,15 @@ const DetailHeader = observer((props: propsType) => {
   const handleBackClick = () => {
     navigate('/main');
   };
+
+  useLayoutEffect(() => {
+    if (!bgPaths[locationData?.name || '']) return;
+    setBgPath(
+      `url(${require(`assets/detailBg/${bgPaths[locationData?.name || ''] || 'Tree'}/${
+        locationData?.populations[0].level || 'NORMAL'
+      }.png`)})`
+    );
+  }, [locationData?.name, locationData?.populations[0].level]);
 
   useEffect(() => {
     if (!locationData?.name || !LocationStore.categories[locationData.name]) return;
@@ -75,7 +81,16 @@ const DetailHeader = observer((props: propsType) => {
   }, [locationData?.name, LocationStore.categories]);
 
   return (
-    <div className={classes.wrap}>
+    <Box
+      className={classes.wrap}
+      sx={
+        bgPath === ''
+          ? undefined
+          : {
+              backgroundImage: bgPath,
+            }
+      }
+    >
       <div className={classes.buttonArea}>
         <IconButton onClick={handleBackClick}>
           <img src={leftIcon} alt='left' />
@@ -98,7 +113,7 @@ const DetailHeader = observer((props: propsType) => {
           />
         </div>
       </div>
-    </div>
+    </Box>
   );
 });
 
