@@ -1,5 +1,5 @@
 export const bgPaths: { [key: string]: string } = {
-  롯데월드잠실점: 'AmuesmentPark',
+  롯데월드잠실점: 'AmusementPark',
   에버랜드: 'AmusementPark',
   롯데월드몰: 'Department',
   타임스퀘어: 'Tree',
@@ -46,7 +46,7 @@ export const bgPaths: { [key: string]: string } = {
   '낙산공원·이화마을': 'Park',
   북서울꿈의숲: 'Park',
   서울대공원: 'Park',
-  어린이대공원: 'Park',
+  어린이대공원: 'AmusementPark',
   서울숲공원: 'Park',
   월드컵공원: 'Park',
   '국립중앙박물관·용산가족공원': 'Park',

@@ -4,6 +4,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { palette, geometry, urlPaths, locationNames, locationRequestTypes } from 'constants/';
 import { locationDataType } from 'types/typeBundle';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
+import exclamationIcon from 'assets/icons/exclamation-icon.svg';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -40,6 +41,7 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     flexGrow: 1,
     padding: '0 16px',
+    cursor: 'pointer',
   },
   textArea: {
     display: 'flex',
@@ -60,6 +62,16 @@ const useStyles = makeStyles(() => ({
     width: 16,
     height: 16,
   },
+  infoWrap: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '100%',
+    color: palette.grey[400],
+    fontSize: 12,
+    fontWeight: 500,
+    gap: 4,
+  },
 }));
 
 declare global {
@@ -75,6 +87,7 @@ interface propsType {
 const LocationInformation = (props: propsType) => {
   const { locationData } = props;
   const [locationAddress, setLocationAddress] = useState<string | null>(null);
+  const [appearMapInfo, setAppearMapInfo] = useState<boolean>(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const classes = useStyles();
 
@@ -109,11 +122,11 @@ const LocationInformation = (props: propsType) => {
     const polygon = new window.kakao.maps.Polygon({
       path: polygonPath,
       strokeWeight: 1,
-      strokeColor: palette.orange,
+      strokeColor: palette.violet,
       strokeOpacity: 1,
       strokeStyle: 'solid',
-      fillColor: palette.orange,
-      fillOpacity: 0.4,
+      fillColor: palette.violet,
+      fillOpacity: 0.5,
     });
     return polygon;
   }, [locationData]);
@@ -145,6 +158,7 @@ const LocationInformation = (props: propsType) => {
       const polygon = highlightMap();
       if (polygon) {
         polygon.setMap(map);
+        setAppearMapInfo(true);
       }
       const centerCoords = map.getCenter();
       getAddress(centerCoords.getLng(), centerCoords.getLat());
@@ -152,7 +166,12 @@ const LocationInformation = (props: propsType) => {
   }, [highlightMap, locationData]);
 
   const handleNavigationClick = () => {
-    window.open(`https://place.map.kakao.com/${urlPaths[locationData?.name || '']}`, '_blank');
+    window.open(
+      `https://place.map.kakao.com/${
+        urlPaths[locationNames[locationData?.name || ''] || locationData?.name || '']
+      }`,
+      '_blank'
+    );
   };
 
   useEffect(() => {
@@ -170,21 +189,24 @@ const LocationInformation = (props: propsType) => {
       <div className={classes.header}>위치 정보</div>
       <div className={classes.mapWrap}>
         <div className={classes.map} ref={mapRef} />
-        <div className={classes.description}>
+        <div className={classes.description} onClick={handleNavigationClick}>
           <div className={classes.textArea}>
             <div className={classes.name}>
               {locationNames[locationData?.name || ''] || locationData?.name}
             </div>
             <div className={classes.address}>{locationAddress || ''}</div>
           </div>
-          <IconButton
-            sx={{ border: `1px solid ${palette.white}`, padding: '3px' }}
-            onClick={handleNavigationClick}
-          >
+          <IconButton sx={{ border: `1px solid ${palette.white}`, padding: '3px' }}>
             <img className={classes.navigationIcon} src={navigationIcon} alt='navigation' />
           </IconButton>
         </div>
       </div>
+      {appearMapInfo && (
+        <div className={classes.infoWrap}>
+          <img src={exclamationIcon} alt='exclamation' />
+          장소 혼잡도는 보라색으로 표시된 영역까지만 통계되었습니다.
+        </div>
+      )}
     </div>
   );
 };

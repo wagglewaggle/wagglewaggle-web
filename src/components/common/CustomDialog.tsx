@@ -5,12 +5,14 @@ import makeStyles from '@mui/styles/makeStyles';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 import lottie from 'lottie-web';
+import { accidentType, cctvType } from 'types/typeBundle';
 import logo from 'assets/icons/logo-filled-icon.svg';
 import NoticeLottie from 'assets/lottie/Notice.json';
 import NoticeLottieMobile from 'assets/lottie/Notice-mobile.json';
 import closeIcon from 'assets/icons/close-icon.svg';
 import accidentIcon from 'assets/icons/accident-icon.svg';
-import { accidentType, cctvType } from 'types/typeBundle';
+import leftIcon from 'assets/icons/left-icon.svg';
+import rightIcon from 'assets/icons/right-icon.svg';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -88,7 +90,18 @@ const useStyles = makeStyles(() => ({
   cctvWrap: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 18,
+    gap: 16,
+    '& button': {
+      padding: 0,
+    },
+  },
+  descWrap: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  buttonDisabled: {
+    opacity: 0.3,
   },
   pageCircleWrap: {
     display: 'flex',
@@ -99,9 +112,10 @@ const useStyles = makeStyles(() => ({
   },
   pageCircle: {
     borderRadius: '50%',
-    width: 10,
-    height: 10,
+    width: 6,
+    height: 6,
     backgroundColor: palette.grey[600],
+    cursor: 'pointer',
   },
   selectedCircle: {
     backgroundColor: palette.white,
@@ -188,6 +202,14 @@ const CctvContent = observer(() => {
     setCctvIdx(idx);
   };
 
+  const moveToPrevCctv = () => {
+    setCctvIdx(cctvIdx - 1);
+  };
+
+  const moveToNextCctv = () => {
+    setCctvIdx(cctvIdx + 1);
+  };
+
   return (
     <div className={classes.cctvWrap}>
       <iframe
@@ -202,7 +224,25 @@ const CctvContent = observer(() => {
           background: palette.grey[500],
         }}
       />
-      <span className={classes.content}>{CustomDialogStore?.cctvList[cctvIdx]?.cctvname}</span>
+      <div className={classes.descWrap}>
+        <IconButton
+          className={cctvIdx === 0 ? classes.buttonDisabled : undefined}
+          disabled={cctvIdx === 0}
+          onClick={moveToPrevCctv}
+        >
+          <img src={leftIcon} alt='left' />
+        </IconButton>
+        <span className={classes.content}>{CustomDialogStore?.cctvList[cctvIdx]?.cctvname}</span>
+        <IconButton
+          className={
+            cctvIdx === CustomDialogStore.cctvList.length - 1 ? classes.buttonDisabled : undefined
+          }
+          disabled={cctvIdx === CustomDialogStore.cctvList.length - 1}
+          onClick={moveToNextCctv}
+        >
+          <img src={rightIcon} alt='right' />
+        </IconButton>
+      </div>
       <div className={classes.pageCircleWrap}>
         {CustomDialogStore.cctvList.map((_: cctvType, idx: number) => (
           <div
@@ -238,7 +278,8 @@ const CustomDialog = observer(() => {
       autoplay: true,
       animationData: ScreenSizeStore.screenType === 'mobile' ? NoticeLottieMobile : NoticeLottie,
     });
-  }, [ScreenSizeStore.screenType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ScreenSizeStore.screenType, lottieContainer.current]);
 
   useEffect(() => {
     if (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'cctv') {
