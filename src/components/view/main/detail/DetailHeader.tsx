@@ -1,12 +1,14 @@
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Box, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import lottie from 'lottie-web';
 import { PlaceStatus } from 'components/common';
 import { palette, locationNames, bgPaths } from 'constants/';
 import { categoryType, locationDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
+import DetailLottie from 'assets/lottie/Detail.json';
 import leftIcon from 'assets/icons/left-icon.svg';
 
 const useStyles = makeStyles(() => ({
@@ -18,6 +20,14 @@ const useStyles = makeStyles(() => ({
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundPositionX: 'center',
+    overflowX: 'hidden',
+    '& svg': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '767px !important',
+      height: '432px !important',
+    },
   },
   buttonArea: {
     padding: '12px 0',
@@ -54,6 +64,7 @@ const DetailHeader = observer((props: propsType) => {
   const { locationData } = props;
   const [categories, setCategories] = useState<string>('');
   const [bgPath, setBgPath] = useState<string>('');
+  const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
   const { LocationStore } = useStore().MobxStore;
   const navigate = useNavigate();
@@ -62,7 +73,18 @@ const DetailHeader = observer((props: propsType) => {
     navigate('/main');
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    if (!lottieContainer.current) return;
+    lottie.loadAnimation({
+      container: lottieContainer.current,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: DetailLottie,
+    });
+  }, []);
+
+  useEffect(() => {
     if (!bgPaths[locationData?.name || '']) return;
     setBgPath(
       `url(${require(`assets/detailBg/${bgPaths[locationData?.name || ''] || 'Tree'}/${
@@ -83,6 +105,7 @@ const DetailHeader = observer((props: propsType) => {
   return (
     <Box
       className={classes.wrap}
+      ref={lottieContainer}
       sx={
         bgPath === ''
           ? undefined

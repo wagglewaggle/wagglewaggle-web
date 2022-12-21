@@ -16,7 +16,9 @@ const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
     flexDirection: 'column',
+    marginBottom: 64,
     color: palette.white,
+    backgroundColor: palette.grey[800],
   },
   veryUncrowded: {
     color: palette.blue,

@@ -99,8 +99,8 @@ const useStyles = makeStyles(() => ({
   },
   pageCircle: {
     borderRadius: '50%',
-    width: 10,
-    height: 10,
+    width: 6,
+    height: 6,
     backgroundColor: palette.grey[600],
   },
   selectedCircle: {
@@ -238,7 +238,8 @@ const CustomDialog = observer(() => {
       autoplay: true,
       animationData: ScreenSizeStore.screenType === 'mobile' ? NoticeLottieMobile : NoticeLottie,
     });
-  }, [ScreenSizeStore.screenType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ScreenSizeStore.screenType, lottieContainer.current]);
 
   useEffect(() => {
     if (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'cctv') {

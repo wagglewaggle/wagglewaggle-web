@@ -12,7 +12,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: '24px 24px 72px 24px',
+    padding: '24px 24px 0 24px',
     marginTop: 8,
     backgroundColor: palette.grey[700],
   },
