@@ -1,5 +1,7 @@
 import { Fragment, useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { observer } from 'mobx-react';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { CustomDrawer, SearchInput } from 'components/common';
 import PlaceData from './PlaceData';
@@ -50,7 +52,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Main = () => {
+const Main = observer(() => {
   const [currentPage, setCurrentPage] = useState<JSX.Element>(<Fragment />);
   const [placeData, setPlaceData] = useState<placeDataType[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
@@ -59,7 +61,7 @@ const Main = () => {
   const [includeInput, setIncludeInput] = useState<boolean>(false);
   const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
-  const { LocationStore, CustomDialogStore, ErrorStore } = useStore().MobxStore;
+  const { ScreenSizeStore, LocationStore, CustomDialogStore, ErrorStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -219,9 +221,13 @@ const Main = () => {
           component={currentPage}
         />
       </div>
-      <div className={classes.lottie} ref={lottieContainer}></div>
+      <Box
+        sx={{ transform: `translateX(${ScreenSizeStore.screenType === 'mobile' ? '-280px' : 0})` }}
+        className={classes.lottie}
+        ref={lottieContainer}
+      />
     </Fragment>
   );
-};
+});
 
 export default Main;
