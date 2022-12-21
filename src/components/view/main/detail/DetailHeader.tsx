@@ -31,6 +31,7 @@ const useStyles = makeStyles(() => ({
   },
   buttonArea: {
     padding: '12px 0',
+    zIndex: 1,
     '& button': {
       padding: 0,
       width: 32,
