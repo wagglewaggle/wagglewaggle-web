@@ -40,7 +40,11 @@ const RelatedLocations = observer(() => {
       `location/${districts[locationNames[LocationStore.placeName] || LocationStore.placeName]}`
     );
     if (!response) return;
-    setPlaces([...response.data.ktPlaces, ...response.data.sktPlaces]);
+    setPlaces(
+      [...response.data.ktPlaces, ...response.data.sktPlaces].filter(
+        (place: placeDataType) => place.name !== LocationStore.placeName
+      )
+    );
   }, [LocationStore.placeName]);
 
   useEffect(() => {
