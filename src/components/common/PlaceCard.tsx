@@ -72,8 +72,7 @@ const PlaceCard = (props: propsType) => {
 
   const handlePlaceCardClick = () => {
     LocationStore.setPlaceName(place.name);
-    // LocationStore.setCategories(place.categories.map((category: categoryType) => category.type));
-    navigate(`/main/detail?place-id=${place.idx}`);
+    navigate(`/main/detail?place-id=${place.idx}&place-name=${place.name}`);
   };
 
   useEffect(() => {

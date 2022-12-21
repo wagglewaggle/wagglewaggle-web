@@ -54,14 +54,16 @@ const Detail = observer(() => {
 
   const initLocationData = useCallback(async () => {
     if (location.search.length === 0) return;
-    const placeName: string = LocationStore.placeName as string;
+    const placeName: string =
+      LocationStore.placeName ||
+      decodeURI(location.search.split('&')[1].replace('place-name=', ''));
     const requestType: string = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName
     )
       ? 'skt-place'
       : 'kt-place';
     const response: { data: locationDataType } | undefined = await axiosRequest(
-      `${requestType}/${location.search.replace('?place-id=', '')}`
+      `${requestType}/${location.search.split('&')[0].replace('?place-id=', '')}`
     );
     if (!response) return;
     setLocationData(response.data);
