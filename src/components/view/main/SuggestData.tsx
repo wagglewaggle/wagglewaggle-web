@@ -1,9 +1,9 @@
-import { Fragment, useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import SearchIcon from '@mui/icons-material/Search';
-import { PlaceCard, SearchBlock } from 'components/common';
+import { SearchBlock } from 'components/common';
 import { useStore } from 'stores';
 import { placeDataType } from 'types/typeBundle';
 import { palette, locationNames } from 'constants/';
@@ -105,7 +105,7 @@ const SuggestData = observer((props: propsType) => {
   const getSuggestionList = useCallback(() => {
     setSuggestionList(
       placeData.filter((data: placeDataType) =>
-        (locationNames[data.name] || data.name).startsWith(searchValue)
+        (locationNames[data.name] || data.name).includes(searchValue)
       )
     );
   }, [placeData, searchValue]);
@@ -120,30 +120,25 @@ const SuggestData = observer((props: propsType) => {
 
   return (
     <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
-      {suggestionList.map((list: placeDataType, idx: number) => (
-        <div
-          key={`suggest-data-${idx}`}
-          className={classes.listWrap}
-          onClick={() => handleListClick(list.name)}
-        >
-          <SearchIcon />
-          <span className={classes.list}>
-            <span className={classes.includedPart}>{searchValue}</span>
-            {(locationNames[list.name] || list.name).replace(searchValue, '')}
-          </span>
-        </div>
-      ))}
-      {suggestionList.length > 0 ? (
-        <Fragment>
-          <hr className={classes.divider} />
-          <span className={classes.title}>관련 장소 현황</span>
-          <div className={classes.cardWrap}>
-            {suggestionList.map((place: placeDataType, idx: number) => (
-              <PlaceCard key={`place-card-${idx}`} place={place} />
-            ))}
+      {suggestionList.map((list: placeDataType, idx: number) => {
+        const searchValueIdx: number = (locationNames[list.name] || list.name).indexOf(searchValue);
+        const location: string = locationNames[list.name] || list.name;
+        return (
+          <div
+            key={`suggest-data-${idx}`}
+            className={classes.listWrap}
+            onClick={() => handleListClick(list.name)}
+          >
+            <SearchIcon />
+            <span className={classes.list}>
+              {location.substring(0, searchValueIdx)}
+              <span className={classes.includedPart}>{searchValue}</span>
+              {location.substring(searchValueIdx + searchValue.length, location.length)}
+            </span>
           </div>
-        </Fragment>
-      ) : (
+        );
+      })}
+      {suggestionList.length === 0 && (
         <div className={classes.emptySuggestionWrap}>
           <SearchBlock
             title='최근 검색어'

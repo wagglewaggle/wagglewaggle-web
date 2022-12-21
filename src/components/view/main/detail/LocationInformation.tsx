@@ -126,7 +126,7 @@ const LocationInformation = (props: propsType) => {
       strokeOpacity: 1,
       strokeStyle: 'solid',
       fillColor: palette.violet,
-      fillOpacity: 0.4,
+      fillOpacity: 0.5,
     });
     return polygon;
   }, [locationData]);
