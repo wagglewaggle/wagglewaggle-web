@@ -33,6 +33,7 @@ const useStyles = makeStyles(() => ({
     height: 24,
     fontSize: 14,
     fontWeight: 400,
+    whiteSpace: 'pre-wrap',
   },
   includedPart: {
     color: palette.orange,
