@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { Fragment, useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import { Footer } from 'components/common';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 import lottie from 'lottie-web';
@@ -15,6 +16,7 @@ import rightIcon from 'assets/icons/right-icon.svg';
 const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
+    flexGrow: 1,
     flexDirection: 'column',
     width: '100%',
     color: palette.white,
@@ -87,7 +89,7 @@ const Error = observer(() => {
 
   const handleRefresh = () => {
     ErrorStore.setStatusCode(null);
-    navigate(`${location.pathname}${location.search}`);
+    navigate(-1);
   };
 
   const handleMoveHome = () => {
@@ -119,34 +121,37 @@ const Error = observer(() => {
   }, [ErrorStore, location.pathname]);
 
   return (
-    <div className={classes.wrap}>
-      <div className={classes.search}>
-        <img src={logo} alt='logo' />
-        <div className={classes.searchBox} />
-        <img src={searchIcon} alt='search' />
-      </div>
-      <div className={classes.error}>
-        <div className={classes.lottie} ref={lottieContainer}></div>
-        <div className={classes.title}>{errorMessage}</div>
-        <span className={classes.errorCode}>{`에러 코드:${ErrorStore.statusCode}`}</span>
-      </div>
-      <div className={classes.buttons}>
-        {ErrorStore.statusCode !== 404 && (
-          <div onClick={handleRefresh}>
-            새로 고침
+    <Fragment>
+      <div className={classes.wrap}>
+        <div className={classes.search}>
+          <img src={logo} alt='logo' />
+          <div className={classes.searchBox} />
+          <img src={searchIcon} alt='search' />
+        </div>
+        <div className={classes.error}>
+          <div className={classes.lottie} ref={lottieContainer}></div>
+          <div className={classes.title}>{errorMessage}</div>
+          <span className={classes.errorCode}>{`에러 코드:${ErrorStore.statusCode}`}</span>
+        </div>
+        <div className={classes.buttons}>
+          {ErrorStore.statusCode !== 404 && (
+            <div onClick={handleRefresh}>
+              새로 고침
+              <IconButton>
+                <img src={refreshIcon} alt='refresh' />
+              </IconButton>
+            </div>
+          )}
+          <div onClick={handleMoveHome}>
+            홈으로 이동
             <IconButton>
-              <img src={refreshIcon} alt='refresh' />
+              <img src={rightIcon} alt='right' />
             </IconButton>
           </div>
-        )}
-        <div onClick={handleMoveHome}>
-          홈으로 이동
-          <IconButton>
-            <img src={rightIcon} alt='right' />
-          </IconButton>
         </div>
       </div>
-    </div>
+      <Footer />
+    </Fragment>
   );
 });
 

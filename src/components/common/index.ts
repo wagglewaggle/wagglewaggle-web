@@ -4,3 +4,4 @@ export { default as SearchInput } from './SearchInput';
 export { default as SearchBlock } from './SearchBlock';
 export { default as CustomDrawer } from './CustomDrawer';
 export { default as CustomDialog } from './CustomDialog';
+export { default as Footer } from './Footer';

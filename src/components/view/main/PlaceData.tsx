@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Box, Select, MenuItem, SelectChangeEvent, Icon } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import ScrollContainer from 'react-indiana-drag-scroll';
-import { PlaceCard } from 'components/common';
+import { PlaceCard, Footer } from 'components/common';
 import { useStore } from 'stores';
 import { categoryType, placeDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
@@ -215,6 +215,7 @@ const PlaceData = observer((props: propsType) => {
           <PlaceCard key={`place-card-${idx}`} place={place} />
         ))}
       </Box>
+      <Footer />
     </div>
   );
 });
