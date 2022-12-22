@@ -16,8 +16,8 @@ const useStyles = makeStyles(() => ({
   },
   title: {
     color: palette.white,
-    fontSize: 14,
-    fontWeight: 700,
+    fontSize: 18,
+    fontWeight: 600,
   },
   listWrap: {
     display: 'flex',
@@ -33,7 +33,8 @@ const useStyles = makeStyles(() => ({
     maxWidth: 380,
     height: 26,
     color: palette.white,
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: 600,
     cursor: 'pointer',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -44,8 +45,8 @@ const useStyles = makeStyles(() => ({
     padding: 0,
     backgroundColor: palette.transparent,
     color: palette.white,
-    fontSize: 11,
-    fontWeight: 500,
+    fontSize: 14,
+    fontWeight: 600,
     cursor: 'pointer',
   },
   emptyData: {
