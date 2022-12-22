@@ -31,6 +31,8 @@ const useStyles = makeStyles(() => ({
   buttonArea: {
     display: 'flex',
     alignItems: 'center',
+    fontSize: 14,
+    fontWeight: 600,
     gap: 4,
   },
   iconImage: {
