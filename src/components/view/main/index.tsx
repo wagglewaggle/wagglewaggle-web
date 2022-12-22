@@ -162,7 +162,10 @@ const Main = observer(() => {
 
   useEffect(() => {
     initPlaceData();
-    CustomDialogStore.setOpen(location.search === '');
+    const openIntroDialog: boolean =
+      location.search === '' &&
+      sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false';
+    CustomDialogStore.setOpen(openIntroDialog);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

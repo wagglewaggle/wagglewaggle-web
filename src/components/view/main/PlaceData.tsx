@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Box, Select, MenuItem, SelectChangeEvent, Icon } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import ScrollContainer from 'react-indiana-drag-scroll';
-import { PlaceCard } from 'components/common';
+import { PlaceCard, Footer } from 'components/common';
 import { useStore } from 'stores';
 import { categoryType, placeDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
     flexDirection: 'column',
-    margin: '20px 24px 35px',
+    margin: '20px 24px 72px',
   },
   chipsWrap: {
     display: 'flex',
@@ -55,11 +55,12 @@ const useStyles = makeStyles(() => ({
   },
   select: {
     '& div': {
-      color: palette.grey[400],
-      fontSize: 12,
-      fontWeight: 500,
+      color: palette.white,
+      fontSize: 14,
+      fontWeight: 600,
     },
     '& span': {
+      color: palette.white,
       transform: 'translateX(10px)',
     },
     '& fieldset': {
@@ -70,6 +71,7 @@ const useStyles = makeStyles(() => ({
     },
   },
   menu: {
+    marginTop: 8,
     '& ul': {
       display: 'flex',
       flexDirection: 'column',
@@ -93,10 +95,6 @@ const useStyles = makeStyles(() => ({
       color: palette.white,
       backgroundColor: 'transparent !important',
     },
-  },
-  menuItem: {
-    fontSize: 14,
-    fontWeight: 400,
   },
   placesWrap: {
     display: 'grid',
@@ -206,7 +204,7 @@ const PlaceData = observer((props: propsType) => {
           )}
         >
           {['복잡한 순', '여유로운 순'].map((menu: string, idx: number) => (
-            <MenuItem key={`menu-${idx}`} className={classes.menuItem} value={menu} dense>
+            <MenuItem key={`menu-${idx}`} sx={{ fontWeight: 600 }} value={menu} dense>
               {menu}
             </MenuItem>
           ))}
@@ -217,6 +215,7 @@ const PlaceData = observer((props: propsType) => {
           <PlaceCard key={`place-card-${idx}`} place={place} />
         ))}
       </Box>
+      <Footer />
     </div>
   );
 });
