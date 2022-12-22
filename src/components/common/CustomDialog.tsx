@@ -266,6 +266,9 @@ const CustomDialog = observer(() => {
   const { ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
 
   const closeDialog = () => {
+    if (CustomDialogStore.variant === 'intro') {
+      sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
+    }
     CustomDialogStore.setOpen(false);
   };
 
