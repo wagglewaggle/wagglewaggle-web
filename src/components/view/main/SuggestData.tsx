@@ -100,7 +100,7 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const handleListClick = (searchWord: string) => {
-    handleWordClick(searchWord);
+    handleWordClick(locationNames[searchWord] || searchWord);
   };
 
   const getSuggestionList = useCallback(() => {
