@@ -54,9 +54,8 @@ const Detail = observer(() => {
 
   const initLocationData = useCallback(async () => {
     if (location.search.length === 0) return;
-    const placeName: string =
-      LocationStore.placeName ||
-      decodeURI(location.search.split('&')[1].replace('place-name=', ''));
+    const placeName: string = decodeURI(location.search.split('&')[1].replace('place-name=', ''));
+    LocationStore.setPlaceName(placeName);
     const requestType: string = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName
     )
