@@ -66,7 +66,7 @@ const Detail = observer(() => {
     );
     if (!response) return;
     setLocationData(response.data);
-  }, [LocationStore.placeName, location.search]);
+  }, [LocationStore, location.search]);
 
   useEffect(() => {
     initLocationData();

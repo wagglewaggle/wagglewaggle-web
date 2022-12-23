@@ -16,9 +16,10 @@ import rightIcon from 'assets/icons/right-icon.svg';
 const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
-    flexGrow: 1,
     flexDirection: 'column',
+    marginBottom: 72,
     width: '100%',
+    minHeight: 'calc(100vh - 72px)',
     color: palette.white,
   },
   search: {
@@ -29,6 +30,9 @@ const useStyles = makeStyles(() => ({
     '& img': {
       width: 32,
       height: 32,
+    },
+    '& img:first-child': {
+      cursor: 'pointer',
     },
   },
   searchBox: {
@@ -124,7 +128,7 @@ const Error = observer(() => {
     <Fragment>
       <div className={classes.wrap}>
         <div className={classes.search}>
-          <img src={logo} alt='logo' />
+          <img src={logo} alt='logo' onClick={handleMoveHome} />
           <div className={classes.searchBox} />
           <img src={searchIcon} alt='search' />
         </div>
@@ -149,8 +153,8 @@ const Error = observer(() => {
             </IconButton>
           </div>
         </div>
+        <Footer />
       </div>
-      <Footer />
     </Fragment>
   );
 });
