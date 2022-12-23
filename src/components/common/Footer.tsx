@@ -6,9 +6,11 @@ import linkCheckIcon from 'assets/icons/link-check-icon.svg';
 const useStyles = makeStyles(() => ({
   footer: {
     display: 'flex',
+    flexGrow: 1,
     flexDirection: 'column',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: '48px 0 50px',
+    paddingTop: 48,
   },
   buttons: {
     display: 'flex',

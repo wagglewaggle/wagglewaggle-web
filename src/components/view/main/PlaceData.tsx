@@ -14,6 +14,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     margin: '20px 24px 72px',
+    minHeight: 'calc(100vh - 148px)',
   },
   chipsWrap: {
     display: 'flex',
