@@ -1,15 +1,68 @@
+export interface categoryType {
+  idx: number;
+  type: string;
+}
+
+export interface populationType {
+  idx: number;
+  level: statusType;
+  createdDate: string;
+  updatedDate: string;
+}
+
 export interface placeDataType {
-  id: number;
+  idx: number;
   name: string;
-  category: string;
-  status: statusType;
+  categories: categoryType[];
+  poiId: number;
+  x: number;
+  y: number;
+  populations: populationType[];
 }
 
-export interface searchWordList {
-  id: number;
-  word: string;
+export interface locationInfoType {
+  [key: string]: {
+    type: 'Polygon' | 'MultiPolygon';
+    coordinates: [number, number][][] | [number, number][][][];
+  };
 }
 
-export type pageType = 'main' | 'search' | 'suggestion' | 'result';
+export interface accidentType {
+  idx: number;
+  type: string;
+  dtype: string;
+  info: string;
+  x: number;
+  y: number;
+  createdDate: string;
+  updatedDate: string;
+}
 
-export type statusType = 'very crowded' | 'crowded' | 'normal' | 'uncrowded' | 'very uncrowded';
+export interface cctvType {
+  idx: number;
+  src: string;
+  cctvname: string;
+}
+
+export interface trafficType {
+  idx: number;
+  avgSpeed: number;
+  info: string;
+  type: string;
+}
+
+export interface locationDataType {
+  idx: number;
+  name: string;
+  x: number;
+  y: number;
+  populations: populationType[];
+  level: statusType;
+  accidents: accidentType[];
+  cctvs: cctvType[];
+  roadTraffic: trafficType;
+}
+
+export type statusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
+
+export type screenType = 'mobile' | 'tablet' | 'pc';
