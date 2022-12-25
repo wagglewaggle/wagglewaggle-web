@@ -1,6 +1,7 @@
 import { ChangeEvent, KeyboardEvent } from 'react';
 import { Box, TextField, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import CustomCloseIcon from './CustomCloseIcon';
 import { palette } from 'constants/';
 import leftArrowIcon from 'assets/icons/left-icon.svg';
 
@@ -65,6 +66,10 @@ const SearchInput = (props: propsType) => {
     }
   };
 
+  const handleIconClick = () => {
+    handleSearchValueChange('');
+  };
+
   return (
     <Box className={classes.wrap}>
       <IconButton onClick={handleArrowLeftClick} sx={{ padding: 0 }}>
@@ -73,11 +78,13 @@ const SearchInput = (props: propsType) => {
       <TextField
         className={classes.input}
         type='text'
+        autoFocus
         value={searchValue}
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}
         placeholder="'강남역'를 입력해보세요"
       />
+      {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
     </Box>
   );
 };

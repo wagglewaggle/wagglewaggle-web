@@ -77,7 +77,7 @@ const SuggestData = observer((props: propsType) => {
   const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
-  const { ScreenSizeStore } = useStore().MobxStore;
+  const { LocationStore, ScreenSizeStore } = useStore().MobxStore;
   const WRAP_BOX_STYLE: { width: number } = {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 400,
   };
@@ -104,12 +104,12 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const getSuggestionList = useCallback(() => {
-    setSuggestionList(
-      placeData.filter((data: placeDataType) =>
-        (locationNames[data.name] || data.name).includes(searchValue)
-      )
+    const newSuggestionList: placeDataType[] = placeData.filter((data: placeDataType) =>
+      (locationNames[data.name] || data.name).includes(searchValue)
     );
-  }, [placeData, searchValue]);
+    setSuggestionList(newSuggestionList);
+    LocationStore.setSuggestionExists(newSuggestionList.length > 0);
+  }, [placeData, searchValue, LocationStore]);
 
   useEffect(() => {
     setSearchBlockList([...latestSearchList]);

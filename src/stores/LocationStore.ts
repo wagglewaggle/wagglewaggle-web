@@ -4,6 +4,7 @@ import { categoryType } from 'types/typeBundle';
 export class LocationStore {
   placeName: string | null = null;
   categories: { [key: string]: categoryType[] } = {};
+  suggestionExists: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -15,5 +16,9 @@ export class LocationStore {
 
   setCategories = (key: string, categories: categoryType[]) => {
     this.categories[key] = categories;
+  };
+
+  setSuggestionExists = (newState: boolean) => {
+    this.suggestionExists = newState;
   };
 }
