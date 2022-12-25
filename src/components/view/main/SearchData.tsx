@@ -17,10 +17,12 @@ interface propsType {
   latestSearchList: string[];
   handleWordClick: (searchWord: string) => void;
   handleLatestListChange: (newList: string[]) => void;
+  handleSearchValueChange: (newValue: string) => void;
 }
 
 const SearchData = observer((props: propsType) => {
-  const { latestSearchList, handleWordClick, handleLatestListChange } = props;
+  const { latestSearchList, handleWordClick, handleLatestListChange, handleSearchValueChange } =
+    props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
@@ -44,6 +46,10 @@ const SearchData = observer((props: propsType) => {
     setSearchBlockList([]);
     handleLatestListChange([]);
   };
+
+  useEffect(() => {
+    handleSearchValueChange('');
+  }, [handleSearchValueChange]);
 
   useEffect(() => {
     setSearchBlockList([...latestSearchList]);

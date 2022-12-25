@@ -38,7 +38,6 @@ const useStyles = makeStyles(() => ({
   searchBox: {
     flexGrow: 1,
     height: '100%',
-    cursor: 'pointer',
   },
   lottie: {
     position: 'fixed',
@@ -87,6 +86,7 @@ const Main = observer(() => {
           latestSearchList={latestList}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
+          handleSearchValueChange={handleSearchValueChange}
         />
       ) : (
         <SuggestData
@@ -107,6 +107,7 @@ const Main = observer(() => {
         latestSearchList={latestList}
         handleWordClick={handleWordClick}
         handleLatestListChange={handleLatestListChange}
+        handleSearchValueChange={handleSearchValueChange}
       />
     );
   };
@@ -190,6 +191,14 @@ const Main = observer(() => {
   }, [location.search]);
 
   useEffect(() => {
+    if (searchValue.length === 0 || location.search.length === 0) {
+      const htmlTitle = document.querySelector('title');
+      if (!htmlTitle) return;
+      htmlTitle.innerHTML = '와글와글';
+    }
+  }, [searchValue, location.search]);
+
+  useEffect(() => {
     if (!ErrorStore.statusCode) return;
     navigate(ErrorStore.statusCode === 404 ? '/not-found' : '/error');
   }, [ErrorStore.statusCode, navigate]);
@@ -204,7 +213,7 @@ const Main = observer(() => {
       <div className={classes.wrap}>
         <div className={classes.search}>
           <img src={logo} alt='logo' onClick={navigateToHome} />
-          <div className={classes.searchBox} onClick={handleSearchClick} />
+          <div className={classes.searchBox} />
           <img src={searchIcon} alt='search' onClick={handleSearchClick} />
         </div>
         <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
@@ -216,7 +225,11 @@ const Main = observer(() => {
               <SearchInput
                 searchValue={searchValue}
                 handleSearchEnter={handleSearchEnter}
-                handleDrawerClose={onDrawerClose}
+                handleDrawerClose={
+                  searchValue.length === 0 || !LocationStore.suggestionExists
+                    ? onDrawerClose
+                    : handleSearchClick
+                }
                 handleSearchValueChange={handleSearchValueChange}
               />
             ) : undefined

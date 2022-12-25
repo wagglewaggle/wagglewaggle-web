@@ -1,6 +1,5 @@
-import { IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import CloseIcon from '@mui/icons-material/Close';
+import CustomCloseIcon from './CustomCloseIcon';
 import { palette } from 'constants/';
 
 const useStyles = makeStyles(() => ({
@@ -74,6 +73,10 @@ const SearchBlock = (props: propsType) => {
     handleWordClick(word);
   };
 
+  const handleIconClick = (list: string) => {
+    onClickRemoveOne(list);
+  };
+
   return (
     <div className={classes.subComponent}>
       <div className={classes.header}>
@@ -90,25 +93,7 @@ const SearchBlock = (props: propsType) => {
             <div className={classes.list} onClick={() => handleListClick(list)}>
               {list}
             </div>
-            <IconButton
-              sx={{
-                padding: 0,
-                marginLeft: '5px',
-                width: '16px',
-                height: '16px',
-                backgroundColor: palette.grey[600],
-              }}
-              disableRipple
-              onClick={() => onClickRemoveOne(list)}
-            >
-              <CloseIcon
-                sx={{
-                  width: '11px',
-                  height: '11px',
-                  color: palette.black,
-                }}
-              />
-            </IconButton>
+            <CustomCloseIcon handleIconClick={() => handleIconClick(list)} />
           </div>
         ))
       ) : (

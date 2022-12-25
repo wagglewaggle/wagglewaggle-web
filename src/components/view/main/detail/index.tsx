@@ -69,6 +69,14 @@ const Detail = observer(() => {
   }, [LocationStore, location.search]);
 
   useEffect(() => {
+    if (location.search.length === 0) return;
+    const placeName: string = decodeURI(location.search.split('&')[1].replace('place-name=', ''));
+    const htmlTitle = document.querySelector('title');
+    if (!htmlTitle) return;
+    htmlTitle.innerHTML = `${locationNames[placeName] || placeName} : 와글와글 장소`;
+  }, [location.search]);
+
+  useEffect(() => {
     initLocationData();
   }, [initLocationData, LocationStore.placeName]);
 
