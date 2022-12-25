@@ -145,6 +145,10 @@ const ResultData = observer((props: propsType) => {
       newSearchedList.push(searchWord);
     }
     localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newSearchedList));
+
+    const htmlTitle = document.querySelector('title');
+    if (!htmlTitle) return;
+    htmlTitle.innerHTML = `${searchWord} : 와글와글 검색`;
   }, [searchWord]);
 
   useEffect(() => {

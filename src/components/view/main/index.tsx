@@ -190,6 +190,14 @@ const Main = observer(() => {
   }, [location.search]);
 
   useEffect(() => {
+    if (searchValue.length === 0 || location.search.length === 0) {
+      const htmlTitle = document.querySelector('title');
+      if (!htmlTitle) return;
+      htmlTitle.innerHTML = '와글와글';
+    }
+  }, [searchValue, location.search]);
+
+  useEffect(() => {
     if (!ErrorStore.statusCode) return;
     navigate(ErrorStore.statusCode === 404 ? '/not-found' : '/error');
   }, [ErrorStore.statusCode, navigate]);
