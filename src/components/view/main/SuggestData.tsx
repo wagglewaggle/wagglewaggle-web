@@ -66,14 +66,12 @@ const useStyles = makeStyles(() => ({
 interface propsType {
   placeData: placeDataType[];
   searchValue: string;
-  latestSearchList: string[];
   handleWordClick: (searchWord: string) => void;
   handleLatestListChange: (newList: string[]) => void;
 }
 
 const SuggestData = observer((props: propsType) => {
-  const { placeData, searchValue, latestSearchList, handleWordClick, handleLatestListChange } =
-    props;
+  const { placeData, searchValue, handleWordClick, handleLatestListChange } = props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
@@ -112,12 +110,13 @@ const SuggestData = observer((props: propsType) => {
   }, [placeData, searchValue, LocationStore]);
 
   useEffect(() => {
-    setSearchBlockList([...latestSearchList]);
-  }, [latestSearchList]);
-
-  useEffect(() => {
     getSuggestionList();
   }, [searchValue, getSuggestionList]);
+
+  useEffect(() => {
+    setSearchBlockList(JSON.parse(localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
 
   return (
     <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>

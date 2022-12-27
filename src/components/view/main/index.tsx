@@ -56,7 +56,6 @@ const Main = observer(() => {
   const [placeData, setPlaceData] = useState<placeDataType[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
-  const [latestList, setLatestList] = useState<string[]>([]);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
   const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
@@ -65,7 +64,6 @@ const Main = observer(() => {
   const location = useLocation();
 
   const handleLatestListChange = (newList: string[]) => {
-    setLatestList(newList);
     localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
   };
 
@@ -83,7 +81,6 @@ const Main = observer(() => {
     setCurrentPage(
       newValue.length === 0 ? (
         <SearchData
-          latestSearchList={latestList}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
           handleSearchValueChange={handleSearchValueChange}
@@ -92,7 +89,6 @@ const Main = observer(() => {
         <SuggestData
           placeData={placeData}
           searchValue={newValue}
-          latestSearchList={latestList}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
         />
@@ -104,7 +100,6 @@ const Main = observer(() => {
     setOpenDrawer(true);
     setCurrentPage(
       <SearchData
-        latestSearchList={latestList}
         handleWordClick={handleWordClick}
         handleLatestListChange={handleLatestListChange}
         handleSearchValueChange={handleSearchValueChange}
@@ -202,11 +197,6 @@ const Main = observer(() => {
     if (!ErrorStore.statusCode) return;
     navigate(ErrorStore.statusCode === 404 ? '/not-found' : '/error');
   }, [ErrorStore.statusCode, navigate]);
-
-  useEffect(() => {
-    setLatestList(JSON.parse(localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
 
   return (
     <Fragment>
