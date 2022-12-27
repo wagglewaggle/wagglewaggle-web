@@ -54,23 +54,24 @@ const Detail = observer(() => {
 
   const initLocationData = useCallback(async () => {
     if (location.search.length === 0) return;
-    const placeName: string = decodeURI(location.search.split('&')[1].replace('place-name=', ''));
+    const placeName: string = decodeURI(location.search).replace('?name=', '');
     LocationStore.setPlaceName(placeName);
     const requestType: string = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName
     )
       ? 'skt-place'
       : 'kt-place';
+    const pathnameArr: string[] = location.pathname.split('/');
     const response: { data: locationDataType } | undefined = await axiosRequest(
-      `${requestType}/${location.search.split('&')[0].replace('?place-id=', '')}`
+      `${requestType}/${pathnameArr[pathnameArr.length - 1]}`
     );
     if (!response) return;
     setLocationData(response.data);
-  }, [LocationStore, location.search]);
+  }, [LocationStore, location.pathname, location.search]);
 
   useEffect(() => {
     if (location.search.length === 0) return;
-    const placeName: string = decodeURI(location.search.split('&')[1].replace('place-name=', ''));
+    const placeName: string = decodeURI(location.search).replace('?name=', '');
     const htmlTitle = document.querySelector('title');
     if (!htmlTitle) return;
     htmlTitle.innerHTML = `${locationNames[placeName] || placeName} : 와글와글 장소`;
