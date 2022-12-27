@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
     height: 26,
     color: palette.white,
     fontSize: 14,
-    fontWeight: 600,
+    fontWeight: 400,
     cursor: 'pointer',
     overflow: 'hidden',
     textOverflow: 'ellipsis',

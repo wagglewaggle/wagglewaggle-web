@@ -21,9 +21,9 @@ const useStyles = makeStyles(() => ({
     gap: 8,
     color: palette.white,
     cursor: 'pointer',
-    '& svg': {
-      width: 24,
-      height: 24,
+    '& path': {
+      width: 17,
+      height: 17,
     },
   },
   list: {
@@ -32,7 +32,7 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
     height: 24,
     fontSize: 14,
-    fontWeight: 400,
+    fontWeight: 600,
     whiteSpace: 'pre-wrap',
   },
   includedPart: {

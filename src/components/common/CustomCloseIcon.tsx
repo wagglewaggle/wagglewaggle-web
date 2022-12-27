@@ -1,6 +1,6 @@
 import { IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { palette } from 'constants/';
+import { ReactComponent as DeleteIcon } from 'assets/icons/delete-icon.svg';
 
 interface propsType {
   handleIconClick: () => void;
@@ -13,21 +13,18 @@ const CustomCloseIcon = (props: propsType) => {
     <IconButton
       sx={{
         padding: 0,
-        marginLeft: '5px',
-        width: '16px',
-        height: '16px',
+        width: '20px',
+        height: '20px',
         backgroundColor: palette.grey[600],
+        '& path': {
+          width: '16.67px',
+          height: '16.67px',
+        },
       }}
       disableRipple
       onClick={handleIconClick}
     >
-      <CloseIcon
-        sx={{
-          width: '11px',
-          height: '11px',
-          color: palette.black,
-        }}
-      />
+      <DeleteIcon />
     </IconButton>
   );
 };

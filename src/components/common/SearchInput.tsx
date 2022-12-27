@@ -3,20 +3,23 @@ import { Box, TextField, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CustomCloseIcon from './CustomCloseIcon';
 import { palette } from 'constants/';
-import leftArrowIcon from 'assets/icons/left-icon.svg';
+import { ReactComponent as LeftArrowIcon } from 'assets/icons/left-icon.svg';
 
 const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    borderBottom: `1px solid ${palette.grey[600]}`,
     padding: '12px 24px',
     width: 'calc(100% - 48px)',
     height: 32,
   },
-  logo: {
-    width: 56,
-    height: 32,
+  leftIcon: {
+    '& path': {
+      width: 12.16,
+      height: 20.55,
+    },
   },
   input: {
     display: 'flex',
@@ -30,13 +33,15 @@ const useStyles = makeStyles(() => ({
       fontSize: 14,
       fontWeight: 400,
     },
+    '& input::placeholder': {
+      color: palette.grey[400],
+      fontSize: 14,
+      fontWeight: 400,
+      lineHeight: '20px',
+      opacity: 1,
+    },
     '& fieldset': {
       display: 'none',
-    },
-    '& svg': {
-      width: 29,
-      height: 29,
-      color: palette.white,
     },
   },
 }));
@@ -73,7 +78,7 @@ const SearchInput = (props: propsType) => {
   return (
     <Box className={classes.wrap}>
       <IconButton onClick={handleArrowLeftClick} sx={{ padding: 0 }}>
-        <img src={leftArrowIcon} alt='left-arrow' />
+        <LeftArrowIcon className={classes.leftIcon} />
       </IconButton>
       <TextField
         className={classes.input}
