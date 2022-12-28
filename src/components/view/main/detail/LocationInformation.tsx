@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { IconButton } from '@mui/material';
+import { observer } from 'mobx-react';
+import { Box, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { palette, geometry, urlPaths, locationNames, locationRequestTypes } from 'constants/';
 import { locationDataType } from 'types/typeBundle';
+import { useStore } from 'stores';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
 import exclamationIcon from 'assets/icons/exclamation-icon.svg';
 
@@ -23,12 +25,10 @@ const useStyles = makeStyles(() => ({
   mapWrap: {
     display: 'flex',
     flexDirection: 'column',
-    border: '1px solid transparent',
     borderRadius: 4,
     margin: 24,
     width: '100%',
     height: 212,
-    backgroundColor: palette.grey[600],
   },
   map: {
     borderTopLeftRadius: 4,
@@ -51,12 +51,7 @@ const useStyles = makeStyles(() => ({
     lineHeight: '20px',
   },
   name: {
-    color: palette.white,
     fontWeight: 600,
-  },
-  address: {
-    color: palette.grey[400],
-    fontWeight: 400,
   },
   navigationIcon: {
     width: 16,
@@ -67,7 +62,6 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'flex-start',
     alignItems: 'center',
     width: '100%',
-    color: palette.grey[400],
     fontSize: 12,
     fontWeight: 500,
     gap: 4,
@@ -84,12 +78,14 @@ interface propsType {
   locationData: locationDataType | null;
 }
 
-const LocationInformation = (props: propsType) => {
+const LocationInformation = observer((props: propsType) => {
   const { locationData } = props;
   const [locationAddress, setLocationAddress] = useState<string | null>(null);
   const [appearMapInfo, setAppearMapInfo] = useState<boolean>(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const classes = useStyles();
+  const { ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const processGeometryCoordinates = (
     coordinates: [number, number][][],
@@ -185,30 +181,63 @@ const LocationInformation = (props: propsType) => {
   }, [locationData, getKakaoMap]);
 
   return (
-    <div className={classes.wrap}>
+    <Box
+      className={classes.wrap}
+      sx={{
+        backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+        '& path': {
+          fill: isDarkTheme ? palette.white : palette.black,
+        },
+      }}
+    >
       <div className={classes.header}>위치 정보</div>
-      <div className={classes.mapWrap}>
+      <Box
+        className={classes.mapWrap}
+        sx={{
+          backgroundColor: palette.grey[isDarkTheme ? 600 : 100],
+        }}
+      >
         <div className={classes.map} ref={mapRef} />
         <div className={classes.description} onClick={handleNavigationClick}>
           <div className={classes.textArea}>
             <div className={classes.name}>
               {locationNames[locationData?.name || ''] || locationData?.name}
             </div>
-            <div className={classes.address}>{locationAddress || ''}</div>
+            <Box
+              sx={{
+                color: palette.grey[isDarkTheme ? 400 : 500],
+                fontWeight: 400,
+              }}
+            >
+              {locationAddress || ''}
+            </Box>
           </div>
-          <IconButton sx={{ border: `1px solid ${palette.white}`, padding: '3px' }}>
+          <IconButton
+            sx={{
+              border: `1px solid ${isDarkTheme ? palette.white : palette.black}`,
+              padding: '3px',
+              '& img': {
+                filter: isDarkTheme ? 'none' : 'invert(1)',
+              },
+            }}
+          >
             <img className={classes.navigationIcon} src={navigationIcon} alt='navigation' />
           </IconButton>
         </div>
-      </div>
+      </Box>
       {appearMapInfo && (
-        <div className={classes.infoWrap}>
+        <Box
+          className={classes.infoWrap}
+          sx={{
+            color: palette.grey[isDarkTheme ? 400 : 500],
+          }}
+        >
           <img src={exclamationIcon} alt='exclamation' />
           장소 혼잡도는 보라색으로 표시된 영역까지만 통계되었습니다.
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
-};
+});
 
 export default LocationInformation;

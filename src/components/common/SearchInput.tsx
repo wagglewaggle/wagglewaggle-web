@@ -3,6 +3,7 @@ import { Box, TextField, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CustomCloseIcon from './CustomCloseIcon';
 import { palette } from 'constants/';
+import { useStore } from 'stores';
 import { ReactComponent as LeftArrowIcon } from 'assets/icons/left-icon.svg';
 
 const useStyles = makeStyles(() => ({
@@ -10,7 +11,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottom: `1px solid ${palette.grey[600]}`,
     padding: '12px 24px',
     width: 'calc(100% - 48px)',
     height: 32,
@@ -29,12 +29,10 @@ const useStyles = makeStyles(() => ({
     height: 48,
     '& input': {
       padding: '12.5px 0 12.5px 14px',
-      color: palette.white,
       fontSize: 14,
       fontWeight: 400,
     },
     '& input::placeholder': {
-      color: palette.grey[400],
       fontSize: 14,
       fontWeight: 400,
       lineHeight: '20px',
@@ -56,6 +54,8 @@ interface propsType {
 const SearchInput = (props: propsType) => {
   const { searchValue, handleSearchEnter, handleDrawerClose, handleSearchValueChange } = props;
   const classes = useStyles();
+  const { ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleArrowLeftClick = () => {
     handleDrawerClose();
@@ -76,8 +76,21 @@ const SearchInput = (props: propsType) => {
   };
 
   return (
-    <Box className={classes.wrap}>
-      <IconButton onClick={handleArrowLeftClick} sx={{ padding: 0 }}>
+    <Box
+      className={classes.wrap}
+      sx={{
+        borderBottom: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
+      }}
+    >
+      <IconButton
+        onClick={handleArrowLeftClick}
+        sx={{
+          padding: 0,
+          '& path': {
+            fill: isDarkTheme ? palette.white : palette.black,
+          },
+        }}
+      >
         <LeftArrowIcon className={classes.leftIcon} />
       </IconButton>
       <TextField
@@ -88,6 +101,11 @@ const SearchInput = (props: propsType) => {
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}
         placeholder="'강남역'를 입력해보세요"
+        sx={{
+          '& ::placeholder': {
+            color: palette.grey[isDarkTheme ? 400 : 500],
+          },
+        }}
       />
       {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
     </Box>

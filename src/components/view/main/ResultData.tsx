@@ -16,7 +16,6 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: '5px 24px 35px',
-    color: palette.white,
   },
   emptyImg: {
     margin: '40px 0 24px',
@@ -29,7 +28,6 @@ const useStyles = makeStyles(() => ({
   },
   emptySuggestion: {
     margin: '8px 0 64px',
-    color: palette.grey[400],
     fontSize: 14,
     fontWeight: 400,
   },
@@ -81,7 +79,8 @@ const ResultData = observer((props: propsType) => {
   const [relatedData, setRelatedData] = useState<placeDataType[]>([]);
   const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
-  const { ScreenSizeStore } = useStore().MobxStore;
+  const { ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const WRAP_BOX_STYLE: { width: number } = {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth - 48 : 352,
   };
@@ -163,7 +162,14 @@ const ResultData = observer((props: propsType) => {
             <div className={classes.lottie} ref={lottieContainer} />
           </div>
           <div className={classes.emptyComment}>검색 결과가 없어요.</div>
-          <span className={classes.emptySuggestion}>다른 장소를 검색해보세요.</span>
+          <Box
+            className={classes.emptySuggestion}
+            sx={{
+              color: palette.grey[isDarkTheme ? 400 : 500],
+            }}
+          >
+            다른 장소를 검색해보세요.
+          </Box>
         </Fragment>
       ) : (
         <Fragment>

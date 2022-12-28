@@ -20,7 +20,6 @@ const useStyles = makeStyles(() => ({
     marginBottom: 72,
     width: '100%',
     minHeight: 'calc(100vh - 72px)',
-    color: palette.white,
   },
   search: {
     display: 'flex',

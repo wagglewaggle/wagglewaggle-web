@@ -14,8 +14,8 @@ import MainLottie from 'assets/lottie/Main.json';
 import { placeDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import logo from 'assets/icons/logo-icon.svg';
-import searchIcon from 'assets/icons/search-icon.svg';
+import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
+import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -29,10 +29,14 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     padding: '0 24px',
     height: 56,
-    '& img': {
+    '& svg': {
+      width: 40,
+      height: 40,
+      cursor: 'pointer',
+    },
+    '& svg:last-of-type': {
       width: 32,
       height: 32,
-      cursor: 'pointer',
     },
   },
   searchBox: {
@@ -201,11 +205,11 @@ const Main = observer(() => {
   return (
     <Fragment>
       <div className={classes.wrap}>
-        <div className={classes.search}>
-          <img src={logo} alt='logo' onClick={navigateToHome} />
+        <Box className={classes.search} sx={{}}>
+          <Logo onClick={navigateToHome} />
           <div className={classes.searchBox} />
-          <img src={searchIcon} alt='search' onClick={handleSearchClick} />
-        </div>
+          <SearchIcon onClick={handleSearchClick} />
+        </Box>
         <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
         <CustomDrawer
           open={openDrawer}

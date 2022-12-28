@@ -16,10 +16,8 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'space-between',
     width: 191,
-    color: palette.white,
     '& button': {
       border: 'none',
-      color: palette.white,
       backgroundColor: 'transparent',
       cursor: 'pointer',
     },

@@ -1,17 +1,9 @@
 import { Fragment, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { Drawer } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { useStore } from 'stores';
 import { palette } from 'constants/';
-
-const useStyles = makeStyles(() => ({
-  wrap: {
-    '& .MuiPaper-root': {
-      backgroundColor: palette.grey[700],
-      overflowX: 'hidden',
-    },
-  },
-}));
 
 interface propsType {
   open: boolean;
@@ -20,11 +12,12 @@ interface propsType {
   onClose: () => void;
 }
 
-const CustomDrawer = (props: propsType) => {
+const CustomDrawer = observer((props: propsType) => {
   const { open, searchInput = <Fragment />, component, onClose } = props;
   const drawerRef = useRef<HTMLDivElement>(null);
-  const classes = useStyles();
+  const { ThemeStore } = useStore().MobxStore;
   const location = useLocation();
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   useEffect(() => {
     if (!drawerRef?.current?.childNodes) return;
@@ -34,7 +27,13 @@ const CustomDrawer = (props: propsType) => {
 
   return (
     <Drawer
-      className={classes.wrap}
+      sx={{
+        '& .MuiPaper-root': {
+          color: ThemeStore.theme === 'dark' ? palette.white : palette.black,
+          backgroundColor: palette.grey[ThemeStore.theme === 'dark' ? 800 : 200],
+          overflowX: 'hidden',
+        },
+      }}
       ref={drawerRef}
       open={open}
       anchor='right'
@@ -45,6 +44,6 @@ const CustomDrawer = (props: propsType) => {
       {component}
     </Drawer>
   );
-};
+});
 
 export default CustomDrawer;

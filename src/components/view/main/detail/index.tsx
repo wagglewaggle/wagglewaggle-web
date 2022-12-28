@@ -16,9 +16,6 @@ const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
     flexDirection: 'column',
-    marginBottom: 64,
-    color: palette.white,
-    backgroundColor: palette.grey[800],
   },
   veryUncrowded: {
     color: palette.blue,
@@ -41,9 +38,11 @@ const Detail = observer(() => {
   const [locationData, setLocationData] = useState<locationDataType | null>(null);
   const classes = useStyles();
   const location = useLocation();
-  const { ScreenSizeStore, CustomDialogStore, LocationStore } = useStore().MobxStore;
-  const BOX_STYLE: { width: number } = {
+  const { ScreenSizeStore, CustomDialogStore, LocationStore, ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const BOX_STYLE: { width: number; color: string } = {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 640,
+    color: isDarkTheme ? palette.white : palette.black,
   };
 
   const setAccidentLists = useCallback(() => {
@@ -91,6 +90,7 @@ const Detail = observer(() => {
       <DetailedCongestion locationData={locationData} initLocationData={initLocationData} />
       <LocationInformation locationData={locationData} />
       <RelatedLocations />
+      <Box sx={{ height: '64px', backgroundColor: isDarkTheme ? palette.black : palette.white }} />
     </Box>
   );
 });

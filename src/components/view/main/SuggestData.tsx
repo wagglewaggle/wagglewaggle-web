@@ -19,7 +19,6 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     padding: '14px 24px',
     gap: 8,
-    color: palette.white,
     cursor: 'pointer',
     '& path': {
       width: 17,
@@ -46,7 +45,6 @@ const useStyles = makeStyles(() => ({
   },
   title: {
     margin: '32px 20px 0',
-    color: palette.white,
     fontSize: 18,
     fontWeight: 600,
   },
@@ -57,7 +55,6 @@ const useStyles = makeStyles(() => ({
   },
   emptySuggestionWrap: {
     padding: '0 24px',
-    color: palette.grey[400],
     fontSize: 14,
     fontWeight: 400,
   },

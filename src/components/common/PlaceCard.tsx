@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
 import { symbols, locationNames } from 'constants/';
@@ -16,7 +17,6 @@ const useStyles = makeStyles(() => ({
     marginBottom: 8,
     width: 'calc(100% - 32px)',
     height: 'fit-content',
-    backgroundColor: palette.grey[600],
     cursor: 'pointer',
   },
   placeLeft: {
@@ -40,14 +40,12 @@ const useStyles = makeStyles(() => ({
     lineHeight: '20px',
   },
   placeName: {
-    color: palette.white,
     fontSize: 14,
     fontWeight: 600,
   },
   placeCategory: {
     fontSize: 14,
     fontWeight: 400,
-    color: palette.grey[400],
   },
   statusWrap: {
     display: 'flex',
@@ -66,9 +64,10 @@ const PlaceCard = (props: propsType) => {
   const [categories, setCategories] = useState<string>('');
   const [symbol, setSymbol] = useState<string>('');
   const classes = useStyles();
-  const { LocationStore } = useStore().MobxStore;
+  const { LocationStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handlePlaceCardClick = () => {
     LocationStore.setPlaceName(place.name);
@@ -97,7 +96,13 @@ const PlaceCard = (props: propsType) => {
   }, [primaryCategories, place.categories]);
 
   return (
-    <div className={classes.placeCard} onClick={handlePlaceCardClick}>
+    <Box
+      className={classes.placeCard}
+      onClick={handlePlaceCardClick}
+      sx={{
+        backgroundColor: palette.grey[isDarkTheme ? 600 : 100],
+      }}
+    >
       <div className={classes.placeLeft}>
         <div className={classes.placeImage}>
           <img src={symbols[symbol]} alt='category-symbol' />
@@ -106,13 +111,18 @@ const PlaceCard = (props: propsType) => {
           <span className={classes.placeName}>
             {locationNames[place?.name || ''] || place?.name}
           </span>
-          <span className={classes.placeCategory}>{categories}</span>
+          <Box
+            className={classes.placeCategory}
+            sx={{ color: palette.grey[isDarkTheme ? 400 : 500] }}
+          >
+            {categories}
+          </Box>
         </div>
       </div>
       <div className={classes.statusWrap}>
         <PlaceStatus status={place.populations[0].level} />
       </div>
-    </div>
+    </Box>
   );
 };
 
