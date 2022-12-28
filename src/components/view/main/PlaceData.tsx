@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Box, Select, MenuItem, SelectChangeEvent, Theme } from '@mui/material';
+import { Box, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard, Footer } from 'components/common';

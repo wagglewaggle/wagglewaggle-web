@@ -34,6 +34,7 @@ const App = observer(() => {
   const classes = useStyles();
   const { ScreenSizeStore, ThemeStore } = MobxStore;
   const { ref, width } = useResizeObserver();
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const disableIosInputAutoZoom = () => {
     const metaEl = document.querySelector('meta[name=viewport]');
@@ -62,10 +63,10 @@ const App = observer(() => {
     <Box
       className={classes.wrap}
       sx={{
-        color: ThemeStore.theme === 'dark' ? palette.white : palette.black,
-        backgroundColor: ThemeStore.theme === 'dark' ? palette.grey[800] : palette.white,
+        color: isDarkTheme ? palette.white : palette.black,
+        backgroundColor: isDarkTheme ? palette.grey[800] : palette.white,
         '& path': {
-          fill: ThemeStore.theme === 'dark' ? palette.white : palette.black,
+          fill: isDarkTheme ? palette.white : palette.black,
         },
       }}
     >

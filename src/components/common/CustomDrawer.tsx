@@ -29,8 +29,8 @@ const CustomDrawer = observer((props: propsType) => {
     <Drawer
       sx={{
         '& .MuiPaper-root': {
-          color: ThemeStore.theme === 'dark' ? palette.white : palette.black,
-          backgroundColor: palette.grey[ThemeStore.theme === 'dark' ? 800 : 200],
+          color: isDarkTheme ? palette.white : palette.black,
+          backgroundColor: palette.grey[isDarkTheme ? 800 : 200],
           overflowX: 'hidden',
         },
       }}

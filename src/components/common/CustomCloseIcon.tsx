@@ -1,5 +1,4 @@
 import { IconButton } from '@mui/material';
-import { palette } from 'constants/';
 import { useStore } from 'stores';
 import { ReactComponent as DarkDeleteIcon } from 'assets/icons/delete-dark-icon.svg';
 import { ReactComponent as LightDeleteIcon } from 'assets/icons/delete-light-icon.svg';

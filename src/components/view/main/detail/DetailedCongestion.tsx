@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Box, Button, IconButton, Divider } from '@mui/material';
+import { Box, Button, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
