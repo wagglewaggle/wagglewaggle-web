@@ -92,8 +92,6 @@ const useStyles = makeStyles(() => ({
       alignItems: 'center',
       width: 144,
       height: 'auto',
-      color: palette.grey[400],
-      backgroundColor: palette.grey[700],
     },
   },
   placesWrap: {
@@ -206,6 +204,10 @@ const PlaceData = observer((props: propsType) => {
           MenuProps={{
             classes: { root: classes.menu },
             sx: {
+              '& .MuiPaper-root': {
+                color: palette.grey[isDarkTheme ? 400 : 500],
+                backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+              },
               '& .Mui-selected': {
                 color: isDarkTheme ? palette.white : palette.black,
                 backgroundColor: 'transparent !important',
