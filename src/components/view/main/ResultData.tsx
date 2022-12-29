@@ -88,7 +88,7 @@ const ResultData = observer((props: propsType) => {
   const getSuggestionList = useCallback(async () => {
     setResultData(
       placeData.filter((data: placeDataType) =>
-        (locationNames[data.name] || data.name).startsWith(searchWord)
+        (locationNames[data.name] || data.name).includes(searchWord)
       )
     );
   }, [placeData, searchWord]);
