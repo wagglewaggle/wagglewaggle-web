@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { palette } from 'constants/';
+import { useStore } from 'stores';
 import linkCheckIcon from 'assets/icons/link-check-icon.svg';
 
 const useStyles = makeStyles(() => ({
@@ -54,6 +56,8 @@ const Footer = () => {
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
   const classes = useStyles();
+  const { ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleContactUsClick = () => {
     window.open('https://forms.gle/AcsYE7WzCkQQwisP7', '_blank');
@@ -72,10 +76,13 @@ const Footer = () => {
 
   return (
     <footer className={classes.footer}>
-      <div className={classes.buttons}>
+      <Box
+        className={classes.buttons}
+        sx={{ '& button': { color: isDarkTheme ? palette.white : palette.black } }}
+      >
         <button onClick={handleContactUsClick}>Contact Us</button>|
         <button onClick={handleShareLinkClick}>Share Link</button>
-      </div>
+      </Box>
       {linkCopied ? (
         <div className={classes.linkCopyPopup}>
           <img src={linkCheckIcon} alt='link-copy-check' />
