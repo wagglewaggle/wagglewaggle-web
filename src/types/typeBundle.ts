@@ -66,3 +66,15 @@ export interface locationDataType {
 export type statusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
 
 export type screenType = 'mobile' | 'tablet' | 'pc';
+
+export type bgType =
+  | 'AmusementPark'
+  | 'Department'
+  | 'GwangHwa'
+  | 'HanRiver'
+  | 'Namsan'
+  | 'Palace'
+  | 'Park'
+  | 'Street'
+  | 'Subway'
+  | 'Tradition';
