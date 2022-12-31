@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
@@ -59,7 +60,7 @@ interface propsType {
   place: placeDataType;
 }
 
-const PlaceCard = (props: propsType) => {
+const PlaceCard = observer((props: propsType) => {
   const { place } = props;
   const [categories, setCategories] = useState<string>('');
   const [symbol, setSymbol] = useState<string>('');
@@ -124,6 +125,6 @@ const PlaceCard = (props: propsType) => {
       </div>
     </Box>
   );
-};
+});
 
 export default PlaceCard;

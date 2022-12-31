@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react';
 import makeStyles from '@mui/styles/makeStyles';
 import { Box } from '@mui/material';
 import CustomCloseIcon from './CustomCloseIcon';
@@ -63,7 +64,7 @@ interface propsType {
   handleWordClick: (searchWord: string) => void;
 }
 
-const SearchBlock = (props: propsType) => {
+const SearchBlock = observer((props: propsType) => {
   const { title, blockList, onClickRemoveAll, onClickRemoveOne, handleWordClick } = props;
   const classes = useStyles();
   const { ThemeStore } = useStore().MobxStore;
@@ -106,6 +107,6 @@ const SearchBlock = (props: propsType) => {
       )}
     </div>
   );
-};
+});
 
 export default SearchBlock;

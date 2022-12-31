@@ -130,7 +130,7 @@ interface titlePropsType {
   dialogWidth: number;
 }
 
-const TitlePart = (props: titlePropsType) => {
+const TitlePart = observer((props: titlePropsType) => {
   const { variant, dialogWidth } = props;
   const classes = useStyles();
   const { ThemeStore } = useStore().MobxStore;
@@ -149,7 +149,7 @@ const TitlePart = (props: titlePropsType) => {
       {variant === 'accident' && <img className={classes.icon} src={accidentIcon} alt='accident' />}
     </DialogTitle>
   );
-};
+});
 
 const IntroContent = () => {
   const classes = useStyles();
@@ -171,7 +171,7 @@ const IntroContent = () => {
   );
 };
 
-const AccidentContent = () => {
+const AccidentContent = observer(() => {
   const classes = useStyles();
   const { CustomDialogStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -195,7 +195,7 @@ const AccidentContent = () => {
       ))}
     </Fragment>
   );
-};
+});
 
 const CctvContent = observer(() => {
   const [cctvIdx, setCctvIdx] = useState<number>(0);

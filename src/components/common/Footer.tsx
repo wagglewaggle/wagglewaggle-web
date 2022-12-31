@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { observer } from 'mobx-react';
 import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { palette } from 'constants/';
@@ -52,7 +53,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Footer = () => {
+const Footer = observer(() => {
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
   const classes = useStyles();
@@ -99,6 +100,6 @@ const Footer = () => {
       />
     </footer>
   );
-};
+});
 
 export default Footer;

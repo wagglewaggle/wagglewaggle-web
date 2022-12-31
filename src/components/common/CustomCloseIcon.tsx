@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react';
 import { IconButton } from '@mui/material';
 import { useStore } from 'stores';
 import { ReactComponent as DarkDeleteIcon } from 'assets/icons/delete-dark-icon.svg';
@@ -7,7 +8,7 @@ interface propsType {
   handleIconClick: () => void;
 }
 
-const CustomCloseIcon = (props: propsType) => {
+const CustomCloseIcon = observer((props: propsType) => {
   const { handleIconClick } = props;
   const { ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -29,6 +30,6 @@ const CustomCloseIcon = (props: propsType) => {
       {isDarkTheme ? <DarkDeleteIcon /> : <LightDeleteIcon />}
     </IconButton>
   );
-};
+});
 
 export default CustomCloseIcon;

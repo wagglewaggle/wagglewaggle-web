@@ -1,4 +1,5 @@
 import { ChangeEvent, KeyboardEvent } from 'react';
+import { observer } from 'mobx-react';
 import { Box, TextField, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CustomCloseIcon from './CustomCloseIcon';
@@ -51,7 +52,7 @@ interface propsType {
   handleSearchValueChange: (newValue: string) => void;
 }
 
-const SearchInput = (props: propsType) => {
+const SearchInput = observer((props: propsType) => {
   const { searchValue, handleSearchEnter, handleDrawerClose, handleSearchValueChange } = props;
   const classes = useStyles();
   const { ThemeStore } = useStore().MobxStore;
@@ -110,6 +111,6 @@ const SearchInput = (props: propsType) => {
       {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
     </Box>
   );
-};
+});
 
 export default SearchInput;
