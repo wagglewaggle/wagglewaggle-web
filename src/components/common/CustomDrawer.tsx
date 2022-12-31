@@ -30,7 +30,11 @@ const CustomDrawer = observer((props: propsType) => {
       sx={{
         '& .MuiPaper-root': {
           color: isDarkTheme ? palette.white : palette.black,
-          backgroundColor: isDarkTheme ? palette.grey[800] : palette.white,
+          backgroundColor: isDarkTheme
+            ? palette.grey[800]
+            : location.search === ''
+            ? palette.white
+            : palette.grey[200],
           overflowX: 'hidden',
         },
       }}

@@ -284,6 +284,7 @@ const CustomDialog = observer(() => {
 
   useEffect(() => {
     if (!lottieContainer.current) return;
+    lottie.destroy();
     lottie.loadAnimation({
       container: lottieContainer.current,
       renderer: 'svg',

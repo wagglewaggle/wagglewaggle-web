@@ -117,7 +117,6 @@ const PlaceData = observer((props: propsType) => {
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const CHIPS: string[] = [
     '전체',
-    '크리스마스 핫플',
     '쇼핑몰',
     '공원',
     '골목 및 거리',
@@ -217,6 +216,9 @@ const PlaceData = observer((props: propsType) => {
           IconComponent={(props) => <DownIcon {...props} />}
           sx={{
             color: isDarkTheme ? palette.white : palette.black,
+            '& path': {
+              fill: isDarkTheme ? palette.white : palette.black,
+            },
           }}
         >
           {['복잡한 순', '여유로운 순'].map((menu: string, idx: number) => (
