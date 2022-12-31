@@ -42,10 +42,8 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     maxWidth: 400,
     lineHeight: '20px',
-    color: palette.black,
     fontSize: 14,
     fontWeight: 600,
-    backgroundColor: palette.white,
     gap: 8,
   },
   linkRef: {
@@ -85,10 +83,16 @@ const Footer = observer(() => {
         <button onClick={handleShareLinkClick}>Share Link</button>
       </Box>
       {linkCopied ? (
-        <div className={classes.linkCopyPopup}>
+        <Box
+          className={classes.linkCopyPopup}
+          sx={{
+            color: isDarkTheme ? palette.black : palette.white,
+            backgroundColor: isDarkTheme ? palette.white : palette.black,
+          }}
+        >
           <img src={linkCheckIcon} alt='link-copy-check' />
           링크가 복사되었습니다.
-        </div>
+        </Box>
       ) : (
         <div className={classes.teamName}>© 2022 Team EXIT</div>
       )}
