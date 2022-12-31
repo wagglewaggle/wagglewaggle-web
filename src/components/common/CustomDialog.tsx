@@ -15,23 +15,9 @@ import rightIcon from 'assets/icons/right-icon.svg';
 const useStyles = makeStyles(() => ({
   wrap: {
     '& .MuiPaper-root': {
-      borderRadius: 8,
       height: 492,
       backgroundColor: 'transparent',
       boxShadow: 'none',
-    },
-    '& ::-webkit-scrollbar': {
-      color: palette.grey[500],
-      background: palette.grey[700],
-      width: 10,
-    },
-    '& ::-webkit-scrollbar-thumb': {
-      borderLeft: '2px solid transparent',
-      boxShadow: `inset 0 0 10px 10px ${palette.grey[700]}`,
-      background: palette.grey[500],
-    },
-    '& ::-webkit-scrollbar-track': {
-      background: palette.grey[700],
     },
   },
   closeButtonWrap: {
@@ -46,6 +32,11 @@ const useStyles = makeStyles(() => ({
       height: '32px',
     },
   },
+  dialogPart: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  },
   icon: {
     width: 48,
     height: 48,
@@ -53,10 +44,12 @@ const useStyles = makeStyles(() => ({
   header: {
     display: 'flex',
     alignItems: 'center',
+    position: 'relative',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     fontSize: 18,
     fontWeight: 600,
+    zIndex: 2,
   },
   type: {
     marginBottom: 8,
@@ -75,8 +68,10 @@ const useStyles = makeStyles(() => ({
     lineHeight: '20px',
   },
   content: {
+    position: 'relative',
     fontSize: 14,
     fontWeight: 400,
+    zIndex: 2,
   },
   cctvWrap: {
     display: 'flex',
@@ -116,11 +111,10 @@ const useStyles = makeStyles(() => ({
   lottie: {
     position: 'absolute',
     bottom: 0,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
+    borderRadius: 8,
     width: '100%',
     height: 'calc(100% - 48px)',
-    zIndex: 10000,
+    zIndex: 1,
     overflow: 'hidden',
   },
 }));
@@ -130,11 +124,9 @@ interface titlePropsType {
   dialogWidth: number;
 }
 
-const TitlePart = observer((props: titlePropsType) => {
+const TitlePart = (props: titlePropsType) => {
   const { variant, dialogWidth } = props;
   const classes = useStyles();
-  const { ThemeStore } = useStore().MobxStore;
-  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   return (
     <DialogTitle
@@ -142,14 +134,13 @@ const TitlePart = observer((props: titlePropsType) => {
       sx={{
         padding: variant !== 'cctv' ? '36px 28px' : 'auto',
         width: `${dialogWidth - 48}px`,
-        backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
       }}
     >
       {variant === 'intro' && <img className={classes.icon} src={logo} alt='logo' />}
       {variant === 'accident' && <img className={classes.icon} src={accidentIcon} alt='accident' />}
     </DialogTitle>
   );
-});
+};
 
 const IntroContent = () => {
   const classes = useStyles();
@@ -323,6 +314,7 @@ const CustomDialog = observer(() => {
       className={classes.wrap}
       sx={{
         '& .MuiPaper-root': {
+          overflow: 'hidden',
           maxHeight: `${
             dialogHeight -
             (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'intro'
@@ -339,8 +331,23 @@ const CustomDialog = observer(() => {
               ? 56
               : 40)
           }px`,
+          height: CustomDialogStore.variant === 'cctv' ? 'fit-content' : 'skip',
+          overflow: 'auto',
           '& img': {
             filter: isDarkTheme ? 'none' : 'invert(1)',
+          },
+          '&::-webkit-scrollbar': {
+            width: '10px',
+            color: palette.grey[isDarkTheme ? 500 : 300],
+            background: isDarkTheme ? palette.grey[700] : palette.white,
+          },
+          '&::-webkit-scrollbar-thumb': {
+            borderLeft: '2px solid transparent',
+            boxShadow: `inset 0 0 10px 10px ${isDarkTheme ? palette.grey[700] : palette.white}`,
+            background: palette.grey[isDarkTheme ? 500 : 300],
+          },
+          '&::-webkit-scrollbar-track': {
+            background: isDarkTheme ? palette.grey[700] : palette.white,
           },
         },
       }}
@@ -355,42 +362,48 @@ const CustomDialog = observer(() => {
           <img src={closeIcon} alt='close' />
         </IconButton>
       </Box>
-      <TitlePart
-        variant={CustomDialogStore.variant}
-        dialogWidth={dialogWidth - (CustomDialogStore.variant === 'intro' ? 16 : 0)}
-      />
-      <DialogContent
-        className={classes.content}
+      <Box
+        className={classes.dialogPart}
         sx={{
-          width: `${dialogWidth - 48 - (CustomDialogStore.variant === 'intro' ? 16 : 0)}px`,
-          height: CustomDialogStore.variant === 'intro' ? 'auto' : '200px',
           color: isDarkTheme ? palette.white : palette.black,
           backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
-          '& div:last-of-type': {
-            marginBottom: `${CustomDialogStore.variant === 'intro' ? 16 : 0}px`,
-          },
         }}
       >
-        {CustomDialogStore.variant === 'intro' ? (
-          <IntroContent />
-        ) : CustomDialogStore.variant === 'accident' ? (
-          <AccidentContent />
-        ) : (
-          <CctvContent />
-        )}
-      </DialogContent>
-      {CustomDialogStore.variant === 'accident' && (
-        <Box
-          sx={{
-            height: '20px',
-            width: '100%',
-            backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
-          }}
+        <TitlePart
+          variant={CustomDialogStore.variant}
+          dialogWidth={dialogWidth - (CustomDialogStore.variant === 'intro' ? 16 : 0)}
         />
-      )}
-      {CustomDialogStore.variant === 'intro' && (
-        <Box className={classes.lottie} ref={lottieContainer} />
-      )}
+        <DialogContent
+          className={classes.content}
+          sx={{
+            width: `${dialogWidth - 48 - (CustomDialogStore.variant === 'intro' ? 16 : 0)}px`,
+            height: CustomDialogStore.variant === 'intro' ? 'auto' : '200px',
+            '& div:last-of-type': {
+              marginBottom: `${CustomDialogStore.variant === 'intro' ? 16 : 0}px`,
+            },
+          }}
+        >
+          {CustomDialogStore.variant === 'intro' ? (
+            <IntroContent />
+          ) : CustomDialogStore.variant === 'accident' ? (
+            <AccidentContent />
+          ) : (
+            <CctvContent />
+          )}
+        </DialogContent>
+        {CustomDialogStore.variant === 'accident' && (
+          <Box
+            sx={{
+              height: '20px',
+              width: '100%',
+              backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+            }}
+          />
+        )}
+        {CustomDialogStore.variant === 'intro' && (
+          <Box className={classes.lottie} ref={lottieContainer} />
+        )}
+      </Box>
     </Dialog>
   );
 });
