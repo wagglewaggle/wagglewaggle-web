@@ -111,7 +111,7 @@ const Error = observer(() => {
       autoplay: true,
       animationData: require(`assets/lottie/${ThemeStore.theme}/Error.json`),
     });
-  }, []);
+  }, [ThemeStore.theme]);
 
   useEffect(() => {
     setErrorMessage(
