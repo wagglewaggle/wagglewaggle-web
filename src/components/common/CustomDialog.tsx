@@ -275,8 +275,7 @@ const CustomDialog = observer(() => {
 
   useEffect(() => {
     if (!lottieContainer.current) return;
-    lottie.destroy();
-    lottie.loadAnimation({
+    const introAnimation = lottie.loadAnimation({
       container: lottieContainer.current,
       renderer: 'svg',
       loop: true,
@@ -285,6 +284,7 @@ const CustomDialog = observer(() => {
         ScreenSizeStore.screenType === 'mobile' ? '-mobile' : ''
       }.json`),
     });
+    return () => introAnimation.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ScreenSizeStore.screenType, lottieContainer.current]);
 
