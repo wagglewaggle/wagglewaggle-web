@@ -65,9 +65,6 @@ const App = observer(() => {
       sx={{
         color: isDarkTheme ? palette.white : palette.black,
         backgroundColor: isDarkTheme ? palette.grey[800] : palette.white,
-        '& path': {
-          fill: isDarkTheme ? palette.white : palette.black,
-        },
       }}
     >
       <CreateStore.Provider value={{ MobxStore }}>

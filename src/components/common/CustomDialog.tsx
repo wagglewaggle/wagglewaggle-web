@@ -7,8 +7,6 @@ import { palette } from 'constants/';
 import lottie from 'lottie-web';
 import { accidentType, cctvType } from 'types/typeBundle';
 import logo from 'assets/icons/logo-filled-icon.svg';
-import NoticeLottie from 'assets/lottie/Notice.json';
-import NoticeLottieMobile from 'assets/lottie/Notice-mobile.json';
 import closeIcon from 'assets/icons/close-icon.svg';
 import accidentIcon from 'assets/icons/accident-icon.svg';
 import leftIcon from 'assets/icons/left-icon.svg';
@@ -291,7 +289,9 @@ const CustomDialog = observer(() => {
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      animationData: ScreenSizeStore.screenType === 'mobile' ? NoticeLottieMobile : NoticeLottie,
+      animationData: require(`assets/lottie/${ThemeStore.theme}/Notice${
+        ScreenSizeStore.screenType === 'mobile' ? '-mobile' : ''
+      }.json`),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ScreenSizeStore.screenType, lottieContainer.current]);

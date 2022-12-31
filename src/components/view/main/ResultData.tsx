@@ -5,7 +5,6 @@ import makeStyles from '@mui/styles/makeStyles';
 import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
 import lottie from 'lottie-web';
-import SearchLottie from 'assets/lottie/Search.json';
 import axiosRequest from 'api/axiosRequest';
 import { placeDataType } from 'types/typeBundle';
 import { palette, locationNames, districts } from 'constants/';
@@ -128,7 +127,7 @@ const ResultData = observer((props: propsType) => {
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      animationData: SearchLottie,
+      animationData: require(`assets/lottie/${ThemeStore.theme}/Error.json`),
     });
   }, []);
 

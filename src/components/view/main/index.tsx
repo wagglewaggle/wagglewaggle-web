@@ -14,6 +14,7 @@ import MainLottie from 'assets/lottie/Main.json';
 import { placeDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
+import { palette } from 'constants/';
 import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 
@@ -63,9 +64,11 @@ const Main = observer(() => {
   const [includeInput, setIncludeInput] = useState<boolean>(false);
   const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
-  const { ScreenSizeStore, LocationStore, CustomDialogStore, ErrorStore } = useStore().MobxStore;
+  const { ScreenSizeStore, LocationStore, CustomDialogStore, ErrorStore, ThemeStore } =
+    useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleLatestListChange = (newList: string[]) => {
     localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
@@ -205,7 +208,14 @@ const Main = observer(() => {
   return (
     <Fragment>
       <div className={classes.wrap}>
-        <Box className={classes.search} sx={{}}>
+        <Box
+          className={classes.search}
+          sx={{
+            '& path': {
+              fill: isDarkTheme ? palette.white : palette.black,
+            },
+          }}
+        >
           <Logo onClick={navigateToHome} />
           <div className={classes.searchBox} />
           <SearchIcon onClick={handleSearchClick} />
