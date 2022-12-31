@@ -16,9 +16,6 @@ const useStyles = makeStyles(() => ({
   wrap: {
     display: 'flex',
     flexDirection: 'column',
-    marginBottom: 64,
-    color: palette.white,
-    backgroundColor: palette.grey[800],
   },
   veryUncrowded: {
     color: palette.blue,
@@ -41,9 +38,11 @@ const Detail = observer(() => {
   const [locationData, setLocationData] = useState<locationDataType | null>(null);
   const classes = useStyles();
   const location = useLocation();
-  const { ScreenSizeStore, CustomDialogStore, LocationStore } = useStore().MobxStore;
-  const BOX_STYLE: { width: number } = {
+  const { ScreenSizeStore, CustomDialogStore, LocationStore, ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const BOX_STYLE: { width: number; color: string } = {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 640,
+    color: isDarkTheme ? palette.white : palette.black,
   };
 
   const setAccidentLists = useCallback(() => {
@@ -54,23 +53,24 @@ const Detail = observer(() => {
 
   const initLocationData = useCallback(async () => {
     if (location.search.length === 0) return;
-    const placeName: string = decodeURI(location.search.split('&')[1].replace('place-name=', ''));
+    const placeName: string = decodeURI(location.search).replace('?name=', '');
     LocationStore.setPlaceName(placeName);
     const requestType: string = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName
     )
       ? 'skt-place'
       : 'kt-place';
+    const pathnameArr: string[] = location.pathname.split('/');
     const response: { data: locationDataType } | undefined = await axiosRequest(
-      `${requestType}/${location.search.split('&')[0].replace('?place-id=', '')}`
+      `${requestType}/${pathnameArr[pathnameArr.length - 1]}`
     );
     if (!response) return;
     setLocationData(response.data);
-  }, [LocationStore, location.search]);
+  }, [LocationStore, location.pathname, location.search]);
 
   useEffect(() => {
     if (location.search.length === 0) return;
-    const placeName: string = decodeURI(location.search.split('&')[1].replace('place-name=', ''));
+    const placeName: string = decodeURI(location.search).replace('?name=', '');
     const htmlTitle = document.querySelector('title');
     if (!htmlTitle) return;
     htmlTitle.innerHTML = `${locationNames[placeName] || placeName} : 와글와글 장소`;
@@ -90,6 +90,7 @@ const Detail = observer(() => {
       <DetailedCongestion locationData={locationData} initLocationData={initLocationData} />
       <LocationInformation locationData={locationData} />
       <RelatedLocations />
+      <Box sx={{ height: '64px', backgroundColor: isDarkTheme ? palette.black : palette.white }} />
     </Box>
   );
 });

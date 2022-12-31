@@ -7,8 +7,6 @@ import { palette } from 'constants/';
 import lottie from 'lottie-web';
 import { accidentType, cctvType } from 'types/typeBundle';
 import logo from 'assets/icons/logo-filled-icon.svg';
-import NoticeLottie from 'assets/lottie/Notice.json';
-import NoticeLottieMobile from 'assets/lottie/Notice-mobile.json';
 import closeIcon from 'assets/icons/close-icon.svg';
 import accidentIcon from 'assets/icons/accident-icon.svg';
 import leftIcon from 'assets/icons/left-icon.svg';
@@ -17,22 +15,9 @@ import rightIcon from 'assets/icons/right-icon.svg';
 const useStyles = makeStyles(() => ({
   wrap: {
     '& .MuiPaper-root': {
-      borderRadius: 8,
       height: 492,
       backgroundColor: 'transparent',
-    },
-    '& ::-webkit-scrollbar': {
-      color: palette.grey[500],
-      background: palette.grey[700],
-      width: 10,
-    },
-    '& ::-webkit-scrollbar-thumb': {
-      borderLeft: '2px solid transparent',
-      boxShadow: `inset 0 0 10px 10px ${palette.grey[700]}`,
-      background: palette.grey[500],
-    },
-    '& ::-webkit-scrollbar-track': {
-      background: palette.grey[700],
+      boxShadow: 'none',
     },
   },
   closeButtonWrap: {
@@ -47,6 +32,11 @@ const useStyles = makeStyles(() => ({
       height: '32px',
     },
   },
+  dialogPart: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  },
   icon: {
     width: 48,
     height: 48,
@@ -54,16 +44,15 @@ const useStyles = makeStyles(() => ({
   header: {
     display: 'flex',
     alignItems: 'center',
+    position: 'relative',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
-    color: palette.white,
     fontSize: 18,
     fontWeight: 600,
-    backgroundColor: palette.grey[700],
+    zIndex: 2,
   },
   type: {
     marginBottom: 8,
-    color: palette.grey[400],
     fontSize: 14,
     fontWeight: 400,
     lineHeight: '20px',
@@ -79,13 +68,10 @@ const useStyles = makeStyles(() => ({
     lineHeight: '20px',
   },
   content: {
-    color: palette.white,
+    position: 'relative',
     fontSize: 14,
     fontWeight: 400,
-    backgroundColor: palette.grey[700],
-  },
-  footerImage: {
-    backgroundColor: palette.grey[700],
+    zIndex: 2,
   },
   cctvWrap: {
     display: 'flex',
@@ -114,20 +100,21 @@ const useStyles = makeStyles(() => ({
     borderRadius: '50%',
     width: 6,
     height: 6,
-    backgroundColor: palette.grey[600],
     cursor: 'pointer',
   },
-  selectedCircle: {
-    backgroundColor: palette.white,
+  darkPageCircle: {
+    backgroundColor: palette.grey[600],
+  },
+  lightPageCircle: {
+    backgroundColor: palette.grey[300],
   },
   lottie: {
     position: 'absolute',
     bottom: 0,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
+    borderRadius: 8,
     width: '100%',
     height: 'calc(100% - 48px)',
-    zIndex: 10000,
+    zIndex: 1,
     overflow: 'hidden',
   },
 }));
@@ -165,25 +152,33 @@ const IntroContent = () => {
       </Box>
       <Box sx={{ lineHeight: '20px' }}>
         ‘와글와글’은 SKT와 KT에서 제공하는 인구 혼잡도 데이터를 기반으로, 서울 및 경기도 내 주요
-        공간 별 인구 혼잡도 현황을 알려드립니다. 보고싶은 위치를 선택하여 그곳의 실시간 인구
-        혼잡도를 확인해보세요.
+        공간별 인구 혼잡 현황을 알려드립니다. 보고 싶은 위치를 선택하여 그곳의 실시간 인구 혼잡
+        현황을 확인해보세요.
         <br />
         <br />
-        Merry Christmas 🎄
+        Happy New Year 🐰
       </Box>
     </Fragment>
   );
 };
 
-const AccidentContent = () => {
+const AccidentContent = observer(() => {
   const classes = useStyles();
-  const { CustomDialogStore } = useStore().MobxStore;
+  const { CustomDialogStore, ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   return (
     <Fragment>
       {CustomDialogStore.accidentList.map((accident: accidentType, idx: number) => (
         <Fragment key={`accident-list-${idx}`}>
-          <div className={classes.type}>{accident.type}</div>
+          <Box
+            className={classes.type}
+            sx={{
+              color: palette.grey[isDarkTheme ? 400 : 500],
+            }}
+          >
+            {accident.type}
+          </Box>
           <Box className={classes.title} sx={{ marginBottom: '24px' }}>
             {accident.info}
           </Box>
@@ -191,12 +186,16 @@ const AccidentContent = () => {
       ))}
     </Fragment>
   );
-};
+});
 
 const CctvContent = observer(() => {
   const [cctvIdx, setCctvIdx] = useState<number>(0);
   const classes = useStyles();
-  const { ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
+  const { ScreenSizeStore, CustomDialogStore, ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const SELECTED_CIRCLE_STYLE: { backgroundColor: string } = {
+    backgroundColor: isDarkTheme ? palette.white : palette.black,
+  };
 
   const handleCircleClick = (idx: number) => {
     setCctvIdx(idx);
@@ -245,11 +244,12 @@ const CctvContent = observer(() => {
       </div>
       <div className={classes.pageCircleWrap}>
         {CustomDialogStore.cctvList.map((_: cctvType, idx: number) => (
-          <div
+          <Box
             key={`cctv-page-${idx}`}
             className={`${classes.pageCircle} ${
-              cctvIdx === idx ? classes.selectedCircle : undefined
+              isDarkTheme ? classes.darkPageCircle : classes.lightPageCircle
             }`}
+            sx={cctvIdx === idx ? SELECTED_CIRCLE_STYLE : {}}
             onClick={() => handleCircleClick(idx)}
           />
         ))}
@@ -263,7 +263,8 @@ const CustomDialog = observer(() => {
   const [dialogHeight, setDialogHeight] = useState<number>(408);
   const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
-  const { ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
+  const { ScreenSizeStore, CustomDialogStore, ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const closeDialog = () => {
     if (CustomDialogStore.variant === 'intro') {
@@ -274,13 +275,16 @@ const CustomDialog = observer(() => {
 
   useEffect(() => {
     if (!lottieContainer.current) return;
-    lottie.loadAnimation({
+    const introAnimation = lottie.loadAnimation({
       container: lottieContainer.current,
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      animationData: ScreenSizeStore.screenType === 'mobile' ? NoticeLottieMobile : NoticeLottie,
+      animationData: require(`assets/lottie/${ThemeStore.theme}/Notice${
+        ScreenSizeStore.screenType === 'mobile' ? '-mobile' : ''
+      }.json`),
     });
+    return () => introAnimation.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ScreenSizeStore.screenType, lottieContainer.current]);
 
@@ -310,6 +314,7 @@ const CustomDialog = observer(() => {
       className={classes.wrap}
       sx={{
         '& .MuiPaper-root': {
+          overflow: 'hidden',
           maxHeight: `${
             dialogHeight -
             (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'intro'
@@ -326,6 +331,24 @@ const CustomDialog = observer(() => {
               ? 56
               : 40)
           }px`,
+          height: CustomDialogStore.variant === 'cctv' ? 'fit-content' : 'skip',
+          overflow: 'auto',
+          '& img': {
+            filter: isDarkTheme ? 'none' : 'invert(1)',
+          },
+          '&::-webkit-scrollbar': {
+            width: '10px',
+            color: palette.grey[isDarkTheme ? 500 : 300],
+            background: isDarkTheme ? palette.grey[700] : palette.white,
+          },
+          '&::-webkit-scrollbar-thumb': {
+            borderLeft: '2px solid transparent',
+            boxShadow: `inset 0 0 10px 10px ${isDarkTheme ? palette.grey[700] : palette.white}`,
+            background: palette.grey[isDarkTheme ? 500 : 300],
+          },
+          '&::-webkit-scrollbar-track': {
+            background: isDarkTheme ? palette.grey[700] : palette.white,
+          },
         },
       }}
       open={CustomDialogStore.open}
@@ -339,34 +362,48 @@ const CustomDialog = observer(() => {
           <img src={closeIcon} alt='close' />
         </IconButton>
       </Box>
-      <TitlePart
-        variant={CustomDialogStore.variant}
-        dialogWidth={dialogWidth - (CustomDialogStore.variant === 'intro' ? 16 : 0)}
-      />
-      <DialogContent
-        className={classes.content}
+      <Box
+        className={classes.dialogPart}
         sx={{
-          width: `${dialogWidth - 48 - (CustomDialogStore.variant === 'intro' ? 16 : 0)}px`,
-          height: CustomDialogStore.variant === 'intro' ? 'auto' : '200px',
-          '& div:last-of-type': {
-            marginBottom: `${CustomDialogStore.variant === 'intro' ? 16 : 0}px`,
-          },
+          color: isDarkTheme ? palette.white : palette.black,
+          backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
         }}
       >
-        {CustomDialogStore.variant === 'intro' ? (
-          <IntroContent />
-        ) : CustomDialogStore.variant === 'accident' ? (
-          <AccidentContent />
-        ) : (
-          <CctvContent />
+        <TitlePart
+          variant={CustomDialogStore.variant}
+          dialogWidth={dialogWidth - (CustomDialogStore.variant === 'intro' ? 16 : 0)}
+        />
+        <DialogContent
+          className={classes.content}
+          sx={{
+            width: `${dialogWidth - 48 - (CustomDialogStore.variant === 'intro' ? 16 : 0)}px`,
+            height: CustomDialogStore.variant === 'intro' ? 'auto' : '200px',
+            '& div:last-of-type': {
+              marginBottom: `${CustomDialogStore.variant === 'intro' ? 16 : 0}px`,
+            },
+          }}
+        >
+          {CustomDialogStore.variant === 'intro' ? (
+            <IntroContent />
+          ) : CustomDialogStore.variant === 'accident' ? (
+            <AccidentContent />
+          ) : (
+            <CctvContent />
+          )}
+        </DialogContent>
+        {CustomDialogStore.variant === 'accident' && (
+          <Box
+            sx={{
+              height: '20px',
+              width: '100%',
+              backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+            }}
+          />
         )}
-      </DialogContent>
-      {CustomDialogStore.variant === 'accident' && (
-        <Box sx={{ height: '20px', width: '100%', backgroundColor: palette.grey[700] }} />
-      )}
-      {CustomDialogStore.variant === 'intro' && (
-        <Box className={classes.lottie} ref={lottieContainer} />
-      )}
+        {CustomDialogStore.variant === 'intro' && (
+          <Box className={classes.lottie} ref={lottieContainer} />
+        )}
+      </Box>
     </Dialog>
   );
 });

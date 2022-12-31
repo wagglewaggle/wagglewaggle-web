@@ -1,14 +1,16 @@
-export const bgPaths: { [key: string]: string } = {
+import { bgType } from 'types/typeBundle';
+
+export const bgPaths: { [key: string]: bgType } = {
   롯데월드잠실점: 'AmusementPark',
   에버랜드: 'AmusementPark',
   롯데월드몰: 'Department',
-  타임스퀘어: 'Tree',
-  '강남 MICE 관광특구': 'Tree',
-  '종로·청계 관광특구': 'Tree',
-  더현대서울: 'Market',
-  '홍대 관광특구': 'Market',
-  '명동 관광특구': 'Market',
-  현대백화점무역센터점: 'Market',
+  타임스퀘어: 'Department',
+  '강남 MICE 관광특구': 'Department',
+  '종로·청계 관광특구': 'Street',
+  더현대서울: 'Department',
+  '홍대 관광특구': 'Street',
+  '명동 관광특구': 'Street',
+  현대백화점무역센터점: 'Department',
   신세계백화점본점신관: 'Department',
   갤러리아백화점명품관WEST: 'Department',
   IFC몰: 'Department',

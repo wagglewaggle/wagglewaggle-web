@@ -1,6 +1,9 @@
+import { observer } from 'mobx-react';
 import makeStyles from '@mui/styles/makeStyles';
+import { Box } from '@mui/material';
 import CustomCloseIcon from './CustomCloseIcon';
 import { palette } from 'constants/';
+import { useStore } from 'stores';
 
 const useStyles = makeStyles(() => ({
   subComponent: {
@@ -14,7 +17,6 @@ const useStyles = makeStyles(() => ({
     padding: '15px 0',
   },
   title: {
-    color: palette.white,
     fontSize: 18,
     fontWeight: 600,
   },
@@ -31,9 +33,8 @@ const useStyles = makeStyles(() => ({
     padding: '5px 0',
     maxWidth: 380,
     height: 26,
-    color: palette.white,
     fontSize: 14,
-    fontWeight: 600,
+    fontWeight: 400,
     cursor: 'pointer',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -43,14 +44,12 @@ const useStyles = makeStyles(() => ({
     border: 0,
     padding: 0,
     backgroundColor: palette.transparent,
-    color: palette.white,
     fontSize: 14,
     fontWeight: 600,
     cursor: 'pointer',
   },
   emptyData: {
     marginTop: 9,
-    color: palette.grey[400],
     fontSize: 14,
     fontWeight: 400,
     lineHeight: '20px',
@@ -65,9 +64,11 @@ interface propsType {
   handleWordClick: (searchWord: string) => void;
 }
 
-const SearchBlock = (props: propsType) => {
+const SearchBlock = observer((props: propsType) => {
   const { title, blockList, onClickRemoveAll, onClickRemoveOne, handleWordClick } = props;
   const classes = useStyles();
+  const { ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleListClick = (word: string) => {
     handleWordClick(word);
@@ -97,10 +98,15 @@ const SearchBlock = (props: propsType) => {
           </div>
         ))
       ) : (
-        <div className={classes.emptyData}>{`${title}가 없어요.`}</div>
+        <Box
+          className={classes.emptyData}
+          sx={{
+            color: palette.grey[isDarkTheme ? 400 : 500],
+          }}
+        >{`${title}가 없어요.`}</Box>
       )}
     </div>
   );
-};
+});
 
 export default SearchBlock;

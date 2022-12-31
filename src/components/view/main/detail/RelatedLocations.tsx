@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceCard } from 'components/common';
 import { placeDataType } from 'types/typeBundle';
@@ -14,7 +15,6 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     padding: '24px 24px 0 24px',
     marginTop: 8,
-    backgroundColor: palette.grey[700],
   },
   header: {
     marginBottom: 24,
@@ -27,7 +27,8 @@ const useStyles = makeStyles(() => ({
 const RelatedLocations = observer(() => {
   const [places, setPlaces] = useState<placeDataType[]>([]);
   const classes = useStyles();
-  const { LocationStore } = useStore().MobxStore;
+  const { LocationStore, ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const initRelatedLocations = useCallback(async () => {
     if (
@@ -56,12 +57,17 @@ const RelatedLocations = observer(() => {
       {places.length === 0 ? (
         <Fragment />
       ) : (
-        <div className={classes.wrap}>
+        <Box
+          className={classes.wrap}
+          sx={{
+            backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+          }}
+        >
           <div className={classes.header}>주변 장소 현황</div>
           {places.map((place: placeDataType, idx: number) => (
             <PlaceCard key={`related-locations-${idx}`} place={place} />
           ))}
-        </div>
+        </Box>
       )}
     </Fragment>
   );

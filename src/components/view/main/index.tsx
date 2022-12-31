@@ -14,8 +14,9 @@ import MainLottie from 'assets/lottie/Main.json';
 import { placeDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import logo from 'assets/icons/logo-icon.svg';
-import searchIcon from 'assets/icons/search-icon.svg';
+import { palette } from 'constants/';
+import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
+import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -29,10 +30,14 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     padding: '0 24px',
     height: 56,
-    '& img': {
+    '& svg': {
+      width: 40,
+      height: 40,
+      cursor: 'pointer',
+    },
+    '& svg:last-of-type': {
       width: 32,
       height: 32,
-      cursor: 'pointer',
     },
   },
   searchBox: {
@@ -56,16 +61,16 @@ const Main = observer(() => {
   const [placeData, setPlaceData] = useState<placeDataType[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
-  const [latestList, setLatestList] = useState<string[]>([]);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
   const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
-  const { ScreenSizeStore, LocationStore, CustomDialogStore, ErrorStore } = useStore().MobxStore;
+  const { ScreenSizeStore, LocationStore, CustomDialogStore, ErrorStore, ThemeStore } =
+    useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleLatestListChange = (newList: string[]) => {
-    setLatestList(newList);
     localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
   };
 
@@ -83,7 +88,6 @@ const Main = observer(() => {
     setCurrentPage(
       newValue.length === 0 ? (
         <SearchData
-          latestSearchList={latestList}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
           handleSearchValueChange={handleSearchValueChange}
@@ -92,7 +96,6 @@ const Main = observer(() => {
         <SuggestData
           placeData={placeData}
           searchValue={newValue}
-          latestSearchList={latestList}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
         />
@@ -104,7 +107,6 @@ const Main = observer(() => {
     setOpenDrawer(true);
     setCurrentPage(
       <SearchData
-        latestSearchList={latestList}
         handleWordClick={handleWordClick}
         handleLatestListChange={handleLatestListChange}
         handleSearchValueChange={handleSearchValueChange}
@@ -203,19 +205,21 @@ const Main = observer(() => {
     navigate(ErrorStore.statusCode === 404 ? '/not-found' : '/error');
   }, [ErrorStore.statusCode, navigate]);
 
-  useEffect(() => {
-    setLatestList(JSON.parse(localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
-
   return (
     <Fragment>
       <div className={classes.wrap}>
-        <div className={classes.search}>
-          <img src={logo} alt='logo' onClick={navigateToHome} />
+        <Box
+          className={classes.search}
+          sx={{
+            '& path': {
+              fill: isDarkTheme ? palette.white : palette.black,
+            },
+          }}
+        >
+          <Logo onClick={navigateToHome} />
           <div className={classes.searchBox} />
-          <img src={searchIcon} alt='search' onClick={handleSearchClick} />
-        </div>
+          <SearchIcon onClick={handleSearchClick} />
+        </Box>
         <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
         <CustomDrawer
           open={openDrawer}

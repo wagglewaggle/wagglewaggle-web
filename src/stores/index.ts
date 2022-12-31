@@ -6,3 +6,4 @@ export { ScreenSizeStore } from './ScreenSizeStore';
 export { CustomDialogStore } from './CustomDialogStore';
 export { ErrorStore } from './ErrorStore';
 export { LocationStore } from './LocationStore';
+export { ThemeStore } from './ThemeStore';

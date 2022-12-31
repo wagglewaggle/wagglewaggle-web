@@ -7,7 +7,6 @@ import { Footer } from 'components/common';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 import lottie from 'lottie-web';
-import ErrorLottie from 'assets/lottie/Error.json';
 import logo from 'assets/icons/logo-icon.svg';
 import searchIcon from 'assets/icons/search-icon.svg';
 import refreshIcon from 'assets/icons/refresh-icon.svg';
@@ -20,7 +19,9 @@ const useStyles = makeStyles(() => ({
     marginBottom: 72,
     width: '100%',
     minHeight: 'calc(100vh - 72px)',
-    color: palette.white,
+    '& img': {
+      filter: 'invert(1)',
+    },
   },
   search: {
     display: 'flex',
@@ -87,7 +88,7 @@ const Error = observer(() => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
-  const { ErrorStore } = useStore().MobxStore;
+  const { ErrorStore, ThemeStore } = useStore().MobxStore;
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -108,9 +109,9 @@ const Error = observer(() => {
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      animationData: ErrorLottie,
+      animationData: require(`assets/lottie/${ThemeStore.theme}/Error.json`),
     });
-  }, []);
+  }, [ThemeStore.theme]);
 
   useEffect(() => {
     setErrorMessage(
