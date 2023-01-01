@@ -9,7 +9,7 @@ export const palette = {
   burgundy: 'rgb(76, 23, 36)',
   violet: '#605cff',
   grey: {
-    100: '#fafafa',
+    100: '#f7f7f7',
     200: '#f2f2f2',
     300: '#ddd',
     400: '#aaa',

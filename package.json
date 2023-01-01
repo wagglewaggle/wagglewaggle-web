@@ -23,6 +23,7 @@
     "react-dom": "^18.2.0",
     "react-indiana-drag-scroll": "^2.2.0",
     "react-router-dom": "^6.4.3",
+    "react-router-sitemap": "^1.2.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.3",
     "use-resize-observer": "^9.1.0",
@@ -32,7 +33,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "sitemap": "babel-node ./src/SitemapGenerator.js",
+    "prebuild": "npm run sitemap"
   },
   "eslintConfig": {
     "extends": [
@@ -51,5 +54,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-register": "^6.26.0"
   }
 }

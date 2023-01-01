@@ -41,7 +41,6 @@ const useStyles = makeStyles(() => ({
   },
   categoryName: {
     margin: '8px 0',
-    color: palette.grey[400],
     fontSize: 12,
     fontWeight: 500,
   },
@@ -67,8 +66,9 @@ const DetailHeader = observer((props: propsType) => {
   const [bgPath, setBgPath] = useState<string>('');
   const lottieContainer = useRef<HTMLDivElement>(null);
   const classes = useStyles();
-  const { LocationStore } = useStore().MobxStore;
+  const { LocationStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleBackClick = () => {
     navigate('/main');
@@ -88,11 +88,11 @@ const DetailHeader = observer((props: propsType) => {
   useEffect(() => {
     if (!bgPaths[locationData?.name || '']) return;
     setBgPath(
-      `url(${require(`assets/detailBg/${bgPaths[locationData?.name || ''] || 'Tree'}/${
-        locationData?.populations[0].level || 'NORMAL'
-      }.png`)})`
+      `url(${require(`assets/detailBg/${ThemeStore.theme}/${
+        bgPaths[locationData?.name || ''] || 'Street'
+      }/${locationData?.populations[0].level || 'NORMAL'}.png`)})`
     );
-  }, [locationData?.name, locationData?.populations]);
+  }, [ThemeStore.theme, locationData?.name, locationData?.populations]);
 
   useEffect(() => {
     if (!locationData?.name || !LocationStore.categories[locationData.name]) return;
@@ -116,11 +116,13 @@ const DetailHeader = observer((props: propsType) => {
       }
     >
       <div className={classes.buttonArea}>
-        <IconButton onClick={handleBackClick}>
+        <IconButton onClick={handleBackClick} sx={{ filter: isDarkTheme ? 'none' : 'invert(1)' }}>
           <img src={leftIcon} alt='left' />
         </IconButton>
       </div>
-      <div className={classes.categoryName}>{categories}</div>
+      <Box className={classes.categoryName} sx={{ color: palette.grey[isDarkTheme ? 400 : 500] }}>
+        {categories}
+      </Box>
       <div className={classes.statusWrap}>
         <div className={classes.status}>
           {`지금 ${locationNames[locationData?.name || ''] || locationData?.name || ''}에

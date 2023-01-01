@@ -19,11 +19,10 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     padding: '14px 24px',
     gap: 8,
-    color: palette.white,
     cursor: 'pointer',
-    '& svg': {
-      width: 24,
-      height: 24,
+    '& path': {
+      width: 17,
+      height: 17,
     },
   },
   list: {
@@ -32,7 +31,7 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
     height: 24,
     fontSize: 14,
-    fontWeight: 400,
+    fontWeight: 600,
     whiteSpace: 'pre-wrap',
   },
   includedPart: {
@@ -46,7 +45,6 @@ const useStyles = makeStyles(() => ({
   },
   title: {
     margin: '32px 20px 0',
-    color: palette.white,
     fontSize: 18,
     fontWeight: 600,
   },
@@ -57,7 +55,6 @@ const useStyles = makeStyles(() => ({
   },
   emptySuggestionWrap: {
     padding: '0 24px',
-    color: palette.grey[400],
     fontSize: 14,
     fontWeight: 400,
   },
@@ -66,18 +63,16 @@ const useStyles = makeStyles(() => ({
 interface propsType {
   placeData: placeDataType[];
   searchValue: string;
-  latestSearchList: string[];
   handleWordClick: (searchWord: string) => void;
   handleLatestListChange: (newList: string[]) => void;
 }
 
 const SuggestData = observer((props: propsType) => {
-  const { placeData, searchValue, latestSearchList, handleWordClick, handleLatestListChange } =
-    props;
+  const { placeData, searchValue, handleWordClick, handleLatestListChange } = props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
   const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
   const classes = useStyles();
-  const { ScreenSizeStore } = useStore().MobxStore;
+  const { LocationStore, ScreenSizeStore } = useStore().MobxStore;
   const WRAP_BOX_STYLE: { width: number } = {
     width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 400,
   };
@@ -104,20 +99,21 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const getSuggestionList = useCallback(() => {
-    setSuggestionList(
-      placeData.filter((data: placeDataType) =>
-        (locationNames[data.name] || data.name).includes(searchValue)
-      )
+    const newSuggestionList: placeDataType[] = placeData.filter((data: placeDataType) =>
+      (locationNames[data.name] || data.name).includes(searchValue)
     );
-  }, [placeData, searchValue]);
-
-  useEffect(() => {
-    setSearchBlockList([...latestSearchList]);
-  }, [latestSearchList]);
+    setSuggestionList(newSuggestionList);
+    LocationStore.setSuggestionExists(newSuggestionList.length > 0);
+  }, [placeData, searchValue, LocationStore]);
 
   useEffect(() => {
     getSuggestionList();
   }, [searchValue, getSuggestionList]);
+
+  useEffect(() => {
+    setSearchBlockList(JSON.parse(localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
 
   return (
     <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>

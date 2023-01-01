@@ -1,14 +1,15 @@
 import { Fragment, useState, useEffect } from 'react';
-import { Button, IconButton } from '@mui/material';
+import { observer } from 'mobx-react';
+import { Box, Button, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
 import { locationDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
-import refreshIcon from 'assets/icons/refresh-icon.svg';
+import { ReactComponent as RefreshIcon } from 'assets/icons/refresh-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import carIcon from 'assets/icons/car-icon.svg';
-import rightIcon from 'assets/icons/right-icon.svg';
+import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 
 const useStyles = makeStyles(() => ({
   wrap: {
@@ -16,7 +17,6 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: '32px 24px 16px',
-    backgroundColor: palette.grey[700],
   },
   header: {
     display: 'flex',
@@ -71,7 +71,6 @@ const useStyles = makeStyles(() => ({
     fontWeight: 600,
     lineHeight: '20px',
     '& span:last-child': {
-      color: palette.grey[400],
       fontWeight: 400,
     },
   },
@@ -85,7 +84,6 @@ const useStyles = makeStyles(() => ({
     border: 'none',
     padding: 0,
     backgroundColor: 'transparent',
-    color: palette.white,
   },
   divider: {
     width: '100%',
@@ -98,11 +96,12 @@ interface propsType {
   initLocationData: () => void;
 }
 
-const DetailedCongestion = (props: propsType) => {
+const DetailedCongestion = observer((props: propsType) => {
   const { locationData, initLocationData } = props;
   const [timePassed, setTimePassed] = useState<string>('');
   const classes = useStyles();
-  const { CustomDialogStore } = useStore().MobxStore;
+  const { CustomDialogStore, ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const COMMENTS_BY_STATUS: { [key: string]: string } = {
     VERY_RELAXATION: '날아다닐 수 있어요',
     RELAXATION: '여유롭게 이동할 수 있어요',
@@ -131,12 +130,23 @@ const DetailedCongestion = (props: propsType) => {
   }, [locationData]);
 
   return (
-    <div className={classes.wrap}>
+    <Box
+      className={classes.wrap}
+      sx={{
+        backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+        '& path': {
+          fill: isDarkTheme ? palette.white : palette.black,
+        },
+        '& hr': {
+          border: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
+        },
+      }}
+    >
       <div className={classes.header}>
         <span>실시간 인구 현황</span>
         <div className={classes.buttonArea}>
           <IconButton sx={{ padding: 0 }} onClick={initLocationData}>
-            <img className={classes.iconImage} src={refreshIcon} alt='refresh' />
+            <RefreshIcon className={classes.iconImage} />
           </IconButton>
           {timePassed}
         </div>
@@ -146,7 +156,13 @@ const DetailedCongestion = (props: propsType) => {
           <img src={personIcon} alt='person' />
           <div className={classes.statusDesc}>
             <span>인구 현황</span>
-            <span>{COMMENTS_BY_STATUS[locationData?.populations[0]?.level || 'NORMAL']}</span>
+            <Box
+              sx={{
+                color: palette.grey[isDarkTheme ? 400 : 500],
+              }}
+            >
+              {COMMENTS_BY_STATUS[locationData?.populations[0]?.level || 'NORMAL']}
+            </Box>
           </div>
         </div>
         <PlaceStatus status={locationData?.populations[0].level || undefined} />
@@ -157,7 +173,13 @@ const DetailedCongestion = (props: propsType) => {
             <img src={carIcon} alt='car' />
             <div className={classes.statusDesc}>
               <span>도로 현황</span>
-              <span>{TRAFFIC_TO_COMMENTS[locationData?.roadTraffic?.type || '서행']}</span>
+              <Box
+                sx={{
+                  color: palette.grey[isDarkTheme ? 400 : 500],
+                }}
+              >
+                {TRAFFIC_TO_COMMENTS[locationData?.roadTraffic?.type || '서행']}
+              </Box>
             </div>
           </div>
           <PlaceStatus
@@ -174,18 +196,18 @@ const DetailedCongestion = (props: propsType) => {
               justifyContent: 'space-between',
               padding: '12px 0',
               width: '100%',
-              color: palette.white,
+              color: isDarkTheme ? palette.white : palette.black,
               fontWeight: 600,
             }}
             onClick={handleOpenDialog}
           >
             CCTV
-            <img src={rightIcon} alt='right' />
+            <RightIcon />
           </Button>
         </Fragment>
       )}
-    </div>
+    </Box>
   );
-};
+});
 
 export default DetailedCongestion;

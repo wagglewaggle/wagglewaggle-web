@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { CustomDialog } from 'components/common';
 import { Main, Error } from './components/view';
@@ -28,10 +30,11 @@ const useStyles = makeStyles(() => ({
 
 export const MobxStore = new RootStore();
 
-const App = () => {
+const App = observer(() => {
   const classes = useStyles();
-  const { ScreenSizeStore } = MobxStore;
+  const { ScreenSizeStore, ThemeStore } = MobxStore;
   const { ref, width } = useResizeObserver();
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const disableIosInputAutoZoom = () => {
     const metaEl = document.querySelector('meta[name=viewport]');
@@ -57,7 +60,13 @@ const App = () => {
   }, [ScreenSizeStore, width]);
 
   return (
-    <div className={classes.wrap}>
+    <Box
+      className={classes.wrap}
+      sx={{
+        color: isDarkTheme ? palette.white : palette.black,
+        backgroundColor: isDarkTheme ? palette.grey[800] : palette.white,
+      }}
+    >
       <CreateStore.Provider value={{ MobxStore }}>
         <div className={classes.serviceWrap} ref={ref}>
           <BrowserRouter>
@@ -72,8 +81,8 @@ const App = () => {
         </div>
         <CustomDialog />
       </CreateStore.Provider>
-    </div>
+    </Box>
   );
-};
+});
 
 export default App;

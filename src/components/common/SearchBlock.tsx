@@ -1,7 +1,9 @@
-import { IconButton } from '@mui/material';
+import { observer } from 'mobx-react';
 import makeStyles from '@mui/styles/makeStyles';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box } from '@mui/material';
+import CustomCloseIcon from './CustomCloseIcon';
 import { palette } from 'constants/';
+import { useStore } from 'stores';
 
 const useStyles = makeStyles(() => ({
   subComponent: {
@@ -15,7 +17,6 @@ const useStyles = makeStyles(() => ({
     padding: '15px 0',
   },
   title: {
-    color: palette.white,
     fontSize: 18,
     fontWeight: 600,
   },
@@ -32,9 +33,8 @@ const useStyles = makeStyles(() => ({
     padding: '5px 0',
     maxWidth: 380,
     height: 26,
-    color: palette.white,
     fontSize: 14,
-    fontWeight: 600,
+    fontWeight: 400,
     cursor: 'pointer',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -44,14 +44,12 @@ const useStyles = makeStyles(() => ({
     border: 0,
     padding: 0,
     backgroundColor: palette.transparent,
-    color: palette.white,
     fontSize: 14,
     fontWeight: 600,
     cursor: 'pointer',
   },
   emptyData: {
     marginTop: 9,
-    color: palette.grey[400],
     fontSize: 14,
     fontWeight: 400,
     lineHeight: '20px',
@@ -66,12 +64,18 @@ interface propsType {
   handleWordClick: (searchWord: string) => void;
 }
 
-const SearchBlock = (props: propsType) => {
+const SearchBlock = observer((props: propsType) => {
   const { title, blockList, onClickRemoveAll, onClickRemoveOne, handleWordClick } = props;
   const classes = useStyles();
+  const { ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleListClick = (word: string) => {
     handleWordClick(word);
+  };
+
+  const handleIconClick = (list: string) => {
+    onClickRemoveOne(list);
   };
 
   return (
@@ -90,32 +94,19 @@ const SearchBlock = (props: propsType) => {
             <div className={classes.list} onClick={() => handleListClick(list)}>
               {list}
             </div>
-            <IconButton
-              sx={{
-                padding: 0,
-                marginLeft: '5px',
-                width: '16px',
-                height: '16px',
-                backgroundColor: palette.grey[600],
-              }}
-              disableRipple
-              onClick={() => onClickRemoveOne(list)}
-            >
-              <CloseIcon
-                sx={{
-                  width: '11px',
-                  height: '11px',
-                  color: palette.black,
-                }}
-              />
-            </IconButton>
+            <CustomCloseIcon handleIconClick={() => handleIconClick(list)} />
           </div>
         ))
       ) : (
-        <div className={classes.emptyData}>{`${title}가 없어요.`}</div>
+        <Box
+          className={classes.emptyData}
+          sx={{
+            color: palette.grey[isDarkTheme ? 400 : 500],
+          }}
+        >{`${title}가 없어요.`}</Box>
       )}
     </div>
   );
-};
+});
 
 export default SearchBlock;

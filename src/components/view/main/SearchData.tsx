@@ -14,13 +14,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface propsType {
-  latestSearchList: string[];
   handleWordClick: (searchWord: string) => void;
   handleLatestListChange: (newList: string[]) => void;
+  handleSearchValueChange: (newValue: string) => void;
 }
 
 const SearchData = observer((props: propsType) => {
-  const { latestSearchList, handleWordClick, handleLatestListChange } = props;
+  const { handleWordClick, handleLatestListChange, handleSearchValueChange } = props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
   const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
@@ -46,8 +46,13 @@ const SearchData = observer((props: propsType) => {
   };
 
   useEffect(() => {
-    setSearchBlockList([...latestSearchList]);
-  }, [latestSearchList]);
+    handleSearchValueChange('');
+  }, [handleSearchValueChange]);
+
+  useEffect(() => {
+    setSearchBlockList(JSON.parse(localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
 
   return (
     <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>

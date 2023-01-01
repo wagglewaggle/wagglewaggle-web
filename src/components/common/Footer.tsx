@@ -1,6 +1,9 @@
 import { useState, useRef } from 'react';
+import { observer } from 'mobx-react';
+import { Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { palette } from 'constants/';
+import { useStore } from 'stores';
 import linkCheckIcon from 'assets/icons/link-check-icon.svg';
 
 const useStyles = makeStyles(() => ({
@@ -16,10 +19,8 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'space-between',
     width: 191,
-    color: palette.white,
     '& button': {
       border: 'none',
-      color: palette.white,
       backgroundColor: 'transparent',
       cursor: 'pointer',
     },
@@ -41,10 +42,8 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     maxWidth: 400,
     lineHeight: '20px',
-    color: palette.black,
     fontSize: 14,
     fontWeight: 600,
-    backgroundColor: palette.white,
     gap: 8,
   },
   linkRef: {
@@ -52,10 +51,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Footer = () => {
+const Footer = observer(() => {
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
   const classes = useStyles();
+  const { ThemeStore } = useStore().MobxStore;
+  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleContactUsClick = () => {
     window.open('https://forms.gle/AcsYE7WzCkQQwisP7', '_blank');
@@ -74,15 +75,24 @@ const Footer = () => {
 
   return (
     <footer className={classes.footer}>
-      <div className={classes.buttons}>
+      <Box
+        className={classes.buttons}
+        sx={{ '& button': { color: isDarkTheme ? palette.white : palette.black } }}
+      >
         <button onClick={handleContactUsClick}>Contact Us</button>|
         <button onClick={handleShareLinkClick}>Share Link</button>
-      </div>
+      </Box>
       {linkCopied ? (
-        <div className={classes.linkCopyPopup}>
+        <Box
+          className={classes.linkCopyPopup}
+          sx={{
+            color: isDarkTheme ? palette.black : palette.white,
+            backgroundColor: isDarkTheme ? palette.white : palette.black,
+          }}
+        >
           <img src={linkCheckIcon} alt='link-copy-check' />
           링크가 복사되었습니다.
-        </div>
+        </Box>
       ) : (
         <div className={classes.teamName}>© 2022 Team EXIT</div>
       )}
@@ -94,6 +104,6 @@ const Footer = () => {
       />
     </footer>
   );
-};
+});
 
 export default Footer;
