@@ -89,7 +89,7 @@ const DetailHeader = observer((props: propsType) => {
     if (!bgPaths[locationData?.name || '']) return;
     setBgPath(
       `url(${require(`assets/detailBg/${ThemeStore.theme}/${
-        bgPaths[locationData?.name || ''] || 'Tree'
+        bgPaths[locationData?.name || ''] || 'Street'
       }/${locationData?.populations[0].level || 'NORMAL'}.png`)})`
     );
   }, [ThemeStore.theme, locationData?.name, locationData?.populations]);
