@@ -117,6 +117,13 @@ const useStyles = makeStyles(() => ({
     zIndex: 1,
     overflow: 'hidden',
   },
+  survey: {
+    textDecoration: 'underline',
+    textDecorationThickness: 2,
+    textUnderlineOffset: '3px',
+    fontWeight: 700,
+    cursor: 'pointer',
+  },
 }));
 
 interface titlePropsType {
@@ -145,18 +152,26 @@ const TitlePart = (props: titlePropsType) => {
 const IntroContent = () => {
   const classes = useStyles();
 
+  const openSurveyPage = () => {
+    window.open(
+      'https://docs.google.com/forms/d/e/1FAIpQLSenqtgHZbuI5RIOYXzYE4217OcZco2Uxb44xl_zHQ_DQAj9Iw/viewform',
+      '_blank'
+    );
+  };
+
   return (
     <Fragment>
       <Box className={classes.title} sx={{ marginBottom: '16px' }}>
-        와글와글에 오신 것을 환영합니다.
+        와글와글에게 여러분의 목소리를 들려주세요.
       </Box>
       <Box sx={{ lineHeight: '20px' }}>
-        ‘와글와글’은 SKT와 KT에서 제공하는 인구 혼잡도 데이터를 기반으로, 서울 및 경기도 내 주요
-        공간별 인구 혼잡 현황을 알려드립니다. 보고 싶은 위치를 선택하여 그곳의 실시간 인구 혼잡
-        현황을 확인해보세요.
+        와글와글을 더욱 더 발전시키기 위해 사용자 인터뷰 대상자를 모집합니다. 참여해주신 분들에겐
+        소정의 사례금을 드립니다. 많은 참여 부탁드립니다 🙇🏻‍♂️🙇🏻‍♀️
         <br />
         <br />
-        Happy New Year 🐰
+        <span className={classes.survey} onClick={openSurveyPage}>
+          참여하러 가기 🔗
+        </span>
       </Box>
     </Fragment>
   );
