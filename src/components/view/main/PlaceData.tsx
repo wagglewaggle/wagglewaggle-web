@@ -33,11 +33,11 @@ const useStyles = makeStyles(() => ({
     fontWeight: 600,
   },
   darkChip: {
-    border: `2px solid ${palette.grey[600]}`,
+    border: `1px solid ${palette.grey[600]}`,
     color: palette.grey[400],
   },
   lightChip: {
-    border: `2px solid ${palette.grey[300]}`,
+    border: `1px solid ${palette.grey[300]}`,
     color: palette.grey[500],
   },
   subHeader: {

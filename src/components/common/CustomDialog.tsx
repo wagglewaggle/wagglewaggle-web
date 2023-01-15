@@ -118,11 +118,15 @@ const useStyles = makeStyles(() => ({
     overflow: 'hidden',
   },
   survey: {
-    textDecoration: 'underline',
-    textDecorationThickness: 2,
-    textUnderlineOffset: '3px',
+    display: 'flex',
+    alignItems: 'center',
     fontWeight: 700,
+    gap: 4,
     cursor: 'pointer',
+    '& img': {
+      width: 16,
+      height: 16,
+    },
   },
 }));
 
@@ -166,11 +170,13 @@ const IntroContent = () => {
       </Box>
       <Box sx={{ lineHeight: '20px' }}>
         와글와글을 더욱 더 발전시키기 위해 사용자 인터뷰 대상자를 모집합니다. 참여해주신 분들에겐
-        소정의 사례금을 드립니다. 많은 참여 부탁드립니다 🙇🏻‍♂️🙇🏻‍♀️
+        소정의 사례금을 드립니다.
+        <br />
+        많은 참여 부탁드립니다 🐰
         <br />
         <br />
         <span className={classes.survey} onClick={openSurveyPage}>
-          참여하러 가기 🔗
+          참여하기 <img src={rightIcon} alt='right' />
         </span>
       </Box>
     </Fragment>
