@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import DetailHeader from './DetailHeader';
@@ -13,6 +13,7 @@ import axiosRequest from 'api/axiosRequest';
 
 const Detail = observer(() => {
   const [locationData, setLocationData] = useState<LocationDataType | null>(null);
+  const navigate = useNavigate();
   const location = useLocation();
   const { ScreenSizeStore, CustomDialogStore, LocationStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -33,12 +34,17 @@ const Detail = observer(() => {
       ? 'skt-place'
       : 'kt-place';
     const pathnameArr: string[] = location.pathname.split('/');
+    const placeId: string = pathnameArr[pathnameArr.length - 1];
+    if (!Number(placeId)) {
+      navigate('/main');
+      return;
+    }
     const response: { data: LocationDataType } | undefined = await axiosRequest(
-      `${requestType}/${pathnameArr[pathnameArr.length - 1]}`
+      `${requestType}/${placeId}`
     );
     if (!response) return;
     setLocationData(response.data);
-  }, [LocationStore, location.pathname, location.search]);
+  }, [LocationStore, navigate, location.pathname, location.search]);
 
   useEffect(() => {
     if (location.search.length === 0) return;
