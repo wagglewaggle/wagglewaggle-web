@@ -1,105 +1,23 @@
 import { Fragment, useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Box, Button, IconButton } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Button, IconButton, styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
-import { locationDataType } from 'types/typeBundle';
+import { LocationDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
 import { ReactComponent as RefreshIcon } from 'assets/icons/refresh-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import carIcon from 'assets/icons/car-icon.svg';
 import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 
-const useStyles = makeStyles(() => ({
-  wrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '32px 24px 16px',
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    '& span': {
-      fontSize: 18,
-      fontWeight: 600,
-    },
-  },
-  buttonArea: {
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: 14,
-    fontWeight: 600,
-    gap: 4,
-  },
-  iconImage: {
-    width: 16,
-    height: 16,
-  },
-  statusCard: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    marginTop: 24,
-    width: '100%',
-    fontSize: 14,
-    fontWeight: 600,
-  },
-  trafficStatusCard: {
-    margin: 0,
-  },
-  statusLeft: {
-    display: 'flex',
-    gap: 8,
-    '& img': {
-      borderRadius: '50%',
-      padding: 8,
-      width: 24,
-      height: 24,
-      backgroundColor: palette.black,
-    },
-  },
-  statusDesc: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    fontSize: 14,
-    fontWeight: 600,
-    lineHeight: '20px',
-    '& span:last-child': {
-      fontWeight: 400,
-    },
-  },
-  status: {
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: 14,
-    fontWeight: 400,
-  },
-  cctvButton: {
-    border: 'none',
-    padding: 0,
-    backgroundColor: 'transparent',
-  },
-  divider: {
-    width: '100%',
-    border: `1px solid ${palette.grey[600]}`,
-  },
-}));
-
 interface propsType {
-  locationData: locationDataType | null;
+  locationData: LocationDataType | null;
   initLocationData: () => void;
 }
 
 const DetailedCongestion = observer((props: propsType) => {
   const { locationData, initLocationData } = props;
   const [timePassed, setTimePassed] = useState<string>('');
-  const classes = useStyles();
   const { CustomDialogStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const COMMENTS_BY_STATUS: { [key: string]: string } = {
@@ -130,84 +48,150 @@ const DetailedCongestion = observer((props: propsType) => {
   }, [locationData]);
 
   return (
-    <Box
-      className={classes.wrap}
-      sx={{
-        backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
-        '& path': {
-          fill: isDarkTheme ? palette.white : palette.black,
-        },
-        '& hr': {
-          border: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
-        },
-      }}
-    >
-      <div className={classes.header}>
+    <Wrap isDarkTheme={isDarkTheme}>
+      <Header>
         <span>실시간 인구 현황</span>
-        <div className={classes.buttonArea}>
-          <IconButton sx={{ padding: 0 }} onClick={initLocationData}>
-            <RefreshIcon className={classes.iconImage} />
-          </IconButton>
+        <ButtonArea>
+          <CustomIconButton onClick={initLocationData}>
+            <CustomRefreshIcon />
+          </CustomIconButton>
           {timePassed}
-        </div>
-      </div>
-      <div className={classes.statusCard}>
-        <div className={classes.statusLeft}>
+        </ButtonArea>
+      </Header>
+      <StatusCard variant='person'>
+        <StatusLeft>
           <img src={personIcon} alt='person' />
-          <div className={classes.statusDesc}>
+          <StatusDescription>
             <span>인구 현황</span>
-            <Box
-              sx={{
-                color: palette.grey[isDarkTheme ? 400 : 500],
-              }}
-            >
+            <CommentsWrap isDarkTheme={isDarkTheme}>
               {COMMENTS_BY_STATUS[locationData?.populations[0]?.level || 'NORMAL']}
-            </Box>
-          </div>
-        </div>
+            </CommentsWrap>
+          </StatusDescription>
+        </StatusLeft>
         <PlaceStatus status={locationData?.populations[0].level || undefined} />
-      </div>
+      </StatusCard>
       {locationData?.roadTraffic?.type && (
-        <div className={`${classes.statusCard} ${classes.trafficStatusCard}`}>
-          <div className={classes.statusLeft}>
+        <StatusCard variant='traffic'>
+          <StatusLeft>
             <img src={carIcon} alt='car' />
-            <div className={classes.statusDesc}>
+            <StatusDescription>
               <span>도로 현황</span>
-              <Box
-                sx={{
-                  color: palette.grey[isDarkTheme ? 400 : 500],
-                }}
-              >
+              <CommentsWrap isDarkTheme={isDarkTheme}>
                 {TRAFFIC_TO_COMMENTS[locationData?.roadTraffic?.type || '서행']}
-              </Box>
-            </div>
-          </div>
+              </CommentsWrap>
+            </StatusDescription>
+          </StatusLeft>
           <PlaceStatus
             status={locationData?.roadTraffic?.type || undefined}
             comments={{ 원활: '원활', 서행: '서행', 정체: '정체' }}
           />
-        </div>
+        </StatusCard>
       )}
       {(locationData?.cctvs || []).length > 0 && (
         <Fragment>
-          <hr className={classes.divider} />
-          <Button
-            sx={{
-              justifyContent: 'space-between',
-              padding: '12px 0',
-              width: '100%',
-              color: isDarkTheme ? palette.white : palette.black,
-              fontWeight: 600,
-            }}
-            onClick={handleOpenDialog}
-          >
+          <CustomDivider />
+          <CustomButton isDarkTheme={isDarkTheme} onClick={handleOpenDialog}>
             CCTV
             <RightIcon />
-          </Button>
+          </CustomButton>
         </Fragment>
       )}
-    </Box>
+    </Wrap>
   );
 });
 
 export default DetailedCongestion;
+
+const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '32px 24px 16px',
+  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+  '& path': {
+    fill: isDarkTheme ? palette.white : palette.black,
+  },
+  '& hr': {
+    border: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
+  },
+}));
+
+const Header = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '100%',
+  '& span': {
+    fontSize: 18,
+    fontWeight: 600,
+  },
+});
+
+const ButtonArea = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  fontSize: 14,
+  fontWeight: 600,
+  gap: 4,
+});
+
+const CustomIconButton = styled(IconButton)({
+  padding: 0,
+});
+
+const CustomRefreshIcon = styled(RefreshIcon)({
+  width: 16,
+  height: 16,
+});
+
+const StatusCard = styled('div')<{ variant: 'person' | 'traffic' }>(({ variant }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: 20,
+  margin: variant === 'person' ? '24px 0 0 0' : 0,
+  width: '100%',
+  fontSize: 14,
+  fontWeight: 600,
+}));
+
+const StatusLeft = styled('div')({
+  display: 'flex',
+  gap: 8,
+  '& img': {
+    borderRadius: '50%',
+    padding: 8,
+    width: 24,
+    height: 24,
+    backgroundColor: palette.black,
+  },
+});
+
+const StatusDescription = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  fontSize: 14,
+  fontWeight: 600,
+  lineHeight: '20px',
+  '& span:last-child': {
+    fontWeight: 400,
+  },
+});
+
+const CommentsWrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  color: palette.grey[isDarkTheme ? 400 : 500],
+}));
+
+const CustomDivider = styled('hr')({
+  width: '100%',
+  border: `1px solid ${palette.grey[600]}`,
+});
+
+const CustomButton = styled(Button)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  justifyContent: 'space-between',
+  padding: '12px 0',
+  width: '100%',
+  color: isDarkTheme ? palette.white : palette.black,
+  fontWeight: 600,
+}));

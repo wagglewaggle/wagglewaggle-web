@@ -1,70 +1,21 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { Box } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { symbols, locationNames } from 'constants/';
-import { categoryType, placeDataType } from 'types/typeBundle';
+import { CategoryType, PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 
-const useStyles = makeStyles(() => ({
-  placeCard: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    borderRadius: 4,
-    padding: '14px 16px',
-    marginBottom: 8,
-    width: 'calc(100% - 32px)',
-    height: 'fit-content',
-    cursor: 'pointer',
-  },
-  placeLeft: {
-    display: 'flex',
-    alignItems: 'center',
-    flexGrow: 1,
-  },
-  placeImage: {
-    display: 'flex',
-    alignItems: 'center',
-    '& img': {
-      width: 40,
-      height: 40,
-    },
-  },
-  placeTitle: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginLeft: 8,
-    lineHeight: '20px',
-  },
-  placeName: {
-    fontSize: 14,
-    fontWeight: 600,
-  },
-  placeCategory: {
-    fontSize: 14,
-    fontWeight: 400,
-  },
-  statusWrap: {
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: 14,
-    fontWeight: 600,
-  },
-}));
-
 interface propsType {
-  place: placeDataType;
+  place: PlaceDataType;
 }
 
 const PlaceCard = observer((props: propsType) => {
   const { place } = props;
   const [categories, setCategories] = useState<string>('');
   const [symbol, setSymbol] = useState<string>('');
-  const classes = useStyles();
   const { LocationStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
@@ -77,7 +28,7 @@ const PlaceCard = observer((props: propsType) => {
 
   useEffect(() => {
     if (!place.categories) return;
-    const categoryList: string[] = place.categories.map((category: categoryType) => category.type);
+    const categoryList: string[] = place.categories.map((category: CategoryType) => category.type);
     setCategories(categoryList.join(', '));
     const addedSymbol: string[] = [];
     primaryCategories.forEach((category: string) => {
@@ -95,34 +46,73 @@ const PlaceCard = observer((props: propsType) => {
   }, [primaryCategories, place.categories]);
 
   return (
-    <Box
-      className={classes.placeCard}
-      onClick={handlePlaceCardClick}
-      sx={{
-        backgroundColor: palette.grey[isDarkTheme ? 600 : 100],
-      }}
-    >
-      <div className={classes.placeLeft}>
-        <div className={classes.placeImage}>
+    <Wrap isDarkTheme={isDarkTheme} onClick={handlePlaceCardClick}>
+      <PlaceLeft>
+        <PlaceImage>
           <img src={symbols[symbol]} alt='category-symbol' />
-        </div>
-        <div className={classes.placeTitle}>
-          <span className={classes.placeName}>
-            {locationNames[place?.name || ''] || place?.name}
-          </span>
-          <Box
-            className={classes.placeCategory}
-            sx={{ color: palette.grey[isDarkTheme ? 400 : 500] }}
-          >
-            {categories}
-          </Box>
-        </div>
-      </div>
-      <div className={classes.statusWrap}>
+        </PlaceImage>
+        <PlaceTitle>
+          <PlaceName>{locationNames[place?.name || ''] || place?.name}</PlaceName>
+          <PlaceCategory>{categories}</PlaceCategory>
+        </PlaceTitle>
+      </PlaceLeft>
+      <StatusWrap>
         <PlaceStatus status={place.populations[0].level} />
-      </div>
-    </Box>
+      </StatusWrap>
+    </Wrap>
   );
 });
 
 export default PlaceCard;
+
+const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  borderRadius: 4,
+  padding: '14px 16px',
+  marginBottom: 8,
+  width: 'calc(100% - 32px)',
+  height: 'fit-content',
+  backgroundColor: palette.grey[isDarkTheme ? 600 : 100],
+  cursor: 'pointer',
+}));
+
+const PlaceLeft = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  flexGrow: 1,
+});
+
+const PlaceImage = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  '& img': {
+    width: 40,
+    height: 40,
+  },
+});
+
+const PlaceTitle = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  marginLeft: 8,
+  lineHeight: '20px',
+});
+
+const PlaceName = styled('span')({
+  fontSize: 14,
+  fontWeight: 600,
+});
+
+const PlaceCategory = styled('span')({
+  fontSize: 14,
+  fontWeight: 400,
+});
+
+const StatusWrap = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  fontSize: 14,
+  fontWeight: 600,
+});

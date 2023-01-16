@@ -1,33 +1,33 @@
-export interface categoryType {
+export interface CategoryType {
   idx: number;
   type: string;
 }
 
-export interface populationType {
+export interface PopulationType {
   idx: number;
-  level: statusType;
+  level: StatusType;
   createdDate: string;
   updatedDate: string;
 }
 
-export interface placeDataType {
+export interface PlaceDataType {
   idx: number;
   name: string;
-  categories: categoryType[];
+  categories: CategoryType[];
   poiId: number;
   x: number;
   y: number;
-  populations: populationType[];
+  populations: PopulationType[];
 }
 
-export interface locationInfoType {
+export interface LocationInfoType {
   [key: string]: {
     type: 'Polygon' | 'MultiPolygon';
     coordinates: [number, number][][] | [number, number][][][];
   };
 }
 
-export interface accidentType {
+export interface AccidentType {
   idx: number;
   type: string;
   dtype: string;
@@ -38,36 +38,36 @@ export interface accidentType {
   updatedDate: string;
 }
 
-export interface cctvType {
+export interface CctvType {
   idx: number;
   src: string;
   cctvname: string;
 }
 
-export interface trafficType {
+export interface TrafficType {
   idx: number;
   avgSpeed: number;
   info: string;
   type: string;
 }
 
-export interface locationDataType {
+export interface LocationDataType {
   idx: number;
   name: string;
   x: number;
   y: number;
-  populations: populationType[];
-  level: statusType;
-  accidents: accidentType[];
-  cctvs: cctvType[];
-  roadTraffic: trafficType;
+  populations: PopulationType[];
+  level: StatusType;
+  accidents: AccidentType[];
+  cctvs: CctvType[];
+  roadTraffic: TrafficType;
 }
 
-export type statusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
+export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
 
-export type screenType = 'mobile' | 'tablet' | 'pc';
+export type ScreenType = 'mobile' | 'tablet' | 'pc';
 
-export type bgType =
+export type BgType =
   | 'AmusementPark'
   | 'Department'
   | 'GwangHwa'

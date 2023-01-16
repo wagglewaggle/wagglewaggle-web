@@ -1,35 +1,9 @@
-import { Fragment } from 'react';
-import makeStyles from '@mui/styles/makeStyles';
-import { statusType } from 'types/typeBundle';
+import { styled } from '@mui/material';
+import { StatusType } from 'types/typeBundle';
 import { palette } from 'constants/';
 
-const useStyles = makeStyles(() => ({
-  wrap: {
-    display: 'flex',
-    alignItems: 'center',
-    minWidth: 'fit-content',
-    fontSize: 14,
-    fontWeight: 600,
-  },
-  veryUncrowded: {
-    color: palette.blue,
-  },
-  uncrowded: {
-    color: palette.green,
-  },
-  normal: {
-    color: palette.yellow,
-  },
-  crowded: {
-    color: palette.orange,
-  },
-  veryCrowded: {
-    color: palette.red,
-  },
-}));
-
 interface propsType {
-  status?: statusType | string;
+  status?: StatusType | string;
   comments?: { [key: string]: string };
 }
 
@@ -44,25 +18,44 @@ const PlaceStatus = (props: propsType) => {
       VERY_CROWDED: '매우 붐빔',
     },
   } = props;
-  const classes = useStyles();
 
   return (
-    <Fragment>
+    <>
       {status === 'VERY_RELAXATION' || status === '원활' ? (
-        <span className={classes.veryUncrowded}>{comments[status]}</span>
+        <VeryUncrowded>{comments[status]}</VeryUncrowded>
       ) : status === 'RELAXATION' ? (
-        <span className={classes.uncrowded}>{comments[status]}</span>
+        <Uncrowded>{comments[status]}</Uncrowded>
       ) : status === 'NORMAL' || status === '서행' ? (
-        <span className={classes.normal}>{comments[status]}</span>
+        <Normal>{comments[status]}</Normal>
       ) : status === 'CROWDED' ? (
-        <span className={classes.crowded}>{comments[status]}</span>
+        <Crowded>{comments[status]}</Crowded>
       ) : status === 'VERY_CROWDED' || status === '정체' ? (
-        <span className={classes.veryCrowded}>{comments[status]}</span>
+        <VeryCrowded>{comments[status]}</VeryCrowded>
       ) : (
-        <Fragment />
+        <></>
       )}
-    </Fragment>
+    </>
   );
 };
 
 export default PlaceStatus;
+
+const VeryUncrowded = styled('span')({
+  color: palette.blue,
+});
+
+const Uncrowded = styled('span')({
+  color: palette.green,
+});
+
+const Normal = styled('span')({
+  color: palette.yellow,
+});
+
+const Crowded = styled('span')({
+  color: palette.orange,
+});
+
+const VeryCrowded = styled('span')({
+  color: palette.red,
+});

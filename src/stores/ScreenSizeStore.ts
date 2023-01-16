@@ -1,9 +1,9 @@
 import { makeAutoObservable } from 'mobx';
-import { screenType } from 'types/typeBundle';
+import { ScreenType } from 'types/typeBundle';
 
 export class ScreenSizeStore {
   screenWidth: number = 0;
-  screenType: screenType = 'mobile';
+  screenType: ScreenType = 'mobile';
 
   constructor() {
     makeAutoObservable(this);
@@ -13,7 +13,7 @@ export class ScreenSizeStore {
     this.screenWidth = newWidth;
   };
 
-  setScreenType = (newType: screenType) => {
+  setScreenType = (newType: ScreenType) => {
     this.screenType = newType;
   };
 }

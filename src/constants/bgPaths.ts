@@ -1,6 +1,6 @@
-import { bgType } from 'types/typeBundle';
+import { BgType } from 'types/typeBundle';
 
-export const bgPaths: { [key: string]: bgType } = {
+export const bgPaths: { [key: string]: BgType } = {
   롯데월드잠실점: 'AmusementPark',
   에버랜드: 'AmusementPark',
   롯데월드몰: 'Department',
