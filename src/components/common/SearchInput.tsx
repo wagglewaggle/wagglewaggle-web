@@ -1,49 +1,10 @@
 import { ChangeEvent, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
-import { Box, TextField, IconButton } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { TextField, IconButton, styled } from '@mui/material';
 import CustomCloseIcon from './CustomCloseIcon';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
 import { ReactComponent as LeftArrowIcon } from 'assets/icons/left-icon.svg';
-
-const useStyles = makeStyles(() => ({
-  wrap: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '12px 24px',
-    width: 'calc(100% - 48px)',
-    height: 32,
-  },
-  leftIcon: {
-    '& path': {
-      width: 12.16,
-      height: 20.55,
-    },
-  },
-  input: {
-    display: 'flex',
-    justifyContent: 'center',
-    borderRadius: 25,
-    width: '100%',
-    height: 48,
-    '& input': {
-      padding: '12.5px 0 12.5px 14px',
-      fontSize: 14,
-      fontWeight: 400,
-    },
-    '& input::placeholder': {
-      fontSize: 14,
-      fontWeight: 400,
-      lineHeight: '20px',
-      opacity: 1,
-    },
-    '& fieldset': {
-      display: 'none',
-    },
-  },
-}));
 
 interface propsType {
   searchValue: string;
@@ -54,7 +15,6 @@ interface propsType {
 
 const SearchInput = observer((props: propsType) => {
   const { searchValue, handleSearchEnter, handleDrawerClose, handleSearchValueChange } = props;
-  const classes = useStyles();
   const { ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
@@ -77,25 +37,11 @@ const SearchInput = observer((props: propsType) => {
   };
 
   return (
-    <Box
-      className={classes.wrap}
-      sx={{
-        borderBottom: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
-      }}
-    >
-      <IconButton
-        onClick={handleArrowLeftClick}
-        sx={{
-          padding: 0,
-          '& path': {
-            fill: isDarkTheme ? palette.white : palette.black,
-          },
-        }}
-      >
-        <LeftArrowIcon className={classes.leftIcon} />
-      </IconButton>
-      <TextField
-        className={classes.input}
+    <Wrap isDarkTheme={isDarkTheme}>
+      <CustomIconButton isDarkTheme={isDarkTheme} onClick={handleArrowLeftClick}>
+        <CustomLeftArrowIcon />
+      </CustomIconButton>
+      <CustomTextField
         type='text'
         autoFocus
         value={searchValue}
@@ -109,8 +55,54 @@ const SearchInput = observer((props: propsType) => {
         }}
       />
       {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
-    </Box>
+    </Wrap>
   );
 });
 
 export default SearchInput;
+
+const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderBottom: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
+  padding: '12px 24px',
+  width: 'calc(100% - 48px)',
+  height: 32,
+}));
+
+const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  padding: 0,
+  '& path': {
+    fill: isDarkTheme ? palette.white : palette.black,
+  },
+}));
+
+const CustomLeftArrowIcon = styled(LeftArrowIcon)({
+  '& path': {
+    width: 12.16,
+    height: 20.55,
+  },
+});
+
+const CustomTextField = styled(TextField)({
+  display: 'flex',
+  justifyContent: 'center',
+  borderRadius: 25,
+  width: '100%',
+  height: 48,
+  '& input': {
+    padding: '12.5px 0 12.5px 14px',
+    fontSize: 14,
+    fontWeight: 400,
+  },
+  '& input::placeholder': {
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: '20px',
+    opacity: 1,
+  },
+  '& fieldset': {
+    display: 'none',
+  },
+});

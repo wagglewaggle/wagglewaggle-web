@@ -1,60 +1,8 @@
 import { observer } from 'mobx-react';
-import makeStyles from '@mui/styles/makeStyles';
-import { Box } from '@mui/material';
+import { styled } from '@mui/material';
 import CustomCloseIcon from './CustomCloseIcon';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
-
-const useStyles = makeStyles(() => ({
-  subComponent: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginBottom: 24,
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '15px 0',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 600,
-  },
-  listWrap: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 8,
-  },
-  list: {
-    display: 'flex',
-    alignItems: 'center',
-    flexGrow: 1,
-    padding: '5px 0',
-    maxWidth: 380,
-    height: 26,
-    fontSize: 14,
-    fontWeight: 400,
-    cursor: 'pointer',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  removeButton: {
-    border: 0,
-    padding: 0,
-    backgroundColor: palette.transparent,
-    fontSize: 14,
-    fontWeight: 600,
-    cursor: 'pointer',
-  },
-  emptyData: {
-    marginTop: 9,
-    fontSize: 14,
-    fontWeight: 400,
-    lineHeight: '20px',
-  },
-}));
 
 interface propsType {
   title: string;
@@ -66,7 +14,6 @@ interface propsType {
 
 const SearchBlock = observer((props: propsType) => {
   const { title, blockList, onClickRemoveAll, onClickRemoveOne, handleWordClick } = props;
-  const classes = useStyles();
   const { ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
@@ -79,34 +26,81 @@ const SearchBlock = observer((props: propsType) => {
   };
 
   return (
-    <div className={classes.subComponent}>
-      <div className={classes.header}>
-        <span className={classes.title}>{title}</span>
+    <Wrap>
+      <Header>
+        <Title>{title}</Title>
         {blockList.length > 0 && (
-          <button className={classes.removeButton} onClick={onClickRemoveAll}>
-            모두 지우기
-          </button>
+          <RemoveButton onClick={onClickRemoveAll}>모두 지우기</RemoveButton>
         )}
-      </div>
+      </Header>
       {blockList.length > 0 ? (
         blockList.map((list: string, idx: number) => (
-          <div key={`search-list-${idx}`} className={classes.listWrap}>
-            <div className={classes.list} onClick={() => handleListClick(list)}>
-              {list}
-            </div>
+          <ListWrap key={`search-list-${idx}`}>
+            <List onClick={() => handleListClick(list)}>{list}</List>
             <CustomCloseIcon handleIconClick={() => handleIconClick(list)} />
-          </div>
+          </ListWrap>
         ))
       ) : (
-        <Box
-          className={classes.emptyData}
-          sx={{
-            color: palette.grey[isDarkTheme ? 400 : 500],
-          }}
-        >{`${title}가 없어요.`}</Box>
+        <EmptyData isDarkTheme={isDarkTheme}>{`${title}가 없어요.`}</EmptyData>
       )}
-    </div>
+    </Wrap>
   );
 });
 
 export default SearchBlock;
+
+const Wrap = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  marginBottom: 24,
+});
+
+const Header = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  padding: '15px 0',
+});
+
+const Title = styled('span')({
+  fontSize: 18,
+  fontWeight: 600,
+});
+
+const RemoveButton = styled('button')({
+  border: 0,
+  padding: 0,
+  backgroundColor: palette.transparent,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: 'pointer',
+});
+
+const ListWrap = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: 8,
+});
+
+const List = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  flexGrow: 1,
+  padding: '5px 0',
+  maxWidth: 380,
+  height: 26,
+  fontSize: 14,
+  fontWeight: 400,
+  cursor: 'pointer',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+});
+
+const EmptyData = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  marginTop: 9,
+  color: palette.grey[isDarkTheme ? 400 : 500],
+  fontSize: 14,
+  fontWeight: 400,
+  lineHeight: '20px',
+}));

@@ -1,8 +1,7 @@
 import { Fragment, useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { Box } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material';
 import { CustomDrawer, SearchInput } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
@@ -11,59 +10,20 @@ import ResultData from './ResultData';
 import { Detail } from 'components/view';
 import lottie from 'lottie-web';
 import MainLottie from 'assets/lottie/Main.json';
-import { placeDataType } from 'types/typeBundle';
+import { PlaceDataType, ScreenType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { palette } from 'constants/';
 import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 
-const useStyles = makeStyles(() => ({
-  wrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    zIndex: 2,
-  },
-  search: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 24px',
-    height: 56,
-    '& svg': {
-      width: 40,
-      height: 40,
-      cursor: 'pointer',
-    },
-    '& svg:last-of-type': {
-      width: 32,
-      height: 32,
-    },
-  },
-  searchBox: {
-    flexGrow: 1,
-    height: '100%',
-  },
-  lottie: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: 1720,
-    height: '100%',
-    overflow: 'hidden',
-    zIndex: 1,
-    opacity: 0.7,
-  },
-}));
-
 const Main = observer(() => {
   const [currentPage, setCurrentPage] = useState<JSX.Element>(<Fragment />);
-  const [placeData, setPlaceData] = useState<placeDataType[]>([]);
+  const [placeData, setPlaceData] = useState<PlaceDataType[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
   const lottieContainer = useRef<HTMLDivElement>(null);
-  const classes = useStyles();
   const { ScreenSizeStore, LocationStore, CustomDialogStore, ErrorStore, ThemeStore } =
     useStore().MobxStore;
   const navigate = useNavigate();
@@ -125,17 +85,17 @@ const Main = observer(() => {
     onDrawerClose();
   };
 
-  const handlePlaceDataChange = (newPlaceData: placeDataType[]) => {
+  const handlePlaceDataChange = (newPlaceData: PlaceDataType[]) => {
     setPlaceData(JSON.parse(JSON.stringify(newPlaceData)));
   };
 
   const initPlaceData = async () => {
     const params = { populationSort: true };
-    const ktData: { data: { list: placeDataType[] } } | undefined = await axiosRequest(
+    const ktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
       'kt-place',
       params
     );
-    const sktData: { data: { list: placeDataType[] } } | undefined = await axiosRequest(
+    const sktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
       'skt-place',
       params
     );
@@ -149,7 +109,7 @@ const Main = observer(() => {
     ];
     setPlaceData(
       [...ktData.data.list, ...sktData.data.list].sort(
-        (prev: placeDataType, next: placeDataType) => {
+        (prev: PlaceDataType, next: PlaceDataType) => {
           const prevLevel = statusArr.indexOf(prev.populations[0].level);
           const nextLevel = statusArr.indexOf(next.populations[0].level);
           if (prevLevel > nextLevel) return -1;
@@ -158,7 +118,7 @@ const Main = observer(() => {
         }
       )
     );
-    [...ktData.data.list, ...sktData.data.list].forEach((data: placeDataType) => {
+    [...ktData.data.list, ...sktData.data.list].forEach((data: PlaceDataType) => {
       LocationStore.setCategories(data.name, data.categories);
     });
   };
@@ -206,20 +166,13 @@ const Main = observer(() => {
   }, [ErrorStore.statusCode, navigate]);
 
   return (
-    <Fragment>
-      <div className={classes.wrap}>
-        <Box
-          className={classes.search}
-          sx={{
-            '& path': {
-              fill: isDarkTheme ? palette.white : palette.black,
-            },
-          }}
-        >
+    <>
+      <SearchWrap>
+        <SearchBox isDarkTheme={isDarkTheme}>
           <Logo onClick={navigateToHome} />
-          <div className={classes.searchBox} />
+          <EmptySpace />
           <SearchIcon onClick={handleSearchClick} />
-        </Box>
+        </SearchBox>
         <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
         <CustomDrawer
           open={openDrawer}
@@ -240,14 +193,53 @@ const Main = observer(() => {
           }
           component={currentPage}
         />
-      </div>
-      <Box
-        sx={{ transform: `translateX(${ScreenSizeStore.screenType === 'mobile' ? '-280px' : 0})` }}
-        className={classes.lottie}
-        ref={lottieContainer}
-      />
-    </Fragment>
+      </SearchWrap>
+      <Lottie screenType={ScreenSizeStore.screenType} ref={lottieContainer} />
+    </>
   );
 });
 
 export default Main;
+
+const SearchWrap = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  zIndex: 2,
+});
+
+const SearchBox = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '0 24px',
+  height: 56,
+  '& svg': {
+    width: 40,
+    height: 40,
+    cursor: 'pointer',
+  },
+  '& svg:last-of-type': {
+    width: 32,
+    height: 32,
+  },
+  '& path': {
+    fill: isDarkTheme ? palette.white : palette.black,
+  },
+}));
+
+const EmptySpace = styled('div')({
+  flexGrow: 1,
+  height: '100%',
+});
+
+const Lottie = styled('div')<{ screenType: ScreenType }>(({ screenType }) => ({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: 1720,
+  height: '100%',
+  overflow: 'hidden',
+  zIndex: 1,
+  opacity: 0.7,
+  transform: `translateX(${screenType === 'mobile' ? '-280px' : 0})`,
+}));
