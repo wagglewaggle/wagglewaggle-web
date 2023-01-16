@@ -1,60 +1,13 @@
 import { useState, useRef } from 'react';
 import { observer } from 'mobx-react';
-import { Box } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
 import linkCheckIcon from 'assets/icons/link-check-icon.svg';
 
-const useStyles = makeStyles(() => ({
-  footer: {
-    display: 'flex',
-    flexGrow: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingTop: 48,
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: 191,
-    '& button': {
-      border: 'none',
-      backgroundColor: 'transparent',
-      cursor: 'pointer',
-    },
-  },
-  teamName: {
-    marginTop: 16,
-    height: 44,
-    color: palette.grey[500],
-    fontSize: 12,
-    fontWeight: 500,
-  },
-  linkCopyPopup: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 6,
-    padding: '12px 0',
-    margin: '16px 0 0',
-    width: '100%',
-    maxWidth: 400,
-    lineHeight: '20px',
-    fontSize: 14,
-    fontWeight: 600,
-    gap: 8,
-  },
-  linkRef: {
-    display: 'none',
-  },
-}));
-
 const Footer = observer(() => {
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
-  const classes = useStyles();
   const { ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
@@ -74,36 +27,72 @@ const Footer = observer(() => {
   };
 
   return (
-    <footer className={classes.footer}>
-      <Box
-        className={classes.buttons}
-        sx={{ '& button': { color: isDarkTheme ? palette.white : palette.black } }}
-      >
+    <Wrap>
+      <Buttons isDarkTheme={isDarkTheme}>
         <button onClick={handleContactUsClick}>Contact Us</button>|
         <button onClick={handleShareLinkClick}>Share Link</button>
-      </Box>
+      </Buttons>
       {linkCopied ? (
-        <Box
-          className={classes.linkCopyPopup}
-          sx={{
-            color: isDarkTheme ? palette.black : palette.white,
-            backgroundColor: isDarkTheme ? palette.white : palette.black,
-          }}
-        >
+        <LinkCopyPopup isDarkTheme={isDarkTheme}>
           <img src={linkCheckIcon} alt='link-copy-check' />
           링크가 복사되었습니다.
-        </Box>
+        </LinkCopyPopup>
       ) : (
-        <div className={classes.teamName}>© 2022 Team EXIT</div>
+        <TeamName>© 2022 Team EXIT</TeamName>
       )}
-      <input
-        className={classes.linkRef}
-        ref={copyLinkRef}
-        value={window.location.href}
-        onChange={() => {}}
-      />
-    </footer>
+      <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />
+    </Wrap>
   );
 });
 
 export default Footer;
+
+const Wrap = styled('div')({
+  display: 'flex',
+  flexGrow: 1,
+  flexDirection: 'column',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  paddingTop: 48,
+});
+
+const Buttons = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  width: 191,
+  '& button': {
+    border: 'none',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    color: isDarkTheme ? palette.white : palette.black,
+  },
+}));
+
+const LinkCopyPopup = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 6,
+  padding: '12px 0',
+  margin: '16px 0 0',
+  width: '100%',
+  maxWidth: 400,
+  lineHeight: '20px',
+  fontSize: 14,
+  fontWeight: 600,
+  gap: 8,
+  color: isDarkTheme ? palette.black : palette.white,
+  backgroundColor: isDarkTheme ? palette.white : palette.black,
+}));
+
+const TeamName = styled('div')({
+  marginTop: 16,
+  height: 44,
+  color: palette.grey[500],
+  fontSize: 12,
+  fontWeight: 500,
+});
+
+const HiddenLink = styled('input')({
+  display: 'none',
+});

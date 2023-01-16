@@ -1,72 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { observer } from 'mobx-react';
-import { Box, IconButton } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { IconButton, styled } from '@mui/material';
 import { palette, geometry, urlPaths, locationNames, locationRequestTypes } from 'constants/';
-import { locationDataType } from 'types/typeBundle';
+import { LocationDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
 import exclamationIcon from 'assets/icons/exclamation-icon.svg';
-
-const useStyles = makeStyles(() => ({
-  wrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 24,
-    marginTop: 8,
-    backgroundColor: palette.grey[700],
-  },
-  header: {
-    width: '100%',
-    fontSize: 18,
-    fontWeight: 600,
-  },
-  mapWrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    borderRadius: 4,
-    margin: 24,
-    width: '100%',
-    height: 212,
-  },
-  map: {
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4,
-    width: '100%',
-    height: 144,
-  },
-  description: {
-    display: 'flex',
-    alignItems: 'center',
-    flexGrow: 1,
-    padding: '0 16px',
-    cursor: 'pointer',
-  },
-  textArea: {
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 1,
-    fontSize: 14,
-    lineHeight: '20px',
-  },
-  name: {
-    fontWeight: 600,
-  },
-  navigationIcon: {
-    width: 16,
-    height: 16,
-  },
-  infoWrap: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    width: '100%',
-    fontSize: 12,
-    fontWeight: 500,
-    gap: 4,
-  },
-}));
 
 declare global {
   interface Window {
@@ -75,7 +14,7 @@ declare global {
 }
 
 interface propsType {
-  locationData: locationDataType | null;
+  locationData: LocationDataType | null;
 }
 
 const LocationInformation = observer((props: propsType) => {
@@ -83,7 +22,6 @@ const LocationInformation = observer((props: propsType) => {
   const [locationAddress, setLocationAddress] = useState<string | null>(null);
   const [appearMapInfo, setAppearMapInfo] = useState<boolean>(false);
   const mapRef = useRef<HTMLDivElement>(null);
-  const classes = useStyles();
   const { ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
@@ -181,63 +119,112 @@ const LocationInformation = observer((props: propsType) => {
   }, [locationData, getKakaoMap]);
 
   return (
-    <Box
-      className={classes.wrap}
-      sx={{
-        backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
-        '& path': {
-          fill: isDarkTheme ? palette.white : palette.black,
-        },
-      }}
-    >
-      <div className={classes.header}>위치 정보</div>
-      <Box
-        className={classes.mapWrap}
-        sx={{
-          backgroundColor: palette.grey[isDarkTheme ? 600 : 100],
-        }}
-      >
-        <div className={classes.map} ref={mapRef} />
-        <div className={classes.description} onClick={handleNavigationClick}>
-          <div className={classes.textArea}>
-            <div className={classes.name}>
-              {locationNames[locationData?.name || ''] || locationData?.name}
-            </div>
-            <Box
-              sx={{
-                color: palette.grey[isDarkTheme ? 400 : 500],
-                fontWeight: 400,
-              }}
-            >
-              {locationAddress || ''}
-            </Box>
-          </div>
-          <IconButton
-            sx={{
-              border: `1px solid ${isDarkTheme ? palette.white : palette.black}`,
-              padding: '3px',
-              '& img': {
-                filter: isDarkTheme ? 'none' : 'invert(1)',
-              },
-            }}
-          >
-            <img className={classes.navigationIcon} src={navigationIcon} alt='navigation' />
-          </IconButton>
-        </div>
-      </Box>
+    <Wrap isDarkTheme={isDarkTheme}>
+      <Header>위치 정보</Header>
+      <MapWrap isDarkTheme={isDarkTheme}>
+        <Map ref={mapRef} />
+        <Description onClick={handleNavigationClick}>
+          <TextArea>
+            <Name>{locationNames[locationData?.name || ''] || locationData?.name}</Name>
+            <Address isDarkTheme={isDarkTheme}>{locationAddress || ''}</Address>
+          </TextArea>
+          <CustomIconButton isDarkTheme={isDarkTheme}>
+            <NavigationIcon src={navigationIcon} alt='navigation' />
+          </CustomIconButton>
+        </Description>
+      </MapWrap>
       {appearMapInfo && (
-        <Box
-          className={classes.infoWrap}
-          sx={{
-            color: palette.grey[isDarkTheme ? 400 : 500],
-          }}
-        >
+        <InfoWrap isDarkTheme={isDarkTheme}>
           <img src={exclamationIcon} alt='exclamation' />
           장소 혼잡도는 보라색으로 표시된 영역까지만 통계되었습니다.
-        </Box>
+        </InfoWrap>
       )}
-    </Box>
+    </Wrap>
   );
 });
 
 export default LocationInformation;
+
+const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: 24,
+  marginTop: 8,
+  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+  '& path': {
+    fill: isDarkTheme ? palette.white : palette.black,
+  },
+}));
+
+const Header = styled('div')({
+  width: '100%',
+  fontSize: 18,
+  fontWeight: 600,
+});
+
+const MapWrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  borderRadius: 4,
+  margin: 24,
+  width: '100%',
+  height: 212,
+  backgroundColor: palette.grey[isDarkTheme ? 600 : 100],
+}));
+
+const Map = styled('div')({
+  borderTopLeftRadius: 4,
+  borderTopRightRadius: 4,
+  width: '100%',
+  height: 144,
+});
+
+const Description = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  flexGrow: 1,
+  padding: '0 16px',
+  cursor: 'pointer',
+});
+
+const TextArea = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  fontSize: 14,
+  lineHeight: '20px',
+});
+
+const Name = styled('div')({
+  fontWeight: 600,
+});
+
+const Address = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  color: palette.grey[isDarkTheme ? 400 : 500],
+  fontWeight: 400,
+}));
+
+const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  border: `1px solid ${isDarkTheme ? palette.white : palette.black}`,
+  padding: '3px',
+  '& img': {
+    filter: isDarkTheme ? 'none' : 'invert(1)',
+  },
+}));
+
+const NavigationIcon = styled('img')({
+  width: 16,
+  height: 16,
+});
+
+const InfoWrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  width: '100%',
+  color: palette.grey[isDarkTheme ? 400 : 500],
+  fontSize: 12,
+  fontWeight: 500,
+  gap: 4,
+}));

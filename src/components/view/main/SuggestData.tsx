@@ -1,67 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
-import { Box } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { SearchBlock } from 'components/common';
 import { useStore } from 'stores';
-import { placeDataType } from 'types/typeBundle';
+import { PlaceDataType, ScreenType } from 'types/typeBundle';
 import { palette, locationNames } from 'constants/';
 
-const useStyles = makeStyles(() => ({
-  wrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    margin: '5px 0 35px',
-  },
-  listWrap: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '14px 24px',
-    gap: 8,
-    cursor: 'pointer',
-    '& path': {
-      width: 17,
-      height: 17,
-    },
-  },
-  list: {
-    display: 'flex',
-    alignItems: 'center',
-    flexGrow: 1,
-    height: 24,
-    fontSize: 14,
-    fontWeight: 600,
-    whiteSpace: 'pre-wrap',
-  },
-  includedPart: {
-    color: palette.orange,
-  },
-  divider: {
-    border: 0,
-    width: '100%',
-    height: 8,
-    backgroundColor: palette.black,
-  },
-  title: {
-    margin: '32px 20px 0',
-    fontSize: 18,
-    fontWeight: 600,
-  },
-  cardWrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    margin: '30px 24px 35px',
-  },
-  emptySuggestionWrap: {
-    padding: '0 24px',
-    fontSize: 14,
-    fontWeight: 400,
-  },
-}));
-
 interface propsType {
-  placeData: placeDataType[];
+  placeData: PlaceDataType[];
   searchValue: string;
   handleWordClick: (searchWord: string) => void;
   handleLatestListChange: (newList: string[]) => void;
@@ -70,12 +17,8 @@ interface propsType {
 const SuggestData = observer((props: propsType) => {
   const { placeData, searchValue, handleWordClick, handleLatestListChange } = props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
-  const [suggestionList, setSuggestionList] = useState<placeDataType[]>([]);
-  const classes = useStyles();
+  const [suggestionList, setSuggestionList] = useState<PlaceDataType[]>([]);
   const { LocationStore, ScreenSizeStore } = useStore().MobxStore;
-  const WRAP_BOX_STYLE: { width: number } = {
-    width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth : 400,
-  };
 
   const handleRemoveLatestList = (list: string) => {
     const newList: string[] = JSON.parse(JSON.stringify(searchBlockList));
@@ -99,7 +42,7 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const getSuggestionList = useCallback(() => {
-    const newSuggestionList: placeDataType[] = placeData.filter((data: placeDataType) =>
+    const newSuggestionList: PlaceDataType[] = placeData.filter((data: PlaceDataType) =>
       (locationNames[data.name] || data.name).includes(searchValue)
     );
     setSuggestionList(newSuggestionList);
@@ -116,27 +59,23 @@ const SuggestData = observer((props: propsType) => {
   }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
 
   return (
-    <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
-      {suggestionList.map((list: placeDataType, idx: number) => {
+    <Wrap screenType={ScreenSizeStore.screenType} screenWidth={ScreenSizeStore.screenWidth}>
+      {suggestionList.map((list: PlaceDataType, idx: number) => {
         const searchValueIdx: number = (locationNames[list.name] || list.name).indexOf(searchValue);
         const location: string = locationNames[list.name] || list.name;
         return (
-          <div
-            key={`suggest-data-${idx}`}
-            className={classes.listWrap}
-            onClick={() => handleListClick(list.name)}
-          >
+          <ListWrap key={`suggest-data-${idx}`} onClick={() => handleListClick(list.name)}>
             <SearchIcon />
-            <span className={classes.list}>
+            <List>
               {location.substring(0, searchValueIdx)}
-              <span className={classes.includedPart}>{searchValue}</span>
+              <IncludedString>{searchValue}</IncludedString>
               {location.substring(searchValueIdx + searchValue.length, location.length)}
-            </span>
-          </div>
+            </List>
+          </ListWrap>
         );
       })}
       {suggestionList.length === 0 && (
-        <div className={classes.emptySuggestionWrap}>
+        <EmptySuggestion>
           <SearchBlock
             title='최근 검색어'
             blockList={searchBlockList}
@@ -144,10 +83,51 @@ const SuggestData = observer((props: propsType) => {
             onClickRemoveOne={handleRemoveLatestList}
             handleWordClick={handleWordClick}
           />
-        </div>
+        </EmptySuggestion>
       )}
-    </Box>
+    </Wrap>
   );
 });
 
 export default SuggestData;
+
+const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number }>(
+  ({ screenType, screenWidth }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '5px 0 35px',
+    width: screenType === 'mobile' ? screenWidth : 400,
+  })
+);
+
+const ListWrap = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '14px 24px',
+  gap: 8,
+  cursor: 'pointer',
+  '& path': {
+    width: 17,
+    height: 17,
+  },
+});
+
+const List = styled('span')({
+  display: 'flex',
+  alignItems: 'center',
+  flexGrow: 1,
+  height: 24,
+  fontSize: 14,
+  fontWeight: 600,
+  whiteSpace: 'pre-wrap',
+});
+
+const IncludedString = styled('span')({
+  color: palette.orange,
+});
+
+const EmptySuggestion = styled('div')({
+  padding: '0 24px',
+  fontSize: 14,
+  fontWeight: 400,
+});

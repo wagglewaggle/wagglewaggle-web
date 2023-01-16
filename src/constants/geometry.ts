@@ -1,6 +1,6 @@
-import { locationInfoType } from 'types/typeBundle';
+import { LocationInfoType } from 'types/typeBundle';
 
-export const geometry: locationInfoType = {
+export const geometry: LocationInfoType = {
   '잠실 관광특구': {
     type: 'Polygon',
     coordinates: [

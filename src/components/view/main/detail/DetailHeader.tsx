@@ -1,63 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { Box, IconButton } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { IconButton, styled } from '@mui/material';
 import lottie from 'lottie-web';
 import { PlaceStatus } from 'components/common';
 import { palette, locationNames, bgPaths } from 'constants/';
-import { categoryType, locationDataType } from 'types/typeBundle';
+import { CategoryType, LocationDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import DetailLottie from 'assets/lottie/Detail.json';
 import leftIcon from 'assets/icons/left-icon.svg';
 
-const useStyles = makeStyles(() => ({
-  wrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '0 24px',
-    height: 448,
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPositionX: 'center',
-    overflowX: 'hidden',
-    '& svg': {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '767px !important',
-      height: '432px !important',
-    },
-  },
-  buttonArea: {
-    padding: '12px 0',
-    zIndex: 1,
-    '& button': {
-      padding: 0,
-      width: 32,
-      height: 32,
-      justifyContent: 'flex-start',
-    },
-  },
-  categoryName: {
-    margin: '8px 0',
-    fontSize: 12,
-    fontWeight: 500,
-  },
-  statusWrap: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    whiteSpace: 'pre-line',
-    lineHeight: '32px',
-  },
-  status: {
-    fontSize: 24,
-    fontWeight: 600,
-  },
-}));
-
 interface propsType {
-  locationData: locationDataType | null;
+  locationData: LocationDataType | null;
 }
 
 const DetailHeader = observer((props: propsType) => {
@@ -65,7 +19,6 @@ const DetailHeader = observer((props: propsType) => {
   const [categories, setCategories] = useState<string>('');
   const [bgPath, setBgPath] = useState<string>('');
   const lottieContainer = useRef<HTMLDivElement>(null);
-  const classes = useStyles();
   const { LocationStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -98,33 +51,21 @@ const DetailHeader = observer((props: propsType) => {
     if (!locationData?.name || !LocationStore.categories[locationData.name]) return;
     setCategories(
       LocationStore.categories[locationData.name]
-        .map((category: categoryType) => category.type)
+        .map((category: CategoryType) => category.type)
         .join(', ')
     );
   }, [locationData?.name, LocationStore.categories]);
 
   return (
-    <Box
-      className={classes.wrap}
-      ref={lottieContainer}
-      sx={
-        bgPath === ''
-          ? undefined
-          : {
-              backgroundImage: bgPath,
-            }
-      }
-    >
-      <div className={classes.buttonArea}>
-        <IconButton onClick={handleBackClick} sx={{ filter: isDarkTheme ? 'none' : 'invert(1)' }}>
+    <Wrap bgPath={bgPath === '' ? undefined : bgPath} ref={lottieContainer}>
+      <ButtonArea>
+        <CustomIconButton isDarkTheme={isDarkTheme} onClick={handleBackClick}>
           <img src={leftIcon} alt='left' />
-        </IconButton>
-      </div>
-      <Box className={classes.categoryName} sx={{ color: palette.grey[isDarkTheme ? 400 : 500] }}>
-        {categories}
-      </Box>
-      <div className={classes.statusWrap}>
-        <div className={classes.status}>
+        </CustomIconButton>
+      </ButtonArea>
+      <CategoryName isDarkTheme={isDarkTheme}>{categories}</CategoryName>
+      <StatusWrap>
+        <Status>
           {`지금 ${locationNames[locationData?.name || ''] || locationData?.name || ''}에
           사람이 `}
           <PlaceStatus
@@ -137,10 +78,63 @@ const DetailHeader = observer((props: propsType) => {
               VERY_CROWDED: '너무 많아요.',
             }}
           />
-        </div>
-      </div>
-    </Box>
+        </Status>
+      </StatusWrap>
+    </Wrap>
   );
 });
 
 export default DetailHeader;
+
+const Wrap = styled('div')<{ bgPath: string | undefined }>(({ bgPath }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '0 24px',
+  height: 448,
+  backgroundImage: bgPath,
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  backgroundPositionX: 'center',
+  overflowX: 'hidden',
+  '& svg': {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '767px !important',
+    height: '432px !important',
+  },
+}));
+
+const ButtonArea = styled('div')({
+  padding: '12px 0',
+  zIndex: 1,
+  '& button': {
+    padding: 0,
+    width: 32,
+    height: 32,
+    justifyContent: 'flex-start',
+  },
+});
+
+const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  filter: isDarkTheme ? 'none' : 'invert(1)',
+}));
+
+const CategoryName = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  margin: '8px 0',
+  color: palette.grey[isDarkTheme ? 400 : 500],
+  fontSize: 12,
+  fontWeight: 500,
+}));
+
+const StatusWrap = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  whiteSpace: 'pre-line',
+  lineHeight: '32px',
+});
+
+const Status = styled('div')({
+  fontSize: 24,
+  fontWeight: 600,
+});

@@ -1,103 +1,40 @@
-import { Fragment, useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { observer } from 'mobx-react';
-import { Box } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material';
 import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
 import lottie from 'lottie-web';
 import axiosRequest from 'api/axiosRequest';
-import { placeDataType } from 'types/typeBundle';
+import { PlaceDataType, ScreenType } from 'types/typeBundle';
 import { palette, locationNames, districts } from 'constants/';
 
-const useStyles = makeStyles(() => ({
-  wrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '5px 24px 35px',
-  },
-  emptyImg: {
-    margin: '40px 0 24px',
-    width: 120,
-    height: 120,
-  },
-  emptyComment: {
-    fontSize: 18,
-    fontWeight: 600,
-  },
-  emptySuggestion: {
-    margin: '8px 0 64px',
-    fontSize: 14,
-    fontWeight: 400,
-  },
-  emptyTitle: {
-    marginTop: 32,
-    width: '100%',
-    fontSize: 18,
-    fontWeight: 600,
-  },
-  listWrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    gap: 10,
-  },
-  subComponent: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-  },
-  header: {
-    display: 'flex',
-    paddingBottom: 5,
-    fontSize: 14,
-    '& svg': {
-      display: 'none',
-    },
-  },
-  title: {
-    margin: '32px 0 24px',
-    fontSize: 18,
-    fontWeight: 600,
-  },
-  lottie: {
-    width: 120,
-    height: 120,
-    overflow: 'hidden',
-  },
-}));
-
 interface propsType {
-  placeData: placeDataType[];
+  placeData: PlaceDataType[];
   searchWord: string;
 }
 
 const ResultData = observer((props: propsType) => {
   const { placeData, searchWord } = props;
-  const [resultData, setResultData] = useState<placeDataType[]>([]);
-  const [relatedData, setRelatedData] = useState<placeDataType[]>([]);
+  const [resultData, setResultData] = useState<PlaceDataType[]>([]);
+  const [relatedData, setRelatedData] = useState<PlaceDataType[]>([]);
   const lottieContainer = useRef<HTMLDivElement>(null);
-  const classes = useStyles();
   const { ScreenSizeStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
-  const WRAP_BOX_STYLE: { width: number } = {
-    width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth - 48 : 352,
-  };
 
   const getSuggestionList = useCallback(async () => {
     setResultData(
-      placeData.filter((data: placeDataType) =>
+      placeData.filter((data: PlaceDataType) =>
         (locationNames[data.name] || data.name).includes(searchWord)
       )
     );
   }, [placeData, searchWord]);
 
   const pushPlaceData = (
-    places: placeDataType[],
+    places: PlaceDataType[],
     newPlaces: string[],
-    newRelatedData: placeDataType[]
+    newRelatedData: PlaceDataType[]
   ) => {
-    places.forEach((place: placeDataType) => {
+    places.forEach((place: PlaceDataType) => {
       if (!newPlaces.includes(place.name)) {
         newPlaces.push(place.name);
         newRelatedData.push(place);
@@ -106,9 +43,9 @@ const ResultData = observer((props: propsType) => {
   };
 
   const getRelatedData = useCallback(() => {
-    const newRelatedData: placeDataType[] = [];
+    const newRelatedData: PlaceDataType[] = [];
     const newPlaces: string[] = [];
-    resultData.forEach(async (data: placeDataType, idx: number) => {
+    resultData.forEach(async (data: PlaceDataType, idx: number) => {
       if (!districts[data.name]) return;
       const response = await axiosRequest(`location/${districts[data.name]}`);
       if (!response?.data?.ktPlaces || !response?.data?.sktPlaces) return;
@@ -154,46 +91,94 @@ const ResultData = observer((props: propsType) => {
   }, [getSuggestionList]);
 
   return (
-    <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
+    <Wrap screenType={ScreenSizeStore.screenType} screenWidth={ScreenSizeStore.screenWidth}>
       {resultData.length === 0 ? (
-        <Fragment>
-          <div className={classes.emptyImg}>
-            <div className={classes.lottie} ref={lottieContainer} />
-          </div>
-          <div className={classes.emptyComment}>검색 결과가 없어요.</div>
-          <Box
-            className={classes.emptySuggestion}
-            sx={{
-              color: palette.grey[isDarkTheme ? 400 : 500],
-            }}
-          >
-            다른 장소를 검색해보세요.
-          </Box>
-        </Fragment>
+        <>
+          <Empty>
+            <Lottie ref={lottieContainer} />
+          </Empty>
+          <EmptyComment>검색 결과가 없어요.</EmptyComment>
+          <EmptySuggestion isDarkTheme={isDarkTheme}>다른 장소를 검색해보세요.</EmptySuggestion>
+        </>
       ) : (
-        <Fragment>
-          <div className={classes.subComponent}>
-            <div className={classes.header}>
-              <span className={classes.title}>{`검색 결과 ${resultData.length}`}</span>
-            </div>
-            {resultData.map((data: placeDataType, idx: number) => (
+        <>
+          <SubComponent>
+            <Header>
+              <Title>{`검색 결과 ${resultData.length}`}</Title>
+            </Header>
+            {resultData.map((data: PlaceDataType, idx: number) => (
               <PlaceCard key={`result-data-${idx}`} place={data} />
             ))}
-          </div>
+          </SubComponent>
           {relatedData.length > 0 && (
-            <div className={classes.subComponent}>
-              <div className={classes.header}>
-                <span className={classes.title}>관련 장소 현황</span>
-              </div>
-              {relatedData.map((data: placeDataType, idx: number) => (
+            <SubComponent>
+              <Header>
+                <Title>관련 장소 현황</Title>
+              </Header>
+              {relatedData.map((data: PlaceDataType, idx: number) => (
                 <PlaceCard key={`related-data-${idx}`} place={data} />
               ))}
-            </div>
+            </SubComponent>
           )}
-        </Fragment>
+        </>
       )}
-    </Box>
+    </Wrap>
   );
 });
 
 export default ResultData;
+
+const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number }>(
+  ({ screenType, screenWidth }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '5px 24px 35px',
+    width: screenType === 'mobile' ? screenWidth - 48 : 352,
+  })
+);
+
+const Empty = styled('div')({
+  margin: '40px 0 24px',
+  width: 120,
+  height: 120,
+});
+
+const Lottie = styled('div')({
+  width: 120,
+  height: 120,
+  overflow: 'hidden',
+});
+
+const EmptyComment = styled('div')({
+  fontSize: 18,
+  fontWeight: 600,
+});
+
+const EmptySuggestion = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  margin: '8px 0 64px',
+  color: palette.grey[isDarkTheme ? 400 : 500],
+  fontSize: 14,
+  fontWeight: 400,
+}));
+
+const SubComponent = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+});
+
+const Header = styled('div')({
+  display: 'flex',
+  paddingBottom: 5,
+  fontSize: 14,
+  '& svg': {
+    display: 'none',
+  },
+});
+
+const Title = styled('span')({
+  margin: '32px 0 24px',
+  fontSize: 18,
+  fontWeight: 600,
+});

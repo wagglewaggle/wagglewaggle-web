@@ -1,17 +1,9 @@
 import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Box } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material';
 import { SearchBlock } from 'components/common';
+import { ScreenType } from 'types/typeBundle';
 import { useStore } from 'stores';
-
-const useStyles = makeStyles(() => ({
-  wrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '5px 24px 35px',
-  },
-}));
 
 interface propsType {
   handleWordClick: (searchWord: string) => void;
@@ -22,11 +14,7 @@ interface propsType {
 const SearchData = observer((props: propsType) => {
   const { handleWordClick, handleLatestListChange, handleSearchValueChange } = props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
-  const classes = useStyles();
   const { ScreenSizeStore } = useStore().MobxStore;
-  const WRAP_BOX_STYLE: { width: number } = {
-    width: ScreenSizeStore.screenType === 'mobile' ? ScreenSizeStore.screenWidth - 48 : 352,
-  };
 
   const handleRemoveLatestList = (list: string) => {
     const newList: string[] = JSON.parse(JSON.stringify(searchBlockList));
@@ -55,7 +43,7 @@ const SearchData = observer((props: propsType) => {
   }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
 
   return (
-    <Box className={classes.wrap} sx={WRAP_BOX_STYLE}>
+    <Wrap screenType={ScreenSizeStore.screenType} screenWidth={ScreenSizeStore.screenWidth}>
       <SearchBlock
         title='최근 검색어'
         blockList={searchBlockList}
@@ -63,8 +51,17 @@ const SearchData = observer((props: propsType) => {
         onClickRemoveAll={handleRemoveAllLatestList}
         handleWordClick={handleWordClick}
       />
-    </Box>
+    </Wrap>
   );
 });
 
 export default SearchData;
+
+const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number }>(
+  ({ screenType, screenWidth }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '5px 24px 35px',
+    width: screenType === 'mobile' ? screenWidth - 48 : 352,
+  })
+);
