@@ -1,13 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { IconButton, styled } from '@mui/material';
-import lottie from 'lottie-web';
 import { PlaceStatus } from 'components/common';
 import { palette, locationNames, bgPaths } from 'constants/';
 import { CategoryType, LocationDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
-import DetailLottie from 'assets/lottie/Detail.json';
 import leftIcon from 'assets/icons/left-icon.svg';
 
 interface propsType {
@@ -18,7 +16,6 @@ const DetailHeader = observer((props: propsType) => {
   const { locationData } = props;
   const [categories, setCategories] = useState<string>('');
   const [bgPath, setBgPath] = useState<string>('');
-  const lottieContainer = useRef<HTMLDivElement>(null);
   const { LocationStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -26,17 +23,6 @@ const DetailHeader = observer((props: propsType) => {
   const handleBackClick = () => {
     navigate('/main');
   };
-
-  useEffect(() => {
-    if (!lottieContainer.current) return;
-    lottie.loadAnimation({
-      container: lottieContainer.current,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      animationData: DetailLottie,
-    });
-  }, []);
 
   useEffect(() => {
     if (!bgPaths[locationData?.name || '']) return;
@@ -57,7 +43,7 @@ const DetailHeader = observer((props: propsType) => {
   }, [locationData?.name, LocationStore.categories]);
 
   return (
-    <Wrap bgPath={bgPath === '' ? undefined : bgPath} ref={lottieContainer}>
+    <Wrap bgPath={bgPath === '' ? undefined : bgPath}>
       <ButtonArea>
         <CustomIconButton isDarkTheme={isDarkTheme} onClick={handleBackClick}>
           <img src={leftIcon} alt='left' />
