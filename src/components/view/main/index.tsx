@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useRef } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
@@ -8,9 +8,7 @@ import SearchData from './SearchData';
 import SuggestData from './SuggestData';
 import ResultData from './ResultData';
 import { Detail } from 'components/view';
-import lottie from 'lottie-web';
-import MainLottie from 'assets/lottie/Main.json';
-import { PlaceDataType, ScreenType } from 'types/typeBundle';
+import { PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { palette } from 'constants/';
@@ -23,9 +21,7 @@ const Main = observer(() => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
-  const lottieContainer = useRef<HTMLDivElement>(null);
-  const { ScreenSizeStore, LocationStore, CustomDialogStore, ErrorStore, ThemeStore } =
-    useStore().MobxStore;
+  const { LocationStore, CustomDialogStore, ErrorStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -133,17 +129,6 @@ const Main = observer(() => {
   }, []);
 
   useEffect(() => {
-    if (!lottieContainer.current) return;
-    lottie.loadAnimation({
-      container: lottieContainer.current,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      animationData: MainLottie,
-    });
-  }, []);
-
-  useEffect(() => {
     const newDrawerState: boolean = location.search.length !== 0;
     setOpenDrawer(newDrawerState);
     setIncludeInput(!newDrawerState);
@@ -166,36 +151,33 @@ const Main = observer(() => {
   }, [ErrorStore.statusCode, navigate]);
 
   return (
-    <>
-      <SearchWrap>
-        <SearchBox isDarkTheme={isDarkTheme}>
-          <Logo onClick={navigateToHome} />
-          <EmptySpace />
-          <SearchIcon onClick={handleSearchClick} />
-        </SearchBox>
-        <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
-        <CustomDrawer
-          open={openDrawer}
-          onClose={onDrawerClose}
-          searchInput={
-            includeInput ? (
-              <SearchInput
-                searchValue={searchValue}
-                handleSearchEnter={handleSearchEnter}
-                handleDrawerClose={
-                  searchValue.length === 0 || !LocationStore.suggestionExists
-                    ? onDrawerClose
-                    : handleSearchClick
-                }
-                handleSearchValueChange={handleSearchValueChange}
-              />
-            ) : undefined
-          }
-          component={currentPage}
-        />
-      </SearchWrap>
-      <Lottie screenType={ScreenSizeStore.screenType} ref={lottieContainer} />
-    </>
+    <SearchWrap>
+      <SearchBox isDarkTheme={isDarkTheme}>
+        <Logo onClick={navigateToHome} />
+        <EmptySpace />
+        <SearchIcon onClick={handleSearchClick} />
+      </SearchBox>
+      <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
+      <CustomDrawer
+        open={openDrawer}
+        onClose={onDrawerClose}
+        searchInput={
+          includeInput ? (
+            <SearchInput
+              searchValue={searchValue}
+              handleSearchEnter={handleSearchEnter}
+              handleDrawerClose={
+                searchValue.length === 0 || !LocationStore.suggestionExists
+                  ? onDrawerClose
+                  : handleSearchClick
+              }
+              handleSearchValueChange={handleSearchValueChange}
+            />
+          ) : undefined
+        }
+        component={currentPage}
+      />
+    </SearchWrap>
   );
 });
 
@@ -231,15 +213,3 @@ const EmptySpace = styled('div')({
   flexGrow: 1,
   height: '100%',
 });
-
-const Lottie = styled('div')<{ screenType: ScreenType }>(({ screenType }) => ({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: 1720,
-  height: '100%',
-  overflow: 'hidden',
-  zIndex: 1,
-  opacity: 0.7,
-  transform: `translateX(${screenType === 'mobile' ? '-280px' : 0})`,
-}));
