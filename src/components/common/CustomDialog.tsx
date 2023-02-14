@@ -104,7 +104,10 @@ const CustomDialog = observer(() => {
 
 export default CustomDialog;
 
-const CustomDialogWrap = styled(Dialog)<{
+const CustomDialogWrap = styled(Dialog, {
+  shouldForwardProp: (prop: string) =>
+    !['width', 'height', 'variant', 'screenType', 'isDarkTheme'].includes(prop),
+})<{
   width: number;
   height: number;
   variant: 'intro' | 'accident' | 'cctv';
@@ -141,23 +144,25 @@ const CustomDialogWrap = styled(Dialog)<{
   },
 }));
 
-const CloseButtonWrap = styled('div')<{ width: number; variant: 'intro' | 'accident' | 'cctv' }>(
-  ({ width, variant }) => ({
-    padding: 0,
-    width: `${width - (variant === 'intro' ? 8 : 0)}px`,
-    textAlign: 'end',
-    backgroundColor: 'transparent',
-    '& button': {
-      padding: '0 0 16px 0',
-    },
-    '& img': {
-      width: '32px',
-      height: '32px',
-    },
-  })
-);
+const CloseButtonWrap = styled('div', {
+  shouldForwardProp: (prop: string) => !['width', 'variant'].includes(prop),
+})<{ width: number; variant: 'intro' | 'accident' | 'cctv' }>(({ width, variant }) => ({
+  padding: 0,
+  width: `${width - (variant === 'intro' ? 8 : 0)}px`,
+  textAlign: 'end',
+  backgroundColor: 'transparent',
+  '& button': {
+    padding: '0 0 16px 0',
+  },
+  '& img': {
+    width: '32px',
+    height: '32px',
+  },
+}));
 
-const DialogPart = styled('div')<{
+const DialogPart = styled('div', {
+  shouldForwardProp: (prop: string) => !['width', 'variant', 'isDarkTheme'].includes(prop),
+})<{
   isDarkTheme: boolean;
   variant: 'intro' | 'accident' | 'cctv';
   width: number;
@@ -181,7 +186,9 @@ const DialogPart = styled('div')<{
   },
 }));
 
-const CustomContent = styled(DialogContent)<{
+const CustomContent = styled(DialogContent, {
+  shouldForwardProp: (prop: string) => !['width', 'variant'].includes(prop),
+})<{
   width: number;
   variant: 'intro' | 'accident' | 'cctv';
 }>(({ width, variant }) => ({
@@ -196,7 +203,9 @@ const CustomContent = styled(DialogContent)<{
   },
 }));
 
-const AccidentEmpty = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const AccidentEmpty = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   height: '20px',
   width: '100%',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,

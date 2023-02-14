@@ -155,7 +155,9 @@ const EmptyComment = styled('div')({
   fontWeight: 600,
 });
 
-const EmptySuggestion = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const EmptySuggestion = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   margin: '8px 0 64px',
   color: palette.grey[isDarkTheme ? 400 : 500],
   fontSize: 14,

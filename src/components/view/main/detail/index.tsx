@@ -79,7 +79,9 @@ const Detail = observer(() => {
 
 export default Detail;
 
-const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number; isDarkTheme: boolean }>(
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => !['screenType', 'screenWidth', 'isDarkTheme'].includes(prop),
+})<{ screenType: ScreenType; screenWidth: number; isDarkTheme: boolean }>(
   ({ screenType, screenWidth, isDarkTheme }) => ({
     display: 'flex',
     flexDirection: 'column',
@@ -88,7 +90,9 @@ const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number; isDark
   })
 );
 
-const MarginArea = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const MarginArea = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   height: '64px',
   backgroundColor: isDarkTheme ? palette.black : palette.white,
 }));
