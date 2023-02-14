@@ -72,7 +72,9 @@ const DetailHeader = observer((props: propsType) => {
 
 export default DetailHeader;
 
-const Wrap = styled('div')<{ bgPath: string | undefined }>(({ bgPath }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'bgPath',
+})<{ bgPath: string | undefined }>(({ bgPath }) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '0 24px',
@@ -102,11 +104,15 @@ const ButtonArea = styled('div')({
   },
 });
 
-const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomIconButton = styled(IconButton, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   filter: isDarkTheme ? 'none' : 'invert(1)',
 }));
 
-const CategoryName = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CategoryName = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   margin: '8px 0',
   color: palette.grey[isDarkTheme ? 400 : 500],
   fontSize: 12,

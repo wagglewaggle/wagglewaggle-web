@@ -56,7 +56,9 @@ const Wrap = styled('div')({
   paddingTop: 48,
 });
 
-const Buttons = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Buttons = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   width: 191,
@@ -68,7 +70,9 @@ const Buttons = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   },
 }));
 
-const LinkCopyPopup = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const LinkCopyPopup = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

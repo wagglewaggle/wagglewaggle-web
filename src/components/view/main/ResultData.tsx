@@ -128,15 +128,15 @@ const ResultData = observer((props: propsType) => {
 
 export default ResultData;
 
-const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number }>(
-  ({ screenType, screenWidth }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '5px 24px 35px',
-    width: screenType === 'mobile' ? screenWidth - 48 : 352,
-  })
-);
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => !['screenType', 'screenWidth'].includes(prop),
+})<{ screenType: ScreenType; screenWidth: number }>(({ screenType, screenWidth }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '5px 24px 35px',
+  width: screenType === 'mobile' ? screenWidth - 48 : 352,
+}));
 
 const Empty = styled('div')({
   margin: '40px 0 24px',
@@ -155,7 +155,9 @@ const EmptyComment = styled('div')({
   fontWeight: 600,
 });
 
-const EmptySuggestion = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const EmptySuggestion = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   margin: '8px 0 64px',
   color: palette.grey[isDarkTheme ? 400 : 500],
   fontSize: 14,

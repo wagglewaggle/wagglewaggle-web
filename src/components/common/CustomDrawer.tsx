@@ -1,7 +1,7 @@
-import { Fragment, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { Drawer } from '@mui/material';
+import { Drawer, styled } from '@mui/material';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 
@@ -13,7 +13,7 @@ interface propsType {
 }
 
 const CustomDrawer = observer((props: propsType) => {
-  const { open, searchInput = <Fragment />, component, onClose } = props;
+  const { open, searchInput = <></>, component, onClose } = props;
   const drawerRef = useRef<HTMLDivElement>(null);
   const { ThemeStore } = useStore().MobxStore;
   const location = useLocation();
@@ -26,18 +26,9 @@ const CustomDrawer = observer((props: propsType) => {
   }, [drawerRef?.current, location.search]);
 
   return (
-    <Drawer
-      sx={{
-        '& .MuiPaper-root': {
-          color: isDarkTheme ? palette.white : palette.black,
-          backgroundColor: isDarkTheme
-            ? palette.grey[800]
-            : location.search === ''
-            ? palette.white
-            : palette.grey[200],
-          overflowX: 'hidden',
-        },
-      }}
+    <CustomMuiDrawer
+      isDarkTheme={isDarkTheme}
+      searchText={location.search}
       ref={drawerRef}
       open={open}
       anchor='right'
@@ -46,8 +37,22 @@ const CustomDrawer = observer((props: propsType) => {
     >
       {searchInput}
       {component}
-    </Drawer>
+    </CustomMuiDrawer>
   );
 });
 
 export default CustomDrawer;
+
+const CustomMuiDrawer = styled(Drawer, {
+  shouldForwardProp: (prop: string) => !['isDarkTheme', 'searchText'].includes(prop),
+})<{ isDarkTheme: boolean; searchText: string }>(({ isDarkTheme, searchText }) => ({
+  '& .MuiPaper-root': {
+    color: isDarkTheme ? palette.white : palette.black,
+    backgroundColor: isDarkTheme
+      ? palette.grey[800]
+      : searchText === ''
+      ? palette.white
+      : palette.grey[200],
+    overflowX: 'hidden',
+  },
+}));

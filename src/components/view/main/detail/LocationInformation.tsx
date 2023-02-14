@@ -145,7 +145,9 @@ const LocationInformation = observer((props: propsType) => {
 
 export default LocationInformation;
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -163,7 +165,9 @@ const Header = styled('div')({
   fontWeight: 600,
 });
 
-const MapWrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const MapWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   flexDirection: 'column',
   borderRadius: 4,
@@ -200,12 +204,16 @@ const Name = styled('div')({
   fontWeight: 600,
 });
 
-const Address = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Address = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: palette.grey[isDarkTheme ? 400 : 500],
   fontWeight: 400,
 }));
 
-const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomIconButton = styled(IconButton, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   border: `1px solid ${isDarkTheme ? palette.white : palette.black}`,
   padding: '3px',
   '& img': {
@@ -218,7 +226,9 @@ const NavigationIcon = styled('img')({
   height: 16,
 });
 
-const InfoWrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const InfoWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',

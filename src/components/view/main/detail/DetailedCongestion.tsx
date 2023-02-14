@@ -102,7 +102,9 @@ const DetailedCongestion = observer((props: propsType) => {
 
 export default DetailedCongestion;
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -144,7 +146,9 @@ const CustomRefreshIcon = styled(RefreshIcon)({
   height: 16,
 });
 
-const StatusCard = styled('div')<{ variant: 'person' | 'traffic' }>(({ variant }) => ({
+const StatusCard = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'variant',
+})<{ variant: 'person' | 'traffic' }>(({ variant }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -179,7 +183,9 @@ const StatusDescription = styled('div')({
   },
 });
 
-const CommentsWrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CommentsWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: palette.grey[isDarkTheme ? 400 : 500],
 }));
 
@@ -188,7 +194,9 @@ const CustomDivider = styled('hr')({
   border: `1px solid ${palette.grey[600]}`,
 });
 
-const CustomButton = styled(Button)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomButton = styled(Button, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   justifyContent: 'space-between',
   padding: '12px 0',
   width: '100%',
