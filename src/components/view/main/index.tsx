@@ -68,6 +68,7 @@ const Main = observer(() => {
         handleSearchValueChange={handleSearchValueChange}
       />
     );
+    navigate('/main/search');
   };
 
   const onDrawerClose = () => {
