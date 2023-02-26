@@ -175,20 +175,20 @@ const ChipsWrap = styled(ScrollContainer)({
   cursor: 'pointer',
 });
 
-const Chip = styled('div')<{ isDarkTheme: boolean; selectedStyle: object }>(
-  ({ isDarkTheme, selectedStyle }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: 29,
-    padding: '8px 12px',
-    whiteSpace: 'nowrap',
-    fontSize: 14,
-    fontWeight: 600,
-    border: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
-    color: palette.grey[isDarkTheme ? 400 : 500],
-    ...selectedStyle,
-  })
-);
+const Chip = styled('div', {
+  shouldForwardProp: (prop: string) => !['isDarkTheme', 'selectedStyle'].includes(prop),
+})<{ isDarkTheme: boolean; selectedStyle: object }>(({ isDarkTheme, selectedStyle }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  borderRadius: 29,
+  padding: '8px 12px',
+  whiteSpace: 'nowrap',
+  fontSize: 14,
+  fontWeight: 600,
+  border: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
+  color: palette.grey[isDarkTheme ? 400 : 500],
+  ...selectedStyle,
+}));
 
 const SubHeader = styled('div')({
   display: 'flex',
@@ -207,7 +207,9 @@ const SubHeaderLength = styled('div')({
   marginLeft: 5,
 });
 
-const CustomSelect = styled(Select)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomSelect = styled(Select, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: isDarkTheme ? palette.white : palette.black,
   '& div': {
     fontSize: 14,
@@ -236,7 +238,9 @@ const CustomMenuItem = styled(MenuItem)({
   fontWeight: 600,
 });
 
-const PlacesWrap = styled('div')<{ screenType: ScreenType }>(({ screenType }) => ({
+const PlacesWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'screenType',
+})<{ screenType: ScreenType }>(({ screenType }) => ({
   display: 'grid',
   justifyContent: 'space-between',
   columnGap: 24,

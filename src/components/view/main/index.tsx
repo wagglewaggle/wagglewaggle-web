@@ -68,7 +68,6 @@ const Main = observer(() => {
         handleSearchValueChange={handleSearchValueChange}
       />
     );
-    navigate('/main/search');
   };
 
   const onDrawerClose = () => {
@@ -191,7 +190,9 @@ const SearchWrap = styled('div')({
   zIndex: 2,
 });
 
-const SearchBox = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const SearchBox = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '0 24px',

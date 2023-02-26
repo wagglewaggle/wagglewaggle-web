@@ -61,7 +61,9 @@ const SearchInput = observer((props: propsType) => {
 
 export default SearchInput;
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -71,7 +73,9 @@ const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   height: 32,
 }));
 
-const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomIconButton = styled(IconButton, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   padding: 0,
   '& path': {
     fill: isDarkTheme ? palette.white : palette.black,

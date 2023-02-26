@@ -5,9 +5,7 @@ const IntroContent = () => {
     <>
       <Title>와글와글에 오신 것을 환영합니다.</Title>
       <Content>
-        ‘와글와글’은 SKT와 KT에서 제공하는 인구 혼잡도 데이터를 기반으로, 서울 및 경기도 내 주요
-        공간별 인구 혼잡 현황을 알려드립니다. 보고 싶은 위치를 선택하여 그곳의 실시간 인구 혼잡
-        현황을 확인해보세요.
+        {`웹에서 검색해서 들어오시기 불편하셨죠?\r\n지금 와글와글은 앱으로 예쁘게 단장 중 🤗\r\n추후 앱스토어에서 ‘와글와글’을 검색해보세요!`}
       </Content>
     </>
   );
@@ -21,8 +19,11 @@ const Title = styled('div')({
   fontWeight: 600,
   wordBreak: 'keep-all',
   lineHeight: '24px',
+  textAlign: 'center',
 });
 
 const Content = styled('div')({
   lineHeight: '20px',
+  whiteSpace: 'pre-wrap',
+  textAlign: 'center',
 });

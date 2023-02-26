@@ -65,7 +65,9 @@ const PlaceCard = observer((props: propsType) => {
 
 export default PlaceCard;
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   borderRadius: 4,

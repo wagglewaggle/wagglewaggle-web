@@ -92,7 +92,9 @@ const Content = styled('span')({
   zIndex: 2,
 });
 
-const CustomIconButton = styled(IconButton)<{ cloudy: boolean }>(({ cloudy }) => ({
+const CustomIconButton = styled(IconButton, {
+  shouldForwardProp: (prop: string) => prop !== 'cloudy',
+})<{ cloudy: boolean }>(({ cloudy }) => ({
   opacity: cloudy ? 0.3 : undefined,
 }));
 
@@ -104,7 +106,9 @@ const PageCircleWrap = styled('div')({
   gap: 8,
 });
 
-const PageCircle = styled('div')<{ isDarkTheme: boolean; selectedCircleStyle: object }>(
+const PageCircle = styled('div', {
+  shouldForwardProp: (prop: string) => !['isDarkTheme', 'selectedCircleStyle'].includes(prop),
+})<{ isDarkTheme: boolean; selectedCircleStyle: object }>(
   ({ isDarkTheme, selectedCircleStyle }) => ({
     borderRadius: '50%',
     width: 6,

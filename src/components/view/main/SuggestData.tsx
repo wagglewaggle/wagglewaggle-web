@@ -91,14 +91,14 @@ const SuggestData = observer((props: propsType) => {
 
 export default SuggestData;
 
-const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number }>(
-  ({ screenType, screenWidth }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    margin: '5px 0 35px',
-    width: screenType === 'mobile' ? screenWidth : 400,
-  })
-);
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => !['screenType', 'screenWidth'].includes(prop),
+})<{ screenType: ScreenType; screenWidth: number }>(({ screenType, screenWidth }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  margin: '5px 0 35px',
+  width: screenType === 'mobile' ? screenWidth : 400,
+}));
 
 const ListWrap = styled('div')({
   display: 'flex',
