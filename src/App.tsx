@@ -26,6 +26,16 @@ const App = observer(() => {
     metaEl.setAttribute('content', newContentArr.join(', '));
   };
 
+  const reactNativeListener = (e: Event) => {
+    const dataArr = (e as MessageEvent).data.split(':');
+    if (dataArr.length === 1) {
+      alert('location permission denied');
+      return;
+    }
+    alert(dataArr[0]);
+    alert(dataArr[1]);
+  };
+
   useEffect(() => {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
       disableIosInputAutoZoom();
@@ -38,6 +48,15 @@ const App = observer(() => {
     ScreenSizeStore.setScreenType(screenType);
     ScreenSizeStore.setScreenWidth(width);
   }, [ScreenSizeStore, width]);
+
+  useEffect(() => {
+    if ((window as unknown as { ReactNativeWebView: unknown }).ReactNativeWebView) {
+      // android
+      document.addEventListener('message', reactNativeListener);
+      // ios
+      window.addEventListener('message', reactNativeListener);
+    }
+  }, []);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
@@ -61,7 +80,9 @@ const App = observer(() => {
 
 export default App;
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'center',
   minWidth: 360,
