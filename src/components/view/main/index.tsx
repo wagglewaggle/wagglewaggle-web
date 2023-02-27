@@ -60,6 +60,7 @@ const Main = observer(() => {
   };
 
   const handleSearchClick = () => {
+    navigate('/main/search');
     setOpenDrawer(true);
     setCurrentPage(
       <SearchData
@@ -74,7 +75,7 @@ const Main = observer(() => {
     navigate('/main');
     setOpenDrawer(false);
     setSearchValue('');
-    setCurrentPage(<Fragment />);
+    setCurrentPage(<></>);
   };
 
   const navigateToHome = () => {
@@ -129,10 +130,18 @@ const Main = observer(() => {
   }, []);
 
   useEffect(() => {
-    const newDrawerState: boolean = location.search.length !== 0;
+    const newDrawerState = location.pathname === '/main';
+    if (!newDrawerState) {
+      setIncludeInput(location.pathname === '/main/search');
+      return;
+    }
+    setOpenDrawer(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const newDrawerState = location.search.length !== 0;
     setOpenDrawer(newDrawerState);
-    setIncludeInput(!newDrawerState);
-    setCurrentPage(newDrawerState ? <Detail /> : <Fragment />);
+    setCurrentPage(newDrawerState ? <Detail /> : <></>);
     setSearchValue(newDrawerState ? searchValue : '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
