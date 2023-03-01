@@ -11,12 +11,21 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const handleKakaoClick = () => {
+    navigate('/register');
+  };
+
   const handleNaverClick = () => {
-    const clientId = process.env.REACT_APP_NAVER_CLIENT_ID;
-    const redirectUri = process.env.REACT_APP_NAVER_REDIRECT_URI;
-    window.open(
-      `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=test`
-    );
+    // const clientId = process.env.REACT_APP_NAVER_CLIENT_ID;
+    // const redirectUri = process.env.REACT_APP_NAVER_REDIRECT_URI;
+    // window.open(
+    //   `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=test`
+    // );
+    navigate('/list');
+  };
+
+  const handleGoogleClick = () => {
+    navigate('/list');
   };
 
   const requestJwt = useCallback(async (authCode: string) => {
@@ -40,7 +49,7 @@ const Login = () => {
         </SubHeader>
       </Header>
       <LoginImage src={loginIllust} alt='login-image' />
-      <ButtonWrap variant='kakao'>
+      <ButtonWrap variant='kakao' onClick={handleKakaoClick}>
         <CustomImgButton src={kakaoIcon} alt='kakao' />
         카카오로 로그인
       </ButtonWrap>
@@ -48,7 +57,7 @@ const Login = () => {
         <CustomImgButton src={naverIcon} alt='naver' />
         네이버로 로그인
       </ButtonWrap>
-      <ButtonWrap variant='google'>
+      <ButtonWrap variant='google' onClick={handleGoogleClick}>
         <CustomImgButton src={googleIcon} alt='google' />
         Google로 로그인
       </ButtonWrap>
