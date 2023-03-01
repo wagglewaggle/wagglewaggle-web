@@ -49,6 +49,7 @@ const SearchInput = observer((props: propsType) => {
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}
         placeholder="'강남역'를 입력해보세요"
+        sx={{}}
       />
       {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
     </Wrap>
