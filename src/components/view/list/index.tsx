@@ -2,7 +2,7 @@ import { Fragment, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import { CustomDrawer, SearchInput } from 'components/common';
+import { CustomDrawer, SearchInput, CustomSearchBox, NavigationIcons } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
 import SuggestData from './SuggestData';
@@ -11,9 +11,6 @@ import { Detail } from 'components/view';
 import { PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import { palette } from 'constants/';
-import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
-import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 
 const List = observer(() => {
   const [currentPage, setCurrentPage] = useState<JSX.Element>(<Fragment />);
@@ -21,10 +18,9 @@ const List = observer(() => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
-  const { LocationStore, CustomDialogStore, ErrorStore, ThemeStore } = useStore().MobxStore;
+  const { LocationStore, CustomDialogStore, ErrorStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
-  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleLatestListChange = (newList: string[]) => {
     localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
@@ -160,12 +156,8 @@ const List = observer(() => {
   }, [ErrorStore.statusCode, navigate]);
 
   return (
-    <SearchWrap>
-      <SearchBox isDarkTheme={isDarkTheme}>
-        <Logo onClick={navigateToHome} />
-        <EmptySpace />
-        <SearchIcon onClick={handleSearchClick} />
-      </SearchBox>
+    <Wrap>
+      <CustomSearchBox navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
       <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
       <CustomDrawer
         open={openDrawer}
@@ -186,41 +178,16 @@ const List = observer(() => {
         }
         component={currentPage}
       />
-    </SearchWrap>
+      <NavigationIcons />
+    </Wrap>
   );
 });
 
 export default List;
 
-const SearchWrap = styled('div')({
+const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
   zIndex: 2,
-});
-
-const SearchBox = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: '0 24px',
-  height: 56,
-  '& svg': {
-    width: 40,
-    height: 40,
-    cursor: 'pointer',
-  },
-  '& svg:last-of-type': {
-    width: 32,
-    height: 32,
-  },
-  '& path': {
-    fill: isDarkTheme ? palette.white : palette.black,
-  },
-}));
-
-const EmptySpace = styled('div')({
-  flexGrow: 1,
-  height: '100%',
 });

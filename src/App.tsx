@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
 import { CustomDialog } from 'components/common';
-import { Login, Register, List, Error } from './components/view';
+import { Login, Register, List, Map, Error } from './components/view';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
 import { palette } from 'constants/';
@@ -65,8 +65,9 @@ const App = observer(() => {
           <BrowserRouter>
             <Routes>
               <Route path='/login' element={<Login />} />
-              <Route path='/register' element={<Register />} />
               <Route path='/auth/naver/callback' element={<Login />} />
+              <Route path='/register' element={<Register />} />
+              <Route path='/map/*' element={<Map />} />
               <Route path='/list/*' element={<List />} />
               <Route path='/not-found' element={<Error />} />
               <Route path='/error' element={<Error />} />

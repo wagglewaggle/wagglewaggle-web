@@ -1,3 +1,6 @@
+export { default as CustomChips } from './CustomChips';
+export { default as CustomSearchBox } from './CustomSearchBox';
+export { default as NavigationIcons } from './NavigationIcons';
 export { default as PlaceCard } from './PlaceCard';
 export { default as PlaceStatus } from './PlaceStatus';
 export { default as SearchInput } from './SearchInput';
