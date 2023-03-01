@@ -36,7 +36,7 @@ const Detail = observer(() => {
     const pathnameArr: string[] = location.pathname.split('/');
     const placeId: string = pathnameArr[pathnameArr.length - 1];
     if (!Number(placeId)) {
-      navigate('/main');
+      navigate('/list');
       return;
     }
     const response: { data: LocationDataType } | undefined = await axiosRequest(

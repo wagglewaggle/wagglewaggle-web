@@ -23,7 +23,7 @@ const PlaceCard = observer((props: propsType) => {
 
   const handlePlaceCardClick = () => {
     LocationStore.setPlaceName(place.name);
-    navigate(`/main/detail/${place.idx}?name=${place.name}`);
+    navigate(`/list/detail/${place.idx}?name=${place.name}`);
   };
 
   useEffect(() => {

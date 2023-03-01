@@ -21,7 +21,7 @@ const DetailHeader = observer((props: propsType) => {
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleBackClick = () => {
-    navigate('/main');
+    navigate('/list');
   };
 
   useEffect(() => {

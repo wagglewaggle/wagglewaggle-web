@@ -15,7 +15,7 @@ import { palette } from 'constants/';
 import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 
-const Main = observer(() => {
+const List = observer(() => {
   const [currentPage, setCurrentPage] = useState<JSX.Element>(<Fragment />);
   const [placeData, setPlaceData] = useState<PlaceDataType[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
@@ -60,7 +60,7 @@ const Main = observer(() => {
   };
 
   const handleSearchClick = () => {
-    navigate('/main/search');
+    navigate('/list/search');
     setOpenDrawer(true);
     setCurrentPage(
       <SearchData
@@ -72,7 +72,7 @@ const Main = observer(() => {
   };
 
   const onDrawerClose = () => {
-    navigate('/main');
+    navigate('/list');
     setOpenDrawer(false);
     setSearchValue('');
     setCurrentPage(<></>);
@@ -130,9 +130,9 @@ const Main = observer(() => {
   }, []);
 
   useEffect(() => {
-    const newDrawerState = location.pathname === '/main';
+    const newDrawerState = location.pathname === '/list';
     if (!newDrawerState) {
-      setIncludeInput(location.pathname === '/main/search');
+      setIncludeInput(location.pathname === '/list/search');
       return;
     }
     setOpenDrawer(false);
@@ -190,7 +190,7 @@ const Main = observer(() => {
   );
 });
 
-export default Main;
+export default List;
 
 const SearchWrap = styled('div')({
   display: 'flex',

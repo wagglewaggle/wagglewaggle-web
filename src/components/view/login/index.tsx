@@ -87,7 +87,7 @@ const Header = styled('h1')({
   lineHeight: '32px',
 });
 
-const SubHeader = styled('h5')({
+const SubHeader = styled('div')({
   margin: '16px 0 0',
   color: palette.grey[500],
   fontSize: 14,
