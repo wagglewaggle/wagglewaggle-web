@@ -52,7 +52,9 @@ const RelatedLocations = observer(() => {
 
 export default RelatedLocations;
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

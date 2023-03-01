@@ -97,7 +97,9 @@ const List = styled('div')({
   whiteSpace: 'nowrap',
 });
 
-const EmptyData = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const EmptyData = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   marginTop: 9,
   color: palette.grey[isDarkTheme ? 400 : 500],
   fontSize: 14,

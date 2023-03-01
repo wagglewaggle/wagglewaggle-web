@@ -23,7 +23,9 @@ const AccidentContent = observer(() => {
 
 export default AccidentContent;
 
-const Type = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Type = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   marginBottom: 8,
   color: palette.grey[isDarkTheme ? 400 : 500],
   fontSize: 14,

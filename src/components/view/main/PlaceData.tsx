@@ -207,7 +207,9 @@ const SubHeaderLength = styled('div')({
   marginLeft: 5,
 });
 
-const CustomSelect = styled(Select)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomSelect = styled(Select, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: isDarkTheme ? palette.white : palette.black,
   '& div': {
     fontSize: 14,
