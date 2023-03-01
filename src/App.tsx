@@ -28,12 +28,12 @@ const App = observer(() => {
 
   const reactNativeListener = (e: Event) => {
     const dataArr = (e as MessageEvent).data.split(':');
-    if (dataArr.length === 1) {
-      alert('location permission denied');
-      return;
-    }
-    alert(dataArr[0]);
-    alert(dataArr[1]);
+    // if (dataArr.length === 1) {
+    //   alert('location permission denied');
+    //   return;
+    // }
+    // alert(dataArr[0]);
+    // alert(dataArr[1]);
   };
 
   useEffect(() => {

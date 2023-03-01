@@ -42,17 +42,13 @@ const SearchInput = observer((props: propsType) => {
         <CustomLeftArrowIcon />
       </CustomIconButton>
       <CustomTextField
+        isDarkTheme={isDarkTheme}
         type='text'
         autoFocus
         value={searchValue}
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}
         placeholder="'강남역'를 입력해보세요"
-        sx={{
-          '& ::placeholder': {
-            color: palette.grey[isDarkTheme ? 400 : 500],
-          },
-        }}
       />
       {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
     </Wrap>
@@ -89,7 +85,9 @@ const CustomLeftArrowIcon = styled(LeftArrowIcon)({
   },
 });
 
-const CustomTextField = styled(TextField)({
+const CustomTextField = styled(TextField, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'center',
   borderRadius: 25,
@@ -109,4 +107,7 @@ const CustomTextField = styled(TextField)({
   '& fieldset': {
     display: 'none',
   },
-});
+  '& ::placeholder': {
+    color: palette.grey[isDarkTheme ? 400 : 500],
+  },
+}));
