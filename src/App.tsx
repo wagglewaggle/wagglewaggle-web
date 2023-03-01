@@ -50,7 +50,7 @@ const App = observer(() => {
               <Route path='/main/*' element={<Main />} />
               <Route path='/not-found' element={<Error />} />
               <Route path='/error' element={<Error />} />
-              <Route path='/' element={<Navigate to='/main' />} />
+              <Route path='/' element={<Navigate to='/login' />} />
               <Route path='/*' element={<Navigate to='/not-found' />} />
             </Routes>
           </BrowserRouter>
