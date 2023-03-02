@@ -1,23 +1,28 @@
 import { useEffect, useCallback, useRef } from 'react';
+import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
+import { useStore } from 'stores';
+import defaultPhoto from 'assets/icons/register/default-photo.png';
 
 const MapContent = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const { UserNavigatorStore } = useStore().MobxStore;
 
   const getKakaoMap = useCallback(() => {
-    const center: number[] = [37.625638, 127.038941];
-    const [latitude, longitude] = center;
+    const [latitude, longitude] = UserNavigatorStore.currentLocation;
     window.kakao.maps.load(() => {
       const map = new window.kakao.maps.Map(mapRef.current, {
         center: new window.kakao.maps.LatLng(latitude, longitude),
-        level: 7,
+        level: 5,
       });
+      const markerSize = new window.kakao.maps.Size(35, 35);
       const marker = new window.kakao.maps.Marker({
+        image: new window.kakao.maps.MarkerImage(defaultPhoto, markerSize),
         position: new window.kakao.maps.LatLng(latitude, longitude),
       });
       marker.setMap(map);
     });
-  }, []);
+  }, [UserNavigatorStore.currentLocation]);
 
   useEffect(() => {
     const mapScript = document.createElement('script');
@@ -36,7 +41,7 @@ const MapContent = () => {
   );
 };
 
-export default MapContent;
+export default observer(MapContent);
 
 const Wrap = styled('div')({
   width: '100%',

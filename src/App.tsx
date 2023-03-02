@@ -12,7 +12,7 @@ import { palette } from 'constants/';
 export const MobxStore = new RootStore();
 
 const App = observer(() => {
-  const { ScreenSizeStore, ThemeStore } = MobxStore;
+  const { ScreenSizeStore, ThemeStore, UserNavigatorStore } = MobxStore;
   const { ref, width } = useResizeObserver();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
@@ -27,13 +27,25 @@ const App = observer(() => {
   };
 
   const reactNativeListener = (e: Event) => {
-    const dataArr = (e as MessageEvent).data.split(':');
-    // if (dataArr.length === 1) {
-    //   alert('location permission denied');
-    //   return;
-    // }
-    // alert(dataArr[0]);
-    // alert(dataArr[1]);
+    const { data } = e as MessageEvent;
+    if (typeof data !== 'string') return;
+    try {
+      const { code, latitude, longitude } = JSON.parse(data);
+      if (code !== 'success' || !latitude || !longitude) return;
+      UserNavigatorStore.setUserLocation([latitude, longitude]);
+    } catch {
+      UserNavigatorStore.setUserLocation([37.625638, 127.038941]);
+    }
+  };
+
+  const onGeolocationSuccess = ({
+    coords,
+  }: {
+    coords: { latitude: number; longitude: number };
+  }) => {
+    const { latitude, longitude } = coords;
+    UserNavigatorStore.setUserLocation([latitude, longitude]);
+    UserNavigatorStore.setLoaded(true);
   };
 
   useEffect(() => {
@@ -51,11 +63,13 @@ const App = observer(() => {
 
   useEffect(() => {
     if ((window as unknown as { ReactNativeWebView: unknown }).ReactNativeWebView) {
-      // android
-      document.addEventListener('message', reactNativeListener);
-      // ios
-      window.addEventListener('message', reactNativeListener);
+      document.addEventListener('message', reactNativeListener); // android
+      window.addEventListener('message', reactNativeListener); // ios
+      return;
     }
+    if (!navigator.geolocation) return;
+    navigator.geolocation.watchPosition(onGeolocationSuccess);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
