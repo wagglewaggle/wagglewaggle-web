@@ -47,10 +47,12 @@ export default NavigationIcons;
 
 const Wrap = styled('div')({
   position: 'fixed',
-  left: 'calc(50% - 24px)',
+  left: '50%',
   bottom: 24,
   display: 'flex',
+  filter: 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3))',
   cursor: 'pointer',
+  transform: 'translateX(-50%)',
 });
 
 const CustomButton = styled('div', {

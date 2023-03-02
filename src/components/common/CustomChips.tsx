@@ -49,7 +49,7 @@ export default CustomChips;
 
 const ChipsWrap = styled(ScrollContainer)({
   display: 'flex',
-  padding: '16px 0',
+  padding: '8px 0 16px',
   height: 32,
   gap: 10,
   cursor: 'pointer',

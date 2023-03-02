@@ -87,7 +87,9 @@ const PlaceData = observer((props: propsType) => {
 
   return (
     <Wrap>
-      <CustomChips selectedCategory={selectedCategory} handleClickChip={handleClickChip} />
+      <ChipsWrap>
+        <CustomChips selectedCategory={selectedCategory} handleClickChip={handleClickChip} />
+      </ChipsWrap>
       <SubHeader>
         <SubHeaderLeft>
           장소
@@ -135,8 +137,12 @@ export default PlaceData;
 const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  margin: '20px 24px 72px',
+  margin: '0 24px 72px',
   minHeight: 'calc(100vh - 148px)',
+});
+
+const ChipsWrap = styled('div')({
+  transform: 'translateX(-4px)',
 });
 
 const SubHeader = styled('div')({

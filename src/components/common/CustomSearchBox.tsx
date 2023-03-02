@@ -31,7 +31,7 @@ const SearchBox = styled('div', {
   display: 'flex',
   alignItems: 'center',
   padding: '0 24px',
-  height: 56,
+  height: 48,
   '& svg': {
     width: 66,
     height: 32,

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material';
 import { CustomSearchBox, CustomChips, NavigationIcons } from 'components/common';
+import MapContent from './MapContent';
 
 const Map = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
@@ -25,7 +26,7 @@ const Map = () => {
       <ChipsWrap>
         <CustomChips selectedCategory={selectedCategory} handleClickChip={handleClickChip} />
       </ChipsWrap>
-      dadada
+      <MapContent />
       <NavigationIcons />
     </Wrap>
   );
@@ -38,13 +39,12 @@ const Wrap = styled('div')({
   flexDirection: 'column',
   width: '100%',
   zIndex: 2,
-  overflowX: 'hidden',
+  overflow: 'hidden',
 });
 
 const ChipsWrap = styled('div')({
-  padding: '0 28px',
-  margin: '20px 0',
-  width: 'calc(100% - 48px)',
+  padding: '0 24px',
+  width: 'calc(100% - 40px)',
   boxShadow: '0 6px 4px -4px rgba(0, 0, 0, 0.3)',
   transform: 'translateX(-4px)',
 });
