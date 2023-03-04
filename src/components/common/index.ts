@@ -9,3 +9,6 @@ export { default as CustomDrawer } from './CustomDrawer';
 export { default as CustomDialog } from './CustomDialog';
 export { default as Footer } from './Footer';
 export { default as CustomCloseIcon } from './CustomCloseIcon';
+export { default as SearchData } from './DrawerContents/SearchData';
+export { default as SuggestData } from './DrawerContents/SuggestData';
+export { default as ResultData } from './DrawerContents/ResultData';

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
@@ -6,13 +6,15 @@ import { styled } from '@mui/material';
 import { CustomDialog, CustomDrawer } from 'components/common';
 import { Login, Register, List, Map, Error } from './components/view';
 import { CreateStore, RootStore } from 'stores';
-import { ScreenType } from 'types/typeBundle';
+import { ScreenType, PlaceDataType } from 'types/typeBundle';
+import axiosRequest from 'api/axiosRequest';
 import { palette } from 'constants/';
 
 export const MobxStore = new RootStore();
 
 const App = observer(() => {
-  const { ScreenSizeStore, ThemeStore, UserNavigatorStore } = MobxStore;
+  const { ScreenSizeStore, ThemeStore, UserNavigatorStore, CustomDrawerStore, LocationStore } =
+    MobxStore;
   const { ref, width } = useResizeObserver();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
@@ -47,6 +49,44 @@ const App = observer(() => {
     UserNavigatorStore.setUserLocation([latitude, longitude]);
     UserNavigatorStore.setLoaded(true);
   };
+
+  const initPlaceData = useCallback(async () => {
+    const params = { populationSort: true };
+    const ktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
+      'kt-place',
+      params
+    );
+    const sktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
+      'skt-place',
+      params
+    );
+    if (!ktData || !sktData) return;
+    const statusArr: string[] = [
+      'VERY_RELAXATION',
+      'RELAXATION',
+      'NORMAL',
+      'CROWDED',
+      'VERY_CROWDED',
+    ];
+    CustomDrawerStore.setPlaceData(
+      [...ktData.data.list, ...sktData.data.list].sort(
+        (prev: PlaceDataType, next: PlaceDataType) => {
+          const prevLevel = statusArr.indexOf(prev.populations[0].level);
+          const nextLevel = statusArr.indexOf(next.populations[0].level);
+          if (prevLevel > nextLevel) return -1;
+          else if (nextLevel > prevLevel) return 1;
+          return 0;
+        }
+      )
+    );
+    [...ktData.data.list, ...sktData.data.list].forEach((data: PlaceDataType) => {
+      LocationStore.setCategories(data.name, data.categories);
+    });
+  }, [CustomDrawerStore, LocationStore]);
+
+  useEffect(() => {
+    initPlaceData();
+  }, [initPlaceData]);
 
   useEffect(() => {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {

@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material';
-import { CustomSearchBox, CustomChips, NavigationIcons } from 'components/common';
-import SearchData from 'components/view/list/SearchData';
-import ResultData from 'components/view/list/ResultData';
+import {
+  SearchData,
+  ResultData,
+  CustomSearchBox,
+  CustomChips,
+  NavigationIcons,
+} from 'components/common';
 import Detail from 'components/view/detail';
 import MapContent from './MapContent';
 import { useStore } from 'stores';
@@ -12,7 +16,7 @@ const Map = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
-  const { CustomDrawerStore } = useStore().MobxStore;
+  const { CustomDrawerStore, CustomDialogStore } = useStore().MobxStore;
 
   const handleWordClick = (searchWord: string) => {
     CustomDrawerStore.setSearchValue(searchWord);
@@ -49,6 +53,10 @@ const Map = () => {
   };
 
   useEffect(() => {
+    CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');
+  }, [CustomDialogStore]);
+
+  useEffect(() => {
     if (!CustomDrawerStore.searchValue || !search) {
       CustomDrawerStore.setTitle('와글와글');
     }
@@ -66,7 +74,7 @@ const Map = () => {
   useEffect(() => {
     const newDrawerState = search.length !== 0;
     if (newDrawerState) {
-      CustomDrawerStore.openDrawer('list', <Detail />);
+      CustomDrawerStore.openDrawer('map', <Detail />);
       return;
     }
     CustomDrawerStore.closeDrawer();
