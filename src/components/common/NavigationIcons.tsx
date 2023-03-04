@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material';
+import { useStore } from 'stores';
 import { ReactComponent as MapIcon } from 'assets/icons/map-icon.svg';
 import { ReactComponent as ListIcon } from 'assets/icons/list-icon.svg';
 import { palette } from 'constants/';
@@ -11,15 +12,18 @@ const NavigationIcons = () => {
   const [focusedItem, setFocusedItem] = useState<IconsType>('map');
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { CustomDrawerStore } = useStore().MobxStore;
 
   const handleMapButtonClick = () => {
     setFocusedItem('map');
     navigate('/map');
+    CustomDrawerStore.setVariant('map');
   };
 
   const handleListButtonClick = () => {
     setFocusedItem('list');
     navigate('/list');
+    CustomDrawerStore.setVariant('list');
   };
 
   useEffect(() => {

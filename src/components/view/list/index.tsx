@@ -14,7 +14,7 @@ import axiosRequest from 'api/axiosRequest';
 const List = observer(() => {
   const { LocationStore, CustomDialogStore, CustomDrawerStore, ErrorStore } = useStore().MobxStore;
   const navigate = useNavigate();
-  const location = useLocation();
+  const { search, pathname } = useLocation();
 
   const handleLatestListChange = (newList: string[]) => {
     localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
@@ -33,6 +33,9 @@ const List = observer(() => {
     CustomDrawerStore.openDrawer(
       'list',
       <SearchData
+        initialBlockList={JSON.parse(
+          localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
+        )}
         handleWordClick={handleWordClick}
         handleLatestListChange={handleLatestListChange}
       />
@@ -89,34 +92,33 @@ const List = observer(() => {
   useEffect(() => {
     initPlaceData();
     const openIntroDialog: boolean =
-      location.search === '' &&
-      sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false';
+      search === '' && sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false';
     CustomDialogStore.setOpen(openIntroDialog);
-  }, [CustomDialogStore, initPlaceData, location.search]);
+  }, [CustomDialogStore, initPlaceData, search]);
 
   useEffect(() => {
-    const newDrawerState = location.pathname === '/list';
+    const newDrawerState = pathname === '/list';
     if (!newDrawerState) {
-      CustomDrawerStore.setIncludesInput(location.pathname === '/list/search');
+      CustomDrawerStore.setIncludesInput(pathname === '/list/search');
       return;
     }
     CustomDrawerStore.closeDrawer();
-  }, [CustomDrawerStore, location.pathname]);
+  }, [CustomDrawerStore, pathname]);
 
   useEffect(() => {
-    const newDrawerState = location.search.length !== 0;
+    const newDrawerState = search.length !== 0;
     if (newDrawerState) {
       CustomDrawerStore.openDrawer('list', <Detail />);
       return;
     }
     CustomDrawerStore.closeDrawer();
-  }, [CustomDrawerStore, location.search]);
+  }, [CustomDrawerStore, search]);
 
   useEffect(() => {
-    if (!CustomDrawerStore.searchValue || !location.search) {
+    if (!CustomDrawerStore.searchValue || !search) {
       CustomDrawerStore.setTitle('와글와글');
     }
-  }, [CustomDrawerStore, location.search]);
+  }, [CustomDrawerStore, search, pathname]);
 
   useEffect(() => {
     if (!ErrorStore.statusCode) return;

@@ -32,7 +32,7 @@ const Register = () => {
 
   const handleStartClick = () => {
     if (nicknameStatus !== 'ok') return;
-    navigate('/list');
+    navigate('/map');
   };
 
   return (

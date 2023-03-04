@@ -18,7 +18,7 @@ const ResultData = observer((props: propsType) => {
   const [resultData, setResultData] = useState<PlaceDataType[]>([]);
   const [relatedData, setRelatedData] = useState<PlaceDataType[]>([]);
   const lottieContainer = useRef<HTMLDivElement>(null);
-  const { ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const { ScreenSizeStore, ThemeStore, CustomDrawerStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const getSuggestionList = useCallback(async () => {
@@ -80,11 +80,8 @@ const ResultData = observer((props: propsType) => {
       newSearchedList.push(searchWord);
     }
     localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newSearchedList));
-
-    const htmlTitle = document.querySelector('title');
-    if (!htmlTitle) return;
-    htmlTitle.innerHTML = `${searchWord} : 와글와글 검색`;
-  }, [searchWord]);
+    CustomDrawerStore.setTitle(`${searchWord} : 와글와글 검색`);
+  }, [searchWord, CustomDrawerStore]);
 
   useEffect(() => {
     getSuggestionList();

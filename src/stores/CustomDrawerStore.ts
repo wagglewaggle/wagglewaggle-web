@@ -25,6 +25,10 @@ export class CustomDrawerStore {
     this.drawerComponent = null;
   };
 
+  setVariant = (newVariant: 'map' | 'list') => {
+    this.variant = newVariant;
+  };
+
   setTitle = (title: string) => {
     if (!this.titleTag) return;
     this.titleTag.innerHTML = title;

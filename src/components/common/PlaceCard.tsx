@@ -16,14 +16,14 @@ const PlaceCard = observer((props: propsType) => {
   const { place } = props;
   const [categories, setCategories] = useState<string>('');
   const [symbol, setSymbol] = useState<string>('');
-  const { LocationStore, ThemeStore } = useStore().MobxStore;
+  const { LocationStore, ThemeStore, CustomDrawerStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handlePlaceCardClick = () => {
     LocationStore.setPlaceName(place.name);
-    navigate(`/list/detail/${place.idx}?name=${place.name}`);
+    navigate(`/${CustomDrawerStore.variant}/detail/${place.idx}?name=${place.name}`);
   };
 
   useEffect(() => {

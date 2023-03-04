@@ -10,13 +10,15 @@ import { palette, locationNames } from 'constants/';
 interface propsType {
   placeData: PlaceDataType[];
   searchValue: string;
+  initialBlockList: string[];
   handleWordClick: (searchWord: string) => void;
   handleLatestListChange: (newList: string[]) => void;
 }
 
 const SuggestData = observer((props: propsType) => {
-  const { placeData, searchValue, handleWordClick, handleLatestListChange } = props;
-  const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
+  const { placeData, searchValue, initialBlockList, handleWordClick, handleLatestListChange } =
+    props;
+  const [searchBlockList, setSearchBlockList] = useState<string[]>(initialBlockList);
   const [suggestionList, setSuggestionList] = useState<PlaceDataType[]>([]);
   const { LocationStore, ScreenSizeStore } = useStore().MobxStore;
 
@@ -52,11 +54,6 @@ const SuggestData = observer((props: propsType) => {
   useEffect(() => {
     getSuggestionList();
   }, [searchValue, getSuggestionList]);
-
-  useEffect(() => {
-    setSearchBlockList(JSON.parse(localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localStorage.getItem('@wagglewaggle_recently_searched')]);
 
   return (
     <Wrap screenType={ScreenSizeStore.screenType} screenWidth={ScreenSizeStore.screenWidth}>

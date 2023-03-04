@@ -16,12 +16,12 @@ const DetailHeader = observer((props: propsType) => {
   const { locationData } = props;
   const [categories, setCategories] = useState<string>('');
   const [bgPath, setBgPath] = useState<string>('');
-  const { LocationStore, ThemeStore } = useStore().MobxStore;
+  const { LocationStore, ThemeStore, CustomDrawerStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleBackClick = () => {
-    navigate('/list');
+    navigate(`/${CustomDrawerStore.variant}`);
   };
 
   useEffect(() => {

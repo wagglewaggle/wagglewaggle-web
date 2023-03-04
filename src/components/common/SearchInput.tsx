@@ -31,6 +31,9 @@ const SearchInput = observer(() => {
       CustomDrawerStore.variant,
       newValue.length === 0 ? (
         <SearchData
+          initialBlockList={JSON.parse(
+            localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
+          )}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
         />
@@ -38,6 +41,9 @@ const SearchInput = observer(() => {
         <SuggestData
           placeData={CustomDrawerStore.placeData}
           searchValue={newValue}
+          initialBlockList={JSON.parse(
+            localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
+          )}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
         />

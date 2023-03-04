@@ -15,7 +15,8 @@ const Detail = observer(() => {
   const [locationData, setLocationData] = useState<LocationDataType | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { ScreenSizeStore, CustomDialogStore, LocationStore, ThemeStore } = useStore().MobxStore;
+  const { ScreenSizeStore, CustomDialogStore, CustomDrawerStore, LocationStore, ThemeStore } =
+    useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const setAccidentLists = useCallback(() => {
@@ -36,7 +37,7 @@ const Detail = observer(() => {
     const pathnameArr: string[] = location.pathname.split('/');
     const placeId: string = pathnameArr[pathnameArr.length - 1];
     if (!Number(placeId)) {
-      navigate('/list');
+      navigate(`/${CustomDrawerStore.variant}`);
       return;
     }
     const response: { data: LocationDataType } | undefined = await axiosRequest(
@@ -44,15 +45,13 @@ const Detail = observer(() => {
     );
     if (!response) return;
     setLocationData(response.data);
-  }, [LocationStore, navigate, location.pathname, location.search]);
+  }, [LocationStore, CustomDrawerStore, navigate, location.pathname, location.search]);
 
   useEffect(() => {
     if (location.search.length === 0) return;
     const placeName: string = decodeURI(location.search).replace('?name=', '');
-    const htmlTitle = document.querySelector('title');
-    if (!htmlTitle) return;
-    htmlTitle.innerHTML = `${locationNames[placeName] || placeName} : 와글와글 장소`;
-  }, [location.search]);
+    CustomDrawerStore.setTitle(`${locationNames[placeName] || placeName} : 와글와글 장소`);
+  }, [location.search, CustomDrawerStore]);
 
   useEffect(() => {
     initLocationData();
