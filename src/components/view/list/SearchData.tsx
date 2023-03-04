@@ -8,11 +8,10 @@ import { useStore } from 'stores';
 interface propsType {
   handleWordClick: (searchWord: string) => void;
   handleLatestListChange: (newList: string[]) => void;
-  handleSearchValueChange: (newValue: string) => void;
 }
 
 const SearchData = observer((props: propsType) => {
-  const { handleWordClick, handleLatestListChange, handleSearchValueChange } = props;
+  const { handleWordClick, handleLatestListChange } = props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
   const { ScreenSizeStore } = useStore().MobxStore;
 
@@ -32,10 +31,6 @@ const SearchData = observer((props: propsType) => {
     setSearchBlockList([]);
     handleLatestListChange([]);
   };
-
-  useEffect(() => {
-    handleSearchValueChange('');
-  }, [handleSearchValueChange]);
 
   useEffect(() => {
     setSearchBlockList(JSON.parse(localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'));

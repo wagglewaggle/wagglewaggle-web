@@ -1,11 +1,10 @@
-import { Fragment, useState, useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import { CustomDrawer, SearchInput, CustomSearchBox, NavigationIcons } from 'components/common';
+import { CustomSearchBox, NavigationIcons } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
-import SuggestData from './SuggestData';
 import ResultData from './ResultData';
 import { Detail } from 'components/view';
 import { PlaceDataType } from 'types/typeBundle';
@@ -13,12 +12,7 @@ import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 
 const List = observer(() => {
-  const [currentPage, setCurrentPage] = useState<JSX.Element>(<Fragment />);
-  const [placeData, setPlaceData] = useState<PlaceDataType[]>([]);
-  const [searchValue, setSearchValue] = useState<string>('');
-  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
-  const [includeInput, setIncludeInput] = useState<boolean>(false);
-  const { LocationStore, CustomDialogStore, ErrorStore } = useStore().MobxStore;
+  const { LocationStore, CustomDialogStore, CustomDrawerStore, ErrorStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,51 +21,27 @@ const List = observer(() => {
   };
 
   const handleWordClick = (searchWord: string) => {
-    setSearchValue(searchWord);
-    setCurrentPage(<ResultData placeData={placeData} searchWord={searchWord} />);
-  };
-
-  const handleSearchEnter = (searchWord: string) => {
-    handleWordClick(searchWord);
-  };
-
-  const handleSearchValueChange = (newValue: string) => {
-    setSearchValue(newValue);
-    setCurrentPage(
-      newValue.length === 0 ? (
-        <SearchData
-          handleWordClick={handleWordClick}
-          handleLatestListChange={handleLatestListChange}
-          handleSearchValueChange={handleSearchValueChange}
-        />
-      ) : (
-        <SuggestData
-          placeData={placeData}
-          searchValue={newValue}
-          handleWordClick={handleWordClick}
-          handleLatestListChange={handleLatestListChange}
-        />
-      )
+    CustomDrawerStore.setSearchValue(searchWord);
+    CustomDrawerStore.openDrawer(
+      'list',
+      <ResultData placeData={CustomDrawerStore.placeData} searchWord={searchWord} />
     );
   };
 
   const handleSearchClick = () => {
     navigate('/list/search');
-    setOpenDrawer(true);
-    setCurrentPage(
+    CustomDrawerStore.openDrawer(
+      'list',
       <SearchData
         handleWordClick={handleWordClick}
         handleLatestListChange={handleLatestListChange}
-        handleSearchValueChange={handleSearchValueChange}
       />
     );
   };
 
   const onDrawerClose = () => {
     navigate('/list');
-    setOpenDrawer(false);
-    setSearchValue('');
-    setCurrentPage(<></>);
+    CustomDrawerStore.closeDrawer();
   };
 
   const navigateToHome = () => {
@@ -79,10 +49,10 @@ const List = observer(() => {
   };
 
   const handlePlaceDataChange = (newPlaceData: PlaceDataType[]) => {
-    setPlaceData(JSON.parse(JSON.stringify(newPlaceData)));
+    CustomDrawerStore.setPlaceData(JSON.parse(JSON.stringify(newPlaceData)));
   };
 
-  const initPlaceData = async () => {
+  const initPlaceData = useCallback(async () => {
     const params = { populationSort: true };
     const ktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
       'kt-place',
@@ -100,7 +70,7 @@ const List = observer(() => {
       'CROWDED',
       'VERY_CROWDED',
     ];
-    setPlaceData(
+    CustomDrawerStore.setPlaceData(
       [...ktData.data.list, ...sktData.data.list].sort(
         (prev: PlaceDataType, next: PlaceDataType) => {
           const prevLevel = statusArr.indexOf(prev.populations[0].level);
@@ -114,7 +84,7 @@ const List = observer(() => {
     [...ktData.data.list, ...sktData.data.list].forEach((data: PlaceDataType) => {
       LocationStore.setCategories(data.name, data.categories);
     });
-  };
+  }, [CustomDrawerStore, LocationStore]);
 
   useEffect(() => {
     initPlaceData();
@@ -122,33 +92,31 @@ const List = observer(() => {
       location.search === '' &&
       sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false';
     CustomDialogStore.setOpen(openIntroDialog);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [CustomDialogStore, initPlaceData, location.search]);
 
   useEffect(() => {
     const newDrawerState = location.pathname === '/list';
     if (!newDrawerState) {
-      setIncludeInput(location.pathname === '/list/search');
+      CustomDrawerStore.setIncludesInput(location.pathname === '/list/search');
       return;
     }
-    setOpenDrawer(false);
-  }, [location.pathname]);
+    CustomDrawerStore.closeDrawer();
+  }, [CustomDrawerStore, location.pathname]);
 
   useEffect(() => {
     const newDrawerState = location.search.length !== 0;
-    setOpenDrawer(newDrawerState);
-    setCurrentPage(newDrawerState ? <Detail /> : <></>);
-    setSearchValue(newDrawerState ? searchValue : '');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search]);
+    if (newDrawerState) {
+      CustomDrawerStore.openDrawer('list', <Detail />);
+      return;
+    }
+    CustomDrawerStore.closeDrawer();
+  }, [CustomDrawerStore, location.search]);
 
   useEffect(() => {
-    if (searchValue.length === 0 || location.search.length === 0) {
-      const htmlTitle = document.querySelector('title');
-      if (!htmlTitle) return;
-      htmlTitle.innerHTML = '와글와글';
+    if (!CustomDrawerStore.searchValue || !location.search) {
+      CustomDrawerStore.setTitle('와글와글');
     }
-  }, [searchValue, location.search]);
+  }, [CustomDrawerStore, location.search]);
 
   useEffect(() => {
     if (!ErrorStore.statusCode) return;
@@ -158,25 +126,9 @@ const List = observer(() => {
   return (
     <Wrap>
       <CustomSearchBox navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
-      <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
-      <CustomDrawer
-        open={openDrawer}
-        onClose={onDrawerClose}
-        searchInput={
-          includeInput ? (
-            <SearchInput
-              searchValue={searchValue}
-              handleSearchEnter={handleSearchEnter}
-              handleDrawerClose={
-                searchValue.length === 0 || !LocationStore.suggestionExists
-                  ? onDrawerClose
-                  : handleSearchClick
-              }
-              handleSearchValueChange={handleSearchValueChange}
-            />
-          ) : undefined
-        }
-        component={currentPage}
+      <PlaceData
+        placeData={CustomDrawerStore.placeData}
+        handlePlaceDataChange={handlePlaceDataChange}
       />
       <NavigationIcons />
     </Wrap>

@@ -69,6 +69,7 @@ const Title = styled('span')({
 const RemoveButton = styled('button')({
   border: 0,
   padding: 0,
+  color: palette.black,
   backgroundColor: palette.transparent,
   fontSize: 14,
   fontWeight: 600,

@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
-import { CustomDialog } from 'components/common';
+import { CustomDialog, CustomDrawer } from 'components/common';
 import { Login, Register, List, Map, Error } from './components/view';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
@@ -88,6 +88,7 @@ const App = observer(() => {
               <Route path='/' element={<Navigate to='/login' />} />
               <Route path='/*' element={<Navigate to='/not-found' />} />
             </Routes>
+            <CustomDrawer />
           </BrowserRouter>
         </ServiceWrap>
         <CustomDialog />

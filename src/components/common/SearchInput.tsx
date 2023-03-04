@@ -1,40 +1,71 @@
-import { ChangeEvent, KeyboardEvent } from 'react';
+import { ChangeEvent, KeyboardEvent, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { TextField, IconButton, styled } from '@mui/material';
 import CustomCloseIcon from './CustomCloseIcon';
+import SearchData from 'components/view/list/SearchData';
+import SuggestData from 'components/view/list/SuggestData';
+import ResultData from 'components/view/list/ResultData';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
 import { ReactComponent as LeftArrowIcon } from 'assets/icons/left-icon.svg';
 
-interface propsType {
-  searchValue: string;
-  handleSearchEnter: (searchWord: string) => void;
-  handleDrawerClose: () => void;
-  handleSearchValueChange: (newValue: string) => void;
-}
-
-const SearchInput = observer((props: propsType) => {
-  const { searchValue, handleSearchEnter, handleDrawerClose, handleSearchValueChange } = props;
-  const { ThemeStore } = useStore().MobxStore;
+const SearchInput = observer(() => {
+  const navigate = useNavigate();
+  const { ThemeStore, CustomDrawerStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleArrowLeftClick = () => {
-    handleDrawerClose();
+    navigate(`/${CustomDrawerStore.variant}`);
+    CustomDrawerStore.closeDrawer();
+  };
+
+  const handleLatestListChange = (newList: string[]) => {
+    localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
   };
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-    handleSearchValueChange(e.target.value);
+    const newValue = e.target.value;
+    CustomDrawerStore.setSearchValue(newValue);
+    CustomDrawerStore.openDrawer(
+      CustomDrawerStore.variant,
+      newValue.length === 0 ? (
+        <SearchData
+          handleWordClick={handleWordClick}
+          handleLatestListChange={handleLatestListChange}
+        />
+      ) : (
+        <SuggestData
+          placeData={CustomDrawerStore.placeData}
+          searchValue={newValue}
+          handleWordClick={handleWordClick}
+          handleLatestListChange={handleLatestListChange}
+        />
+      )
+    );
+  };
+
+  const handleWordClick = (searchWord: string) => {
+    CustomDrawerStore.setSearchValue(searchWord);
+    CustomDrawerStore.openDrawer(
+      'list',
+      <ResultData placeData={CustomDrawerStore.placeData} searchWord={searchWord} />
+    );
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (searchValue !== '' && e.key === 'Enter') {
-      handleSearchEnter(searchValue);
+    if (CustomDrawerStore.searchValue && e.key === 'Enter') {
+      handleWordClick(CustomDrawerStore.searchValue);
     }
   };
 
-  const handleIconClick = () => {
-    handleSearchValueChange('');
-  };
+  const handleIconClick = useCallback(() => {
+    CustomDrawerStore.setSearchValue('');
+  }, [CustomDrawerStore]);
+
+  useEffect(() => {
+    handleIconClick();
+  }, [handleIconClick]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
@@ -45,13 +76,14 @@ const SearchInput = observer((props: propsType) => {
         isDarkTheme={isDarkTheme}
         type='text'
         autoFocus
-        value={searchValue}
+        value={CustomDrawerStore.searchValue}
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}
         placeholder="'강남역'를 입력해보세요"
-        sx={{}}
       />
-      {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
+      {CustomDrawerStore.searchValue.length > 0 && (
+        <CustomCloseIcon handleIconClick={handleIconClick} />
+      )}
     </Wrap>
   );
 });

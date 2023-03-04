@@ -1,6 +1,7 @@
 import {
   ScreenSizeStore,
   CustomDialogStore,
+  CustomDrawerStore,
   ErrorStore,
   LocationStore,
   ThemeStore,
@@ -10,6 +11,7 @@ import {
 export default class RootStore {
   ScreenSizeStore: ScreenSizeStore = new ScreenSizeStore();
   CustomDialogStore: CustomDialogStore = new CustomDialogStore();
+  CustomDrawerStore: CustomDrawerStore = new CustomDrawerStore();
   ErrorStore: ErrorStore = new ErrorStore();
   LocationStore: LocationStore = new LocationStore();
   ThemeStore: ThemeStore = new ThemeStore();

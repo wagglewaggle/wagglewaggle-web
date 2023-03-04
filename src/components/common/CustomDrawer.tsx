@@ -1,42 +1,40 @@
 import { useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, styled } from '@mui/material';
+import SearchInput from './SearchInput';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 
-interface propsType {
-  open: boolean;
-  searchInput?: JSX.Element;
-  component: JSX.Element;
-  onClose: () => void;
-}
-
-const CustomDrawer = observer((props: propsType) => {
-  const { open, searchInput = <></>, component, onClose } = props;
+const CustomDrawer = observer(() => {
   const drawerRef = useRef<HTMLDivElement>(null);
-  const { ThemeStore } = useStore().MobxStore;
-  const location = useLocation();
+  const { ThemeStore, CustomDrawerStore } = useStore().MobxStore;
+  const { search } = useLocation();
+  const navigate = useNavigate();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+
+  const handleClose = () => {
+    navigate(`/${CustomDrawerStore.variant}`);
+    CustomDrawerStore.closeDrawer();
+  };
 
   useEffect(() => {
     if (!drawerRef?.current?.childNodes) return;
     (drawerRef.current.childNodes[2] as HTMLDivElement).scrollTo(0, 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drawerRef?.current, location.search]);
+  }, [search]);
 
   return (
     <StyledDrawer
       isDarkTheme={isDarkTheme}
-      search={location.search}
+      search={search}
       ref={drawerRef}
-      open={open}
+      open={CustomDrawerStore.open}
       anchor='right'
-      onClose={onClose}
+      onClose={handleClose}
       transitionDuration={0}
     >
-      {searchInput}
-      {component}
+      {CustomDrawerStore.includesInputBox && <SearchInput />}
+      {CustomDrawerStore.drawerComponent}
     </StyledDrawer>
   );
 });
