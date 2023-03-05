@@ -52,15 +52,11 @@ const App = observer(() => {
 
   const initPlaceData = useCallback(async () => {
     const params = { populationSort: true };
-    const ktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-      'kt-place',
+    const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
+      'place',
       params
     );
-    const sktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-      'skt-place',
-      params
-    );
-    if (!ktData || !sktData) return;
+    if (!placeData) return;
     const statusArr: string[] = [
       'VERY_RELAXATION',
       'RELAXATION',
@@ -69,17 +65,15 @@ const App = observer(() => {
       'VERY_CROWDED',
     ];
     CustomDrawerStore.setPlaceData(
-      [...ktData.data.list, ...sktData.data.list].sort(
-        (prev: PlaceDataType, next: PlaceDataType) => {
-          const prevLevel = statusArr.indexOf(prev.populations[0].level);
-          const nextLevel = statusArr.indexOf(next.populations[0].level);
-          if (prevLevel > nextLevel) return -1;
-          else if (nextLevel > prevLevel) return 1;
-          return 0;
-        }
-      )
+      [...placeData.data.list].sort((prev: PlaceDataType, next: PlaceDataType) => {
+        const prevLevel = statusArr.indexOf(prev.population.level);
+        const nextLevel = statusArr.indexOf(next.population.level);
+        if (prevLevel > nextLevel) return -1;
+        else if (nextLevel > prevLevel) return 1;
+        return 0;
+      })
     );
-    [...ktData.data.list, ...sktData.data.list].forEach((data: PlaceDataType) => {
+    [...placeData.data.list].forEach((data: PlaceDataType) => {
       LocationStore.setCategories(data.name, data.categories);
     });
   }, [CustomDrawerStore, LocationStore]);
@@ -125,6 +119,9 @@ const App = observer(() => {
               <Route path='/list/*' element={<List />} />
               <Route path='/not-found' element={<Error />} />
               <Route path='/error' element={<Error />} />
+              <Route path='/api/auth/naver/redirect/*' element={<Login />} />
+              <Route path='/api/auth/kakao/redirect/*' element={<Login />} />
+              <Route path='/api/auth/google/redirect/*' element={<Login />} />
               <Route path='/' element={<Navigate to='/login' />} />
               <Route path='/*' element={<Navigate to='/not-found' />} />
             </Routes>
@@ -154,7 +151,7 @@ const ServiceWrap = styled('div')({
   flexDirection: 'column',
   alignItems: 'center',
   width: '100%',
-  maxWidth: 1024,
+  maxWidth: 768,
   height: 'fit-content',
   minHeight: '100vh',
 });
