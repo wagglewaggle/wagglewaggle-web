@@ -60,8 +60,8 @@ const PlaceData = observer((props: propsType) => {
     ];
     handlePlaceDataChange(
       placeData.sort((prev: PlaceDataType, next: PlaceDataType) => {
-        const prevLevel = statusArr.indexOf(prev.populations[0].level);
-        const nextLevel = statusArr.indexOf(next.populations[0].level);
+        const prevLevel = statusArr.indexOf(prev.population.level);
+        const nextLevel = statusArr.indexOf(next.population.level);
         if (prevLevel > nextLevel) return e.target.value === '복잡한 순' ? -1 : 1;
         else if (nextLevel > prevLevel) return e.target.value === '복잡한 순' ? 1 : -1;
         return 0;

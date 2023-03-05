@@ -29,9 +29,9 @@ const DetailHeader = observer((props: propsType) => {
     setBgPath(
       `url(${require(`assets/detailBg/${ThemeStore.theme}/${
         bgPaths[locationData?.name || ''] || 'Street'
-      }/${locationData?.populations[0].level || 'NORMAL'}.png`)})`
+      }/${locationData?.population.level || 'NORMAL'}.png`)})`
     );
-  }, [ThemeStore.theme, locationData?.name, locationData?.populations]);
+  }, [ThemeStore.theme, locationData?.name, locationData?.population]);
 
   useEffect(() => {
     if (!locationData?.name || !LocationStore.categories[locationData.name]) return;
@@ -55,7 +55,7 @@ const DetailHeader = observer((props: propsType) => {
           {`지금 ${locationNames[locationData?.name || ''] || locationData?.name || ''}에
           사람이 `}
           <PlaceStatus
-            status={locationData?.populations[0].level || undefined}
+            status={locationData?.population.level || undefined}
             comments={{
               VERY_RELAXATION: '거의 없어요.',
               RELAXATION: '조금 있어요.',

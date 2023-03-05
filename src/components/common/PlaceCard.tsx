@@ -57,7 +57,7 @@ const PlaceCard = observer((props: propsType) => {
         </PlaceTitle>
       </PlaceLeft>
       <StatusWrap>
-        <PlaceStatus status={place.populations[0].level} />
+        <PlaceStatus status={place.population.level} />
       </StatusWrap>
     </Wrap>
   );

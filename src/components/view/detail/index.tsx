@@ -32,8 +32,8 @@ const Detail = observer(() => {
     const requestType: string = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName
     )
-      ? 'skt-place'
-      : 'kt-place';
+      ? 'SKT'
+      : 'KT';
     const pathnameArr: string[] = location.pathname.split('/');
     const placeId: string = pathnameArr[pathnameArr.length - 1];
     if (!Number(placeId)) {
@@ -41,7 +41,7 @@ const Detail = observer(() => {
       return;
     }
     const response: { data: LocationDataType } | undefined = await axiosRequest(
-      `${requestType}/${placeId}`
+      `place/${requestType}/${placeId}`
     );
     if (!response) return;
     setLocationData(response.data);
