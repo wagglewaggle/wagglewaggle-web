@@ -1,12 +1,56 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useMemo } from 'react';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { useStore } from 'stores';
+import { PlaceDataType, CategoryType } from 'types/typeBundle';
+import { palette, symbols } from 'constants/';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
 
 const MapContent = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { UserNavigatorStore } = useStore().MobxStore;
+  const primaryCategories = useMemo(() => ['한강', '공원', '궁궐'], []);
+  const { UserNavigatorStore, CustomDrawerStore } = useStore().MobxStore;
+
+  const getSymbol = useCallback(
+    (categories: CategoryType[]) => {
+      const categoryList = categories.map((category: CategoryType) => category.type);
+      const symbolCandidate = categoryList.filter((category: string) =>
+        primaryCategories.includes(category)
+      );
+      return symbolCandidate.length > 0 ? symbolCandidate[0] : categoryList[0];
+    },
+    [primaryCategories]
+  );
+
+  const setMarkerOnMap = (
+    variant: 'profile' | 'place',
+    lat: number,
+    lng: number,
+    map: any,
+    name: string,
+    markerImage: string
+  ) => {
+    const markerSize = variant === 'profile' ? 35 : 24;
+    const kakaoMarkerSize = new window.kakao.maps.Size(markerSize, markerSize);
+    const marker = new window.kakao.maps.Marker({
+      image: new window.kakao.maps.MarkerImage(markerImage, kakaoMarkerSize),
+      position: new window.kakao.maps.LatLng(lat + 0.0003, lng),
+      title: name,
+    });
+    marker.setMap(map);
+  };
+
+  const getOpacityCircleOnMap = (lat: number, lng: number) => {
+    return new window.kakao.maps.Circle({
+      center: new window.kakao.maps.LatLng(lat, lng),
+      radius: 10000000,
+      strokeWeight: 1,
+      strokeColor: palette.white,
+      strokeOpacity: 0.4,
+      fillColor: palette.white,
+      fillOpacity: 0.4,
+    });
+  };
 
   const getKakaoMap = useCallback(() => {
     const [latitude, longitude] = UserNavigatorStore.currentLocation;
@@ -15,14 +59,14 @@ const MapContent = () => {
         center: new window.kakao.maps.LatLng(latitude, longitude),
         level: 5,
       });
-      const markerSize = new window.kakao.maps.Size(35, 35);
-      const marker = new window.kakao.maps.Marker({
-        image: new window.kakao.maps.MarkerImage(defaultPhoto, markerSize),
-        position: new window.kakao.maps.LatLng(latitude, longitude),
+      CustomDrawerStore.placeData.forEach((place: PlaceDataType) => {
+        const { name, categories, x, y } = place;
+        setMarkerOnMap('place', x, y, map, name, symbols[getSymbol(categories)]);
       });
-      marker.setMap(map);
+      setMarkerOnMap('profile', latitude, longitude, map, '와글와글', defaultPhoto);
+      getOpacityCircleOnMap(latitude, longitude).setMap(map);
     });
-  }, [UserNavigatorStore.currentLocation]);
+  }, [CustomDrawerStore.placeData, UserNavigatorStore.currentLocation, getSymbol]);
 
   useEffect(() => {
     const mapScript = document.createElement('script');
