@@ -1,44 +1,69 @@
 import { useEffect, useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { styled } from '@mui/material';
 import googleIcon from 'assets/icons/login/google.png';
 import kakaoIcon from 'assets/icons/login/kakao.png';
 import naverIcon from 'assets/icons/login/naver.png';
 import loginIllust from 'assets/icons/login/login-illust.png';
 import { palette } from 'constants/';
+import axiosRequest from 'api/axiosRequest';
 
 const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const handleLoggedIn = useCallback(() => {
+    navigate('/map');
+  }, [navigate]);
 
   const handleKakaoClick = () => {
-    navigate('/register');
+    const clientId = process.env.REACT_APP_KAKAO_CLIENT_ID;
+    const redirectUri = process.env.REACT_APP_KAKAO_REDIRECT_URI;
+    window.open(
+      `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}`,
+      '_self'
+    );
   };
 
   const handleNaverClick = () => {
-    // const clientId = process.env.REACT_APP_NAVER_CLIENT_ID;
-    // const redirectUri = process.env.REACT_APP_NAVER_REDIRECT_URI;
-    // window.open(
-    //   `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=test`
-    // );
-    navigate('/list');
+    const clientId = process.env.REACT_APP_NAVER_CLIENT_ID;
+    const redirectUri = process.env.REACT_APP_NAVER_REDIRECT_URI;
+    window.open(
+      `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&state=test`,
+      '_self'
+    );
   };
 
   const handleGoogleClick = () => {
-    navigate('/list');
+    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+    const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
+    window.open(
+      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
+      '_blank'
+    );
   };
 
-  const requestJwt = useCallback(async (authCode: string) => {
-    console.log(await fetch(`http://54.180.151.30:3000/api/auth/naver?code=${authCode}`));
+  const requestJwt = useCallback(async (authCode: string, platform: string) => {
+    const response = await axiosRequest(`auth/${platform}?code=${authCode}`);
+    const { accessToken, refreshToken } = response?.data;
+    if (!accessToken || !refreshToken) return;
+
+    localStorage.setItem('@wagglewaggle_access_token', accessToken);
+    localStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
+    localStorage.removeItem('@wagglewaggle_logging_in');
   }, []);
 
   useEffect(() => {
+    if (localStorage.getItem('@wagglewaggle_logging_in')) return;
     const authCode = searchParams.get('code');
-    if (!authCode) return;
+    const platform = pathname.split('/')?.[3] ?? null;
+    if (!authCode || !platform) return;
 
-    requestJwt(authCode);
-    navigate('/login');
-  }, [searchParams, navigate, requestJwt]);
+    localStorage.setItem('@wagglewaggle_logging_in', 'true');
+    requestJwt(authCode, platform);
+    handleLoggedIn();
+  }, [searchParams, pathname, navigate, handleLoggedIn, requestJwt]);
 
   return (
     <Wrap>
@@ -109,6 +134,7 @@ const ButtonWrap = styled('div', {
   alignItems: 'center',
   border: `1px solid ${variant === 'google' ? palette.grey[400] : palette[variant]}`,
   borderRadius: 4,
+  marginBottom: variant === 'google' ? 20 : 0,
   width: '100%',
   height: 60,
   color: variant === 'naver' ? palette.white : palette.black,

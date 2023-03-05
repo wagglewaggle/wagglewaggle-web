@@ -105,6 +105,5 @@ const Wrap = styled('div')({
 const ChipsWrap = styled('div')({
   padding: '0 24px',
   width: 'calc(100% - 40px)',
-  boxShadow: '0 6px 4px -4px rgba(0, 0, 0, 0.3)',
   transform: 'translateX(-4px)',
 });
