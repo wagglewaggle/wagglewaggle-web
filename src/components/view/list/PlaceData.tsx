@@ -47,6 +47,14 @@ const PlaceData = observer((props: propsType) => {
 
   const handleClickChip = (chip: string) => {
     setSelectedCategory(chip);
+
+    // 아래 코드는 iOS 기기에서 카카오맵 딥링크가 작동하는지 테스트하기위한 임시 코드임
+    if (chip === '한강') {
+      window.open(
+        'https://map.kakao.com/link/to/%EC%B9%B4%EC%B9%B4%EC%98%A4%ED%8C%90%EA%B5%90%EC%98%A4%ED%94%BC%EC%8A%A4,37.402056,127.108212',
+        '_blank'
+      );
+    }
   };
 
   const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
