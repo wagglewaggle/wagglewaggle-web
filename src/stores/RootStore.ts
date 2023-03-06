@@ -1,4 +1,5 @@
 import {
+  AuthStore,
   ScreenSizeStore,
   CustomDialogStore,
   CustomDrawerStore,
@@ -9,6 +10,7 @@ import {
 } from 'stores';
 
 export default class RootStore {
+  AuthStore: AuthStore = new AuthStore();
   ScreenSizeStore: ScreenSizeStore = new ScreenSizeStore();
   CustomDialogStore: CustomDialogStore = new CustomDialogStore();
   CustomDrawerStore: CustomDrawerStore = new CustomDrawerStore();

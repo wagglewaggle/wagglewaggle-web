@@ -1,10 +1,11 @@
 import { useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
 import { CustomDialog, CustomDrawer } from 'components/common';
-import { Login, Register, List, Map, Error } from './components/view';
+import PrivateRoutes from './PrivateRoutes';
+import { Login } from './components/view';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType, PlaceDataType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
@@ -13,8 +14,15 @@ import { palette } from 'constants/';
 export const MobxStore = new RootStore();
 
 const App = observer(() => {
-  const { ScreenSizeStore, ThemeStore, UserNavigatorStore, CustomDrawerStore, LocationStore } =
-    MobxStore;
+  const {
+    AuthStore,
+    ScreenSizeStore,
+    ThemeStore,
+    UserNavigatorStore,
+    CustomDialogStore,
+    CustomDrawerStore,
+    LocationStore,
+  } = MobxStore;
   const { ref, width } = useResizeObserver();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
@@ -53,26 +61,12 @@ const App = observer(() => {
   const initPlaceData = useCallback(async () => {
     const params = { populationSort: true };
     const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
+      'get',
       'place',
       params
     );
     if (!placeData) return;
-    const statusArr: string[] = [
-      'VERY_RELAXATION',
-      'RELAXATION',
-      'NORMAL',
-      'CROWDED',
-      'VERY_CROWDED',
-    ];
-    CustomDrawerStore.setPlaceData(
-      [...placeData.data.list].sort((prev: PlaceDataType, next: PlaceDataType) => {
-        const prevLevel = statusArr.indexOf(prev.population.level);
-        const nextLevel = statusArr.indexOf(next.population.level);
-        if (prevLevel > nextLevel) return -1;
-        else if (nextLevel > prevLevel) return 1;
-        return 0;
-      })
-    );
+    CustomDrawerStore.setPlaceData([...placeData.data.list]);
     [...placeData.data.list].forEach((data: PlaceDataType) => {
       LocationStore.setCategories(data.name, data.categories);
     });
@@ -106,6 +100,30 @@ const App = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const reissueToken = useCallback(
+    async (refreshToken: string) => {
+      AuthStore.setIsLoggingIn(true);
+      const response = await axiosRequest('post', 'auth/reissue', { refreshToken });
+      AuthStore.setIsLoggingIn(false);
+      if (response?.data?.accessToken) {
+        AuthStore.setAuthorized(true);
+        return;
+      }
+      CustomDialogStore.setOpen(false);
+      CustomDrawerStore.closeDrawer();
+    },
+    [AuthStore, CustomDialogStore, CustomDrawerStore]
+  );
+
+  useEffect(() => {
+    if (AuthStore.authorized || AuthStore.isLoggingIn) return;
+    const refreshToken = localStorage.getItem('@wagglewaggle_refresh_token');
+    if (refreshToken) {
+      reissueToken(refreshToken);
+      return;
+    }
+  }, [AuthStore, AuthStore.authorized, reissueToken]);
+
   return (
     <Wrap isDarkTheme={isDarkTheme}>
       <CreateStore.Provider value={{ MobxStore }}>
@@ -113,17 +131,7 @@ const App = observer(() => {
           <BrowserRouter>
             <Routes>
               <Route path='/login' element={<Login />} />
-              <Route path='/auth/naver/callback' element={<Login />} />
-              <Route path='/register' element={<Register />} />
-              <Route path='/map/*' element={<Map />} />
-              <Route path='/list/*' element={<List />} />
-              <Route path='/not-found' element={<Error />} />
-              <Route path='/error' element={<Error />} />
-              <Route path='/api/auth/naver/redirect/*' element={<Login />} />
-              <Route path='/api/auth/kakao/redirect/*' element={<Login />} />
-              <Route path='/api/auth/google/redirect/*' element={<Login />} />
-              <Route path='/' element={<Navigate to='/login' />} />
-              <Route path='/*' element={<Navigate to='/not-found' />} />
+              <Route path='/*' element={<PrivateRoutes />} />
             </Routes>
             <CustomDrawer />
           </BrowserRouter>

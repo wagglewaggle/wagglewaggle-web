@@ -47,7 +47,7 @@ const ResultData = observer((props: propsType) => {
     const newPlaces: string[] = [];
     resultData.forEach(async (data: PlaceDataType, idx: number) => {
       if (!districts[data.name]) return;
-      const response = await axiosRequest(`location/${districts[data.name]}`);
+      const response = await axiosRequest('get', `location/${districts[data.name]}`);
       if (!response?.data?.ktPlaces || !response?.data?.sktPlaces) return;
       pushPlaceData(response.data.ktPlaces, newPlaces, newRelatedData);
       pushPlaceData(response.data.sktPlaces, newPlaces, newRelatedData);

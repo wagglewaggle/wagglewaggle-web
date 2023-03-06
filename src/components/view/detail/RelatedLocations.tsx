@@ -20,6 +20,7 @@ const RelatedLocations = observer(() => {
       return;
     type responseType = { data: { ktPlaces: PlaceDataType[]; sktPlaces: PlaceDataType[] } };
     const response: responseType | undefined = await axiosRequest(
+      'get',
       `location/${districts[locationNames[LocationStore.placeName] || LocationStore.placeName]}`
     );
     if (!response) return;

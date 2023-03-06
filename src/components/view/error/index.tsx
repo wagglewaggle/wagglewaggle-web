@@ -106,7 +106,7 @@ const Search = styled('div')({
     width: 32,
     height: 32,
   },
-  '& img:first-child': {
+  '& img:first-of-type': {
     cursor: 'pointer',
   },
 });

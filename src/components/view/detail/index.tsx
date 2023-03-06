@@ -41,6 +41,7 @@ const Detail = observer(() => {
       return;
     }
     const response: { data: LocationDataType } | undefined = await axiosRequest(
+      'get',
       `place/${requestType}/${placeId}`
     );
     if (!response) return;

@@ -7,11 +7,13 @@ import naverIcon from 'assets/icons/login/naver.png';
 import loginIllust from 'assets/icons/login/login-illust.png';
 import { palette } from 'constants/';
 import axiosRequest from 'api/axiosRequest';
+import { useStore } from 'stores';
 
 const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { AuthStore } = useStore().MobxStore;
 
   const handleLoggedIn = useCallback(() => {
     navigate('/map');
@@ -44,26 +46,33 @@ const Login = () => {
     );
   };
 
-  const requestJwt = useCallback(async (authCode: string, platform: string) => {
-    const response = await axiosRequest(`auth/${platform}?code=${authCode}`);
-    const { accessToken, refreshToken } = response?.data;
-    if (!accessToken || !refreshToken) return;
+  const requestJwt = useCallback(
+    async (authCode: string, platform: string) => {
+      AuthStore.setIsLoggingIn(true);
+      const response = await axiosRequest('get', `auth/${platform}?code=${authCode}`);
+      AuthStore.setIsLoggingIn(false);
+      const { accessToken, refreshToken } = response?.data;
+      if (!accessToken || !refreshToken) return;
 
-    localStorage.setItem('@wagglewaggle_access_token', accessToken);
-    localStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
-    localStorage.removeItem('@wagglewaggle_logging_in');
-  }, []);
+      AuthStore.setAuthorized(true);
+    },
+    [AuthStore]
+  );
 
   useEffect(() => {
-    if (localStorage.getItem('@wagglewaggle_logging_in')) return;
     const authCode = searchParams.get('code');
     const platform = pathname.split('/')?.[3] ?? null;
     if (!authCode || !platform) return;
+    if (AuthStore.isLoggingIn) return;
 
-    localStorage.setItem('@wagglewaggle_logging_in', 'true');
     requestJwt(authCode, platform);
     handleLoggedIn();
-  }, [searchParams, pathname, navigate, handleLoggedIn, requestJwt]);
+  }, [AuthStore, searchParams, pathname, handleLoggedIn, requestJwt]);
+
+  useEffect(() => {
+    if (!AuthStore.authorized) return;
+    handleLoggedIn();
+  }, [AuthStore.authorized, handleLoggedIn]);
 
   return (
     <Wrap>
