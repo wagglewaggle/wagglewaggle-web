@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
@@ -24,6 +25,7 @@ const App = observer(() => {
     LocationStore,
   } = MobxStore;
   const { ref, width } = useResizeObserver();
+  const history = createBrowserHistory();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const disableIosInputAutoZoom = () => {
@@ -81,6 +83,14 @@ const App = observer(() => {
       disableIosInputAutoZoom();
     }
   }, []);
+
+  useEffect(() => {
+    history.listen(() => {
+      if (history.action !== 'POP') return;
+      if (!CustomDialogStore.open) return;
+      CustomDialogStore.setOpen(false);
+    });
+  }, [history, CustomDialogStore, CustomDialogStore.open]);
 
   useEffect(() => {
     if (!width) return;
