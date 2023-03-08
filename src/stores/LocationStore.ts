@@ -1,10 +1,11 @@
 import { makeAutoObservable } from 'mobx';
-import { CategoryType } from 'types/typeBundle';
+import { CategoryType, LocationDataType } from 'types/typeBundle';
 
 export class LocationStore {
   placeName: string | null = null;
   categories: { [key: string]: CategoryType[] } = {};
   suggestionExists: boolean = false;
+  locationData: LocationDataType | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -20,5 +21,9 @@ export class LocationStore {
 
   setSuggestionExists = (newState: boolean) => {
     this.suggestionExists = newState;
+  };
+
+  setLocationData = (newLocationData: LocationDataType | null) => {
+    this.locationData = newLocationData;
   };
 }

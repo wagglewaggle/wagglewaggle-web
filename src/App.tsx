@@ -24,7 +24,7 @@ const App = observer(() => {
     CustomDrawerStore,
     LocationStore,
   } = MobxStore;
-  const { ref, width } = useResizeObserver();
+  const { ref, width, height } = useResizeObserver();
   const history = createBrowserHistory();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
@@ -44,9 +44,9 @@ const App = observer(() => {
     try {
       const { code, latitude, longitude } = JSON.parse(data);
       if (code !== 'success' || !latitude || !longitude) return;
-      UserNavigatorStore.setUserLocation([latitude, longitude]);
+      UserNavigatorStore.setUserLocation([latitude, longitude], true);
     } catch {
-      UserNavigatorStore.setUserLocation([37.625638, 127.038941]);
+      UserNavigatorStore.setUserLocation([37.625638, 127.038941], false);
     }
   };
 
@@ -56,7 +56,7 @@ const App = observer(() => {
     coords: { latitude: number; longitude: number };
   }) => {
     const { latitude, longitude } = coords;
-    UserNavigatorStore.setUserLocation([latitude, longitude]);
+    UserNavigatorStore.setUserLocation([latitude, longitude], true);
     UserNavigatorStore.setLoaded(true);
   };
 
@@ -93,11 +93,11 @@ const App = observer(() => {
   }, [history, CustomDialogStore, CustomDialogStore.open]);
 
   useEffect(() => {
-    if (!width) return;
+    if (!width || !height) return;
     const screenType: ScreenType = width < 768 ? 'mobile' : width < 1024 ? 'tablet' : 'pc';
     ScreenSizeStore.setScreenType(screenType);
-    ScreenSizeStore.setScreenWidth(width);
-  }, [ScreenSizeStore, width]);
+    ScreenSizeStore.setScreenSize(width, height);
+  }, [ScreenSizeStore, width, height]);
 
   useEffect(() => {
     if ((window as unknown as { ReactNativeWebView: unknown }).ReactNativeWebView) {

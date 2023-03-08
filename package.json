@@ -16,6 +16,7 @@
     "@types/node": "^16.18.3",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
+    "@types/react-rnd": "^8.0.0",
     "axios": "^1.2.1",
     "lottie-web": "^5.10.0",
     "mobx": "^6.7.0",

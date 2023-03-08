@@ -28,12 +28,12 @@ const MapContent = () => {
     lng: number,
     map: any,
     name: string,
-    markerImage: string
+    markerImage: string | null
   ) => {
     const markerSize = variant === 'profile' ? 35 : 24;
     const kakaoMarkerSize = new window.kakao.maps.Size(markerSize, markerSize);
     const marker = new window.kakao.maps.Marker({
-      image: new window.kakao.maps.MarkerImage(markerImage, kakaoMarkerSize),
+      image: markerImage && new window.kakao.maps.MarkerImage(markerImage, kakaoMarkerSize),
       position: new window.kakao.maps.LatLng(lat + 0.0003, lng),
       title: name,
     });
@@ -63,10 +63,16 @@ const MapContent = () => {
         const { name, categories, x, y } = place;
         setMarkerOnMap('place', x, y, map, name, symbols[getSymbol(categories)]);
       });
-      setMarkerOnMap('profile', latitude, longitude, map, '와글와글', defaultPhoto);
+      const photoImage = UserNavigatorStore.isUserLocation ? defaultPhoto : null;
+      setMarkerOnMap('profile', latitude, longitude, map, '와글와글', photoImage);
       getOpacityCircleOnMap(latitude, longitude).setMap(map);
     });
-  }, [CustomDrawerStore.placeData, UserNavigatorStore.currentLocation, getSymbol]);
+  }, [
+    CustomDrawerStore.placeData,
+    UserNavigatorStore.isUserLocation,
+    UserNavigatorStore.currentLocation,
+    getSymbol,
+  ]);
 
   useEffect(() => {
     const mapScript = document.createElement('script');

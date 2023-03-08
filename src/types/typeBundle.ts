@@ -61,6 +61,7 @@ export interface LocationDataType {
   accidents: AccidentType[];
   cctvs: CctvType[];
   roadTraffic: TrafficType;
+  address: string;
 }
 
 export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';

@@ -8,7 +8,7 @@ export class CustomDrawerStore {
   titleTag: HTMLTitleElement | null = document.querySelector('title');
   searchValue: string = '';
   placeData: PlaceDataType[] = [];
-  includesInputBox: boolean = false;
+  includesInputBox: boolean = true;
 
   constructor() {
     makeAutoObservable(this);
@@ -22,7 +22,6 @@ export class CustomDrawerStore {
 
   closeDrawer = () => {
     this.open = false;
-    this.drawerComponent = null;
   };
 
   setVariant = (newVariant: 'map' | 'list') => {
