@@ -9,7 +9,7 @@ export class CustomDrawerStore {
   searchValue: string = '';
   placeData: PlaceDataType[] = [];
   includesInputBox: boolean = true;
-  drawerStatus: DrawerStatusType = { expanded: 'appeared', dragHeight: 0 };
+  drawerStatus: DrawerStatusType = { expanded: 'removed', dragHeight: 0 };
 
   constructor() {
     makeAutoObservable(this);
@@ -23,6 +23,7 @@ export class CustomDrawerStore {
 
   closeDrawer = () => {
     this.open = false;
+    this.setDrawerStatus({ expanded: 'removed' });
   };
 
   setVariant = (newVariant: 'map' | 'list') => {

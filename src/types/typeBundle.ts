@@ -65,7 +65,7 @@ export interface LocationDataType {
 }
 
 export interface DrawerStatusType {
-  expanded: 'appeared' | 'expanded' | 'full';
+  expanded: 'removed' | 'appeared' | 'expanded' | 'full';
   dragHeight: number;
 }
 

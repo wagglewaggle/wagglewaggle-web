@@ -40,8 +40,7 @@ const CustomDrawer = observer(() => {
   const { locationData } = LocationStore;
   const { open, includesInputBox, variant, drawerStatus } = CustomDrawerStore;
   const FULL_HEIGHT = ScreenSizeStore.screenHeight;
-  const EXPANDED_HEIGHT =
-    ScreenSizeStore.screenHeight - (ScreenSizeStore.screenType === 'mobile' ? 256 : 356);
+  const EXPANDED_HEIGHT = ScreenSizeStore.screenHeight * 0.6;
   const APPEARED_HEIGHT = 196;
   const DRAWER_X = ScreenSizeStore.screenType === 'mobile' ? 0 : 243;
   const [isBeginning, setIsBeginning] = useState<boolean>(true);
@@ -151,16 +150,13 @@ const CustomDrawer = observer(() => {
     if (!response) return;
     const { data } = response;
     LocationStore.setLocationData(data);
-    UserNavigatorStore.setUserLocation([data.x, data.y], false);
+    UserNavigatorStore.setDataLocation([data.x, data.y]);
   }, [LocationStore, CustomDrawerStore, UserNavigatorStore, navigate, pathname, search]);
 
   useEffect(() => {
     setTouchIndex(0);
     setIsBeginning(true);
   }, []);
-  useEffect(() => {
-    // alert(ScreenSizeStore.screenHeight - drawerStatus.dragHeight);
-  }, [ScreenSizeStore, drawerStatus.dragHeight]);
 
   useEffect(() => {
     initLocationData();
@@ -174,14 +170,15 @@ const CustomDrawer = observer(() => {
     setSwipeEnabled(CustomDrawerStore.drawerStatus.expanded === 'full');
   }, [CustomDrawerStore.drawerStatus.expanded]);
 
-  useEffect(() => {
-    CustomDrawerStore.setDrawerStatus({ expanded: 'appeared', dragHeight: APPEARED_HEIGHT });
-  }, [CustomDrawerStore]);
-
   // useEffect(() => {
   //   if (!drawerRef?.current?.childNodes) return;
   //   (drawerRef.current.childNodes[2] as HTMLDivElement).scrollTo(0, 0);
   // }, [search]);
+
+  useEffect(() => {
+    if (!open) return;
+    CustomDrawerStore.setDrawerStatus({ expanded: 'appeared', dragHeight: APPEARED_HEIGHT });
+  }, [open, CustomDrawerStore]);
 
   useEffect(() => {
     if (!open || includesInputBox) return;
@@ -282,6 +279,7 @@ const CustomRnd = styled(Rnd, {
   overflow: 'hidden',
   zIndex: 10,
   backgroundColor: palette.white,
+  boxShadow: '0px -10px 40px rgb(0 0 0 / 30%)',
   transform: `translate(${transformX}px, ${
     screenHeight - dragHeight - transformDeltaY
   }px) !important`,

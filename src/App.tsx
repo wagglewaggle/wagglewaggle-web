@@ -40,11 +40,12 @@ const App = observer(() => {
 
   const reactNativeListener = (e: Event) => {
     const { data } = e as MessageEvent;
-    if (typeof data !== 'string') return;
+    if (UserNavigatorStore.loaded || typeof data !== 'string') return;
     try {
       const { code, latitude, longitude } = JSON.parse(data);
       if (code !== 'success' || !latitude || !longitude) return;
-      UserNavigatorStore.setUserLocation([latitude, longitude], true);
+      UserNavigatorStore.setUserLocation([latitude, longitude], false);
+      UserNavigatorStore.setLoaded(true);
     } catch {
       UserNavigatorStore.setUserLocation([37.625638, 127.038941], false);
     }
@@ -56,7 +57,7 @@ const App = observer(() => {
     coords: { latitude: number; longitude: number };
   }) => {
     const { latitude, longitude } = coords;
-    UserNavigatorStore.setUserLocation([latitude, longitude], true);
+    UserNavigatorStore.setUserLocation([latitude, longitude], false);
     UserNavigatorStore.setLoaded(true);
   };
 
@@ -106,7 +107,7 @@ const App = observer(() => {
       return;
     }
     if (!navigator.geolocation) return;
-    navigator.geolocation.watchPosition(onGeolocationSuccess);
+    navigator.geolocation.getCurrentPosition(onGeolocationSuccess);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

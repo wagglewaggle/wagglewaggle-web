@@ -6,10 +6,19 @@ import { PlaceDataType, CategoryType } from 'types/typeBundle';
 import { palette, symbols } from 'constants/';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
 
+let map: any;
+const mapInfo: { lat: number; lng: number } = { lat: 0, lng: 0 };
 const MapContent = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const primaryCategories = useMemo(() => ['한강', '공원', '궁궐'], []);
-  const { UserNavigatorStore, CustomDrawerStore } = useStore().MobxStore;
+  const { UserNavigatorStore, CustomDrawerStore, ScreenSizeStore } = useStore().MobxStore;
+  const { drawerStatus } = CustomDrawerStore;
+
+  const onDragEnd = useCallback(() => {
+    if (!map || !map.getDraggable()) return;
+    const center = map.getCenter();
+    [mapInfo.lat, mapInfo.lng] = [center.Ma, center.La];
+  }, []);
 
   const getSymbol = useCallback(
     (categories: CategoryType[]) => {
@@ -40,8 +49,8 @@ const MapContent = () => {
     marker.setMap(map);
   };
 
-  const getOpacityCircleOnMap = (lat: number, lng: number) => {
-    return new window.kakao.maps.Circle({
+  const getOpacityCircleOnMap = (lat: number, lng: number) =>
+    new window.kakao.maps.Circle({
       center: new window.kakao.maps.LatLng(lat, lng),
       radius: 10000000,
       strokeWeight: 1,
@@ -50,13 +59,14 @@ const MapContent = () => {
       fillColor: palette.white,
       fillOpacity: 0.4,
     });
-  };
 
   const getKakaoMap = useCallback(() => {
-    const [latitude, longitude] = UserNavigatorStore.currentLocation;
+    const [latitude, longitude] = UserNavigatorStore.dataLocation;
+    const latOffset =
+      (drawerStatus.expanded === 'appeared' ? 0.0000035 : 0) * ScreenSizeStore.screenHeight;
     window.kakao.maps.load(() => {
-      const map = new window.kakao.maps.Map(mapRef.current, {
-        center: new window.kakao.maps.LatLng(latitude, longitude),
+      map = new window.kakao.maps.Map(mapRef.current, {
+        center: new window.kakao.maps.LatLng(latitude - latOffset, longitude),
         level: 5,
       });
       CustomDrawerStore.placeData.forEach((place: PlaceDataType) => {
@@ -66,23 +76,47 @@ const MapContent = () => {
       const photoImage = UserNavigatorStore.isUserLocation ? defaultPhoto : null;
       setMarkerOnMap('profile', latitude, longitude, map, '와글와글', photoImage);
       getOpacityCircleOnMap(latitude, longitude).setMap(map);
+      [mapInfo.lat, mapInfo.lng] = [latitude, longitude];
+      window.kakao.maps.event.addListener(map, 'dragend', onDragEnd);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     CustomDrawerStore.placeData,
     UserNavigatorStore.isUserLocation,
-    UserNavigatorStore.currentLocation,
+    UserNavigatorStore.dataLocation,
+    ScreenSizeStore.screenHeight,
     getSymbol,
+    onDragEnd,
   ]);
+
+  const setMapCenter = useCallback(() => {
+    const [latitude, longitude] = UserNavigatorStore.dataLocation;
+    const isExpanded = drawerStatus.expanded === 'expanded';
+    const latOffset = (isExpanded ? 0.00001 : 0.0000035) * ScreenSizeStore.screenHeight;
+    map.setDraggable(!isExpanded);
+    map.setZoomable(!isExpanded);
+    map.setLevel(5);
+    map.panTo(
+      new window.kakao.maps.LatLng(
+        isExpanded ? latitude - latOffset : mapInfo.lat,
+        isExpanded ? longitude : mapInfo.lng
+      )
+    );
+  }, [UserNavigatorStore.dataLocation, drawerStatus.expanded, ScreenSizeStore.screenHeight]);
 
   useEffect(() => {
     const mapScript = document.createElement('script');
     mapScript.async = true;
     mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_MAP_APP_KEY}&autoload=false&libraries=services`;
     document.head.appendChild(mapScript);
-
     mapScript.addEventListener('load', getKakaoMap);
     return () => mapScript.removeEventListener('load', getKakaoMap);
   }, [getKakaoMap]);
+
+  useEffect(() => {
+    if (!map || !['expanded', 'appeared'].includes(drawerStatus.expanded)) return;
+    setMapCenter();
+  }, [drawerStatus.dragHeight, drawerStatus.expanded, setMapCenter]);
 
   return (
     <Wrap>

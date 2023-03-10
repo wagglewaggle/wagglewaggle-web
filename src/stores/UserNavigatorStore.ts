@@ -1,7 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 
 export class UserNavigatorStore {
-  currentLocation: number[] = [37.625638, 127.038941];
+  userLocation: number[] = [37.625638, 127.038941];
+  dataLocation: number[] = [37.625638, 127.038941];
   loaded: boolean = false;
   isUserLocation: boolean = false;
 
@@ -9,9 +10,17 @@ export class UserNavigatorStore {
     makeAutoObservable(this);
   }
 
-  setUserLocation = (newUserLocation: number[], isUserLocation: boolean) => {
-    this.currentLocation = newUserLocation;
-    this.isUserLocation = isUserLocation;
+  setUserLocation = (newUserLocation: number[], shouldUpdate: boolean) => {
+    this.userLocation = newUserLocation;
+    if (shouldUpdate) {
+      this.dataLocation = newUserLocation;
+      this.isUserLocation = true;
+    }
+  };
+
+  setDataLocation = (newDataLocation: number[]) => {
+    this.dataLocation = newDataLocation;
+    this.isUserLocation = false;
   };
 
   setLoaded = (newStatus: boolean) => {
