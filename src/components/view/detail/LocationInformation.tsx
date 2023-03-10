@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { IconButton, styled } from '@mui/material';
-import { palette, geometry, urlPaths, locationNames, locationRequestTypes } from 'constants/';
-import { LocationDataType } from 'types/typeBundle';
+import { palette, geometry, locationNames, locationRequestTypes } from 'constants/';
 import { useStore } from 'stores';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
-import exclamationIcon from 'assets/icons/exclamation-icon.svg';
 
 declare global {
   interface Window {
@@ -13,16 +11,11 @@ declare global {
   }
 }
 
-interface propsType {
-  locationData: LocationDataType | null;
-}
-
-const LocationInformation = observer((props: propsType) => {
-  const { locationData } = props;
+const LocationInformation = observer(() => {
   const [locationAddress, setLocationAddress] = useState<string | null>(null);
-  const [appearMapInfo, setAppearMapInfo] = useState<boolean>(false);
   const mapRef = useRef<HTMLDivElement>(null);
-  const { ThemeStore } = useStore().MobxStore;
+  const { ThemeStore, LocationStore } = useStore().MobxStore;
+  const { locationData } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const processGeometryCoordinates = (
@@ -92,21 +85,11 @@ const LocationInformation = observer((props: propsType) => {
       const polygon = highlightMap();
       if (polygon) {
         polygon.setMap(map);
-        setAppearMapInfo(true);
       }
       const centerCoords = map.getCenter();
       getAddress(centerCoords.getLng(), centerCoords.getLat());
     });
   }, [highlightMap, locationData]);
-
-  const handleNavigationClick = () => {
-    window.open(
-      `https://place.map.kakao.com/${
-        urlPaths[locationNames[locationData?.name || ''] || locationData?.name || '']
-      }`,
-      '_blank'
-    );
-  };
 
   useEffect(() => {
     const mapScript = document.createElement('script');
@@ -120,10 +103,9 @@ const LocationInformation = observer((props: propsType) => {
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
-      <Header>위치 정보</Header>
       <MapWrap isDarkTheme={isDarkTheme}>
         <Map ref={mapRef} />
-        <Description onClick={handleNavigationClick}>
+        <Description>
           <TextArea>
             <Name>{locationNames[locationData?.name || ''] || locationData?.name}</Name>
             <Address isDarkTheme={isDarkTheme}>{locationAddress || ''}</Address>
@@ -133,12 +115,6 @@ const LocationInformation = observer((props: propsType) => {
           </CustomIconButton>
         </Description>
       </MapWrap>
-      {appearMapInfo && (
-        <InfoWrap isDarkTheme={isDarkTheme}>
-          <img src={exclamationIcon} alt='exclamation' />
-          장소 혼잡도는 보라색으로 표시된 영역까지만 통계되었습니다.
-        </InfoWrap>
-      )}
     </Wrap>
   );
 });
@@ -151,19 +127,11 @@ const Wrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: 24,
-  marginTop: 8,
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   '& path': {
     fill: isDarkTheme ? palette.white : palette.black,
   },
 }));
-
-const Header = styled('div')({
-  width: '100%',
-  fontSize: 18,
-  fontWeight: 600,
-});
 
 const MapWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
@@ -171,7 +139,6 @@ const MapWrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   borderRadius: 4,
-  margin: 24,
   width: '100%',
   height: 212,
   backgroundColor: palette.grey[isDarkTheme ? 600 : 100],
@@ -225,16 +192,3 @@ const NavigationIcon = styled('img')({
   width: 16,
   height: 16,
 });
-
-const InfoWrap = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
-  display: 'flex',
-  justifyContent: 'flex-start',
-  alignItems: 'center',
-  width: '100%',
-  color: palette.grey[isDarkTheme ? 400 : 500],
-  fontSize: 12,
-  fontWeight: 500,
-  gap: 4,
-}));

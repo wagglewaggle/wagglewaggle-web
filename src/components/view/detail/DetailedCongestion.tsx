@@ -3,22 +3,21 @@ import { observer } from 'mobx-react';
 import { Button, IconButton, styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
-import { LocationDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
 import { ReactComponent as RefreshIcon } from 'assets/icons/refresh-icon.svg';
+import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import carIcon from 'assets/icons/car-icon.svg';
-import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 
 interface propsType {
-  locationData: LocationDataType | null;
   initLocationData: () => void;
 }
 
 const DetailedCongestion = observer((props: propsType) => {
-  const { locationData, initLocationData } = props;
+  const { initLocationData } = props;
   const [timePassed, setTimePassed] = useState<string>('');
-  const { CustomDialogStore, ThemeStore } = useStore().MobxStore;
+  const { CustomDialogStore, ThemeStore, LocationStore } = useStore().MobxStore;
+  const { locationData } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const COMMENTS_BY_STATUS: { [key: string]: string } = {
     VERY_RELAXATION: '날아다닐 수 있어요',
@@ -108,7 +107,8 @@ const Wrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '32px 24px 16px',
+  padding: '12px 24px 16px',
+  width: 'calc(100% - 48px)',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   '& path': {
     fill: isDarkTheme ? palette.white : palette.black,

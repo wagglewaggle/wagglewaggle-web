@@ -64,6 +64,11 @@ export interface LocationDataType {
   address: string;
 }
 
+export interface DrawerStatusType {
+  expanded: 'appeared' | 'expanded' | 'full';
+  dragHeight: number;
+}
+
 export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
 
 export type ScreenType = 'mobile' | 'tablet' | 'pc';

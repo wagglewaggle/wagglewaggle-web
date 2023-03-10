@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { PlaceDataType } from 'types/typeBundle';
+import { DrawerStatusType, PlaceDataType } from 'types/typeBundle';
 
 export class CustomDrawerStore {
   open: boolean = false;
@@ -9,6 +9,7 @@ export class CustomDrawerStore {
   searchValue: string = '';
   placeData: PlaceDataType[] = [];
   includesInputBox: boolean = true;
+  drawerStatus: DrawerStatusType = { expanded: 'appeared', dragHeight: 0 };
 
   constructor() {
     makeAutoObservable(this);
@@ -43,5 +44,9 @@ export class CustomDrawerStore {
 
   setIncludesInput = (newInputStatus: boolean) => {
     this.includesInputBox = newInputStatus;
+  };
+
+  setDrawerStatus = (newStatus: Partial<DrawerStatusType>) => {
+    this.drawerStatus = { ...this.drawerStatus, ...newStatus };
   };
 }

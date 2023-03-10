@@ -10,12 +10,14 @@ import { ReactComponent as ShareIcon } from 'assets/icons/drawer/share.svg';
 import { ReactComponent as NaviIcon } from 'assets/icons/drawer/navi.svg';
 
 const CongestionSummary = () => {
-  const { ThemeStore, LocationStore } = useStore().MobxStore;
+  const { ThemeStore, LocationStore, CustomDrawerStore } = useStore().MobxStore;
   const { placeName, categories, locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
+  const isAppeared = CustomDrawerStore.drawerStatus.expanded === 'appeared';
 
   return (
-    <Wrap isDarkTheme={isDarkTheme}>
+    <Wrap isDarkTheme={isDarkTheme} isAppeared={isAppeared}>
+      {!isAppeared && <BlankArea isDarkTheme={isDarkTheme} />}
       <Header>
         <LocationWrap>
           <Title>{locationNames?.[placeName ?? ''] ?? placeName}</Title>
@@ -33,7 +35,7 @@ const CongestionSummary = () => {
           <ChatIcon /> 102
         </IconWrap>
         <IconWrap>
-          <CctvIcon /> {String(locationData?.cctvs.length ?? 0).padStart(2, '0')}
+          <CctvIcon /> {String(locationData?.cctvs?.length ?? 0).padStart(2, '0')}
         </IconWrap>
       </IconsWrap>
       <Address>{locationData?.address ?? ''}</Address>
@@ -54,15 +56,24 @@ const CongestionSummary = () => {
 export default observer(CongestionSummary);
 
 const Wrap = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  shouldForwardProp: (prop: string) => !['isDarkTheme', 'isAppeared'].includes(prop),
+})<{ isDarkTheme: boolean; isAppeared: boolean }>(({ isDarkTheme, isAppeared }) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '12px 24px 16px',
   width: 'calc(100% - 48px)',
-  height: '100vh',
+  height: isAppeared ? 204 : 172,
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   gap: 8,
+}));
+
+const BlankArea = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  width: '100%',
+  height: 32,
+  minHeight: 32,
+  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));
 
 const Header = styled('div')({

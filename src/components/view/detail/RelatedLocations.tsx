@@ -59,8 +59,9 @@ const Wrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '24px 24px 0 24px',
+  padding: '12px 24px 16px',
   marginTop: 8,
+  width: 'calc(100% - 48px)',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));
 
