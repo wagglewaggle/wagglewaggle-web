@@ -1,21 +1,21 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Dialog, DialogTitle, DialogContent, IconButton, styled } from '@mui/material';
 import { IntroContent, AccidentContent, CctvContent } from './DialogContents';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
-import lottie from 'lottie-web';
+import Lottie from 'react-lottie-player';
 import { ScreenType } from 'types/typeBundle';
 import logo from 'assets/icons/logo-filled-icon.svg';
 import closeIcon from 'assets/icons/close-icon.svg';
 import accidentIcon from 'assets/icons/accident-icon.svg';
 
 const CustomDialog = observer(() => {
-  const [dialogWidth, setDialogWidth] = useState<number>(408);
-  const [dialogHeight, setDialogHeight] = useState<number>(408);
-  const lottieContainer = useRef<HTMLDivElement>(null);
   const { ScreenSizeStore, CustomDialogStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const [dialogWidth, setDialogWidth] = useState<number>(408);
+  const [dialogHeight, setDialogHeight] = useState<number>(408);
+  const [animationData, setAnimationData] = useState<object | null>(null);
 
   const closeDialog = () => {
     if (CustomDialogStore.variant === 'intro') {
@@ -25,19 +25,12 @@ const CustomDialog = observer(() => {
   };
 
   useEffect(() => {
-    if (!lottieContainer.current) return;
-    const introAnimation = lottie.loadAnimation({
-      container: lottieContainer.current,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      animationData: require(`assets/lottie/${ThemeStore.theme}/Notice${
+    setAnimationData(
+      require(`assets/lottie/${ThemeStore.theme}/Notice${
         ScreenSizeStore.screenType === 'mobile' ? '-mobile' : ''
-      }.json`),
-    });
-    return () => introAnimation.destroy();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ScreenSizeStore.screenType, lottieContainer.current]);
+      }.json`)
+    );
+  }, [ScreenSizeStore.screenType, ThemeStore.theme]);
 
   useEffect(() => {
     if (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'cctv') {
@@ -96,7 +89,9 @@ const CustomDialog = observer(() => {
           )}
         </CustomContent>
         {CustomDialogStore.variant === 'accident' && <AccidentEmpty isDarkTheme={isDarkTheme} />}
-        {CustomDialogStore.variant === 'intro' && <Lottie ref={lottieContainer} />}
+        {CustomDialogStore.variant === 'intro' && animationData && (
+          <CustomLottie loop play animationData={animationData} />
+        )}
       </DialogPart>
     </CustomDialogWrap>
   );
@@ -211,7 +206,7 @@ const AccidentEmpty = styled('div', {
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));
 
-const Lottie = styled('div')({
+const CustomLottie = styled(Lottie)({
   position: 'absolute',
   bottom: 0,
   borderRadius: 8,
