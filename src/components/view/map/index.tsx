@@ -2,9 +2,14 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
-import Detail from 'components/view/detail';
 import MapContent from './MapContent';
 import { useStore } from 'stores';
+
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
 
 const Map = () => {
   const navigate = useNavigate();
@@ -63,7 +68,7 @@ const Map = () => {
   useEffect(() => {
     const newDrawerState = search.length !== 0;
     if (!newDrawerState) return;
-    CustomDrawerStore.openDrawer('map', <Detail />);
+    CustomDrawerStore.openDrawer('map', <></>);
   }, [CustomDrawerStore, search]);
 
   return (

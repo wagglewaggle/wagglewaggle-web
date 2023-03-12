@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import PlaceData from './PlaceData';
-import { Detail } from 'components/view';
 import { PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 
@@ -66,12 +65,6 @@ const List = observer(() => {
   }, [CustomDrawerStore, pathname]);
 
   useEffect(() => {
-    const newDrawerState = search.length !== 0;
-    if (!newDrawerState) return;
-    CustomDrawerStore.openDrawer('list', <Detail />);
-  }, [CustomDrawerStore, search]);
-
-  useEffect(() => {
     if (!CustomDrawerStore.searchValue || !search) {
       CustomDrawerStore.setTitle('와글와글');
     }
@@ -81,6 +74,12 @@ const List = observer(() => {
     if (!ErrorStore.statusCode) return;
     navigate(ErrorStore.statusCode === 404 ? '/not-found' : '/error');
   }, [ErrorStore.statusCode, navigate]);
+
+  useEffect(() => {
+    const newDrawerState = search.length !== 0;
+    if (!newDrawerState) return;
+    CustomDrawerStore.openDrawer('map', <></>);
+  }, [CustomDrawerStore, search]);
 
   return (
     <Wrap>

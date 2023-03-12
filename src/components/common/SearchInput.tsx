@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { TextField, IconButton, styled } from '@mui/material';
 import CustomCloseIcon from './CustomCloseIcon';
-import { SearchData, SuggestData, ResultData } from 'components/common';
+import { SearchData, SuggestData, ResultData } from './DrawerContents/search';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
 import { ReactComponent as LeftArrowIcon } from 'assets/icons/left-icon.svg';

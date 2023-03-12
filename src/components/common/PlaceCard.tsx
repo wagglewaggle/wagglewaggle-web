@@ -54,8 +54,8 @@ const PlaceCard = observer((props: propsType) => {
   }, [primaryCategories, place.categories]);
 
   return (
-    <Wrap isDarkTheme={isDarkTheme}>
-      <PlaceWrap onClick={handlePlaceCardClick}>
+    <Wrap isDarkTheme={isDarkTheme} onClick={handlePlaceCardClick}>
+      <PlaceWrap>
         <PlaceLeft>
           <PlaceImage>
             <img src={symbols[symbol]} alt='category-symbol' />

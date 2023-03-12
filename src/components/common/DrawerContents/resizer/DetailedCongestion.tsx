@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconButton, styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
@@ -33,6 +33,7 @@ const DetailedCongestion = observer((props: propsType) => {
   };
 
   const handleOpenDialog = () => {
+    console.log('open');
     CustomDialogStore.openCctvDialog(locationData?.cctvs || []);
   };
 
@@ -87,13 +88,13 @@ const DetailedCongestion = observer((props: propsType) => {
         </StatusCard>
       )}
       {(locationData?.cctvs || []).length > 0 && (
-        <Fragment>
+        <>
           <CustomDivider />
           <CustomButton isDarkTheme={isDarkTheme} onClick={handleOpenDialog}>
             CCTV
             <RightIcon />
           </CustomButton>
-        </Fragment>
+        </>
       )}
     </Wrap>
   );
