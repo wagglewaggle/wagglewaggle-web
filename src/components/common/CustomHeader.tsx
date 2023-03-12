@@ -32,8 +32,8 @@ const CustomHeader = (props: PropsType) => {
           <SubHeaderWrap>
             <Logo onClick={navigateToHome} />
             <SubHeader>
-              <CustomIconButton>
-                <SearchIcon onClick={handleSearchClick} />
+              <CustomIconButton onClick={handleSearchClick}>
+                <SearchIcon />
               </CustomIconButton>
               <CustomIconButton>
                 <PersonIcon />
@@ -75,6 +75,9 @@ const Wrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   height,
+  '& svg': {
+    cursor: 'pointer',
+  },
 }));
 
 const HeaderWrap = styled('div', {

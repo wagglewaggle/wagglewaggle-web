@@ -62,11 +62,8 @@ const Map = () => {
 
   useEffect(() => {
     const newDrawerState = search.length !== 0;
-    if (newDrawerState) {
-      CustomDrawerStore.openDrawer('map', <Detail />);
-      return;
-    }
-    CustomDrawerStore.closeDrawer();
+    if (!newDrawerState) return;
+    CustomDrawerStore.openDrawer('map', <Detail />);
   }, [CustomDrawerStore, search]);
 
   return (

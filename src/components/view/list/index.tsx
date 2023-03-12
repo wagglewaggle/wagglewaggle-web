@@ -67,11 +67,8 @@ const List = observer(() => {
 
   useEffect(() => {
     const newDrawerState = search.length !== 0;
-    if (newDrawerState) {
-      CustomDrawerStore.openDrawer('list', <Detail />);
-      return;
-    }
-    CustomDrawerStore.closeDrawer();
+    if (!newDrawerState) return;
+    CustomDrawerStore.openDrawer('list', <Detail />);
   }, [CustomDrawerStore, search]);
 
   useEffect(() => {
