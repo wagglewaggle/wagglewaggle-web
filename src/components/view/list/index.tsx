@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import { SearchData, ResultData, CustomSearchBox, NavigationIcons } from 'components/common';
+import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import PlaceData from './PlaceData';
 import { Detail } from 'components/view';
 import { PlaceDataType } from 'types/typeBundle';
@@ -87,7 +87,7 @@ const List = observer(() => {
 
   return (
     <Wrap>
-      <CustomSearchBox navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
+      <CustomHeader navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
       <PlaceData
         placeData={CustomDrawerStore.placeData}
         handlePlaceDataChange={handlePlaceDataChange}

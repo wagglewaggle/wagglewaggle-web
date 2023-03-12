@@ -23,9 +23,7 @@ export class AuthStore {
           });
           if (!response) throw Error;
         } catch (e) {
-          this.authorized = false;
-          localStorage.removeItem('@wagglewaggle_access_token');
-          localStorage.removeItem('@wagglewaggle_refresh_token');
+          this.logout();
         }
       }, 1740000);
     }
@@ -33,5 +31,10 @@ export class AuthStore {
 
   setIsLoggingIn = (newStatus: boolean) => {
     this.isLoggingIn = newStatus;
+  };
+
+  logout = () => {
+    this.authorized = false;
+    localStorage.clear();
   };
 }

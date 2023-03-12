@@ -95,6 +95,7 @@ const Wrap = styled('div', {
   flexDirection: 'column',
   margin: '5px 0 35px',
   width: screenType === 'mobile' ? screenWidth : 400,
+  minHeight: 'calc(100vh - 97px)',
 }));
 
 const ListWrap = styled('div')({

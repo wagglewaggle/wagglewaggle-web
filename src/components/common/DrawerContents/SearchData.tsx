@@ -55,4 +55,5 @@ const Wrap = styled('div', {
   flexDirection: 'column',
   padding: '5px 24px 35px',
   width: screenType === 'mobile' ? screenWidth - 48 : 352,
+  minHeight: 'calc(100vh - 97px)',
 }));

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Select, MenuItem, SelectChangeEvent, styled } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { PlaceCard, Footer, CustomChips } from 'components/common';
+import { PlaceCard, Footer } from 'components/common';
 import { useStore } from 'stores';
 import { CategoryType, PlaceDataType, ScreenType } from 'types/typeBundle';
 import { palette } from 'constants/';
@@ -40,22 +40,9 @@ const PlaceData = observer((props: propsType) => {
   const { placeData, handlePlaceDataChange } = props;
   const [renderData, setRenderData] = useState<PlaceDataType[]>([]);
   const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
-  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const classes = useStyles();
-  const { ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const { ScreenSizeStore, ThemeStore, CategoryStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
-
-  const handleClickChip = (chip: string) => {
-    setSelectedCategory(chip);
-
-    // 아래 코드는 iOS 기기에서 카카오맵 딥링크가 작동하는지 테스트하기위한 임시 코드임
-    if (chip === '한강') {
-      window.open(
-        'https://map.kakao.com/link/to/%EC%B9%B4%EC%B9%B4%EC%98%A4%ED%8C%90%EA%B5%90%EC%98%A4%ED%94%BC%EC%8A%A4,37.402056,127.108212',
-        '_blank'
-      );
-    }
-  };
 
   const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
     setPlaceOrder(e.target.value as string);
@@ -88,16 +75,16 @@ const PlaceData = observer((props: propsType) => {
         const categories: string[] = place.categories.map(
           (category: CategoryType) => category.type
         );
-        return selectedCategory === '전체' || categories.includes(selectedCategory);
+        return (
+          CategoryStore.selectedCategory === '전체' ||
+          categories.includes(CategoryStore.selectedCategory)
+        );
       })
     );
-  }, [placeData, selectedCategory]);
+  }, [placeData, CategoryStore.selectedCategory]);
 
   return (
     <Wrap>
-      <ChipsWrap>
-        <CustomChips selectedCategory={selectedCategory} handleClickChip={handleClickChip} />
-      </ChipsWrap>
       <SubHeader>
         <SubHeaderLeft>
           장소
@@ -147,10 +134,6 @@ const Wrap = styled('div')({
   flexDirection: 'column',
   margin: '0 24px 72px',
   minHeight: 'calc(100vh - 148px)',
-});
-
-const ChipsWrap = styled('div')({
-  transform: 'translateX(-4px)',
 });
 
 const SubHeader = styled('div')({

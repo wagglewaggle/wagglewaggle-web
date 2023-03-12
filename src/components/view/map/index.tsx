@@ -1,19 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material';
-import {
-  SearchData,
-  ResultData,
-  CustomSearchBox,
-  CustomChips,
-  NavigationIcons,
-} from 'components/common';
+import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import Detail from 'components/view/detail';
 import MapContent from './MapContent';
 import { useStore } from 'stores';
 
 const Map = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const { CustomDrawerStore, CustomDialogStore } = useStore().MobxStore;
@@ -48,10 +41,6 @@ const Map = () => {
     );
   };
 
-  const handleClickChip = (chip: string) => {
-    setSelectedCategory(chip);
-  };
-
   useEffect(() => {
     CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');
   }, [CustomDialogStore]);
@@ -82,10 +71,7 @@ const Map = () => {
 
   return (
     <Wrap>
-      <CustomSearchBox navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
-      <ChipsWrap>
-        <CustomChips selectedCategory={selectedCategory} handleClickChip={handleClickChip} />
-      </ChipsWrap>
+      <CustomHeader navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
       <MapContent />
       <NavigationIcons />
     </Wrap>
@@ -100,10 +86,4 @@ const Wrap = styled('div')({
   width: '100%',
   zIndex: 2,
   overflow: 'hidden',
-});
-
-const ChipsWrap = styled('div')({
-  padding: '0 24px',
-  width: 'calc(100% - 40px)',
-  transform: 'translateX(-4px)',
 });
