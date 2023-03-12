@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import SearchInput from './SearchInput';
+import CustomResizer from './DrawerContents/CustomResizer';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
-import { CustomResizer } from './DialogContents';
 
 const CustomDrawer = observer(() => {
   const { ThemeStore, CustomDialogStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;

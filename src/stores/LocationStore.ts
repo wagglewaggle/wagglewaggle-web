@@ -6,6 +6,7 @@ export class LocationStore {
   categories: { [key: string]: CategoryType[] } = {};
   suggestionExists: boolean = false;
   locationData: LocationDataType | null = null;
+  currentLocationPinned: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -25,5 +26,9 @@ export class LocationStore {
 
   setLocationData = (newLocationData: LocationDataType | null) => {
     this.locationData = newLocationData;
+  };
+
+  setCurrentLocationPinned = (newStatus: boolean) => {
+    this.currentLocationPinned = newStatus;
   };
 }

@@ -9,7 +9,7 @@ import axiosRequest from 'api/axiosRequest';
 
 const RelatedLocations = observer(() => {
   const [places, setPlaces] = useState<PlaceDataType[]>([]);
-  const { LocationStore, ThemeStore } = useStore().MobxStore;
+  const { LocationStore, CustomDrawerStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const initRelatedLocations = useCallback(async () => {
@@ -34,7 +34,6 @@ const RelatedLocations = observer(() => {
   useEffect(() => {
     initRelatedLocations();
   }, [LocationStore.placeName, initRelatedLocations]);
-
   return (
     <>
       {places.length === 0 ? (
@@ -43,7 +42,13 @@ const RelatedLocations = observer(() => {
         <Wrap isDarkTheme={isDarkTheme}>
           <Header>주변 장소 현황</Header>
           {places.map((place: PlaceDataType, idx: number) => (
-            <PlaceCard key={`related-locations-${idx}`} place={place} />
+            <PlaceCard
+              key={`related-locations-${idx}`}
+              place={
+                CustomDrawerStore.placeData.find((p: PlaceDataType) => p.name === place.name) ??
+                place
+              }
+            />
           ))}
         </Wrap>
       )}

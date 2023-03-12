@@ -13,10 +13,14 @@ export interface PopulationType {
 export interface PlaceDataType {
   idx: number;
   name: string;
+  type: string;
   categories: CategoryType[];
   poiId: number;
   x: number;
   y: number;
+  reviewPostCount: number;
+  pinPlaceCount: number;
+  cctvCount?: number;
   population: PopulationType;
 }
 
@@ -67,6 +71,17 @@ export interface LocationDataType {
 export interface DrawerStatusType {
   expanded: 'removed' | 'appeared' | 'expanded' | 'full';
   dragHeight: number;
+}
+
+export interface FavoritePlaceType {
+  createdDate: string;
+  idx: number;
+  place: PlaceDataType;
+}
+
+export interface FavoritesType {
+  ktPlaces: FavoritePlaceType[];
+  sktPlaces: FavoritePlaceType[];
 }
 
 export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';

@@ -1,8 +1,12 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { IconButton, styled } from '@mui/material';
 import { CustomChips } from 'components/common';
 import { useStore } from 'stores';
-import { palette, locationNames } from 'constants/';
+import axiosRequest from 'api/axiosRequest';
+import { palette, locationNames, locationRequestTypes } from 'constants/';
+import { FavoritePlaceType, FavoritesType } from 'types/typeBundle';
 import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 import { ReactComponent as PersonIcon } from 'assets/icons/person-icon.svg';
@@ -16,18 +20,45 @@ interface PropsType {
 
 const CustomHeader = (props: PropsType) => {
   const { navigateToHome, handleSearchClick } = props;
-  const { ThemeStore, CustomDrawerStore, CategoryStore, LocationStore } = useStore().MobxStore;
+  const { CustomDrawerStore, CategoryStore, LocationStore, AuthStore } = useStore().MobxStore;
+  const { pathname, search } = useLocation();
   const { locationData } = LocationStore;
-  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const isExpanded = ['expanded', 'full'].includes(CustomDrawerStore.drawerStatus.expanded);
+  const placeName = locationNames[locationData?.name ?? ''] || (locationData?.name ?? '');
+  const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
+    locationNames[placeName] || placeName
+  )
+    ? 'SKT'
+    : 'KT';
 
   const handleClickChip = (chip: string) => {
     CategoryStore.setSelectedCategory(chip);
   };
 
+  const handleHeartClick = async () => {
+    const pathnameArr = pathname.split('/');
+    const placeIdx = Number(pathnameArr[pathnameArr.length - 1]);
+    const response = LocationStore.currentLocationPinned
+      ? await axiosRequest('delete', 'pin-place', { idx: placeIdx })
+      : await axiosRequest('post', 'pin-place', { idx: placeIdx, type: requestType });
+    if (!response?.data) return;
+    const { data } = (await axiosRequest('get', 'pin-place')) as { data: FavoritesType };
+    AuthStore.setFavorites(data);
+  };
+
+  useEffect(() => {
+    const pathnameArr = pathname.split('/');
+    const placeIdx = Number(pathnameArr[pathnameArr.length - 1]);
+    LocationStore.setCurrentLocationPinned(
+      AuthStore.favorites[`${requestType.toLowerCase() as 'kt' | 'skt'}Places`]
+        .map((favorite: FavoritePlaceType) => favorite.place.idx)
+        .includes(placeIdx)
+    );
+  }, [search, pathname, requestType, LocationStore, AuthStore.favorites]);
+
   return (
     <Wrap height={isExpanded ? 48 : 104}>
-      <HeaderWrap isDarkTheme={isDarkTheme}>
+      <HeaderWrap>
         {!isExpanded ? (
           <SubHeaderWrap>
             <Logo onClick={navigateToHome} />
@@ -46,10 +77,12 @@ const CustomHeader = (props: PropsType) => {
               <CustomIconButton>
                 <LeftIcon />
               </CustomIconButton>
-
-              <div>{locationNames[locationData?.name ?? ''] || (locationData?.name ?? '')}</div>
+              {placeName}
             </SubHeader>
-            <CustomIconButton>
+            <CustomIconButton
+              pinned={LocationStore.currentLocationPinned}
+              onClick={handleHeartClick}
+            >
               <HeartIcon />
             </CustomIconButton>
           </SubHeaderWrap>
@@ -80,17 +113,12 @@ const Wrap = styled('div', {
   },
 }));
 
-const HeaderWrap = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const HeaderWrap = styled('div')({
   display: 'flex',
   alignItems: 'center',
   padding: '0 24px',
   height: 48,
-  '& path': {
-    fill: isDarkTheme ? palette.white : palette.black,
-  },
-}));
+});
 
 const SubHeaderWrap = styled('div')({
   display: 'flex',
@@ -108,7 +136,9 @@ const SubHeader = styled('div')({
   gap: 8,
 });
 
-const CustomIconButton = styled(IconButton)({
+const CustomIconButton = styled(IconButton, {
+  shouldForwardProp: (prop: string) => prop !== 'pinned',
+})<{ pinned?: boolean }>(({ pinned }) => ({
   padding: 0,
   width: 24,
   height: 24,
@@ -116,7 +146,10 @@ const CustomIconButton = styled(IconButton)({
     width: 24,
     height: 24,
   },
-});
+  '& path': {
+    fill: pinned === true ? palette.violet : pinned === false ? palette.grey[400] : palette.black,
+  },
+}));
 
 const ChipsWrap = styled('div')({
   padding: '0 24px',
