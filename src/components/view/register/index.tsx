@@ -2,6 +2,7 @@ import { useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, styled } from '@mui/material';
 import { palette } from 'constants/';
+import axiosRequest from 'api/axiosRequest';
 import defaultImage from 'assets/icons/register/default-photo.png';
 import cancelButton from 'assets/icons/register/cancel-button.png';
 import errorIcon from 'assets/icons/register/error-icon.png';
@@ -30,8 +31,9 @@ const Register = () => {
     setNicknameStatus('empty');
   };
 
-  const handleStartClick = () => {
+  const handleStartClick = async () => {
     if (nicknameStatus !== 'ok') return;
+    await axiosRequest('put', 'user/setting', { nickname });
     navigate('/map');
   };
 

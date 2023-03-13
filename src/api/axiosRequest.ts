@@ -10,22 +10,22 @@ const axiosRequest = async (
   const SERVER_URL: string | undefined = process.env.REACT_APP_SERVER_URL;
   if (!SERVER_URL) return;
 
-  const isReissueTokenPath = path === 'auth/reissue';
-  const reissueAxiosInstance = axios.create();
+  const tokenAxiosInstance = axios.create();
+  const apiAxiosInstance = axios.create();
+  const isTokenIssuePath =
+    ['reissue', 'naver', 'kakao', 'google'].filter((pathname: string) => path.includes(pathname))
+      .length > 0;
 
-  axios.interceptors.request.use((config) => {
+  apiAxiosInstance.interceptors.request.use((config) => {
     if (!config.headers) return config;
-    const token = localStorage.getItem(
-      `@wagglewaggle_${isReissueTokenPath ? 'refresh_token' : 'access_token'}`
-    );
+    const token = localStorage.getItem(`@wagglewaggle_access_token`);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   });
 
-  axios.interceptors.response.use((res) => {
+  tokenAxiosInstance.interceptors.response.use((res) => {
     const { accessToken, refreshToken } = res.data;
     if (accessToken) {
       localStorage.setItem('@wagglewaggle_access_token', accessToken);
@@ -38,17 +38,14 @@ const axiosRequest = async (
   });
 
   try {
-    if (isReissueTokenPath) {
-      return await reissueAxiosInstance.post(`${SERVER_URL}/${path}`, { ...params });
-    }
-
+    const selectedAxiosInstance = isTokenIssuePath ? tokenAxiosInstance : apiAxiosInstance;
     return method === 'get'
-      ? await axios.get(`${SERVER_URL}/${path}`, { params })
+      ? await selectedAxiosInstance.get(`${SERVER_URL}/${path}`, { params })
       : method === 'post'
-      ? await axios.post(`${SERVER_URL}/${path}`, { ...params })
+      ? await selectedAxiosInstance.post(`${SERVER_URL}/${path}`, { ...params })
       : method === 'put'
-      ? await axios.put(`${SERVER_URL}/${path}`, { ...params })
-      : await axios.delete(`${SERVER_URL}/${path}`, { data: { ...params } });
+      ? await selectedAxiosInstance.put(`${SERVER_URL}/${path}`, { ...params })
+      : await selectedAxiosInstance.delete(`${SERVER_URL}/${path}`, { data: { ...params } });
   } catch (e) {
     ErrorStore.setStatusCode((e as AxiosError).response?.status || null);
   }
