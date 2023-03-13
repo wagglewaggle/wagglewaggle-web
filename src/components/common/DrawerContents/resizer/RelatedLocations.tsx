@@ -1,39 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { PlaceCard } from 'components/common';
 import { PlaceDataType } from 'types/typeBundle';
-import { palette, locationNames, districts } from 'constants/';
+import { palette } from 'constants/';
 import { useStore } from 'stores';
-import axiosRequest from 'api/axiosRequest';
 
-const RelatedLocations = observer(() => {
-  const [places, setPlaces] = useState<PlaceDataType[]>([]);
-  const { LocationStore, CustomDrawerStore, ThemeStore } = useStore().MobxStore;
+interface PropsType {
+  places: PlaceDataType[];
+}
+
+const RelatedLocations = observer((props: PropsType) => {
+  const { places } = props;
+  const { CustomDrawerStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
-  const initRelatedLocations = useCallback(async () => {
-    if (
-      !LocationStore.placeName ||
-      !districts[locationNames[LocationStore.placeName] || LocationStore.placeName]
-    )
-      return;
-    type responseType = { data: { ktPlaces: PlaceDataType[]; sktPlaces: PlaceDataType[] } };
-    const response: responseType | undefined = await axiosRequest(
-      'get',
-      `location/${districts[locationNames[LocationStore.placeName] || LocationStore.placeName]}`
-    );
-    if (!response) return;
-    setPlaces(
-      [...response.data.ktPlaces, ...response.data.sktPlaces].filter(
-        (place: PlaceDataType) => place.name !== LocationStore.placeName
-      )
-    );
-  }, [LocationStore.placeName]);
-
-  useEffect(() => {
-    initRelatedLocations();
-  }, [LocationStore.placeName, initRelatedLocations]);
   return (
     <>
       {places.length === 0 ? (
@@ -64,8 +44,7 @@ const Wrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '12px 24px 16px',
-  marginTop: 8,
+  padding: '20px 24px 16px',
   width: 'calc(100% - 48px)',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));

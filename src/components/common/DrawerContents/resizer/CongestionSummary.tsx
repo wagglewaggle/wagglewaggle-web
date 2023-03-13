@@ -2,7 +2,8 @@ import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
-import { palette, locationNames } from 'constants/';
+import { palette, locationNames, locationRequestTypes } from 'constants/';
+import { FavoritePlaceType } from 'types/typeBundle';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import { ReactComponent as CctvIcon } from 'assets/icons/drawer/cctv.svg';
@@ -10,10 +11,20 @@ import { ReactComponent as ShareIcon } from 'assets/icons/drawer/share.svg';
 import { ReactComponent as NaviIcon } from 'assets/icons/drawer/navi.svg';
 
 const CongestionSummary = () => {
-  const { ThemeStore, LocationStore, CustomDrawerStore } = useStore().MobxStore;
+  const { ThemeStore, LocationStore, CustomDrawerStore, AuthStore } = useStore().MobxStore;
   const { placeName, categories, locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isAppeared = CustomDrawerStore.drawerStatus.expanded === 'appeared';
+  const requestType: string = locationRequestTypes.skt.includes(
+    locationNames?.[placeName as string] || (placeName as string)
+  )
+    ? 'SKT'
+    : 'KT';
+  const isPinned = AuthStore.favorites[
+    `${requestType.toLowerCase()}Places` as 'ktPlaces' | 'sktPlaces'
+  ]
+    .map((favorite: FavoritePlaceType) => favorite.place.name)
+    .includes(placeName as string);
 
   return (
     <Wrap isDarkTheme={isDarkTheme} isAppeared={isAppeared}>
@@ -28,11 +39,11 @@ const CongestionSummary = () => {
         </StatusWrap>
       </Header>
       <IconsWrap>
-        <IconWrap>
-          <HeartIcon /> 102
+        <IconWrap isPinned={isPinned}>
+          <HeartIcon /> {String(locationData?.pinPlaceCount ?? 0).padStart(2, '0')}
         </IconWrap>
         <IconWrap>
-          <ChatIcon /> 102
+          <ChatIcon /> {String(locationData?.reviewPostCount ?? 0).padStart(2, '0')}
         </IconWrap>
         <IconWrap>
           <CctvIcon /> {String(locationData?.cctvs?.length ?? 0).padStart(2, '0')}
@@ -119,14 +130,19 @@ const IconsWrap = styled('div')({
   gap: 12,
 });
 
-const IconWrap = styled('div')({
+const IconWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isPinned',
+})<{ isPinned?: boolean }>(({ isPinned }) => ({
   display: 'flex',
   color: palette.grey[400],
   fontSize: 12,
   fontWeight: 500,
   lineHeight: '16px',
   gap: 2,
-});
+  '& path': {
+    fill: isPinned ? palette.violet : palette.grey[400],
+  },
+}));
 
 const Address = styled('div')({
   color: palette.grey[500],

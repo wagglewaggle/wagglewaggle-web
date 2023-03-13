@@ -3,11 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Rnd, ResizableDelta } from 'react-rnd';
 import { styled } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { CongestionSummary, DetailedCongestion, RelatedLocations } from './resizer';
+import { CongestionSummary, DetailedCongestion, Reviews, RelatedLocations } from './resizer';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import { LocationDataType } from 'types/typeBundle';
-import { palette, locationNames, locationRequestTypes } from 'constants/';
+import { LocationDataType, PlaceDataType } from 'types/typeBundle';
+import { palette, locationNames, locationRequestTypes, districts } from 'constants/';
 
 type SwiperType = {
   activeIndex: number;
@@ -31,7 +31,8 @@ const CustomResizer = () => {
   const FULL_HEIGHT = ScreenSizeStore.screenHeight;
   const EXPANDED_HEIGHT = ScreenSizeStore.screenHeight * 0.6;
   const APPEARED_HEIGHT = 196;
-  const DRAWER_X = ScreenSizeStore.screenType === 'mobile' ? 0 : 158;
+  const DRAWER_X = /iPad|iPhone|iPod|Android/.test(navigator.userAgent) ? 0 : 327;
+  const [relatedPlaces, setRelatedPlaces] = useState<PlaceDataType[]>([]);
   const [isBeginning, setIsBeginning] = useState<boolean>(true);
   const [swipeEnabled, setSwipeEnabled] = useState<boolean>(false);
   const [touchIndex, setTouchIndex] = useState<number>(0);
@@ -136,6 +137,29 @@ const CustomResizer = () => {
     UserNavigatorStore.setDataLocation([data.x, data.y]);
   }, [LocationStore, CustomDrawerStore, UserNavigatorStore, navigate, pathname, search]);
 
+  const initRelatedLocations = useCallback(async () => {
+    if (
+      !LocationStore.placeName ||
+      !districts[locationNames[LocationStore.placeName] || LocationStore.placeName]
+    )
+      return;
+    type responseType = { data: { ktPlaces: PlaceDataType[]; sktPlaces: PlaceDataType[] } };
+    const response: responseType | undefined = await axiosRequest(
+      'get',
+      `location/${districts[locationNames[LocationStore.placeName] || LocationStore.placeName]}`
+    );
+    if (!response) return;
+    setRelatedPlaces(
+      [...response.data.ktPlaces, ...response.data.sktPlaces].filter(
+        (place: PlaceDataType) => place.name !== LocationStore.placeName
+      )
+    );
+  }, [LocationStore.placeName]);
+
+  useEffect(() => {
+    initRelatedLocations();
+  }, [LocationStore.placeName, initRelatedLocations]);
+
   useEffect(() => {
     setSwipeEnabled(CustomDrawerStore.drawerStatus.expanded === 'full');
   }, [CustomDrawerStore.drawerStatus.expanded]);
@@ -202,11 +226,13 @@ const CustomResizer = () => {
                 <DetailedCongestion initLocationData={initLocationData} />
               </CustomSwiperSlide>
               <CustomSwiperSlide>
-                <RelatedLocations />
+                <Reviews />
               </CustomSwiperSlide>
-              <CustomSwiperSlide>
-                <RelatedLocations />
-              </CustomSwiperSlide>
+              {relatedPlaces.length > 0 && (
+                <CustomSwiperSlide>
+                  <RelatedLocations places={relatedPlaces} />
+                </CustomSwiperSlide>
+              )}
             </CustomSwiper>
           </>
         ),

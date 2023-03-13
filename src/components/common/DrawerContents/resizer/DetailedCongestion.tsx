@@ -33,7 +33,6 @@ const DetailedCongestion = observer((props: propsType) => {
   };
 
   const handleOpenDialog = () => {
-    console.log('open');
     CustomDialogStore.openCctvDialog(locationData?.cctvs || []);
   };
 
@@ -108,7 +107,7 @@ const Wrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '12px 24px 16px',
+  padding: '20px 24px 16px',
   width: 'calc(100% - 48px)',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   '& path': {

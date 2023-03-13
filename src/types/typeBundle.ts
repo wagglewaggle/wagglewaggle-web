@@ -66,6 +66,8 @@ export interface LocationDataType {
   cctvs: CctvType[];
   roadTraffic: TrafficType;
   address: string;
+  pinPlaceCount: number;
+  reviewPostCount: number;
 }
 
 export interface DrawerStatusType {
@@ -82,6 +84,33 @@ export interface FavoritePlaceType {
 export interface FavoritesType {
   ktPlaces: FavoritePlaceType[];
   sktPlaces: FavoritePlaceType[];
+}
+
+export interface ReviewType {
+  content: string;
+  createdDate: string;
+  idx: number;
+  pinReviewPostCount: number;
+  place: PlaceDataType;
+  replyCount: number;
+  report: number;
+  status: string;
+  updatedDate: string;
+  view: number;
+  writer: WriterType;
+  isPin: boolean;
+}
+
+interface WriterType {
+  createdDate: string;
+  updatedDate: string;
+  email: string;
+  idx: number;
+  name: string;
+  nickname: string;
+  snsId: string;
+  snsType: 'KAKAO' | 'NAVER' | 'GOOGLE';
+  status: string;
 }
 
 export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
