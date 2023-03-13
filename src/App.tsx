@@ -8,7 +8,7 @@ import { CustomDialog, CustomDrawer } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
 import { Login } from './components/view';
 import { CreateStore, RootStore } from 'stores';
-import { ScreenType, PlaceDataType, FavoritesType } from 'types/typeBundle';
+import { ScreenType, PlaceDataType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
 import { palette } from 'constants/';
 
@@ -75,15 +75,10 @@ const App = observer(() => {
     });
   }, [CustomDrawerStore, LocationStore]);
 
-  const getFavoritePlaces = useCallback(async () => {
-    const { data } = (await axiosRequest('get', 'pin-place')) as { data: FavoritesType };
-    AuthStore.setFavorites(data);
-  }, [AuthStore]);
-
   useEffect(() => {
+    if (!AuthStore.authorized) return;
     initPlaceData();
-    getFavoritePlaces();
-  }, [initPlaceData, getFavoritePlaces]);
+  }, [AuthStore.authorized, initPlaceData]);
 
   useEffect(() => {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
@@ -169,6 +164,7 @@ const Wrap = styled('div', {
   minWidth: 360,
   color: isDarkTheme ? palette.white : palette.black,
   backgroundColor: isDarkTheme ? palette.grey[800] : palette.white,
+  overflowX: 'hidden',
 }));
 
 const ServiceWrap = styled('div')({

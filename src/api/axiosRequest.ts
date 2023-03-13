@@ -8,18 +8,20 @@ const axiosRequest = async (
 ) => {
   const { ErrorStore, AuthStore } = MobxStore;
   const SERVER_URL: string | undefined = process.env.REACT_APP_SERVER_URL;
-  const isReissueTokenPath = path === 'auth/reissue';
   if (!SERVER_URL) return;
+
+  const isReissueTokenPath = path === 'auth/reissue';
+  const reissueAxiosInstance = axios.create();
 
   axios.interceptors.request.use((config) => {
     if (!config.headers) return config;
-
     const token = localStorage.getItem(
       `@wagglewaggle_${isReissueTokenPath ? 'refresh_token' : 'access_token'}`
     );
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   });
 
@@ -36,15 +38,17 @@ const axiosRequest = async (
   });
 
   try {
-    const response =
-      method === 'get'
-        ? await axios.get(`${SERVER_URL}/${path}`, { params })
-        : method === 'post'
-        ? await axios.post(`${SERVER_URL}/${path}`, { ...params })
-        : method === 'put'
-        ? await axios.put(`${SERVER_URL}/${path}`, { ...params })
-        : await axios.delete(`${SERVER_URL}/${path}`, { data: { ...params } });
-    return response;
+    if (isReissueTokenPath) {
+      return await reissueAxiosInstance.post(`${SERVER_URL}/${path}`, { ...params });
+    }
+
+    return method === 'get'
+      ? await axios.get(`${SERVER_URL}/${path}`, { params })
+      : method === 'post'
+      ? await axios.post(`${SERVER_URL}/${path}`, { ...params })
+      : method === 'put'
+      ? await axios.put(`${SERVER_URL}/${path}`, { ...params })
+      : await axios.delete(`${SERVER_URL}/${path}`, { data: { ...params } });
   } catch (e) {
     ErrorStore.setStatusCode((e as AxiosError).response?.status || null);
   }

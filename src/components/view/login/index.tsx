@@ -15,9 +15,12 @@ const Login = () => {
   const { pathname } = useLocation();
   const { AuthStore } = useStore().MobxStore;
 
-  const handleLoggedIn = useCallback(() => {
-    navigate('/map');
-  }, [navigate]);
+  const handleLoggedIn = useCallback(
+    (userExists: boolean) => {
+      navigate(`/${userExists ? 'map' : 'register'}`);
+    },
+    [navigate]
+  );
 
   const handleKakaoClick = () => {
     const clientId = process.env.REACT_APP_KAKAO_CLIENT_ID;
@@ -51,12 +54,13 @@ const Login = () => {
       AuthStore.setIsLoggingIn(true);
       const response = await axiosRequest('get', `auth/${platform}?code=${authCode}`);
       AuthStore.setIsLoggingIn(false);
-      const { accessToken, refreshToken } = response?.data;
+      const { accessToken, refreshToken, existUser } = response?.data;
       if (!accessToken || !refreshToken) return;
 
       AuthStore.setAuthorized(true);
+      handleLoggedIn(existUser);
     },
-    [AuthStore]
+    [AuthStore, handleLoggedIn]
   );
 
   useEffect(() => {
@@ -66,12 +70,11 @@ const Login = () => {
     if (AuthStore.isLoggingIn) return;
 
     requestJwt(authCode, platform);
-    handleLoggedIn();
-  }, [AuthStore, searchParams, pathname, handleLoggedIn, requestJwt]);
+  }, [AuthStore, searchParams, pathname, requestJwt]);
 
   useEffect(() => {
     if (!AuthStore.authorized) return;
-    handleLoggedIn();
+    handleLoggedIn(true);
   }, [AuthStore.authorized, handleLoggedIn]);
 
   return (
