@@ -60,7 +60,8 @@ const MapContent = () => {
       fillOpacity: 0.4,
     });
 
-  const getKakaoMap = useCallback(() => {
+  const getKakaoMap = () => {
+    if (['expanded', 'full'].includes(drawerStatus.expanded)) return;
     const [latitude, longitude] = UserNavigatorStore.dataLocation;
     const latOffset =
       (drawerStatus.expanded === 'appeared' ? 0.0000035 : 0) * ScreenSizeStore.screenHeight;
@@ -79,17 +80,9 @@ const MapContent = () => {
       [mapInfo.lat, mapInfo.lng] = [latitude, longitude];
       window.kakao.maps.event.addListener(map, 'dragend', onDragEnd);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    CustomDrawerStore.placeData,
-    UserNavigatorStore.isUserLocation,
-    UserNavigatorStore.dataLocation,
-    ScreenSizeStore.screenHeight,
-    getSymbol,
-    onDragEnd,
-  ]);
+  };
 
-  const setMapCenter = useCallback(() => {
+  const setMapCenter = () => {
     const [latitude, longitude] = UserNavigatorStore.dataLocation;
     const isExpanded = drawerStatus.expanded === 'expanded';
     const latOffset = (isExpanded ? 0.00001 : 0.0000035) * ScreenSizeStore.screenHeight;
@@ -102,7 +95,7 @@ const MapContent = () => {
         isExpanded ? longitude : mapInfo.lng
       )
     );
-  }, [UserNavigatorStore.dataLocation, drawerStatus.expanded, ScreenSizeStore.screenHeight]);
+  };
 
   useEffect(() => {
     const mapScript = document.createElement('script');
@@ -111,12 +104,14 @@ const MapContent = () => {
     document.head.appendChild(mapScript);
     mapScript.addEventListener('load', getKakaoMap);
     return () => mapScript.removeEventListener('load', getKakaoMap);
-  }, [getKakaoMap]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [UserNavigatorStore.dataLocation]);
 
   useEffect(() => {
     if (!map || !['expanded', 'appeared'].includes(drawerStatus.expanded)) return;
     setMapCenter();
-  }, [drawerStatus.dragHeight, drawerStatus.expanded, setMapCenter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drawerStatus.expanded]);
 
   return (
     <Wrap>
@@ -135,5 +130,4 @@ const Wrap = styled('div')({
 const Map = styled('div')({
   width: '100%',
   height: '100%',
-  transform: 'translateY(3px)',
 });

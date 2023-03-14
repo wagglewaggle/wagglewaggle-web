@@ -13,10 +13,11 @@ import { ReactComponent as CctvIcon } from 'assets/icons/drawer/cctv.svg';
 
 interface propsType {
   place: PlaceDataType;
+  isResizer?: boolean;
 }
 
 const PlaceCard = observer((props: propsType) => {
-  const { place } = props;
+  const { place, isResizer } = props;
   const [categories, setCategories] = useState<string>('');
   const [symbol, setSymbol] = useState<string>('');
   const { LocationStore, ThemeStore, CustomDrawerStore, AuthStore } = useStore().MobxStore;
@@ -32,6 +33,11 @@ const PlaceCard = observer((props: propsType) => {
   const handlePlaceCardClick = () => {
     LocationStore.setPlaceName(place.name);
     navigate(`/${CustomDrawerStore.variant}/detail/${place.idx}?name=${place.name}`);
+  };
+
+  const handleMouseDown = () => {
+    if (!isResizer) return;
+    CustomDrawerStore.setRndResizerFunctionConfig('placeCard', [place, navigate]);
   };
 
   useEffect(() => {
@@ -54,7 +60,12 @@ const PlaceCard = observer((props: propsType) => {
   }, [primaryCategories, place.categories]);
 
   return (
-    <Wrap isDarkTheme={isDarkTheme} onClick={handlePlaceCardClick}>
+    <Wrap
+      isDarkTheme={isDarkTheme}
+      onClick={handlePlaceCardClick}
+      onMouseDown={handleMouseDown}
+      onTouchEnd={handleMouseDown}
+    >
       <PlaceWrap>
         <PlaceLeft>
           <PlaceImage>

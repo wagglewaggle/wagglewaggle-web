@@ -24,6 +24,7 @@ const RelatedLocations = observer((props: PropsType) => {
           {places.map((place: PlaceDataType, idx: number) => (
             <PlaceCard
               key={`related-locations-${idx}`}
+              isResizer
               place={
                 CustomDrawerStore.placeData.find((p: PlaceDataType) => p.name === place.name) ??
                 place

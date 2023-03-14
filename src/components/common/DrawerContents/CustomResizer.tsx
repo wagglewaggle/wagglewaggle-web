@@ -1,13 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { isMobile } from 'react-device-detect';
 import { Rnd, ResizableDelta } from 'react-rnd';
 import { styled } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Mousewheel } from 'swiper';
 import { CongestionSummary, DetailedCongestion, Reviews, RelatedLocations } from './resizer';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { LocationDataType, PlaceDataType } from 'types/typeBundle';
 import { palette, locationNames, locationRequestTypes, districts } from 'constants/';
+import { resizerFunctions } from './resizer/resizerFunctions';
 
 type SwiperType = {
   activeIndex: number;
@@ -20,6 +23,7 @@ type SwiperType = {
   isBeginning: boolean;
 };
 
+SwiperCore.use([Mousewheel]);
 const swiperStatus = { startY: 0, endY: 0 };
 const CustomResizer = () => {
   const { pathname, search } = useLocation();
@@ -31,7 +35,8 @@ const CustomResizer = () => {
   const FULL_HEIGHT = ScreenSizeStore.screenHeight;
   const EXPANDED_HEIGHT = ScreenSizeStore.screenHeight * 0.6;
   const APPEARED_HEIGHT = 196;
-  const DRAWER_X = /iPad|iPhone|iPod|Android/.test(navigator.userAgent) ? 0 : 327;
+  const DRAWER_X = isMobile ? 0 : 327;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const [relatedPlaces, setRelatedPlaces] = useState<PlaceDataType[]>([]);
   const [isBeginning, setIsBeginning] = useState<boolean>(true);
   const [swipeEnabled, setSwipeEnabled] = useState<boolean>(false);
@@ -45,6 +50,16 @@ const CustomResizer = () => {
     LocationStore.setLocationData(null);
   };
 
+  const setResizeData = (
+    newExpanded: 'removed' | 'appeared' | 'expanded' | 'full',
+    newDragHeight: number,
+    newTouchIndex: number
+  ) => {
+    CustomDrawerStore.setDrawerStatus({ expanded: newExpanded, dragHeight: newDragHeight });
+    setTouchIndex(newTouchIndex);
+    newExpanded === 'full' ? swiper?.mousewheel.enable() : swiper?.mousewheel.disable();
+  };
+
   const onResize = (
     e: MouseEvent | TouchEvent,
     dir: string,
@@ -52,6 +67,7 @@ const CustomResizer = () => {
     delta: ResizableDelta
   ) => {
     setTransformDeltaY(delta.height);
+    CustomDrawerStore.initRndResizerFunctionConfig();
   };
 
   const onResizeStop = (
@@ -62,26 +78,37 @@ const CustomResizer = () => {
   ) => {
     setTransformDeltaY(0);
     const { height } = delta;
-    if (height === 0 || touchIndex !== 0) return;
+    if (height === 0) {
+      const currentKey = CustomDrawerStore.rndResizerFunctionConfig.currentKey;
+      const selectedFunction = resizerFunctions()?.[currentKey ?? ''];
+      selectedFunction && selectedFunction();
+      return;
+    }
+    if (touchIndex !== 0) return;
     const isExpanded = height >= 0;
     if (drawerStatus.expanded === 'appeared') {
+      setResizeData(
+        isExpanded ? 'expanded' : 'removed',
+        isExpanded ? EXPANDED_HEIGHT : 0,
+        isExpanded ? 0 : touchIndex
+      );
       if (!isExpanded) {
         handleClose();
-        return;
       }
-      CustomDrawerStore.setDrawerStatus({ expanded: 'expanded', dragHeight: EXPANDED_HEIGHT });
     }
     if (drawerStatus.expanded === 'expanded') {
-      CustomDrawerStore.setDrawerStatus({
-        expanded: isExpanded ? 'full' : 'appeared',
-        dragHeight: isExpanded ? FULL_HEIGHT : APPEARED_HEIGHT,
-      });
+      setResizeData(
+        isExpanded ? 'full' : 'appeared',
+        isExpanded ? FULL_HEIGHT : APPEARED_HEIGHT,
+        isExpanded ? 0 : touchIndex
+      );
     }
-    if (drawerStatus.expanded === 'full' && !isExpanded) {
-      CustomDrawerStore.setDrawerStatus({
-        expanded: 'expanded',
-        dragHeight: EXPANDED_HEIGHT,
-      });
+    if (drawerStatus.expanded === 'full') {
+      setResizeData(
+        isExpanded ? 'full' : 'expanded',
+        isExpanded ? FULL_HEIGHT : EXPANDED_HEIGHT,
+        isExpanded ? 0 : touchIndex
+      );
     }
   };
 
@@ -157,6 +184,12 @@ const CustomResizer = () => {
   }, [LocationStore.placeName]);
 
   useEffect(() => {
+    if (!swiper?.slideTo) return;
+    swiper.slideTo(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
+  useEffect(() => {
     initRelatedLocations();
   }, [LocationStore.placeName, initRelatedLocations]);
 
@@ -213,9 +246,11 @@ const CustomResizer = () => {
             <CustomSwiper
               isDarkTheme={isDarkTheme}
               direction='vertical'
+              mousewheel={false}
               allowTouchMove={false}
-              onTouchStart={onTouchStart}
-              onTouchEnd={onTouchEnd}
+              onTouchStart={isMobile ? onTouchStart : undefined}
+              onTouchEnd={isMobile ? onTouchEnd : undefined}
+              onSwiper={(swiper) => setSwiper(swiper)}
               speed={500}
               slidesPerView='auto'
             >
@@ -223,7 +258,7 @@ const CustomResizer = () => {
                 <CongestionSummary />
               </CustomSwiperSlide>
               <CustomSwiperSlide>
-                <DetailedCongestion initLocationData={initLocationData} />
+                <DetailedCongestion />
               </CustomSwiperSlide>
               <CustomSwiperSlide>
                 <Reviews />

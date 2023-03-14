@@ -1,22 +1,16 @@
 import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Button, IconButton, styled } from '@mui/material';
+import { Button, styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
-import { ReactComponent as RefreshIcon } from 'assets/icons/refresh-icon.svg';
 import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import carIcon from 'assets/icons/car-icon.svg';
 
-interface propsType {
-  initLocationData: () => void;
-}
-
-const DetailedCongestion = observer((props: propsType) => {
-  const { initLocationData } = props;
+const DetailedCongestion = observer(() => {
   const [timePassed, setTimePassed] = useState<string>('');
-  const { CustomDialogStore, ThemeStore, LocationStore } = useStore().MobxStore;
+  const { CustomDrawerStore, ThemeStore, LocationStore } = useStore().MobxStore;
   const { locationData } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const COMMENTS_BY_STATUS: { [key: string]: string } = {
@@ -33,7 +27,7 @@ const DetailedCongestion = observer((props: propsType) => {
   };
 
   const handleOpenDialog = () => {
-    CustomDialogStore.openCctvDialog(locationData?.cctvs || []);
+    CustomDrawerStore.setRndResizerFunctionConfig('cctv', locationData?.cctvs || []);
   };
 
   useEffect(() => {
@@ -50,12 +44,7 @@ const DetailedCongestion = observer((props: propsType) => {
     <Wrap isDarkTheme={isDarkTheme}>
       <Header>
         <span>실시간 인구 현황</span>
-        <ButtonArea>
-          <CustomIconButton onClick={initLocationData}>
-            <CustomRefreshIcon />
-          </CustomIconButton>
-          {timePassed}
-        </ButtonArea>
+        <ButtonArea>{timePassed}</ButtonArea>
       </Header>
       <StatusCard variant='person'>
         <StatusLeft>
@@ -89,7 +78,11 @@ const DetailedCongestion = observer((props: propsType) => {
       {(locationData?.cctvs || []).length > 0 && (
         <>
           <CustomDivider />
-          <CustomButton isDarkTheme={isDarkTheme} onClick={handleOpenDialog}>
+          <CustomButton
+            isDarkTheme={isDarkTheme}
+            onMouseDown={handleOpenDialog}
+            onTouchEnd={handleOpenDialog}
+          >
             CCTV
             <RightIcon />
           </CustomButton>
@@ -135,15 +128,6 @@ const ButtonArea = styled('div')({
   fontSize: 14,
   fontWeight: 600,
   gap: 4,
-});
-
-const CustomIconButton = styled(IconButton)({
-  padding: 0,
-});
-
-const CustomRefreshIcon = styled(RefreshIcon)({
-  width: 16,
-  height: 16,
 });
 
 const StatusCard = styled('div', {

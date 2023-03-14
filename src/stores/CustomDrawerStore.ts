@@ -10,6 +10,10 @@ export class CustomDrawerStore {
   placeData: PlaceDataType[] = [];
   includesInputBox: boolean = true;
   drawerStatus: DrawerStatusType = { expanded: 'removed', dragHeight: 0 };
+  rndResizerFunctionConfig: { currentKey: string | null; functionProps: unknown | null } = {
+    currentKey: null,
+    functionProps: null,
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -49,5 +53,16 @@ export class CustomDrawerStore {
 
   setDrawerStatus = (newStatus: Partial<DrawerStatusType>) => {
     this.drawerStatus = { ...this.drawerStatus, ...newStatus };
+  };
+
+  initRndResizerFunctionConfig = () => {
+    this.rndResizerFunctionConfig = {
+      currentKey: null,
+      functionProps: null,
+    };
+  };
+
+  setRndResizerFunctionConfig = (key: string, props?: unknown) => {
+    this.rndResizerFunctionConfig = { currentKey: key, functionProps: props ?? null };
   };
 }

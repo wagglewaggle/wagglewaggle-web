@@ -57,6 +57,7 @@ const Wrap = styled('div')({
   filter: 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3))',
   cursor: 'pointer',
   transform: 'translateX(-50%)',
+  zIndex: 10,
 });
 
 const CustomButton = styled('div', {

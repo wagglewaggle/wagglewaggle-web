@@ -47,6 +47,10 @@ const Map = () => {
   };
 
   useEffect(() => {
+    document.body.setAttribute('style', `overflow-y:hidden`);
+  }, [pathname]);
+
+  useEffect(() => {
     CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');
   }, [CustomDialogStore]);
 
@@ -72,11 +76,13 @@ const Map = () => {
   }, [CustomDrawerStore, search]);
 
   return (
-    <Wrap>
+    <>
       <CustomHeader navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
-      <MapContent />
-      <NavigationIcons />
-    </Wrap>
+      <Wrap>
+        <MapContent />
+        <NavigationIcons />
+      </Wrap>
+    </>
   );
 };
 

@@ -20,9 +20,11 @@ interface PropsType {
 
 const CustomHeader = (props: PropsType) => {
   const { navigateToHome, handleSearchClick } = props;
-  const { CustomDrawerStore, CategoryStore, LocationStore, AuthStore } = useStore().MobxStore;
+  const { ThemeStore, CustomDrawerStore, CategoryStore, LocationStore, AuthStore } =
+    useStore().MobxStore;
   const { pathname, search } = useLocation();
   const { locationData } = LocationStore;
+  const isDarkTheme = ThemeStore.theme === 'dark';
   const isExpanded = ['expanded', 'full'].includes(CustomDrawerStore.drawerStatus.expanded);
   const placeName = locationNames[locationData?.name ?? ''] || (locationData?.name ?? '');
   const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
@@ -57,7 +59,7 @@ const CustomHeader = (props: PropsType) => {
   }, [search, pathname, requestType, LocationStore, AuthStore.favorites]);
 
   return (
-    <Wrap height={isExpanded ? 48 : 104}>
+    <Wrap isDarkTheme={isDarkTheme} height={isExpanded ? 48 : 104}>
       <HeaderWrap>
         {!isExpanded ? (
           <SubHeaderWrap>
@@ -103,11 +105,15 @@ const CustomHeader = (props: PropsType) => {
 export default observer(CustomHeader);
 
 const Wrap = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'height',
-})<{ height: number }>(({ height }) => ({
+  shouldForwardProp: (prop: string) => !['isDarkTheme', 'height'].includes(prop),
+})<{ isDarkTheme: boolean; height: number }>(({ isDarkTheme, height }) => ({
   display: 'flex',
   flexDirection: 'column',
+  borderBottom: `1px solid ${palette.grey[300]}`,
+  width: '100%',
   height,
+  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+  zIndex: 20,
   '& svg': {
     cursor: 'pointer',
   },

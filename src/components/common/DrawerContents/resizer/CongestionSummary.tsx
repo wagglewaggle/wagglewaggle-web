@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
@@ -26,9 +27,26 @@ const CongestionSummary = () => {
     .map((favorite: FavoritePlaceType) => favorite.place.name)
     .includes(placeName as string);
 
+  const handleShareClick = useCallback(() => {
+    CustomDrawerStore.setRndResizerFunctionConfig('share');
+  }, [CustomDrawerStore]);
+
+  const handleNaviClick = useCallback(() => {
+    CustomDrawerStore.setRndResizerFunctionConfig('navi');
+  }, [CustomDrawerStore]);
+
   return (
-    <Wrap isDarkTheme={isDarkTheme} isAppeared={isAppeared}>
-      {!isAppeared && <BlankArea isDarkTheme={isDarkTheme} />}
+    <Wrap
+      isFull={CustomDrawerStore.drawerStatus.expanded === 'full'}
+      isDarkTheme={isDarkTheme}
+      isAppeared={isAppeared}
+    >
+      {!isAppeared && (
+        <BlankArea
+          isFull={CustomDrawerStore.drawerStatus.expanded === 'full'}
+          isDarkTheme={isDarkTheme}
+        />
+      )}
       <Header>
         <LocationWrap>
           <Title>{locationNames?.[placeName ?? ''] ?? placeName}</Title>
@@ -51,11 +69,11 @@ const CongestionSummary = () => {
       </IconsWrap>
       <Address>{locationData?.address ?? ''}</Address>
       <ButtonsWrap>
-        <CustomButton variant='share'>
+        <CustomButton variant='share' onMouseDown={handleShareClick} onTouchEnd={handleShareClick}>
           <ShareIcon />
           공유하기
         </CustomButton>
-        <CustomButton variant='navi'>
+        <CustomButton variant='navi' onMouseDown={handleNaviClick} onTouchEnd={handleNaviClick}>
           <NaviIcon />
           길찾기
         </CustomButton>
@@ -67,23 +85,25 @@ const CongestionSummary = () => {
 export default observer(CongestionSummary);
 
 const Wrap = styled('div', {
-  shouldForwardProp: (prop: string) => !['isDarkTheme', 'isAppeared'].includes(prop),
-})<{ isDarkTheme: boolean; isAppeared: boolean }>(({ isDarkTheme, isAppeared }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '12px 24px 16px',
-  width: 'calc(100% - 48px)',
-  height: isAppeared ? 204 : 172,
-  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
-  gap: 8,
-}));
+  shouldForwardProp: (prop: string) => !['isFull', 'isDarkTheme', 'isAppeared'].includes(prop),
+})<{ isFull: boolean; isDarkTheme: boolean; isAppeared: boolean }>(
+  ({ isFull, isDarkTheme, isAppeared }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '12px 24px 16px',
+    width: 'calc(100% - 48px)',
+    height: (isAppeared ? 204 : 172) + (isFull ? 8 : 0),
+    backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+    gap: 8,
+  })
+);
 
 const BlankArea = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  shouldForwardProp: (prop: string) => !['isFull', 'isDarkTheme'].includes(prop),
+})<{ isFull: boolean; isDarkTheme: boolean }>(({ isFull, isDarkTheme }) => ({
   width: '100%',
-  height: 32,
-  minHeight: 32,
+  height: isFull ? 40 : 32,
+  minHeight: isFull ? 40 : 32,
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));
 

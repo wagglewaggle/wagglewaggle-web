@@ -52,6 +52,10 @@ const List = observer(() => {
   };
 
   useEffect(() => {
+    document.body.setAttribute('style', `overflow-y:auto`);
+  }, [pathname]);
+
+  useEffect(() => {
     CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');
   }, [CustomDialogStore]);
 

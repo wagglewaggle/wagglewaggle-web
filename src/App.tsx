@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { isIOS } from 'react-device-detect';
 import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
@@ -81,9 +82,8 @@ const App = observer(() => {
   }, [AuthStore.authorized, initPlaceData]);
 
   useEffect(() => {
-    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-      disableIosInputAutoZoom();
-    }
+    if (!isIOS) return;
+    disableIosInputAutoZoom();
   }, []);
 
   useEffect(() => {
