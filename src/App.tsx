@@ -114,6 +114,10 @@ const App = observer(() => {
 
   const reissueToken = useCallback(
     async (refreshToken: string) => {
+      if (sessionStorage.getItem('@wagglewaggle_authorized')) {
+        AuthStore.setAuthorized(true);
+        return;
+      }
       AuthStore.setIsLoggingIn(true);
       const response = await axiosRequest('post', 'auth/reissue', { refreshToken });
       AuthStore.setIsLoggingIn(false);

@@ -9,7 +9,7 @@ const PrivateRoutes = () => {
   const { AuthStore } = useStore().MobxStore;
 
   useEffect(() => {
-    if (AuthStore.authorized) return;
+    if (AuthStore.authorized || sessionStorage.getItem('@wagglewaggle_authorized')) return;
     navigate('/login');
   }, [AuthStore.authorized, navigate]);
 

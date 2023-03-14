@@ -29,6 +29,7 @@ const axiosRequest = async (
     const { accessToken, refreshToken } = res.data;
     if (accessToken) {
       localStorage.setItem('@wagglewaggle_access_token', accessToken);
+      sessionStorage.setItem('@wagglewaggle_authorized', 'authorized');
       AuthStore.setAuthorized(true);
     }
     if (refreshToken) {
