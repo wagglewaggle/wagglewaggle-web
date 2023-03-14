@@ -25,6 +25,28 @@ const axiosRequest = async (
     return config;
   });
 
+  apiAxiosInstance.interceptors.response.use(
+    (res) => Promise.resolve(res),
+    async (err) => {
+      const { errorCode } = err.response.data;
+      if (errorCode === 'ERR_0006003') {
+        await tokenAxiosInstance.post(`${SERVER_URL}/auth/reissue`, {
+          refreshToken: localStorage.getItem('@wagglewaggle_refresh_token'),
+        });
+        const { method, params } = err.config;
+        const { responseURL } = err.request;
+        method === 'get'
+          ? apiAxiosInstance.get(responseURL, { params })
+          : method === 'post'
+          ? apiAxiosInstance.post(responseURL, { ...params })
+          : method === 'put'
+          ? apiAxiosInstance.put(responseURL, { ...params })
+          : apiAxiosInstance.delete(responseURL, { data: { ...params } });
+      }
+      return err;
+    }
+  );
+
   tokenAxiosInstance.interceptors.response.use((res) => {
     const { accessToken, refreshToken } = res.data;
     if (accessToken) {
