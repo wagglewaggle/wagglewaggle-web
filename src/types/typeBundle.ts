@@ -82,8 +82,7 @@ export interface FavoritePlaceType {
 }
 
 export interface FavoritesType {
-  ktPlaces: FavoritePlaceType[];
-  sktPlaces: FavoritePlaceType[];
+  places: FavoritePlaceType[];
 }
 
 export interface ReviewType {

@@ -25,14 +25,14 @@ const PlaceCard = observer((props: propsType) => {
   const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const isPinned = place.type
-    ? AuthStore.favorites[`${place.type.toLowerCase()}Places` as 'ktPlaces' | 'sktPlaces']
+    ? AuthStore.favorites.places
         .map((favorite: FavoritePlaceType) => favorite.place.name)
         .includes(place.name)
     : false;
 
   const handlePlaceCardClick = () => {
     LocationStore.setPlaceName(place.name);
-    navigate(`/${CustomDrawerStore.variant}/detail/${place.idx}?name=${place.name}`);
+    navigate(`/map/detail/${place.idx}?name=${place.name}`);
   };
 
   const handleMouseDown = () => {

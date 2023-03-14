@@ -5,7 +5,7 @@ import { FavoritesType, FavoritePlaceType } from 'types/typeBundle';
 export class AuthStore {
   authorized: boolean = false;
   isLoggingIn: boolean = false;
-  favorites: FavoritesType = { ktPlaces: [], sktPlaces: [] };
+  favorites: FavoritesType = { places: [] };
 
   constructor() {
     makeAutoObservable(this);
@@ -15,8 +15,8 @@ export class AuthStore {
     this.favorites = favorites;
   };
 
-  setUserFavorites = (type: 'KT' | 'SKT', favorites: FavoritePlaceType[]) => {
-    this.favorites[`${type.toLowerCase() as 'kt' | 'skt'}Places`] = favorites;
+  setUserFavorites = (favorites: FavoritePlaceType[]) => {
+    this.favorites.places = favorites;
   };
 
   initializeFavorites = async () => {
@@ -36,7 +36,7 @@ export class AuthStore {
 
   logout = () => {
     this.authorized = false;
-    this.favorites = { ktPlaces: [], sktPlaces: [] };
+    this.favorites = { places: [] };
     localStorage.clear();
   };
 }

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
-import { palette, locationNames, locationRequestTypes } from 'constants/';
+import { palette, locationNames } from 'constants/';
 import { FavoritePlaceType } from 'types/typeBundle';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
@@ -16,14 +16,7 @@ const CongestionSummary = () => {
   const { placeName, categories, locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isAppeared = CustomDrawerStore.drawerStatus.expanded === 'appeared';
-  const requestType: string = locationRequestTypes.skt.includes(
-    locationNames?.[placeName as string] || (placeName as string)
-  )
-    ? 'SKT'
-    : 'KT';
-  const isPinned = AuthStore.favorites[
-    `${requestType.toLowerCase()}Places` as 'ktPlaces' | 'sktPlaces'
-  ]
+  const isPinned = AuthStore.favorites.places
     .map((favorite: FavoritePlaceType) => favorite.place.name)
     .includes(placeName as string);
 
