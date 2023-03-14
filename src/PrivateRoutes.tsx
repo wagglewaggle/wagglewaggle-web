@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { Login, Register, List, Map, Error } from './components/view';
+import { Login, Register, List, Map, Review, Error } from './components/view';
 import { useStore } from 'stores';
 
 const PrivateRoutes = () => {
@@ -19,6 +19,7 @@ const PrivateRoutes = () => {
       <Route path='/register' element={<Register />} />
       <Route path='/map/*' element={<Map />} />
       <Route path='/list/*' element={<List />} />
+      <Route path='/review/*' element={<Review />} />
       <Route path='/not-found' element={<Error />} />
       <Route path='/error' element={<Error />} />
       <Route path='/api/auth/naver/redirect/*' element={<Login />} />

@@ -25,5 +25,10 @@ export const resizerFunctions: () => { [key: string]: () => void } = () => {
       LocationStore.setPlaceName(place.name);
       navigate(`/${CustomDrawerStore.variant}/detail/${place.idx}?name=${place.name}`);
     },
+    reviews: () => {
+      const [placeName, placeIdx, navigate] = CustomDrawerStore.rndResizerFunctionConfig
+        .functionProps as [string, number, NavigateFunction];
+      navigate(`/review/${placeIdx}?name=${placeName}`);
+    },
   };
 };

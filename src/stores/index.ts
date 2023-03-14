@@ -9,5 +9,6 @@ export { CustomDialogStore } from './CustomDialogStore';
 export { CustomDrawerStore } from './CustomDrawerStore';
 export { ErrorStore } from './ErrorStore';
 export { LocationStore } from './LocationStore';
+export { ReviewStore } from './ReviewStore';
 export { ThemeStore } from './ThemeStore';
 export { UserNavigatorStore } from './UserNavigatorStore';

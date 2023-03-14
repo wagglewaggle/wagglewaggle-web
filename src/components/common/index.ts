@@ -9,6 +9,7 @@ export { default as CustomDrawer } from './CustomDrawer';
 export { default as CustomDialog } from './CustomDialog';
 export { default as Footer } from './Footer';
 export { default as CustomCloseIcon } from './CustomCloseIcon';
+export { default as ReviewList } from './ReviewList';
 export { SearchData } from './DrawerContents/search';
 export { SuggestData } from './DrawerContents/search';
 export { ResultData } from './DrawerContents/search';

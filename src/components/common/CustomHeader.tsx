@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { IconButton, styled } from '@mui/material';
 import { CustomChips } from 'components/common';
@@ -14,9 +14,28 @@ import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 
 interface PropsType {
-  navigateToHome: () => void;
-  handleSearchClick: () => void;
+  navigateToHome?: () => void;
+  handleSearchClick?: () => void;
 }
+
+const LeftButton = (props: { backUrlInfo?: string }) => {
+  const { backUrlInfo } = props;
+  const navigate = useNavigate();
+  const { CustomDrawerStore } = useStore().MobxStore;
+
+  const handleRefresh = () => {
+    CustomDrawerStore.setDrawerStatus({ expanded: 'appeared', dragHeight: 196 });
+    if (backUrlInfo) {
+      navigate(`/map/${backUrlInfo}`);
+    }
+  };
+
+  return (
+    <CustomIconButton onClick={handleRefresh}>
+      <LeftIcon />
+    </CustomIconButton>
+  );
+};
 
 const CustomHeader = (props: PropsType) => {
   const { navigateToHome, handleSearchClick } = props;
@@ -26,7 +45,10 @@ const CustomHeader = (props: PropsType) => {
   const { locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isExpanded = ['expanded', 'full'].includes(CustomDrawerStore.drawerStatus.expanded);
+  const isReviewPage = pathname.split('/').includes('review');
   const placeName = locationNames[locationData?.name ?? ''] || (locationData?.name ?? '');
+  const pathnameArr = pathname.split('/');
+  const placeIdx = Number(pathnameArr[pathnameArr.length - 1]);
   const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
     locationNames[placeName] || placeName
   )
@@ -49,48 +71,52 @@ const CustomHeader = (props: PropsType) => {
   };
 
   useEffect(() => {
-    const pathnameArr = pathname.split('/');
-    const placeIdx = Number(pathnameArr[pathnameArr.length - 1]);
+    if (isReviewPage) return;
     LocationStore.setCurrentLocationPinned(
-      AuthStore.favorites[`${requestType.toLowerCase() as 'kt' | 'skt'}Places`]
+      AuthStore.favorites.places
         .map((favorite: FavoritePlaceType) => favorite.place.idx)
         .includes(placeIdx)
     );
-  }, [search, pathname, requestType, LocationStore, AuthStore.favorites]);
+  }, [isReviewPage, search, placeIdx, requestType, LocationStore, AuthStore.favorites]);
 
   return (
-    <Wrap isDarkTheme={isDarkTheme} height={isExpanded ? 48 : 104}>
+    <Wrap isDarkTheme={isDarkTheme} height={isReviewPage || isExpanded ? 48 : 104}>
       <HeaderWrap>
-        {!isExpanded ? (
-          <SubHeaderWrap>
-            <Logo onClick={navigateToHome} />
+        <SubHeaderWrap>
+          {!navigateToHome ? (
             <SubHeader>
-              <CustomIconButton onClick={handleSearchClick}>
-                <SearchIcon />
-              </CustomIconButton>
-              <CustomIconButton>
-                <PersonIcon />
-              </CustomIconButton>
+              <LeftButton backUrlInfo={`${placeIdx}${search}`} />
+              {`${placeName} 실시간 리뷰`}
             </SubHeader>
-          </SubHeaderWrap>
-        ) : (
-          <SubHeaderWrap>
-            <SubHeader>
-              <CustomIconButton>
-                <LeftIcon />
+          ) : !isExpanded ? (
+            <>
+              <Logo onClick={navigateToHome} />
+              <SubHeader>
+                <CustomIconButton onClick={handleSearchClick}>
+                  <SearchIcon />
+                </CustomIconButton>
+                <CustomIconButton>
+                  <PersonIcon />
+                </CustomIconButton>
+              </SubHeader>
+            </>
+          ) : (
+            <>
+              <SubHeader>
+                <LeftButton />
+                {placeName}
+              </SubHeader>
+              <CustomIconButton
+                pinned={LocationStore.currentLocationPinned}
+                onClick={handleHeartClick}
+              >
+                <HeartIcon />
               </CustomIconButton>
-              {placeName}
-            </SubHeader>
-            <CustomIconButton
-              pinned={LocationStore.currentLocationPinned}
-              onClick={handleHeartClick}
-            >
-              <HeartIcon />
-            </CustomIconButton>
-          </SubHeaderWrap>
-        )}
+            </>
+          )}
+        </SubHeaderWrap>
       </HeaderWrap>
-      {!isExpanded && (
+      {!isReviewPage && !isExpanded && (
         <ChipsWrap>
           <CustomChips
             selectedCategory={CategoryStore.selectedCategory}

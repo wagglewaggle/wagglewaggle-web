@@ -6,6 +6,7 @@ import {
   CustomDrawerStore,
   ErrorStore,
   LocationStore,
+  ReviewStore,
   ThemeStore,
   UserNavigatorStore,
 } from 'stores';
@@ -18,6 +19,7 @@ export default class RootStore {
   CustomDrawerStore: CustomDrawerStore = new CustomDrawerStore();
   ErrorStore: ErrorStore = new ErrorStore();
   LocationStore: LocationStore = new LocationStore();
+  ReviewStore: ReviewStore = new ReviewStore();
   ThemeStore: ThemeStore = new ThemeStore();
   UserNavigatorStore: UserNavigatorStore = new UserNavigatorStore();
 }

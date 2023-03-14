@@ -1,11 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 import { Rnd, ResizableDelta } from 'react-rnd';
 import { styled } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Mousewheel } from 'swiper';
-import { CongestionSummary, DetailedCongestion, Reviews, RelatedLocations } from './resizer';
+import {
+  CongestionSummary,
+  DetailedCongestion,
+  RealtimeReviews,
+  RelatedLocations,
+} from './resizer';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { LocationDataType, PlaceDataType } from 'types/typeBundle';
@@ -36,6 +41,7 @@ const CustomResizer = () => {
   const EXPANDED_HEIGHT = ScreenSizeStore.screenHeight * 0.6;
   const APPEARED_HEIGHT = 196;
   const DRAWER_X = isMobile ? 0 : 327;
+  const pathnameArr: string[] = pathname.split('/');
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [relatedPlaces, setRelatedPlaces] = useState<PlaceDataType[]>([]);
   const [isBeginning, setIsBeginning] = useState<boolean>(true);
@@ -139,7 +145,7 @@ const CustomResizer = () => {
     }
   };
 
-  const initLocationData = useCallback(async () => {
+  const initLocationData = async () => {
     if (search.length === 0) return;
     const placeName: string = decodeURI(search).replace('?name=', '');
     LocationStore.setPlaceName(placeName);
@@ -148,7 +154,6 @@ const CustomResizer = () => {
     )
       ? 'SKT'
       : 'KT';
-    const pathnameArr: string[] = pathname.split('/');
     const placeId: string = pathnameArr[pathnameArr.length - 1];
     if (!Number(placeId)) {
       navigate(`/${CustomDrawerStore.variant}`);
@@ -162,9 +167,9 @@ const CustomResizer = () => {
     const { data } = response;
     LocationStore.setLocationData(data);
     UserNavigatorStore.setDataLocation([data.x, data.y]);
-  }, [LocationStore, CustomDrawerStore, UserNavigatorStore, navigate, pathname, search]);
+  };
 
-  const initRelatedLocations = useCallback(async () => {
+  const initRelatedLocations = async () => {
     if (
       !LocationStore.placeName ||
       !districts[locationNames[LocationStore.placeName] || LocationStore.placeName]
@@ -181,7 +186,7 @@ const CustomResizer = () => {
         (place: PlaceDataType) => place.name !== LocationStore.placeName
       )
     );
-  }, [LocationStore.placeName]);
+  };
 
   useEffect(() => {
     if (!swiper?.slideTo) return;
@@ -191,7 +196,8 @@ const CustomResizer = () => {
 
   useEffect(() => {
     initRelatedLocations();
-  }, [LocationStore.placeName, initRelatedLocations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setSwipeEnabled(CustomDrawerStore.drawerStatus.expanded === 'full');
@@ -204,7 +210,8 @@ const CustomResizer = () => {
 
   useEffect(() => {
     initLocationData();
-  }, [initLocationData, LocationStore.placeName]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -261,7 +268,7 @@ const CustomResizer = () => {
                 <DetailedCongestion />
               </CustomSwiperSlide>
               <CustomSwiperSlide>
-                <Reviews />
+                <RealtimeReviews />
               </CustomSwiperSlide>
               {relatedPlaces.length > 0 && (
                 <CustomSwiperSlide>
