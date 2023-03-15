@@ -51,5 +51,5 @@ const SearchWrap = styled('div', {
   height: '100vh',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   boxShadow: '0 10px 20px rgba(0, 0, 0, 0.25)',
-  zIndex: 10,
+  zIndex: 100,
 }));

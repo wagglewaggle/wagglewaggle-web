@@ -80,13 +80,13 @@ const CustomHeader = (props: PropsType) => {
   };
 
   useEffect(() => {
-    if (isReviewPage) return;
+    if (isReviewPage || !locationData?.name) return;
     LocationStore.setCurrentLocationPinned(
       AuthStore.favorites.places
-        .map((favorite: FavoritePlaceType) => favorite.place.idx)
-        .includes(placeIdx)
+        .map((favorite: FavoritePlaceType) => favorite.place.name)
+        .includes(locationData.name)
     );
-  }, [isReviewPage, search, placeIdx, requestType, LocationStore, AuthStore.favorites]);
+  }, [isReviewPage, search, locationData?.name, requestType, LocationStore, AuthStore.favorites]);
 
   return (
     <Wrap

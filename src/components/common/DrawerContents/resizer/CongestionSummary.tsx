@@ -4,7 +4,6 @@ import { styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
 import { palette, locationNames } from 'constants/';
-import { FavoritePlaceType } from 'types/typeBundle';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import { ReactComponent as CctvIcon } from 'assets/icons/drawer/cctv.svg';
@@ -12,13 +11,10 @@ import { ReactComponent as ShareIcon } from 'assets/icons/drawer/share.svg';
 import { ReactComponent as NaviIcon } from 'assets/icons/drawer/navi.svg';
 
 const CongestionSummary = () => {
-  const { ThemeStore, LocationStore, CustomDrawerStore, AuthStore } = useStore().MobxStore;
+  const { ThemeStore, LocationStore, CustomDrawerStore } = useStore().MobxStore;
   const { placeName, categories, locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isAppeared = CustomDrawerStore.drawerStatus.expanded === 'appeared';
-  const isPinned = AuthStore.favorites.places
-    .map((favorite: FavoritePlaceType) => favorite.place.name)
-    .includes(placeName as string);
 
   const handleShareClick = useCallback(() => {
     CustomDrawerStore.setRndResizerFunctionConfig('share');
@@ -50,7 +46,7 @@ const CongestionSummary = () => {
         </StatusWrap>
       </Header>
       <IconsWrap>
-        <IconWrap isPinned={isPinned}>
+        <IconWrap isPinned={LocationStore.currentLocationPinned}>
           <HeartIcon /> {String(locationData?.pinPlaceCount ?? 0).padStart(2, '0')}
         </IconWrap>
         <IconWrap>
