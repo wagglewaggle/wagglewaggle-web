@@ -62,7 +62,6 @@ const MapContent = () => {
     });
 
   const getKakaoMap = () => {
-    if (['expanded', 'full'].includes(drawerStatus.expanded)) return;
     const [latitude, longitude] = UserNavigatorStore.dataLocation;
     const latOffset =
       (drawerStatus.expanded === 'appeared' ? 0.0000035 : 0) * ScreenSizeStore.screenHeight;
@@ -80,6 +79,9 @@ const MapContent = () => {
       getOpacityCircleOnMap(latitude, longitude).setMap(map);
       [mapInfo.lat, mapInfo.lng] = [latitude, longitude];
       window.kakao.maps.event.addListener(map, 'dragend', onDragEnd);
+      if (drawerStatus.expanded === 'expanded') {
+        setMapCenter();
+      }
     });
   };
 

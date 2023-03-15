@@ -11,7 +11,7 @@ import { palette, locationNames, locationRequestTypes } from 'constants/';
 
 const Review = () => {
   const { pathname, search } = useLocation();
-  const { CustomDrawerStore, LocationStore, ReviewStore, ThemeStore } = useStore().MobxStore;
+  const { LocationStore, ReviewStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const pathnameArr = pathname.split('/');
   const placeName = decodeURI(search).replace('?name=', '');
@@ -49,11 +49,6 @@ const Review = () => {
   }, [pathname]);
 
   useEffect(() => {
-    CustomDrawerStore.setDrawerStatus({ expanded: 'removed', dragHeight: 0 });
-    CustomDrawerStore.closeDrawer();
-  }, [CustomDrawerStore]);
-
-  useEffect(() => {
     if (ReviewStore.reviews.length > 0) return;
     getReviews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,6 +79,7 @@ const Wrap = styled('div', {
   minHeight: '100vh',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   boxShadow: '0px -10px 40px rgb(0 0 0 / 30%)',
+  zIndex: 100,
 }));
 
 const BlankArea = styled('div')({

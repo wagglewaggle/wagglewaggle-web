@@ -199,13 +199,10 @@ const CustomResizer = () => {
   }, []);
 
   useEffect(() => {
-    setSwipeEnabled(CustomDrawerStore.drawerStatus.expanded === 'full');
-  }, [CustomDrawerStore.drawerStatus.expanded]);
-
-  useEffect(() => {
     setTouchIndex(0);
     setIsBeginning(true);
-  }, []);
+    setSwipeEnabled(CustomDrawerStore.drawerStatus.expanded === 'full');
+  }, [CustomDrawerStore.drawerStatus.expanded]);
 
   useEffect(() => {
     initLocationData();
@@ -213,9 +210,9 @@ const CustomResizer = () => {
   }, []);
 
   useEffect(() => {
-    if (!open) return;
+    if (CustomDrawerStore.drawerStatus.expanded !== 'removed') return;
     CustomDrawerStore.setDrawerStatus({ expanded: 'appeared', dragHeight: APPEARED_HEIGHT });
-  }, [open, CustomDrawerStore]);
+  }, [open, CustomDrawerStore, CustomDrawerStore.drawerStatus.expanded]);
 
   return (
     <CustomRnd

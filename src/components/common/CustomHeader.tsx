@@ -22,14 +22,12 @@ interface PropsType {
 const LeftButton = (props: { backUrlInfo?: string }) => {
   const { backUrlInfo } = props;
   const navigate = useNavigate();
-  const { CustomDrawerStore, ReviewStore } = useStore().MobxStore;
+  const { ReviewStore } = useStore().MobxStore;
 
   const handleRefresh = () => {
-    CustomDrawerStore.setDrawerStatus({ expanded: 'appeared', dragHeight: 196 });
-    if (backUrlInfo) {
-      navigate(backUrlInfo);
-      ReviewStore.initReviewDetail();
-    }
+    if (!backUrlInfo) return;
+    navigate(backUrlInfo);
+    ReviewStore.initReviewDetail();
   };
 
   return (
