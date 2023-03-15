@@ -68,6 +68,11 @@ export interface LocationDataType {
   address: string;
   pinPlaceCount: number;
   reviewPostCount: number;
+  locations: {
+    idx: number;
+    name: string;
+    places: PlaceDataType[];
+  };
 }
 
 export interface DrawerStatusType {

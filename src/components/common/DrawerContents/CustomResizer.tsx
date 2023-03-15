@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 import { Rnd, ResizableDelta } from 'react-rnd';
+import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Mousewheel } from 'swiper';
@@ -42,7 +43,7 @@ const CustomResizer = () => {
   const APPEARED_HEIGHT = 196;
   const pathnameArr: string[] = pathname.split('/');
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [relatedPlaces, setRelatedPlaces] = useState<PlaceDataType[]>([]);
+  const [relatedPlaces, setRelatedPlaces] = useState<string[]>([]);
   const [isBeginning, setIsBeginning] = useState<boolean>(true);
   const [swipeEnabled, setSwipeEnabled] = useState<boolean>(false);
   const [touchIndex, setTouchIndex] = useState<number>(0);
@@ -168,7 +169,7 @@ const CustomResizer = () => {
     UserNavigatorStore.setDataLocation([data.x, data.y]);
   };
 
-  const initRelatedLocations = async () => {
+  const initRelatedLocations = useCallback(async () => {
     if (
       !LocationStore.placeName ||
       !districts[locationNames[LocationStore.placeName] || LocationStore.placeName]
@@ -181,11 +182,11 @@ const CustomResizer = () => {
     );
     if (!response) return;
     setRelatedPlaces(
-      [...response.data.ktPlaces, ...response.data.sktPlaces].filter(
-        (place: PlaceDataType) => place.name !== LocationStore.placeName
-      )
+      [...response.data.ktPlaces, ...response.data.sktPlaces]
+        .filter((place: PlaceDataType) => place.name !== LocationStore.placeName)
+        .map((place: PlaceDataType) => place.name)
     );
-  };
+  }, [LocationStore.placeName]);
 
   useEffect(() => {
     if (!swiper?.slideTo) return;
@@ -195,8 +196,7 @@ const CustomResizer = () => {
 
   useEffect(() => {
     initRelatedLocations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initRelatedLocations]);
 
   useEffect(() => {
     setTouchIndex(0);
@@ -282,7 +282,7 @@ const CustomResizer = () => {
   );
 };
 
-export default CustomResizer;
+export default observer(CustomResizer);
 
 const CustomRnd = styled(Rnd, {
   shouldForwardProp: (prop: string) =>

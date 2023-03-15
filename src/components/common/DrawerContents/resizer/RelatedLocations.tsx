@@ -6,29 +6,25 @@ import { palette } from 'constants/';
 import { useStore } from 'stores';
 
 interface PropsType {
-  places: PlaceDataType[];
+  places: string[];
 }
 
 const RelatedLocations = observer((props: PropsType) => {
   const { places } = props;
   const { LocationStore, ThemeStore } = useStore().MobxStore;
+  const { placesData } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const relatedPlaces = placesData.filter((place: PlaceDataType) => places.includes(place.name));
 
   return (
     <>
-      {places.length === 0 ? (
+      {relatedPlaces.length === 0 ? (
         <></>
       ) : (
         <Wrap isDarkTheme={isDarkTheme}>
           <Header>주변 장소 현황</Header>
-          {places.map((place: PlaceDataType, idx: number) => (
-            <PlaceCard
-              key={`related-locations-${idx}`}
-              isResizer
-              place={
-                LocationStore.placesData.find((p: PlaceDataType) => p.name === place.name) ?? place
-              }
-            />
+          {relatedPlaces.map((place: PlaceDataType, idx: number) => (
+            <PlaceCard key={`related-locations-${idx}`} isResizer place={place} />
           ))}
         </Wrap>
       )}

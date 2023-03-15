@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import MapContent from './MapContent';
+import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
+import { PlaceDataType } from 'types/typeBundle';
 
 declare global {
   interface Window {
@@ -14,7 +16,7 @@ declare global {
 const Map = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
-  const { CustomDrawerStore, LocationStore, CustomDialogStore } = useStore().MobxStore;
+  const { CustomDrawerStore, LocationStore, CustomDialogStore, AuthStore } = useStore().MobxStore;
 
   const handleWordClick = (searchWord: string) => {
     CustomDrawerStore.setSearchValue(searchWord);
@@ -46,9 +48,28 @@ const Map = () => {
     );
   };
 
+  const initPlaceData = useCallback(async () => {
+    const params = { populationSort: true };
+    const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
+      'get',
+      'place',
+      params
+    );
+    if (!placeData) return;
+    LocationStore.setPlacesData([...placeData.data.list]);
+    [...placeData.data.list].forEach((data: PlaceDataType) => {
+      LocationStore.setCategories(data.name, data.categories);
+    });
+  }, [LocationStore]);
+
   useEffect(() => {
     document.body.setAttribute('style', `overflow-y:hidden`);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!AuthStore.authorized) return;
+    initPlaceData();
+  }, [AuthStore.authorized, initPlaceData]);
 
   useEffect(() => {
     CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');

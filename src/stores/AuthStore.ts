@@ -20,14 +20,12 @@ export class AuthStore {
   };
 
   initializeFavorites = async () => {
-    if (!this.authorized) return;
     const { data } = (await axiosRequest('get', 'pin-place')) as { data: FavoritesType };
     this.setFavorites(data);
   };
 
   setAuthorized = (newStatus: boolean) => {
     this.authorized = newStatus;
-    this.initializeFavorites();
   };
 
   setIsLoggingIn = (newStatus: boolean) => {

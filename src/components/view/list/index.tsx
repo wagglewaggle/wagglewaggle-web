@@ -74,7 +74,8 @@ const List = observer(() => {
   useEffect(() => {
     if (!AuthStore.authorized) return;
     initPlaceData();
-  }, [AuthStore.authorized, initPlaceData]);
+    AuthStore.initializeFavorites();
+  }, [AuthStore, AuthStore.authorized, initPlaceData]);
 
   useEffect(() => {
     CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');
