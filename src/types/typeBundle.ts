@@ -100,6 +100,23 @@ export interface ReviewType {
   isPin: boolean;
 }
 
+export interface ReviewDetailType {
+  content: string;
+  createdDate: string;
+  idx: number;
+  images: string[];
+  isPin: boolean;
+  pinReviewPostCount: number;
+  place: PlaceDataType;
+  replies: string[];
+  replyCount: number;
+  report: number;
+  status: string;
+  updatedDate: string;
+  view: number;
+  writer: WriterType;
+}
+
 interface WriterType {
   createdDate: string;
   updatedDate: string;

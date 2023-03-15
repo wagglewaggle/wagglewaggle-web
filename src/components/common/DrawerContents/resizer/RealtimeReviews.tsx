@@ -51,14 +51,7 @@ const RealtimeReviews = () => {
           </CustomIconButton>
         </ButtonArea>
       </Header>
-      {ReviewStore.reviews.length === 0 ? (
-        <NoReviewWrap>
-          <NoReviewHeader>작성된 리뷰가 없어요.</NoReviewHeader>
-          <NoReviewContent>{`지금 해당 장소에 계시다면\r\n첫번째 리뷰를 남겨주세요 🥰`}</NoReviewContent>
-        </NoReviewWrap>
-      ) : (
-        <ReviewList reviews={_.cloneDeep(ReviewStore.reviews).slice(0, 3)} />
-      )}
+      <ReviewList reviews={_.cloneDeep(ReviewStore.reviews).slice(0, 3)} />
     </Wrap>
   );
 };
@@ -106,29 +99,4 @@ const CustomIconButton = styled(IconButton)({
   '& path': {
     fill: palette.black,
   },
-});
-
-const NoReviewWrap = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: '20px 24px',
-  marginTop: 16,
-  gap: 8,
-});
-
-const NoReviewHeader = styled('span')({
-  color: palette.black,
-  fontSize: 18,
-  fontWeight: 600,
-  lineHeight: '24px',
-});
-
-const NoReviewContent = styled('span')({
-  color: palette.grey[500],
-  fontSize: 14,
-  fontWeight: 400,
-  lineHeight: '20px',
-  whiteSpace: 'pre-wrap',
-  textAlign: 'center',
 });

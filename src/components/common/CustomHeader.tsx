@@ -16,17 +16,19 @@ import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 interface PropsType {
   navigateToHome?: () => void;
   handleSearchClick?: () => void;
+  isFixed?: boolean;
 }
 
 const LeftButton = (props: { backUrlInfo?: string }) => {
   const { backUrlInfo } = props;
   const navigate = useNavigate();
-  const { CustomDrawerStore } = useStore().MobxStore;
+  const { CustomDrawerStore, ReviewStore } = useStore().MobxStore;
 
   const handleRefresh = () => {
     CustomDrawerStore.setDrawerStatus({ expanded: 'appeared', dragHeight: 196 });
     if (backUrlInfo) {
-      navigate(`/map/${backUrlInfo}`);
+      navigate(backUrlInfo);
+      ReviewStore.initReviewDetail();
     }
   };
 
@@ -38,9 +40,16 @@ const LeftButton = (props: { backUrlInfo?: string }) => {
 };
 
 const CustomHeader = (props: PropsType) => {
-  const { navigateToHome, handleSearchClick } = props;
-  const { ThemeStore, CustomDrawerStore, CategoryStore, LocationStore, AuthStore } =
-    useStore().MobxStore;
+  const { navigateToHome, handleSearchClick, isFixed } = props;
+  const {
+    ThemeStore,
+    CustomDrawerStore,
+    CategoryStore,
+    LocationStore,
+    AuthStore,
+    ScreenSizeStore,
+    ReviewStore,
+  } = useStore().MobxStore;
   const { pathname, search } = useLocation();
   const { locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
@@ -48,7 +57,7 @@ const CustomHeader = (props: PropsType) => {
   const isReviewPage = pathname.split('/').includes('review');
   const placeName = locationNames[locationData?.name ?? ''] || (locationData?.name ?? '');
   const pathnameArr = pathname.split('/');
-  const placeIdx = Number(pathnameArr[pathnameArr.length - 1]);
+  const placeIdx = Number(pathnameArr[2]);
   const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
     locationNames[placeName] || placeName
   )
@@ -80,12 +89,23 @@ const CustomHeader = (props: PropsType) => {
   }, [isReviewPage, search, placeIdx, requestType, LocationStore, AuthStore.favorites]);
 
   return (
-    <Wrap isDarkTheme={isDarkTheme} height={isReviewPage || isExpanded ? 48 : 104}>
+    <Wrap
+      isFixed={isFixed}
+      screenWidth={ScreenSizeStore.screenWidth}
+      isDarkTheme={isDarkTheme}
+      height={isReviewPage || isExpanded ? 48 : 104}
+    >
       <HeaderWrap>
         <SubHeaderWrap>
           {!navigateToHome ? (
             <SubHeader>
-              <LeftButton backUrlInfo={`${placeIdx}${search}`} />
+              <LeftButton
+                backUrlInfo={
+                  ReviewStore.reviewDetail
+                    ? `/review/${placeIdx}?name=${placeName}`
+                    : `/map/${placeIdx}${search}`
+                }
+              />
               {`${placeName} 실시간 리뷰`}
             </SubHeader>
           ) : !isExpanded ? (
@@ -131,19 +151,23 @@ const CustomHeader = (props: PropsType) => {
 export default observer(CustomHeader);
 
 const Wrap = styled('div', {
-  shouldForwardProp: (prop: string) => !['isDarkTheme', 'height'].includes(prop),
-})<{ isDarkTheme: boolean; height: number }>(({ isDarkTheme, height }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  borderBottom: `1px solid ${palette.grey[300]}`,
-  width: '100%',
-  height,
-  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
-  zIndex: 20,
-  '& svg': {
-    cursor: 'pointer',
-  },
-}));
+  shouldForwardProp: (prop: string) =>
+    !['isFixed', 'screenWidth', 'isDarkTheme', 'height'].includes(prop),
+})<{ isFixed?: boolean; screenWidth: number; isDarkTheme: boolean; height: number }>(
+  ({ isFixed, screenWidth, isDarkTheme, height }) => ({
+    position: isFixed ? 'fixed' : undefined,
+    display: 'flex',
+    flexDirection: 'column',
+    borderBottom: `1px solid ${palette.grey[300]}`,
+    width: screenWidth,
+    height,
+    backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+    zIndex: 20,
+    '& svg': {
+      cursor: 'pointer',
+    },
+  })
+);
 
 const HeaderWrap = styled('div')({
   display: 'flex',

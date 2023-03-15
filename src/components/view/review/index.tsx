@@ -2,14 +2,13 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import SwiperCore, { Mousewheel } from 'swiper';
 import { CustomHeader, ReviewList } from 'components/common';
+import ReviewDetail from './ReviewDetail';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { LocationDataType } from 'types/typeBundle';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
 
-SwiperCore.use([Mousewheel]);
 const Review = () => {
   const { pathname, search } = useLocation();
   const { CustomDrawerStore, LocationStore, ReviewStore, ThemeStore } = useStore().MobxStore;
@@ -62,8 +61,13 @@ const Review = () => {
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
-      <CustomHeader />
-      <ReviewList reviews={ReviewStore.reviews} />
+      <CustomHeader isFixed />
+      <BlankArea />
+      {ReviewStore.reviewDetail ? (
+        <ReviewDetail />
+      ) : (
+        <ReviewList reviews={ReviewStore.reviews} shouldIncludeOnClick />
+      )}
     </Wrap>
   );
 };
@@ -77,6 +81,12 @@ const Wrap = styled('div', {
   flexDirection: 'column',
   width: '100%',
   height: 'auto',
+  minHeight: '100vh',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   boxShadow: '0px -10px 40px rgb(0 0 0 / 30%)',
 }));
+
+const BlankArea = styled('div')({
+  width: '100%',
+  height: 48,
+});

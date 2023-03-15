@@ -40,7 +40,6 @@ const CustomResizer = () => {
   const FULL_HEIGHT = ScreenSizeStore.screenHeight;
   const EXPANDED_HEIGHT = ScreenSizeStore.screenHeight * 0.6;
   const APPEARED_HEIGHT = 196;
-  const DRAWER_X = isMobile ? 0 : 327;
   const pathnameArr: string[] = pathname.split('/');
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [relatedPlaces, setRelatedPlaces] = useState<PlaceDataType[]>([]);
@@ -223,7 +222,6 @@ const CustomResizer = () => {
       borderTopRadius={APPEARED_HEIGHT === drawerStatus.dragHeight ? 12 : 0}
       screenHeight={ScreenSizeStore.screenHeight}
       dragHeight={drawerStatus.dragHeight}
-      transformX={DRAWER_X}
       transformDeltaY={transformDeltaY}
       resizeGrid={[1, Number(isBeginning)]}
       position={{ x: 0, y: ScreenSizeStore.screenHeight - drawerStatus.dragHeight }}
@@ -291,16 +289,13 @@ export default CustomResizer;
 
 const CustomRnd = styled(Rnd, {
   shouldForwardProp: (prop: string) =>
-    !['borderTopRadius', 'screenHeight', 'dragHeight', 'transformX', 'transformDeltaY'].includes(
-      prop
-    ),
+    !['borderTopRadius', 'screenHeight', 'dragHeight', 'transformDeltaY'].includes(prop),
 })<{
   borderTopRadius: number;
   screenHeight: number;
   dragHeight: number;
-  transformX: number;
   transformDeltaY: number;
-}>(({ borderTopRadius, screenHeight, dragHeight, transformX, transformDeltaY }) => ({
+}>(({ borderTopRadius, screenHeight, dragHeight, transformDeltaY }) => ({
   position: 'fixed',
   left: 0,
   bottom: 0,
@@ -311,9 +306,7 @@ const CustomRnd = styled(Rnd, {
   zIndex: 10,
   backgroundColor: palette.white,
   boxShadow: '0px -10px 40px rgb(0 0 0 / 30%)',
-  transform: `translate(${transformX}px, ${
-    screenHeight - dragHeight - transformDeltaY
-  }px) !important`,
+  transform: `translate(auto, ${screenHeight - dragHeight - transformDeltaY}px) !important`,
 }));
 
 const CustomSwiper = styled(Swiper, {
