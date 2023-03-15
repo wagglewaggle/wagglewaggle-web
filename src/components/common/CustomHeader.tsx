@@ -19,13 +19,16 @@ interface PropsType {
   isFixed?: boolean;
 }
 
-const LeftButton = (props: { backUrlInfo?: string }) => {
-  const { backUrlInfo } = props;
+const LeftButton = (props: { backUrlInfo?: string; isExpanded?: boolean }) => {
+  const { backUrlInfo, isExpanded } = props;
   const navigate = useNavigate();
-  const { ReviewStore } = useStore().MobxStore;
+  const { ReviewStore, CustomDrawerStore } = useStore().MobxStore;
 
   const handleRefresh = () => {
-    if (!backUrlInfo) return;
+    if (!backUrlInfo) {
+      isExpanded && CustomDrawerStore.setDrawerStatus({ expanded: 'appeared', dragHeight: 196 });
+      return;
+    }
     navigate(backUrlInfo);
     ReviewStore.initReviewDetail();
   };
@@ -121,7 +124,7 @@ const CustomHeader = (props: PropsType) => {
           ) : (
             <>
               <SubHeader>
-                <LeftButton />
+                <LeftButton isExpanded={isExpanded} />
                 {placeName}
               </SubHeader>
               <CustomIconButton
