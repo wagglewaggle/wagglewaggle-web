@@ -1,11 +1,12 @@
 import { makeAutoObservable } from 'mobx';
-import { CategoryType, LocationDataType } from 'types/typeBundle';
+import { CategoryType, LocationDataType, PlaceDataType } from 'types/typeBundle';
 
 export class LocationStore {
   placeName: string | null = null;
   categories: { [key: string]: CategoryType[] } = {};
   suggestionExists: boolean = false;
   locationData: LocationDataType | null = null;
+  placesData: PlaceDataType[] = [];
   currentLocationPinned: boolean = false;
 
   constructor() {
@@ -28,7 +29,17 @@ export class LocationStore {
     this.locationData = newLocationData;
   };
 
+  setPlacesData = (newPlacesData: PlaceDataType[]) => {
+    this.placesData = newPlacesData;
+  };
+
   setCurrentLocationPinned = (newStatus: boolean) => {
     this.currentLocationPinned = newStatus;
+  };
+
+  handlePinChange = (wasPinned: boolean) => {
+    if (!this.locationData) return;
+    this.locationData.pinPlaceCount += wasPinned ? -1 : 1;
+    this.currentLocationPinned = !wasPinned;
   };
 }

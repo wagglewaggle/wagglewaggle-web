@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { DrawerStatusType, PlaceDataType } from 'types/typeBundle';
+import { DrawerStatusType } from 'types/typeBundle';
 
 export class CustomDrawerStore {
   open: boolean = false;
@@ -7,7 +7,6 @@ export class CustomDrawerStore {
   drawerComponent: JSX.Element | null = null;
   titleTag: HTMLTitleElement | null = document.querySelector('title');
   searchValue: string = '';
-  placeData: PlaceDataType[] = [];
   includesInputBox: boolean = true;
   drawerStatus: DrawerStatusType = { expanded: 'removed', dragHeight: 0 };
   rndResizerFunctionConfig: { currentKey: string | null; functionProps: unknown | null } = {
@@ -41,10 +40,6 @@ export class CustomDrawerStore {
 
   setSearchValue = (searchValue: string) => {
     this.searchValue = searchValue;
-  };
-
-  setPlaceData = (newPlaces: PlaceDataType[]) => {
-    this.placeData = newPlaces;
   };
 
   setIncludesInput = (newInputStatus: boolean) => {

@@ -10,7 +10,7 @@ import { ReactComponent as LeftArrowIcon } from 'assets/icons/left-icon.svg';
 
 const SearchInput = observer(() => {
   const navigate = useNavigate();
-  const { ThemeStore, CustomDrawerStore } = useStore().MobxStore;
+  const { ThemeStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleArrowLeftClick = () => {
@@ -37,7 +37,7 @@ const SearchInput = observer(() => {
         />
       ) : (
         <SuggestData
-          placeData={CustomDrawerStore.placeData}
+          placeData={LocationStore.placesData}
           searchValue={newValue}
           initialBlockList={JSON.parse(
             localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
@@ -53,7 +53,7 @@ const SearchInput = observer(() => {
     CustomDrawerStore.setSearchValue(searchWord);
     CustomDrawerStore.openDrawer(
       'list',
-      <ResultData placeData={CustomDrawerStore.placeData} searchWord={searchWord} />
+      <ResultData placeData={LocationStore.placesData} searchWord={searchWord} />
     );
   };
 

@@ -9,7 +9,7 @@ import { CustomDialog, CustomDrawer } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
 import { Login } from './components/view';
 import { CreateStore, RootStore } from 'stores';
-import { ScreenType, PlaceDataType } from 'types/typeBundle';
+import { ScreenType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
 import { palette } from 'constants/';
 
@@ -23,7 +23,6 @@ const App = observer(() => {
     UserNavigatorStore,
     CustomDialogStore,
     CustomDrawerStore,
-    LocationStore,
   } = MobxStore;
   const { ref, width, height } = useResizeObserver();
   const history = createBrowserHistory();
@@ -61,25 +60,6 @@ const App = observer(() => {
     UserNavigatorStore.setUserLocation([latitude, longitude], false);
     UserNavigatorStore.setLoaded(true);
   };
-
-  const initPlaceData = useCallback(async () => {
-    const params = { populationSort: true };
-    const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-      'get',
-      'place',
-      params
-    );
-    if (!placeData) return;
-    CustomDrawerStore.setPlaceData([...placeData.data.list]);
-    [...placeData.data.list].forEach((data: PlaceDataType) => {
-      LocationStore.setCategories(data.name, data.categories);
-    });
-  }, [CustomDrawerStore, LocationStore]);
-
-  useEffect(() => {
-    if (!AuthStore.authorized) return;
-    initPlaceData();
-  }, [AuthStore.authorized, initPlaceData]);
 
   useEffect(() => {
     if (!isIOS) return;

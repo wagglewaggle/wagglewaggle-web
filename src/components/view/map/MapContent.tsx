@@ -11,7 +11,8 @@ const mapInfo: { lat: number; lng: number } = { lat: 0, lng: 0 };
 const MapContent = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const primaryCategories = useMemo(() => ['한강', '공원', '궁궐'], []);
-  const { UserNavigatorStore, CustomDrawerStore, ScreenSizeStore } = useStore().MobxStore;
+  const { UserNavigatorStore, CustomDrawerStore, LocationStore, ScreenSizeStore } =
+    useStore().MobxStore;
   const { drawerStatus } = CustomDrawerStore;
 
   const onDragEnd = useCallback(() => {
@@ -70,7 +71,7 @@ const MapContent = () => {
         center: new window.kakao.maps.LatLng(latitude - latOffset, longitude),
         level: 5,
       });
-      CustomDrawerStore.placeData.forEach((place: PlaceDataType) => {
+      LocationStore.placesData.forEach((place: PlaceDataType) => {
         const { name, categories, x, y } = place;
         setMarkerOnMap('place', x, y, map, name, symbols[getSymbol(categories)]);
       });

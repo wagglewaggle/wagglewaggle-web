@@ -14,13 +14,13 @@ declare global {
 const Map = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
-  const { CustomDrawerStore, CustomDialogStore } = useStore().MobxStore;
+  const { CustomDrawerStore, LocationStore, CustomDialogStore } = useStore().MobxStore;
 
   const handleWordClick = (searchWord: string) => {
     CustomDrawerStore.setSearchValue(searchWord);
     CustomDrawerStore.openDrawer(
       'map',
-      <ResultData placeData={CustomDrawerStore.placeData} searchWord={searchWord} />
+      <ResultData placeData={LocationStore.placesData} searchWord={searchWord} />
     );
   };
 

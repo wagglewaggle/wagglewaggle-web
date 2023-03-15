@@ -11,7 +11,7 @@ interface PropsType {
 
 const RelatedLocations = observer((props: PropsType) => {
   const { places } = props;
-  const { CustomDrawerStore, ThemeStore } = useStore().MobxStore;
+  const { LocationStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   return (
@@ -26,8 +26,7 @@ const RelatedLocations = observer((props: PropsType) => {
               key={`related-locations-${idx}`}
               isResizer
               place={
-                CustomDrawerStore.placeData.find((p: PlaceDataType) => p.name === place.name) ??
-                place
+                LocationStore.placesData.find((p: PlaceDataType) => p.name === place.name) ?? place
               }
             />
           ))}

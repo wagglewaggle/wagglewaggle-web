@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import PlaceData from './PlaceData';
+import axiosRequest from 'api/axiosRequest';
 import { PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 
 const List = observer(() => {
-  const { CustomDialogStore, CustomDrawerStore, ErrorStore } = useStore().MobxStore;
+  const { CustomDialogStore, CustomDrawerStore, LocationStore, ErrorStore, AuthStore } =
+    useStore().MobxStore;
   const navigate = useNavigate();
   const { search, pathname } = useLocation();
 
@@ -20,7 +22,7 @@ const List = observer(() => {
     CustomDrawerStore.setSearchValue(searchWord);
     CustomDrawerStore.openDrawer(
       'list',
-      <ResultData placeData={CustomDrawerStore.placeData} searchWord={searchWord} />
+      <ResultData placeData={LocationStore.placesData} searchWord={searchWord} />
     );
   };
 
@@ -48,12 +50,31 @@ const List = observer(() => {
   };
 
   const handlePlaceDataChange = (newPlaceData: PlaceDataType[]) => {
-    CustomDrawerStore.setPlaceData(JSON.parse(JSON.stringify(newPlaceData)));
+    LocationStore.setPlacesData(JSON.parse(JSON.stringify(newPlaceData)));
   };
+
+  const initPlaceData = useCallback(async () => {
+    const params = { populationSort: true };
+    const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
+      'get',
+      'place',
+      params
+    );
+    if (!placeData) return;
+    LocationStore.setPlacesData([...placeData.data.list]);
+    [...placeData.data.list].forEach((data: PlaceDataType) => {
+      LocationStore.setCategories(data.name, data.categories);
+    });
+  }, [LocationStore]);
 
   useEffect(() => {
     document.body.setAttribute('style', `overflow-y:auto`);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!AuthStore.authorized) return;
+    initPlaceData();
+  }, [AuthStore.authorized, initPlaceData]);
 
   useEffect(() => {
     CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');
@@ -89,7 +110,7 @@ const List = observer(() => {
     <Wrap>
       <CustomHeader navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
       <PlaceData
-        placeData={CustomDrawerStore.placeData}
+        placeData={LocationStore.placesData}
         handlePlaceDataChange={handlePlaceDataChange}
       />
       <NavigationIcons />

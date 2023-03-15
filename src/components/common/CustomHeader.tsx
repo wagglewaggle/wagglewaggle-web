@@ -6,7 +6,7 @@ import { CustomChips } from 'components/common';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
-import { FavoritePlaceType, FavoritesType } from 'types/typeBundle';
+import { FavoritePlaceType } from 'types/typeBundle';
 import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 import { ReactComponent as PersonIcon } from 'assets/icons/person-icon.svg';
@@ -71,12 +71,12 @@ const CustomHeader = (props: PropsType) => {
   const handleHeartClick = async () => {
     const pathnameArr = pathname.split('/');
     const placeIdx = Number(pathnameArr[pathnameArr.length - 1]);
-    const response = LocationStore.currentLocationPinned
-      ? await axiosRequest('delete', 'pin-place', { idx: placeIdx })
-      : await axiosRequest('post', 'pin-place', { idx: placeIdx, type: requestType });
-    if (!response?.data) return;
-    const { data } = (await axiosRequest('get', 'pin-place')) as { data: FavoritesType };
-    AuthStore.setFavorites(data);
+    const requestParams = { idx: placeIdx, type: requestType };
+    const pinned = LocationStore.currentLocationPinned;
+    pinned
+      ? await axiosRequest('delete', 'pin-place', requestParams)
+      : await axiosRequest('post', 'pin-place', requestParams);
+    LocationStore.handlePinChange(pinned);
   };
 
   useEffect(() => {
