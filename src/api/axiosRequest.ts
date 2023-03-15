@@ -47,18 +47,25 @@ const axiosRequest = async (
     }
   );
 
-  tokenAxiosInstance.interceptors.response.use((res) => {
-    const { accessToken, refreshToken } = res.data;
-    if (accessToken) {
-      localStorage.setItem('@wagglewaggle_access_token', accessToken);
-      sessionStorage.setItem('@wagglewaggle_authorized', 'authorized');
-      AuthStore.setAuthorized(true);
+  tokenAxiosInstance.interceptors.response.use(
+    (res) => {
+      const { accessToken, refreshToken } = res.data;
+      if (accessToken) {
+        localStorage.setItem('@wagglewaggle_access_token', accessToken);
+        sessionStorage.setItem('@wagglewaggle_authorized', 'authorized');
+        AuthStore.setAuthorized(true);
+      }
+      if (refreshToken) {
+        localStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
+      }
+      return res;
+    },
+    () => {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = window.location.origin + '/login';
     }
-    if (refreshToken) {
-      localStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
-    }
-    return res;
-  });
+  );
 
   try {
     const selectedAxiosInstance = isTokenIssuePath ? tokenAxiosInstance : apiAxiosInstance;
