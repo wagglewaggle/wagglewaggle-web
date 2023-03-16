@@ -10,7 +10,7 @@ import carIcon from 'assets/icons/car-icon.svg';
 
 const DetailedCongestion = observer(() => {
   const [timePassed, setTimePassed] = useState<string>('');
-  const { CustomDrawerStore, ThemeStore, LocationStore } = useStore().MobxStore;
+  const { CustomDialogStore, ThemeStore, LocationStore } = useStore().MobxStore;
   const { locationData } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const COMMENTS_BY_STATUS: { [key: string]: string } = {
@@ -27,7 +27,7 @@ const DetailedCongestion = observer(() => {
   };
 
   const handleOpenDialog = () => {
-    CustomDrawerStore.setRndResizerFunctionConfig('cctv', locationData?.cctvs || []);
+    CustomDialogStore.openCctvDialog(locationData?.cctvs ?? []);
   };
 
   useEffect(() => {

@@ -117,7 +117,7 @@ const MapContent = () => {
   }, [drawerStatus.expanded]);
 
   return (
-    <Wrap>
+    <Wrap top={['removed', 'appeared'].includes(drawerStatus.expanded) ? 105 : 48}>
       <Map ref={mapRef} />
     </Wrap>
   );
@@ -125,10 +125,15 @@ const MapContent = () => {
 
 export default observer(MapContent);
 
-const Wrap = styled('div')({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'top',
+})<{ top: number }>(({ top }) => ({
+  position: 'fixed',
+  top,
   width: '100%',
+  maxWidth: 430,
   height: 'calc(100vh - 104px)',
-});
+}));
 
 const Map = styled('div')({
   width: '100%',

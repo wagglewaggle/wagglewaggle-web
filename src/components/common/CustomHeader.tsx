@@ -16,7 +16,6 @@ import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 interface PropsType {
   navigateToHome?: () => void;
   handleSearchClick?: () => void;
-  isFixed?: boolean;
 }
 
 const LeftButton = (props: { backUrlInfo?: string; isExpanded?: boolean }) => {
@@ -41,7 +40,7 @@ const LeftButton = (props: { backUrlInfo?: string; isExpanded?: boolean }) => {
 };
 
 const CustomHeader = (props: PropsType) => {
-  const { navigateToHome, handleSearchClick, isFixed } = props;
+  const { navigateToHome, handleSearchClick } = props;
   const {
     ThemeStore,
     CustomDrawerStore,
@@ -64,7 +63,7 @@ const CustomHeader = (props: PropsType) => {
   )
     ? 'SKT'
     : 'KT';
-
+  console.log(JSON.parse(JSON.stringify(locationData)));
   const handleClickChip = (chip: string) => {
     CategoryStore.setSelectedCategory(chip);
   };
@@ -91,7 +90,6 @@ const CustomHeader = (props: PropsType) => {
 
   return (
     <Wrap
-      isFixed={isFixed}
       screenWidth={ScreenSizeStore.screenWidth}
       isDarkTheme={isDarkTheme}
       height={isReviewPage || isExpanded ? 48 : 104}
@@ -154,13 +152,15 @@ export default observer(CustomHeader);
 const Wrap = styled('div', {
   shouldForwardProp: (prop: string) =>
     !['isFixed', 'screenWidth', 'isDarkTheme', 'height'].includes(prop),
-})<{ isFixed?: boolean; screenWidth: number; isDarkTheme: boolean; height: number }>(
-  ({ isFixed, screenWidth, isDarkTheme, height }) => ({
-    position: isFixed ? 'fixed' : undefined,
+})<{ screenWidth: number; isDarkTheme: boolean; height: number }>(
+  ({ screenWidth, isDarkTheme, height }) => ({
+    position: 'fixed',
+    top: 0,
     display: 'flex',
     flexDirection: 'column',
     borderBottom: `1px solid ${palette.grey[300]}`,
     width: screenWidth,
+    maxWidth: 430,
     height,
     backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
     zIndex: 20,

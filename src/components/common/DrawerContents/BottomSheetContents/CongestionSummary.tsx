@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
@@ -16,13 +15,13 @@ const CongestionSummary = () => {
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isAppeared = CustomDrawerStore.drawerStatus.expanded === 'appeared';
 
-  const handleShareClick = useCallback(() => {
-    CustomDrawerStore.setRndResizerFunctionConfig('share');
-  }, [CustomDrawerStore]);
+  const handleShareClick = () => {
+    console.log('clicked share button');
+  };
 
-  const handleNaviClick = useCallback(() => {
-    CustomDrawerStore.setRndResizerFunctionConfig('navi');
-  }, [CustomDrawerStore]);
+  const handleNaviClick = () => {
+    console.log('clicked navi button');
+  };
 
   return (
     <Wrap

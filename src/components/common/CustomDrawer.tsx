@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import SearchInput from './SearchInput';
-import CustomResizer from './DrawerContents/CustomResizer';
+import BottomSheet from './DrawerContents/BottomSheetContents';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 
@@ -32,7 +32,7 @@ const CustomDrawer = observer(() => {
               {CustomDrawerStore.drawerComponent}
             </SearchWrap>
           ) : (
-            <CustomResizer />
+            <BottomSheet />
           )}
         </>
       )}

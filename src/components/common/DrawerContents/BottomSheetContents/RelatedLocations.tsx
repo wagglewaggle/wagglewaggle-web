@@ -23,8 +23,10 @@ const RelatedLocations = observer((props: PropsType) => {
       ) : (
         <Wrap isDarkTheme={isDarkTheme}>
           <Header>주변 장소 현황</Header>
-          {relatedPlaces.map((place: PlaceDataType, idx: number) => (
-            <PlaceCard key={`related-locations-${idx}`} isResizer place={place} />
+          {relatedPlaces.map((place: PlaceDataType) => (
+            <PlaceWrap key={`related-locations-${place.name}`} className='related-locations-wrap'>
+              <PlaceCard fromBottomSheet place={place} />
+            </PlaceWrap>
           ))}
         </Wrap>
       )}
@@ -43,6 +45,9 @@ const Wrap = styled('div', {
   padding: '20px 24px 16px',
   width: 'calc(100% - 48px)',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+  '& .related-locations-wrap:last-of-type': {
+    marginBottom: 96,
+  },
 }));
 
 const Header = styled('div')({
@@ -50,4 +55,8 @@ const Header = styled('div')({
   width: '100%',
   fontSize: 18,
   fontWeight: 600,
+});
+
+const PlaceWrap = styled('div')({
+  width: '100%',
 });

@@ -124,6 +124,7 @@ export default List;
 const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
+  marginTop: 105,
   width: '100%',
   zIndex: 2,
 });

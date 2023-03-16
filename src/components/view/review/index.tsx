@@ -56,7 +56,7 @@ const Review = () => {
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
-      <CustomHeader isFixed />
+      <CustomHeader />
       <BlankArea />
       {ReviewStore.reviewDetail ? (
         <ReviewDetail />

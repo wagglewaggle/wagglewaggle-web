@@ -11,7 +11,7 @@ import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 
 const RealtimeReviews = () => {
   const { pathname, search } = useLocation();
-  const { ThemeStore, CustomDrawerStore, ReviewStore } = useStore().MobxStore;
+  const { ThemeStore, ReviewStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const isDarkTheme = ThemeStore.theme === 'dark';
   const placeName: string = decodeURI(search).replace('?name=', '');
@@ -24,7 +24,7 @@ const RealtimeReviews = () => {
     : 'KT';
 
   const handleOpenReviewPage = () => {
-    CustomDrawerStore.setRndResizerFunctionConfig('reviews', [placeName, placeIdx, navigate]);
+    navigate(`/review/${placeIdx}?name=${placeName}`);
   };
 
   const getReviews = useCallback(
