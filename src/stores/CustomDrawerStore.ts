@@ -8,7 +8,7 @@ export class CustomDrawerStore {
   titleTag: HTMLTitleElement | null = document.querySelector('title');
   searchValue: string = '';
   includesInputBox: boolean = true;
-  drawerStatus: DrawerStatusType = { expanded: 'removed', dragHeight: 0 };
+  drawerStatus: DrawerStatusType = { expanded: 'removed' };
 
   constructor() {
     makeAutoObservable(this);

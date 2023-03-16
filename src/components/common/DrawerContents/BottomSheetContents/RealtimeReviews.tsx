@@ -44,7 +44,7 @@ const RealtimeReviews = () => {
     <Wrap isDarkTheme={isDarkTheme}>
       <Header>
         <span>실시간 리뷰</span>
-        <ButtonArea onMouseDown={handleOpenReviewPage} onTouchEnd={handleOpenReviewPage}>
+        <ButtonArea onClick={handleOpenReviewPage}>
           더보기
           <CustomIconButton>
             <RightIcon />

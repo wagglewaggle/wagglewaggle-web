@@ -57,11 +57,11 @@ const CongestionSummary = () => {
       </IconsWrap>
       <Address>{locationData?.address ?? ''}</Address>
       <ButtonsWrap>
-        <CustomButton variant='share' onMouseDown={handleShareClick} onTouchEnd={handleShareClick}>
+        <CustomButton variant='share' onClick={handleShareClick}>
           <ShareIcon />
           공유하기
         </CustomButton>
-        <CustomButton variant='navi' onMouseDown={handleNaviClick} onTouchEnd={handleNaviClick}>
+        <CustomButton variant='navi' onClick={handleNaviClick}>
           <NaviIcon />
           길찾기
         </CustomButton>
@@ -78,7 +78,7 @@ const Wrap = styled('div', {
   ({ isFull, isDarkTheme, isAppeared }) => ({
     display: 'flex',
     flexDirection: 'column',
-    padding: '12px 24px 16px',
+    padding: '12px 24px 24px',
     width: 'calc(100% - 48px)',
     height: (isAppeared ? 204 : 172) + (isFull ? 8 : 0),
     backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,

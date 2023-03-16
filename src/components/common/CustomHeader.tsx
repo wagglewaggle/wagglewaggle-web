@@ -25,7 +25,7 @@ const LeftButton = (props: { backUrlInfo?: string; isExpanded?: boolean }) => {
 
   const handleRefresh = () => {
     if (!backUrlInfo) {
-      isExpanded && CustomDrawerStore.setDrawerStatus({ expanded: 'appeared', dragHeight: 196 });
+      isExpanded && CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
       return;
     }
     navigate(backUrlInfo);
@@ -63,7 +63,6 @@ const CustomHeader = (props: PropsType) => {
   )
     ? 'SKT'
     : 'KT';
-  console.log(JSON.parse(JSON.stringify(locationData)));
   const handleClickChip = (chip: string) => {
     CategoryStore.setSelectedCategory(chip);
   };

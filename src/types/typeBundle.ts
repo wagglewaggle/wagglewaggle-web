@@ -77,7 +77,6 @@ export interface LocationDataType {
 
 export interface DrawerStatusType {
   expanded: 'removed' | 'appeared' | 'expanded' | 'full';
-  dragHeight: number;
 }
 
 export interface FavoritePlaceType {

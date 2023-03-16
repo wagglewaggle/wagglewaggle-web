@@ -78,11 +78,7 @@ const DetailedCongestion = observer(() => {
       {(locationData?.cctvs || []).length > 0 && (
         <>
           <CustomDivider />
-          <CustomButton
-            isDarkTheme={isDarkTheme}
-            onMouseDown={handleOpenDialog}
-            onTouchEnd={handleOpenDialog}
-          >
+          <CustomButton isDarkTheme={isDarkTheme} onClick={handleOpenDialog}>
             CCTV
             <RightIcon />
           </CustomButton>

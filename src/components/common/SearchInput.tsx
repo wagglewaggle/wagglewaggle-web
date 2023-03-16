@@ -60,6 +60,7 @@ const SearchInput = observer(() => {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (CustomDrawerStore.searchValue && e.key === 'Enter') {
       handleWordClick(CustomDrawerStore.searchValue);
+      (e.target as HTMLInputElement).blur();
     }
   };
 

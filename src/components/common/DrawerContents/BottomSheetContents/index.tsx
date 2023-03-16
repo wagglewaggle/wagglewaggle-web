@@ -20,20 +20,22 @@ const BottomSheet = () => {
   const navigate = useNavigate();
   const { ThemeStore, CustomDrawerStore, UserNavigatorStore, LocationStore, ScreenSizeStore } =
     useStore().MobxStore;
-  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const isDarkTheme = ThemeStore.theme === 'dark';
   const { variant, drawerStatus } = CustomDrawerStore;
   const FULL_HEIGHT = -ScreenSizeStore.screenHeight;
-  const EXPANDED_HEIGHT = -ScreenSizeStore.screenHeight * 0.6;
+  const EXPANDED_HEIGHT = -Math.round(ScreenSizeStore.screenHeight * 0.6);
   const APPEARED_HEIGHT = -196;
   const CANCEL_HEIGHT = (Math.abs(FULL_HEIGHT) - Math.abs(EXPANDED_HEIGHT)) * 0.95;
-  const pathnameArr: string[] = pathname.split('/');
+  const pathnameArr = pathname.split('/');
   const sheetRef = useRef<HTMLDivElement>(null);
   const [relatedPlaces, setRelatedPlaces] = useState<string[]>([]);
   const [positionY, setPositionY] = useState<number>(APPEARED_HEIGHT);
+  const [dragEnabled, setDragEnabled] = useState<boolean>(true);
   const [{ y }, api] = useSpring(() => ({ y: APPEARED_HEIGHT }));
 
   const handleClose = useCallback(() => {
     navigate(`/${variant}`);
+    setPositionY(0);
     CustomDrawerStore.closeDrawer();
     CustomDrawerStore.setIncludesInput(true);
     LocationStore.setLocationData(null);
@@ -93,51 +95,72 @@ const BottomSheet = () => {
     return Math.abs(movementY) > CANCEL_HEIGHT;
   };
 
-  const makeLastMove = (offsetY: number) => {
-    const expandedMap: { [key: string]: ExpandedType } = {
-      0: 'removed',
-      [APPEARED_HEIGHT]: 'appeared',
-      [EXPANDED_HEIGHT]: 'expanded',
-      [FULL_HEIGHT]: 'full',
-    };
-    const newPositionY = Object.keys(expandedMap)
-      .map(Number)
-      .reduce((prev, curr) => (Math.abs(curr - offsetY) < Math.abs(prev - offsetY) ? curr : prev));
+  const setSheetStates = (newDrawerStats: ExpandedType, newPositionY: number) => {
+    CustomDrawerStore.setDrawerStatus({ expanded: newDrawerStats });
     api.start({ y: newPositionY });
     setPositionY(newPositionY);
-    CustomDrawerStore.setDrawerStatus({ expanded: expandedMap[newPositionY] });
+  };
+
+  const makeLastMove = (dy: number) => {
+    if (dy === 0) return;
+    const movingDown = dy === 1;
+    const { expanded } = drawerStatus;
+    if (expanded === 'appeared') {
+      setSheetStates(movingDown ? 'removed' : 'expanded', movingDown ? 0 : EXPANDED_HEIGHT);
+    }
+    if (expanded === 'expanded') {
+      setSheetStates(movingDown ? 'appeared' : 'full', movingDown ? APPEARED_HEIGHT : FULL_HEIGHT);
+    }
+    if (expanded === 'full') {
+      setSheetStates(movingDown ? 'expanded' : 'full', movingDown ? EXPANDED_HEIGHT : FULL_HEIGHT);
+    }
   };
 
   const bind = useDrag(
     (props) => {
-      const { offset, initial, direction, xy, last, cancel } = props;
-      const [, oy] = offset;
-      const [, iy] = initial;
+      if (pathnameArr.includes('review')) return;
+      const { direction, movement, last, cancel } = props;
       const [, dy] = direction;
-      const [, yy] = xy;
-      const movementY = yy - iy;
-      if (shouldBeCanceled(movementY, positionY, dy === 1)) {
+      const [, my] = movement;
+      if (shouldBeCanceled(my, positionY, dy === 1)) {
         cancel();
       }
       if (!last) {
-        shouldBeCanceled(movementY, positionY, dy === 1);
-        api.start({ y: positionY + movementY });
+        shouldBeCanceled(my, positionY, dy === 1);
+        api.start({ y: positionY + my });
         return;
       }
-      makeLastMove(oy);
+      makeLastMove(dy);
     },
-    { filterTaps: true, pointer: { touch: true } }
+    { threshold: 10, enabled: dragEnabled }
   );
 
   useEffect(() => {
-    api.start({ y: APPEARED_HEIGHT, config: { mass: 0.1, friction: 12, velocity: 180 } });
-  }, [api, APPEARED_HEIGHT]);
+    const refCurrent = sheetRef.current;
+
+    const preventDrag = () => {
+      const scrollPosition = refCurrent?.scrollTop;
+      if (typeof scrollPosition === 'number' && scrollPosition < 50) {
+        setDragEnabled(true);
+        return;
+      }
+      setDragEnabled(false);
+    };
+
+    refCurrent?.addEventListener('scroll', preventDrag);
+    return () => refCurrent?.removeEventListener('scroll', preventDrag);
+  }, []);
 
   useEffect(() => {
     sheetRef?.current?.scrollTo({ top: 0, behavior: 'smooth' });
-    if (drawerStatus.expanded !== 'removed') return;
-    handleClose();
-  }, [drawerStatus.expanded, handleClose]);
+    if (drawerStatus.expanded === 'appeared') {
+      api.start({ y: APPEARED_HEIGHT });
+      setPositionY(APPEARED_HEIGHT);
+    }
+    if (drawerStatus.expanded === 'removed') {
+      handleClose();
+    }
+  }, [api, APPEARED_HEIGHT, drawerStatus.expanded, handleClose]);
 
   useEffect(() => {
     initLocationData();
@@ -151,12 +174,12 @@ const BottomSheet = () => {
       {...bind()}
       style={{ x: '-50%', y }}
     >
+      {drawerStatus.expanded === 'appeared' && (
+        <Puller isDarkTheme={isDarkTheme}>
+          <PullerChip />
+        </Puller>
+      )}
       <SheetWrap isDarkTheme={isDarkTheme} expanded={drawerStatus.expanded} ref={sheetRef}>
-        {drawerStatus.expanded === 'appeared' && (
-          <Puller isDarkTheme={isDarkTheme}>
-            <PullerChip />
-          </Puller>
-        )}
         <CongestionSummary />
         <DetailedCongestion />
         <RealtimeReviews />
@@ -193,8 +216,9 @@ const SheetWrap = styled('div', {
   width: '100%',
   height: 'calc(100vh - 48px)',
   minHeight: '100vh',
-  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+  backgroundColor: palette.grey[200],
   overflow: `hidden ${expanded === 'full' ? 'scroll' : 'hidden'}`,
+  gap: 6,
 }));
 
 const PullerChip = styled('div')({
