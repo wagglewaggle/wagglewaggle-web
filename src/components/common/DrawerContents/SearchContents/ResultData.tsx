@@ -16,10 +16,14 @@ interface propsType {
 const ResultData = observer((props: propsType) => {
   const { placeData, searchWord } = props;
   const [resultData, setResultData] = useState<PlaceDataType[]>([]);
-  const [relatedData, setRelatedData] = useState<PlaceDataType[]>([]);
+  const [relatedData, setRelatedData] = useState<string[]>([]);
   const lottieContainer = useRef<HTMLDivElement>(null);
-  const { ScreenSizeStore, ThemeStore, CustomDrawerStore } = useStore().MobxStore;
+  const { ScreenSizeStore, ThemeStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;
+  const { placesData } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const relatedPlaces = placesData.filter((place: PlaceDataType) =>
+    relatedData.includes(place.name)
+  );
 
   const getSuggestionList = useCallback(async () => {
     setResultData(
@@ -52,7 +56,7 @@ const ResultData = observer((props: propsType) => {
       pushPlaceData(response.data.ktPlaces, newPlaces, newRelatedData);
       pushPlaceData(response.data.sktPlaces, newPlaces, newRelatedData);
       if (idx === resultData.length - 1) {
-        setRelatedData(newRelatedData);
+        setRelatedData(newPlaces);
       }
     });
   }, [resultData]);
@@ -112,7 +116,7 @@ const ResultData = observer((props: propsType) => {
               <Header>
                 <Title>관련 장소 현황</Title>
               </Header>
-              {relatedData.map((data: PlaceDataType, idx: number) => (
+              {relatedPlaces.map((data: PlaceDataType, idx: number) => (
                 <PlaceCard key={`related-data-${idx}`} place={data} />
               ))}
             </SubComponent>
@@ -134,6 +138,8 @@ const Wrap = styled('div', {
   padding: '5px 24px 35px',
   width: screenType === 'mobile' ? screenWidth - 48 : 352,
   minHeight: 'calc(100vh - 97px)',
+  maxHeight: 'calc(100vh - 97px)',
+  overflow: 'hidden auto',
 }));
 
 const Empty = styled('div')({

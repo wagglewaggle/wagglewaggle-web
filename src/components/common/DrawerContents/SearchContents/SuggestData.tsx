@@ -96,6 +96,8 @@ const Wrap = styled('div', {
   margin: '5px 0 35px',
   width: screenType === 'mobile' ? screenWidth : 400,
   minHeight: 'calc(100vh - 97px)',
+  maxHeight: 'calc(100vh - 97px)',
+  overflow: 'hidden auto',
 }));
 
 const ListWrap = styled('div')({
