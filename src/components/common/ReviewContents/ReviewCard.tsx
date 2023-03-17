@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Avatar, styled } from '@mui/material';
 import { palette } from 'constants/';
 import { ReviewType } from 'types/typeBundle';
+import { getTimeDiff } from 'util/';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
@@ -20,15 +21,6 @@ const ReviewCard = (props: PropsType) => {
   const handleClick = (review: ReviewType) => {
     if (!shouldIncludeOnClick) return;
     navigate(`${pathname}/${review.place.type}/${review.idx}`);
-  };
-
-  const getTimeDiff = (updatedDate: string) => {
-    const newTimePassed: number = Math.round(
-      (new Date().getTime() - new Date(updatedDate || '').getTime()) / 60000
-    );
-    return newTimePassed >= 60
-      ? `${Math.floor(newTimePassed / 60)}시간 전`
-      : `${newTimePassed}분 전`;
   };
 
   return (

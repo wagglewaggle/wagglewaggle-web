@@ -4,6 +4,7 @@ import { Button, styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
+import { getTimeDiff } from 'util/';
 import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import carIcon from 'assets/icons/car-icon.svg';
@@ -31,13 +32,8 @@ const DetailedCongestion = observer(() => {
   };
 
   useEffect(() => {
-    const newTimePassed: number = Math.round(
-      (new Date().getTime() - new Date(locationData?.population?.updatedDate || '').getTime()) /
-        60000
-    );
-    setTimePassed(
-      newTimePassed >= 60 ? `${Math.floor(newTimePassed / 60)}시간 전` : `${newTimePassed}분 전`
-    );
+    if (!locationData?.population?.updatedDate) return;
+    setTimePassed(getTimeDiff(locationData.population.updatedDate));
   }, [locationData]);
 
   return (
