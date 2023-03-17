@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
-import { symbols, locationNames } from 'constants/';
+import { symbolsComponents, locationNames } from 'constants/';
 import { CategoryType, FavoritePlaceType, PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
+import { getImageSymbol } from 'util/';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import { ReactComponent as CctvIcon } from 'assets/icons/drawer/cctv.svg';
@@ -42,28 +43,14 @@ const PlaceCard = observer((props: propsType) => {
     if (!place.categories) return;
     const categoryList: string[] = place.categories.map((category: CategoryType) => category.type);
     setCategories(categoryList.join(', '));
-    const addedSymbol: string[] = [];
-    primaryCategories.forEach((category: string) => {
-      if (addedSymbol.length > 0) return;
-      if (categoryList.includes(category)) {
-        addedSymbol.push(category);
-        setSymbol(category);
-      }
-    });
-    categoryList.forEach((category: string) => {
-      if (addedSymbol.length > 0) return;
-      addedSymbol.push(category);
-      setSymbol(category);
-    });
+    setSymbol(getImageSymbol(categoryList));
   }, [primaryCategories, place.categories]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme} onClick={handlePlaceCardClick}>
       <PlaceWrap>
         <PlaceLeft>
-          <PlaceImage>
-            <img src={symbols[symbol]} alt='category-symbol' />
-          </PlaceImage>
+          <PlaceImage>{symbolsComponents[symbol] ?? ''}</PlaceImage>
           <PlaceTitle>
             <PlaceName>{locationNames[place?.name || ''] || place?.name}</PlaceName>
             <PlaceCategory>{categories}</PlaceCategory>

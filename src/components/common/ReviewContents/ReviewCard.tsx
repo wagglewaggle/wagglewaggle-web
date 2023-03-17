@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Avatar, styled } from '@mui/material';
+import { styled } from '@mui/material';
+import ReviewCardHeader from './ReviewCardHeader';
 import { palette } from 'constants/';
 import { ReviewType } from 'types/typeBundle';
-import { getTimeDiff } from 'util/';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
@@ -25,13 +25,11 @@ const ReviewCard = (props: PropsType) => {
 
   return (
     <ReviewWrap isDetail={isDetail} onClick={() => handleClick(review)}>
-      <ReviewHeader>
-        <CustomAvatar alt='profile-pic' src={defaultPhoto} />
-        <WriterInfoWrap>
-          <span>{review.writer.nickname}</span>
-          <span>{`${getTimeDiff(review.updatedDate)} \u00B7 조회 ${review.view}`}</span>
-        </WriterInfoWrap>
-      </ReviewHeader>
+      <ReviewCardHeader
+        profilePhoto={defaultPhoto}
+        userName={review.writer.name}
+        updatedDate={review.updatedDate}
+      />
       <ReviewContent isDetail={isDetail}>{review.content}</ReviewContent>
       <IconsInfoWrap>
         <IconsWrap isPinned={review.isPin}>
@@ -57,34 +55,6 @@ const ReviewWrap = styled('div', {
   width: 'calc(100% - 48px)',
   gap: 8,
 }));
-
-const ReviewHeader = styled('div')({
-  display: 'flex',
-  height: 36,
-  gap: 8,
-});
-
-const CustomAvatar = styled(Avatar)({
-  width: 36,
-  height: 36,
-});
-
-const WriterInfoWrap = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  '& span:first-of-type': {
-    color: palette.black,
-    fontSize: 14,
-    fontWeight: 600,
-    lineHeight: '20px',
-  },
-  '& span:last-of-type': {
-    color: palette.grey[400],
-    fontSize: 12,
-    fontWeight: 500,
-  },
-});
 
 const ReviewContent = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDetail',

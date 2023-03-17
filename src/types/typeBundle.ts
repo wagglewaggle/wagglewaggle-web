@@ -96,12 +96,38 @@ export interface ReviewType {
   pinReviewPostCount: number;
   place: PlaceDataType;
   replyCount: number;
+  replies: ReplyType[];
   report: number;
   status: string;
   updatedDate: string;
   view: number;
   writer: WriterType;
   isPin: boolean;
+}
+
+export interface ReplyType {
+  content: string;
+  createdDate: string;
+  idx: number;
+  level: number;
+  levelReplies: string[];
+  mainReplyIdx: number;
+  report: number;
+  status: string;
+  updatedDate: string;
+  user: UserType;
+}
+
+export interface UserType {
+  createdDate: string;
+  email: string;
+  idx: number;
+  name: string;
+  nickname: string;
+  snsId: string;
+  snsType: 'KAKAO' | 'NAVER' | 'GOOGLE';
+  status: string;
+  updatedDate: string;
 }
 
 export interface ReviewDetailType {
@@ -112,7 +138,7 @@ export interface ReviewDetailType {
   isPin: boolean;
   pinReviewPostCount: number;
   place: PlaceDataType;
-  replies: string[];
+  replies: ReplyType[];
   replyCount: number;
   report: number;
   status: string;

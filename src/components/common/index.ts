@@ -11,6 +11,7 @@ export { default as Footer } from './Footer';
 export { default as CustomCloseIcon } from './CustomCloseIcon';
 export { default as ReviewList } from './ReviewContents/ReviewList';
 export { default as ReviewCard } from './ReviewContents/ReviewCard';
+export { default as ReplyCard } from './ReviewContents/ReplyCard';
 export { default as ReviewWriteButton } from './ReviewContents/ReviewWriteButton';
 export { SearchData } from './DrawerContents/SearchContents';
 export { SuggestData } from './DrawerContents/SearchContents';
