@@ -16,7 +16,7 @@ const RealtimeReviews = () => {
   const isDarkTheme = ThemeStore.theme === 'dark';
   const placeName: string = decodeURI(search).replace('?name=', '');
   const pathnameArr = pathname.split('/');
-  const placeIdx = Number(pathnameArr[pathnameArr.length - 1]);
+  const placeIdx = Number(pathnameArr[3]) || Number(pathnameArr[2]);
   const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
     locationNames[placeName] || placeName
   )
@@ -37,8 +37,9 @@ const RealtimeReviews = () => {
   );
 
   useEffect(() => {
+    if (!placeName) return;
     getReviews(placeIdx);
-  }, [getReviews, placeIdx]);
+  }, [getReviews, placeIdx, placeName]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>

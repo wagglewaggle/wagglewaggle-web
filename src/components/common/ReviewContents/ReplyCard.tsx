@@ -6,13 +6,14 @@ import defaultPhoto from 'assets/icons/register/default-photo.png';
 
 interface PropsType {
   reply: ReplyType;
+  isLast: boolean;
 }
 
 const ReplyCard = (props: PropsType) => {
-  const { reply } = props;
+  const { reply, isLast } = props;
 
   return (
-    <ReplyWrap>
+    <ReplyWrap isLast={isLast}>
       <ReviewCardHeader
         profilePhoto={defaultPhoto}
         userName={reply.user.name}
@@ -29,14 +30,17 @@ const ReplyCard = (props: PropsType) => {
 
 export default ReplyCard;
 
-const ReplyWrap = styled('div')({
+const ReplyWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isLast',
+})<{ isLast: boolean }>(({ isLast }) => ({
   display: 'flex',
   flexDirection: 'column',
   borderBottom: `1px solid ${palette.grey[300]}`,
   padding: '20px 24px',
+  marginBottom: isLast ? 56 : 0,
   width: 'calc(100% - 48px)',
   gap: 8,
-});
+}));
 
 const ReplyContent = styled('div')({
   display: '-webkit-box',

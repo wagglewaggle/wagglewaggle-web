@@ -34,8 +34,12 @@ const ReviewDetail = () => {
         {locationData?.name ?? ''}
       </PlaceTag>
       <ReviewCard review={reviewDetail as ReviewDetailType} isDetail />
-      {reviewDetail?.replies.map((reply: ReplyType) => (
-        <ReplyCard reply={reply} />
+      {(reviewDetail?.replies ?? []).map((reply: ReplyType, idx: number) => (
+        <ReplyCard
+          key={`reply-card-${reply.idx}`}
+          reply={reply}
+          isLast={idx === (reviewDetail?.replies.length ?? 0) - 1}
+        />
       ))}
       <ReviewDetailInput />
     </>
