@@ -18,8 +18,14 @@ type ExpandedType = 'removed' | 'appeared' | 'expanded' | 'full';
 const BottomSheet = () => {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
-  const { ThemeStore, CustomDrawerStore, UserNavigatorStore, LocationStore, ScreenSizeStore } =
-    useStore().MobxStore;
+  const {
+    ThemeStore,
+    CustomDrawerStore,
+    UserNavigatorStore,
+    LocationStore,
+    ScreenSizeStore,
+    ReviewStore,
+  } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const { variant, drawerStatus } = CustomDrawerStore;
   const FULL_HEIGHT = -ScreenSizeStore.screenHeight;
@@ -160,7 +166,8 @@ const BottomSheet = () => {
     if (drawerStatus.expanded === 'removed') {
       handleClose();
     }
-  }, [api, APPEARED_HEIGHT, drawerStatus.expanded, handleClose]);
+    ReviewStore.setWriteReviewButtonVisible(['expanded', 'full'].includes(drawerStatus.expanded));
+  }, [api, APPEARED_HEIGHT, drawerStatus.expanded, handleClose, ReviewStore]);
 
   useEffect(() => {
     initLocationData();

@@ -5,7 +5,7 @@ import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
-import { CustomDialog, CustomDrawer } from 'components/common';
+import { CustomDialog, CustomDrawer, ReviewWriteButton } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
 import { Login } from './components/view';
 import { CreateStore, RootStore } from 'stores';
@@ -130,6 +130,7 @@ const App = observer(() => {
               <Route path='/*' element={<PrivateRoutes />} />
             </Routes>
             <CustomDrawer />
+            <ReviewWriteButton />
           </BrowserRouter>
         </ServiceWrap>
         <CustomDialog />

@@ -69,7 +69,7 @@ const Review = () => {
 
 export default observer(Review);
 
-const Wrap = styled('div', {
+export const Wrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
 })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',

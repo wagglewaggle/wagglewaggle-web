@@ -21,14 +21,15 @@ interface PropsType {
 const LeftButton = (props: { backUrlInfo?: string; isExpanded?: boolean }) => {
   const { backUrlInfo, isExpanded } = props;
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { ReviewStore, CustomDrawerStore } = useStore().MobxStore;
 
   const handleRefresh = () => {
-    if (!backUrlInfo) {
+    if (!pathname.split('/').includes('review')) {
       isExpanded && CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
       return;
     }
-    navigate(backUrlInfo);
+    navigate((backUrlInfo as string) ?? -1);
     ReviewStore.initReviewDetail();
   };
 
@@ -52,6 +53,7 @@ const CustomHeader = (props: PropsType) => {
   } = useStore().MobxStore;
   const { pathname, search } = useLocation();
   const { locationData } = LocationStore;
+  const { headerTitleStatus } = ReviewStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isExpanded = ['expanded', 'full'].includes(CustomDrawerStore.drawerStatus.expanded);
   const isReviewPage = pathname.split('/').includes('review');
@@ -104,7 +106,7 @@ const CustomHeader = (props: PropsType) => {
                     : `/map/${placeIdx}${search}`
                 }
               />
-              {`${placeName} 실시간 리뷰`}
+              {headerTitleStatus.visible && headerTitleStatus.title}
             </SubHeader>
           ) : !isExpanded ? (
             <>

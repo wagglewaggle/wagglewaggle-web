@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { ReviewDetailType, ReviewType } from 'types/typeBundle';
-import { palette } from 'constants/';
+import { palette, locationNames } from 'constants/';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import ReviewCard from './ReviewCard';
@@ -16,7 +16,9 @@ interface PropsType {
 const ReviewList = (props: PropsType) => {
   const { reviews, shouldIncludeOnClick } = props;
   const { pathname } = useLocation();
-  const { ReviewStore } = useStore().MobxStore;
+  const { ReviewStore, LocationStore } = useStore().MobxStore;
+  const { locationData } = LocationStore;
+  const placeName = locationNames[locationData?.name ?? ''] || (locationData?.name ?? '');
 
   const getReviewDetail = async (type: string, placeIdx: string, postIdx: string) => {
     const response = await axiosRequest('get', `${type}/${placeIdx}/review-post/${postIdx}`);
@@ -33,6 +35,10 @@ const ReviewList = (props: PropsType) => {
     getReviewDetail(type, placeIdx, postIdx);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ReviewStore, pathname]);
+
+  useEffect(() => {
+    ReviewStore.setHeaderTitleStatus({ visible: true, title: `${placeName} 실시간 리뷰` });
+  }, [ReviewStore, placeName]);
 
   return (
     <ReviewsWrap shouldIncludeOnClick={shouldIncludeOnClick}>
