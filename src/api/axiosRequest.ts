@@ -30,10 +30,12 @@ const axiosRequest = async (
     async (err) => {
       const { errorCode } = err.response.data;
       if (errorCode === 'ERR_0006003') {
+        if (sessionStorage.getItem('@wagglewaggle_reissuing')) return;
         sessionStorage.setItem('@wagglewaggle_reissuing', 'true');
         await tokenAxiosInstance.post(`${SERVER_URL}/auth/reissue`, {
           refreshToken: localStorage.getItem('@wagglewaggle_refresh_token'),
         });
+        sessionStorage.removeItem('@wagglewaggle_reissuing');
       }
       return err;
     }
