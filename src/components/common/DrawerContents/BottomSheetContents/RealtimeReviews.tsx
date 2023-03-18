@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { IconButton, styled } from '@mui/material';
 import _ from 'lodash';
@@ -10,11 +10,12 @@ import axiosRequest from 'api/axiosRequest';
 import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 
 const RealtimeReviews = () => {
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
   const { ThemeStore, ReviewStore } = useStore().MobxStore;
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const isDarkTheme = ThemeStore.theme === 'dark';
-  const placeName: string = decodeURI(search).replace('?name=', '');
+  const placeName = searchParams.get('name') ?? '';
   const pathnameArr = pathname.split('/');
   const placeIdx = Number(pathnameArr[3]) || Number(pathnameArr[2]);
   const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(

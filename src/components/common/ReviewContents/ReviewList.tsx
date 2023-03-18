@@ -40,6 +40,10 @@ const ReviewList = (props: PropsType) => {
     ReviewStore.setHeaderTitleStatus({ visible: true, title: `${placeName} 실시간 리뷰` });
   }, [ReviewStore, placeName]);
 
+  useEffect(() => {
+    ReviewStore.setWriteReviewButtonVisible(true);
+  }, [ReviewStore]);
+
   return (
     <ReviewsWrap shouldIncludeOnClick={shouldIncludeOnClick}>
       {reviews.length === 0 ? (

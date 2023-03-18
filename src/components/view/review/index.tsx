@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { CustomHeader, ReviewList } from 'components/common';
@@ -10,11 +10,12 @@ import { LocationDataType } from 'types/typeBundle';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
 
 const Review = () => {
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
   const { LocationStore, ReviewStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const pathnameArr = pathname.split('/');
-  const placeName = decodeURI(search).replace('?name=', '');
+  const placeName = searchParams.get('name') ?? '';
   const placeIdx = pathnameArr[pathnameArr.length - 1];
   const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
     locationNames[placeName] || placeName

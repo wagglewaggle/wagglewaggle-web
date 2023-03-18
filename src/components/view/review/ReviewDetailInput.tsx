@@ -1,6 +1,6 @@
 import { useState, useRef, ChangeEvent, KeyboardEvent } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Input, IconButton, styled } from '@mui/material';
+import { TextField, IconButton, styled } from '@mui/material';
 import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
@@ -9,7 +9,7 @@ import { ReactComponent as SubmitIcon } from 'assets/icons/review/write-submit.s
 
 const ReviewDetailInput = () => {
   const [reviewInput, setReviewInput] = useState<string>('');
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [, , placeIdx, placeType, reviewPostIdx] = useLocation().pathname.split('/');
   const { ReviewStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
@@ -48,7 +48,7 @@ const ReviewDetailInput = () => {
     <Wrap isDarkTheme={isDarkTheme}>
       <CustomInput
         ref={inputRef}
-        disableUnderline
+        multiline
         placeholder='댓글을 입력해주세요.'
         value={reviewInput}
         onChange={handleChange}
@@ -75,15 +75,24 @@ const Wrap = styled('div', {
   width: 'calc(100% - 48px)',
   maxWidth: 382,
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+  gap: 16,
 }));
 
-const CustomInput = styled(Input)({
+const CustomInput = styled(TextField)({
   flex: 1,
-  height: 24,
-  color: palette.black,
-  fontSize: 14,
-  fontWeight: 400,
-  lineHeight: '20px',
+  height: 'fit-content',
+  '& textarea': {
+    color: palette.black,
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: '20px',
+  },
+  '& div': {
+    padding: 0,
+  },
+  '& fieldset': {
+    display: 'none',
+  },
 });
 
 const CustomIconButton = styled(IconButton)({

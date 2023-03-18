@@ -7,17 +7,19 @@ import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 
 const ReviewWriteButton = () => {
   const navigate = useNavigate();
-  const { search } = useLocation();
-  const { ReviewStore } = useStore().MobxStore;
+  const { pathname, search } = useLocation();
+  const { ReviewStore, ScreenSizeStore } = useStore().MobxStore;
+  const pathnameArr = pathname.split('/');
+  const placeIdx = pathnameArr[pathnameArr.length - 1];
 
   const handleClick = () => {
-    navigate(`/review/write${search}`);
+    navigate(`/review/write/${placeIdx}${search}`);
   };
 
   return (
     <>
       {ReviewStore.writeReviewButtonVisible && (
-        <Wrap onClick={handleClick}>
+        <Wrap onClick={handleClick} screenWidth={ScreenSizeStore.screenWidth}>
           <ChatIcon />
           리뷰쓰기
         </Wrap>
@@ -28,9 +30,11 @@ const ReviewWriteButton = () => {
 
 export default observer(ReviewWriteButton);
 
-const Wrap = styled('div')({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'screenWidth',
+})<{ screenWidth: number }>(({ screenWidth }) => ({
   position: 'fixed',
-  left: 'calc(50% + 144px)',
+  left: `calc(50% + ${screenWidth / 2 - 70}px)`,
   bottom: 58,
   display: 'flex',
   justifyContent: 'center',
@@ -45,8 +49,8 @@ const Wrap = styled('div')({
   backgroundColor: palette.violet,
   boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.3)',
   cursor: 'pointer',
-  transform: 'translateX(-50%)',
   zIndex: 100,
+  transform: 'translateX(-50%)',
   gap: 4,
   '& svg': {
     width: 20,
@@ -55,4 +59,4 @@ const Wrap = styled('div')({
   '& path': {
     fill: palette.white,
   },
-});
+}));

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { useSpring, a } from 'react-spring';
@@ -18,6 +18,7 @@ type ExpandedType = 'removed' | 'appeared' | 'expanded' | 'full';
 const BottomSheet = () => {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const {
     ThemeStore,
     CustomDrawerStore,
@@ -49,7 +50,7 @@ const BottomSheet = () => {
 
   const initLocationData = useCallback(async () => {
     if (search.length === 0) return;
-    const placeName: string = decodeURI(search).replace('?name=', '');
+    const placeName = searchParams.get('name') ?? '';
     LocationStore.setPlaceName(placeName);
     const requestType: string = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName
