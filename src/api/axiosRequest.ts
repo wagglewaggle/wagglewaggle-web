@@ -33,7 +33,9 @@ const axiosRequest = async (
         if (sessionStorage.getItem('@wagglewaggle_reissuing')) return;
         sessionStorage.setItem('@wagglewaggle_reissuing', 'true');
         await tokenAxiosInstance.post(`${SERVER_URL}/auth/reissue`, {
-          refreshToken: localStorage.getItem('@wagglewaggle_refresh_token'),
+          refreshToken:
+            localStorage.getItem('@wagglewaggle_refresh_token') ??
+            sessionStorage.getItem('@wagglewaggle_refresh_token'),
         });
         sessionStorage.removeItem('@wagglewaggle_reissuing');
       }
@@ -50,7 +52,10 @@ const axiosRequest = async (
         AuthStore.setAuthorized(true);
       }
       if (refreshToken) {
-        localStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
+        const webStorage = sessionStorage.getItem('@wagglewaggle_auto_login_checked')
+          ? localStorage
+          : sessionStorage;
+        webStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
       }
       return res;
     },

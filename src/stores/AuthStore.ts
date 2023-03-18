@@ -6,6 +6,7 @@ export class AuthStore {
   authorized: boolean = false;
   isLoggingIn: boolean = false;
   favorites: FavoritesType = { places: [] };
+  autoLoginChecked: boolean = true;
 
   constructor() {
     makeAutoObservable(this);
@@ -26,6 +27,16 @@ export class AuthStore {
 
   setAuthorized = (newStatus: boolean) => {
     this.authorized = newStatus;
+  };
+
+  initAutoLoginChecked = () => {
+    this.autoLoginChecked = false;
+  };
+
+  setAutoLoginChecked = () => {
+    this.autoLoginChecked = !this.autoLoginChecked;
+    if (!this.autoLoginChecked) return;
+    sessionStorage.setItem('@wagglewaggle_auto_login_checked', 'true');
   };
 
   setIsLoggingIn = (newStatus: boolean) => {

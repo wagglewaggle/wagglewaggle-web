@@ -1,10 +1,12 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import googleIcon from 'assets/icons/login/google.png';
 import kakaoIcon from 'assets/icons/login/kakao.png';
 import naverIcon from 'assets/icons/login/naver.png';
-import loginIllust from 'assets/icons/login/login-illust.png';
+import { ReactComponent as LoginIllust } from 'assets/icons/login/login-illust.svg';
+import { ReactComponent as CheckIcon } from 'assets/icons/login/check.svg';
 import { palette } from 'constants/';
 import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
@@ -14,6 +16,11 @@ const Login = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { AuthStore } = useStore().MobxStore;
+  const { autoLoginChecked } = AuthStore;
+
+  const handleAutoLoginClick = () => {
+    AuthStore.setAutoLoginChecked();
+  };
 
   const handleLoggedIn = useCallback(
     (userExists: boolean) => {
@@ -77,6 +84,10 @@ const Login = () => {
     handleLoggedIn(true);
   }, [AuthStore.authorized, handleLoggedIn]);
 
+  useEffect(() => {
+    AuthStore.initAutoLoginChecked();
+  }, [AuthStore]);
+
   return (
     <Wrap>
       <Header>
@@ -85,7 +96,7 @@ const Login = () => {
           {`지금 가려는 곳의 혼잡도가 궁금하다면\r\n와글와글에서 확인해보세요.`}
         </SubHeader>
       </Header>
-      <LoginImage src={loginIllust} alt='login-image' />
+      <CustomLoginIllust />
       <ButtonWrap variant='kakao' onClick={handleKakaoClick}>
         <CustomImgButton src={kakaoIcon} alt='kakao' />
         카카오로 로그인
@@ -98,11 +109,15 @@ const Login = () => {
         <CustomImgButton src={googleIcon} alt='google' />
         Google로 로그인
       </ButtonWrap>
+      <OptionWrap onClick={handleAutoLoginClick}>
+        <CustomCheckIcon autoLoginChecked={autoLoginChecked} />
+        자동 로그인
+      </OptionWrap>
     </Wrap>
   );
 };
 
-export default Login;
+export default observer(Login);
 
 const Wrap = styled('div')({
   display: 'flex',
@@ -132,7 +147,7 @@ const SubHeader = styled('div')({
   lineHeight: '20px',
 });
 
-const LoginImage = styled('img')({
+const CustomLoginIllust = styled(LoginIllust)({
   margin: '16px 0',
   width: '100%',
   height: 262,
@@ -146,7 +161,6 @@ const ButtonWrap = styled('div', {
   alignItems: 'center',
   border: `1px solid ${variant === 'google' ? palette.grey[400] : palette[variant]}`,
   borderRadius: 4,
-  marginBottom: variant === 'google' ? 20 : 0,
   width: '100%',
   height: 60,
   color: variant === 'naver' ? palette.white : palette.black,
@@ -162,3 +176,24 @@ const CustomImgButton = styled('img')({
   width: 36,
   height: 36,
 });
+
+const OptionWrap = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  margin: '4px 0 24px',
+  fontSize: 14,
+  fontWeight: 600,
+  lineHeight: '20px',
+  gap: 8,
+  cursor: 'pointer',
+});
+
+const CustomCheckIcon = styled(CheckIcon, {
+  shouldForwardProp: (prop: string) => prop !== 'autoLoginChecked',
+})<{ autoLoginChecked: boolean }>(({ autoLoginChecked }) => ({
+  width: 20,
+  height: 20,
+  path: {
+    fill: autoLoginChecked ? palette.violet : palette.grey[400],
+  },
+}));
