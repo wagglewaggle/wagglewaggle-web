@@ -84,7 +84,7 @@ const BottomSheet = () => {
       'get',
       `location/${districts[locationNames[LocationStore.placeName] || LocationStore.placeName]}`
     );
-    if (!response) return;
+    if (!response?.data?.ktPlaces || !response?.data?.sktPlaces) return;
     setRelatedPlaces(
       [...response.data.ktPlaces, ...response.data.sktPlaces]
         .filter((place: PlaceDataType) => place.name !== LocationStore.placeName)

@@ -53,7 +53,7 @@ const RealtimeReviews = () => {
           </CustomIconButton>
         </ButtonArea>
       </Header>
-      <ReviewList reviews={_.cloneDeep(ReviewStore.reviews).slice(0, 3)} />
+      <ReviewList reviews={_.cloneDeep(ReviewStore.reviews).slice(0, 3)} fromBottomSheet />
     </Wrap>
   );
 };

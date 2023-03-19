@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { styled } from '@mui/material';
+import { Divider, styled } from '@mui/material';
 import { useStore } from 'stores';
 import ReviewDetailInput from './ReviewDetailInput';
 import { ReviewCard, ReplyCard } from 'components/common';
@@ -10,10 +11,12 @@ import { getImageSymbol } from 'util/';
 
 const ReviewDetail = () => {
   const [symbol, setSymbol] = useState<string>('');
+  const [searchParams] = useSearchParams();
   const { ReviewStore, LocationStore } = useStore().MobxStore;
   const { reviewDetail } = ReviewStore;
-  const { placesData, locationData } = LocationStore;
+  const { placesData } = LocationStore;
   const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
+  const placeName = searchParams.get('name');
 
   useEffect(() => {
     ReviewStore.setWriteReviewButtonVisible(false);
@@ -22,18 +25,19 @@ const ReviewDetail = () => {
 
   useEffect(() => {
     const placeCategories = placesData
-      .find((data: PlaceDataType) => data.name === locationData?.name)
+      .find((data: PlaceDataType) => data.name === placeName)
       ?.categories?.map((category: CategoryType) => category.type);
     setSymbol(getImageSymbol(placeCategories ?? []) ?? '');
-  }, [placesData, locationData, primaryCategories]);
+  }, [placesData, placeName, primaryCategories]);
 
   return (
     <>
       <PlaceTag>
         {symbolsComponents[symbol] ?? ''}
-        {locationData?.name ?? ''}
+        {placeName}
       </PlaceTag>
       <ReviewCard review={reviewDetail as ReviewDetailType} isDetail />
+      <CustomDivider />
       {(reviewDetail?.replies ?? []).map((reply: ReplyType, idx: number) => (
         <ReplyCard
           key={`reply-card-${reply.idx}`}
@@ -72,4 +76,8 @@ const PlaceTag = styled('div')({
   '& path': {
     fill: palette.white,
   },
+});
+
+const CustomDivider = styled(Divider)({
+  border: `3px solid ${palette.grey[200]}`,
 });

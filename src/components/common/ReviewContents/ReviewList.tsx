@@ -11,10 +11,11 @@ import ReviewCard from './ReviewCard';
 interface PropsType {
   reviews: ReviewType[];
   shouldIncludeOnClick?: boolean;
+  fromBottomSheet?: boolean;
 }
 
 const ReviewList = (props: PropsType) => {
-  const { reviews, shouldIncludeOnClick } = props;
+  const { reviews, shouldIncludeOnClick, fromBottomSheet } = props;
   const { pathname } = useLocation();
   const { ReviewStore, LocationStore } = useStore().MobxStore;
   const { locationData } = LocationStore;
@@ -53,11 +54,12 @@ const ReviewList = (props: PropsType) => {
         </NoReviewWrap>
       ) : (
         <>
-          {reviews.map((review: ReviewType) => (
+          {reviews.map((review: ReviewType, idx: number) => (
             <ReviewCard
               key={`review-${review.idx}`}
               review={review}
               shouldIncludeOnClick={shouldIncludeOnClick}
+              disableBottom={fromBottomSheet && idx === reviews.length - 1}
             />
           ))}
         </>

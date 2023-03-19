@@ -11,32 +11,35 @@ interface PropsType {
   review: ReviewType;
   shouldIncludeOnClick?: boolean;
   isDetail?: boolean;
+  disableBottom?: boolean;
 }
 
 const ReviewCard = (props: PropsType) => {
-  const { review, shouldIncludeOnClick, isDetail } = props;
+  const { review, shouldIncludeOnClick, isDetail, disableBottom } = props;
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const { writer, updatedDate, content, pinReviewPostCount, replyCount, isPin, place, idx } =
+    review;
 
-  const handleClick = (review: ReviewType) => {
+  const handleClick = () => {
     if (!shouldIncludeOnClick) return;
-    navigate(`${pathname}/${review.place.type}/${review.idx}`);
+    navigate(`${pathname}/${place.type}/${idx}${search}`);
   };
 
   return (
-    <ReviewWrap isDetail={isDetail} onClick={() => handleClick(review)}>
+    <ReviewWrap isDetail={isDetail} disableBottom={disableBottom} onClick={handleClick}>
       <ReviewCardHeader
         profilePhoto={defaultPhoto}
-        userName={review.writer.name}
-        updatedDate={review.updatedDate}
+        userName={writer.name}
+        updatedDate={updatedDate}
       />
-      <ReviewContent isDetail={isDetail}>{review.content}</ReviewContent>
+      <ReviewContent isDetail={isDetail}>{content}</ReviewContent>
       <IconsInfoWrap>
-        <IconsWrap isPinned={review.isPin}>
-          <HeartIcon /> {String(review.pinReviewPostCount).padStart(2, '0')}
+        <IconsWrap isPinned={isPin}>
+          <HeartIcon /> {String(pinReviewPostCount).padStart(2, '0')}
         </IconsWrap>
         <IconsWrap>
-          <ChatIcon /> {String(review.replyCount).padStart(2, '0')}
+          <ChatIcon /> {String(replyCount).padStart(2, '0')}
         </IconsWrap>
       </IconsInfoWrap>
     </ReviewWrap>
@@ -46,11 +49,11 @@ const ReviewCard = (props: PropsType) => {
 export default ReviewCard;
 
 const ReviewWrap = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'isDetail',
-})<{ isDetail?: boolean }>(({ isDetail }) => ({
+  shouldForwardProp: (prop: string) => !['isDetail', 'disableBottom'].includes(prop),
+})<{ isDetail?: boolean; disableBottom?: boolean }>(({ isDetail, disableBottom }) => ({
   display: 'flex',
   flexDirection: 'column',
-  borderBottom: isDetail ? 'none' : `1px solid ${palette.grey[300]}`,
+  borderBottom: isDetail || disableBottom ? 'none' : `1px solid ${palette.grey[300]}`,
   padding: '20px 24px',
   width: 'calc(100% - 48px)',
   gap: 8,
