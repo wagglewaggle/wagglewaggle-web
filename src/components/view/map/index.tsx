@@ -1,11 +1,10 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import MapContent from './MapContent';
-import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
-import { PlaceDataType } from 'types/typeBundle';
+import { initPlaceData } from 'util/';
 
 declare global {
   interface Window {
@@ -48,28 +47,14 @@ const Map = () => {
     );
   };
 
-  const initPlaceData = useCallback(async () => {
-    const params = { populationSort: true };
-    const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-      'get',
-      'place',
-      params
-    );
-    if (!placeData) return;
-    LocationStore.setPlacesData([...placeData.data.list]);
-    [...placeData.data.list].forEach((data: PlaceDataType) => {
-      LocationStore.setCategories(data.name, data.categories);
-    });
-  }, [LocationStore]);
-
   useEffect(() => {
     document.body.setAttribute('style', `overflow-y:hidden`);
   }, [pathname]);
 
   useEffect(() => {
-    if (!AuthStore.authorized) return;
+    if (LocationStore.placesData.length !== 0 || !AuthStore.authorized) return;
     initPlaceData();
-  }, [AuthStore.authorized, initPlaceData]);
+  }, [LocationStore.placesData.length, AuthStore.authorized]);
 
   useEffect(() => {
     CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');

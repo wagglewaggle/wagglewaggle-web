@@ -1,11 +1,11 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import PlaceData from './PlaceData';
-import axiosRequest from 'api/axiosRequest';
 import { PlaceDataType } from 'types/typeBundle';
+import { initPlaceData } from 'util/';
 import { useStore } from 'stores';
 
 const List = observer(() => {
@@ -53,19 +53,19 @@ const List = observer(() => {
     LocationStore.setPlacesData(JSON.parse(JSON.stringify(newPlaceData)));
   };
 
-  const initPlaceData = useCallback(async () => {
-    const params = { populationSort: true };
-    const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-      'get',
-      'place',
-      params
-    );
-    if (!placeData) return;
-    LocationStore.setPlacesData([...placeData.data.list]);
-    [...placeData.data.list].forEach((data: PlaceDataType) => {
-      LocationStore.setCategories(data.name, data.categories);
-    });
-  }, [LocationStore]);
+  // const initPlaceData = useCallback(async () => {
+  //   const params = { populationSort: true };
+  //   const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
+  //     'get',
+  //     'place',
+  //     params
+  //   );
+  //   if (!placeData) return;
+  //   LocationStore.setPlacesData([...placeData.data.list]);
+  //   [...placeData.data.list].forEach((data: PlaceDataType) => {
+  //     LocationStore.setCategories(data.name, data.categories);
+  //   });
+  // }, [LocationStore]);
 
   useEffect(() => {
     document.body.setAttribute('style', `overflow-y:auto`);
@@ -75,7 +75,7 @@ const List = observer(() => {
     if (!AuthStore.authorized) return;
     initPlaceData();
     AuthStore.initializeFavorites();
-  }, [AuthStore, AuthStore.authorized, initPlaceData]);
+  }, [AuthStore, AuthStore.authorized]);
 
   useEffect(() => {
     CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
@@ -7,12 +7,13 @@ import ReviewDetail from './ReviewDetail';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { LocationDataType } from 'types/typeBundle';
+import { initPlaceData } from 'util/';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
 
 const Review = () => {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
-  const { LocationStore, ReviewStore, ThemeStore } = useStore().MobxStore;
+  const { LocationStore, ReviewStore, ThemeStore, AuthStore } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const pathnameArr = pathname.split('/');
   const placeName = searchParams.get('name') ?? '';
@@ -23,13 +24,13 @@ const Review = () => {
     ? 'SKT'
     : 'KT';
 
-  const getReviews = async () => {
+  const getReviews = useCallback(async () => {
     if (!requestType || !placeIdx) return;
     const response = await axiosRequest('get', `${requestType}/${placeIdx}/review-post`);
     ReviewStore.setReviews(response?.data.list);
-  };
+  }, [ReviewStore, placeIdx, requestType]);
 
-  const initLocationData = async () => {
+  const initLocationData = useCallback(async () => {
     LocationStore.setPlaceName(placeName);
     const response: { data: LocationDataType } | undefined = await axiosRequest(
       'get',
@@ -38,12 +39,16 @@ const Review = () => {
     if (!response) return;
     const { data } = response;
     LocationStore.setLocationData(data);
-  };
+  }, [LocationStore, placeName, placeIdx, requestType]);
 
   useEffect(() => {
     initLocationData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initLocationData]);
+
+  useEffect(() => {
+    if (LocationStore.placesData.length !== 0 || !AuthStore.authorized) return;
+    initPlaceData();
+  }, [AuthStore.authorized, LocationStore.placesData.length]);
 
   useEffect(() => {
     document.body.setAttribute('style', `overflow-y:auto`);
@@ -52,8 +57,7 @@ const Review = () => {
   useEffect(() => {
     if (ReviewStore.reviews.length > 0) return;
     getReviews();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ReviewStore]);
+  }, [ReviewStore, getReviews]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
