@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { IconButton, styled } from '@mui/material';
 import { CustomChips } from 'components/common';
@@ -52,12 +52,13 @@ const CustomHeader = (props: PropsType) => {
     ReviewStore,
   } = useStore().MobxStore;
   const { pathname, search } = useLocation();
+  const [searchParams] = useSearchParams();
   const { locationData } = LocationStore;
   const { headerTitleStatus } = ReviewStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isExpanded = ['expanded', 'full'].includes(CustomDrawerStore.drawerStatus.expanded);
   const isReviewPage = pathname.split('/').includes('review');
-  const placeName = locationNames[locationData?.name ?? ''] || (locationData?.name ?? '');
+  const placeName = searchParams.get('name') ?? '';
   const pathnameArr = pathname.split('/');
   const placeIdx = Number(pathnameArr[2]);
   const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(

@@ -110,7 +110,19 @@ export interface ReplyType {
   createdDate: string;
   idx: number;
   level: number;
-  levelReplies: string[];
+  levelReplies: RereplyType[];
+  mainReplyIdx: number;
+  report: number;
+  status: string;
+  updatedDate: string;
+  user: UserType;
+}
+
+export interface RereplyType {
+  content: string;
+  createdDate: string;
+  idx: number;
+  level: number;
   mainReplyIdx: number;
   report: number;
   status: string;

@@ -21,6 +21,7 @@ const ReviewDetail = () => {
   useEffect(() => {
     ReviewStore.setWriteReviewButtonVisible(false);
     ReviewStore.setHeaderTitleStatus({ visible: false });
+    ReviewStore.setReplyStatus({ writeMode: false });
   }, [ReviewStore]);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const ReviewDetail = () => {
           isLast={idx === (reviewDetail?.replies.length ?? 0) - 1}
         />
       ))}
-      <ReviewDetailInput />
+      {ReviewStore.replyStatus.writeMode && <ReviewDetailInput />}
     </>
   );
 };

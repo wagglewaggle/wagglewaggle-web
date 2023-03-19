@@ -6,11 +6,17 @@ type HeaderTitleStatusType = {
   title: string;
 };
 
+type ReplyStatusType = {
+  writeMode: boolean;
+  replyIdx?: number;
+};
+
 export class ReviewStore {
   reviews: ReviewType[] = [];
   reviewDetail: ReviewDetailType | null = null;
   writeReviewButtonVisible: boolean = false;
   headerTitleStatus: HeaderTitleStatusType = { visible: true, title: '' };
+  replyStatus: ReplyStatusType = { writeMode: false };
 
   constructor() {
     makeAutoObservable(this);
@@ -30,6 +36,10 @@ export class ReviewStore {
 
   setHeaderTitleStatus = (newStatus: Partial<HeaderTitleStatusType>) => {
     this.headerTitleStatus = { ...this.headerTitleStatus, ...newStatus };
+  };
+
+  setReplyStatus = (newStatus: ReplyStatusType) => {
+    this.replyStatus = newStatus;
   };
 
   initReviewDetail = () => {

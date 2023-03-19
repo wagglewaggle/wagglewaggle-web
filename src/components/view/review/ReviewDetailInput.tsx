@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent, KeyboardEvent } from 'react';
+import { useState, useRef, ChangeEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import { TextField, IconButton, styled } from '@mui/material';
 import axiosRequest from 'api/axiosRequest';
@@ -18,16 +18,12 @@ const ReviewDetailInput = () => {
     setReviewInput(e.target.value);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSubmit();
-    }
-  };
-
   const handleSubmit = async () => {
     const postResponse = await axiosRequest(
       'post',
-      `${placeType}/${placeIdx}/review-post/${reviewPostIdx}/reply`,
+      `${placeType}/${placeIdx}/review-post/${reviewPostIdx}/reply/${
+        ReviewStore.replyStatus.replyIdx ?? ''
+      }`,
       {
         content: reviewInput,
       }
@@ -40,6 +36,7 @@ const ReviewDetailInput = () => {
     );
     if (!getResponse?.data) return;
     ReviewStore.setReviewDetail(getResponse.data as ReviewDetailType);
+    ReviewStore.setReplyStatus({ writeMode: false });
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     inputRef.current?.blur();
   };
@@ -52,9 +49,8 @@ const ReviewDetailInput = () => {
         placeholder='댓글을 입력해주세요.'
         value={reviewInput}
         onChange={handleChange}
-        onKeyDown={handleKeyDown}
       />
-      <CustomIconButton onClick={handleSubmit}>
+      <CustomIconButton submittable={reviewInput.length > 0} onClick={handleSubmit}>
         <SubmitIcon />
       </CustomIconButton>
     </Wrap>
@@ -95,8 +91,16 @@ const CustomInput = styled(TextField)({
   },
 });
 
-const CustomIconButton = styled(IconButton)({
+const CustomIconButton = styled(IconButton, {
+  shouldForwardProp: (prop: string) => prop !== 'submittable',
+})<{ submittable: boolean }>(({ submittable }) => ({
   padding: 0,
   width: 24,
   height: 24,
-});
+  '& path': {
+    fill: submittable ? palette.white : palette.grey[500],
+  },
+  '& rect': {
+    fill: submittable ? palette.violet : palette.grey[300],
+  },
+}));

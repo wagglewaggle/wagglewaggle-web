@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material';
 import ReviewCardHeader from './ReviewCardHeader';
 import { palette } from 'constants/';
+import { useStore } from 'stores';
 import { ReviewType } from 'types/typeBundle';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
@@ -20,10 +21,16 @@ const ReviewCard = (props: PropsType) => {
   const { pathname, search } = useLocation();
   const { writer, updatedDate, content, pinReviewPostCount, replyCount, isPin, place, idx } =
     review;
+  const { ReviewStore } = useStore().MobxStore;
 
   const handleClick = () => {
     if (!shouldIncludeOnClick) return;
     navigate(`${pathname}/${place.type}/${idx}${search}`);
+  };
+
+  const handleWriteReplyClick = () => {
+    if (!isDetail) return;
+    ReviewStore.setReplyStatus({ writeMode: true });
   };
 
   return (
@@ -38,7 +45,7 @@ const ReviewCard = (props: PropsType) => {
         <IconsWrap isPinned={isPin}>
           <HeartIcon /> {String(pinReviewPostCount).padStart(2, '0')}
         </IconsWrap>
-        <IconsWrap>
+        <IconsWrap onClick={handleWriteReplyClick}>
           <ChatIcon /> {String(replyCount).padStart(2, '0')}
         </IconsWrap>
       </IconsInfoWrap>
@@ -72,6 +79,7 @@ const ReviewContent = styled('div', {
   lineHeight: '20px',
   overflow: isDetail ? 'unset' : 'hidden',
   textOverflow: isDetail ? 'unset' : 'ellipsis',
+  whiteSpace: 'pre-wrap',
   WebkitLineClamp: isDetail ? 'unset' : 3,
   WebkitBoxOrient: isDetail ? 'unset' : 'vertical',
 }));
@@ -90,6 +98,7 @@ const IconsWrap = styled('div', {
   fontWeight: 500,
   lineHeight: '16px',
   gap: 2,
+  cursor: 'pointer',
   '& path': {
     fill: isPinned ? palette.violet : palette.grey[400],
   },
