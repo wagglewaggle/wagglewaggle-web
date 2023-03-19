@@ -7,7 +7,7 @@ export class CustomDrawerStore {
   drawerComponent: JSX.Element | null = null;
   titleTag: HTMLTitleElement | null = document.querySelector('title');
   searchValue: string = '';
-  includesInputBox: boolean = true;
+  includesInputBox: boolean = false;
   drawerStatus: DrawerStatusType = { expanded: 'removed' };
 
   constructor() {
@@ -23,6 +23,7 @@ export class CustomDrawerStore {
   closeDrawer = () => {
     this.open = false;
     this.setDrawerStatus({ expanded: 'removed' });
+    this.includesInputBox = false;
   };
 
   setVariant = (newVariant: 'map' | 'list') => {

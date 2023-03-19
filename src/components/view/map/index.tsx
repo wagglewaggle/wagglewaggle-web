@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
@@ -17,13 +17,16 @@ const Map = () => {
   const { pathname, search } = useLocation();
   const { CustomDrawerStore, LocationStore, CustomDialogStore, AuthStore } = useStore().MobxStore;
 
-  const handleWordClick = (searchWord: string) => {
-    CustomDrawerStore.setSearchValue(searchWord);
-    CustomDrawerStore.openDrawer(
-      'map',
-      <ResultData placeData={LocationStore.placesData} searchWord={searchWord} />
-    );
-  };
+  const handleWordClick = useCallback(
+    (searchWord: string) => {
+      CustomDrawerStore.setSearchValue(searchWord);
+      CustomDrawerStore.openDrawer(
+        'map',
+        <ResultData placeData={LocationStore.placesData} searchWord={searchWord} />
+      );
+    },
+    [CustomDrawerStore, LocationStore.placesData]
+  );
 
   const handleLatestListChange = (newList: string[]) => {
     localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
@@ -35,6 +38,7 @@ const Map = () => {
 
   const handleSearchClick = () => {
     navigate('/map/search');
+    CustomDrawerStore.setIncludesInput(true);
     CustomDrawerStore.openDrawer(
       'map',
       <SearchData
@@ -67,19 +71,24 @@ const Map = () => {
   }, [CustomDrawerStore, search, pathname]);
 
   useEffect(() => {
-    const newDrawerState = pathname === '/map';
-    if (!newDrawerState) {
-      CustomDrawerStore.setIncludesInput(pathname === '/map/search');
+    if (pathname === '/map' && !search) return;
+    if (search) {
+      CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
+      CustomDrawerStore.openDrawer('map', <></>);
       return;
     }
-    CustomDrawerStore.closeDrawer();
-  }, [CustomDrawerStore, pathname]);
-
-  useEffect(() => {
-    const newDrawerState = search.length !== 0;
-    if (!newDrawerState) return;
-    CustomDrawerStore.openDrawer('map', <></>);
-  }, [CustomDrawerStore, search]);
+    CustomDrawerStore.setIncludesInput(true);
+    CustomDrawerStore.openDrawer(
+      'map',
+      <SearchData
+        initialBlockList={JSON.parse(
+          localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
+        )}
+        handleWordClick={handleWordClick}
+        handleLatestListChange={handleLatestListChange}
+      />
+    );
+  }, [CustomDrawerStore, pathname, search, handleWordClick]);
 
   return (
     <>

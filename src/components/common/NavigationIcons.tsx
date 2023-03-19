@@ -18,12 +18,14 @@ const NavigationIcons = () => {
     setFocusedItem('map');
     navigate('/map');
     CustomDrawerStore.setVariant('map');
+    CustomDrawerStore.closeDrawer();
   };
 
   const handleListButtonClick = () => {
     setFocusedItem('list');
     navigate('/list');
     CustomDrawerStore.setVariant('list');
+    CustomDrawerStore.closeDrawer();
   };
 
   useEffect(() => {

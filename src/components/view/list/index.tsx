@@ -28,6 +28,7 @@ const List = observer(() => {
 
   const handleSearchClick = () => {
     navigate('/list/search');
+    CustomDrawerStore.setIncludesInput(true);
     CustomDrawerStore.openDrawer(
       'list',
       <SearchData
@@ -52,20 +53,6 @@ const List = observer(() => {
   const handlePlaceDataChange = (newPlaceData: PlaceDataType[]) => {
     LocationStore.setPlacesData(JSON.parse(JSON.stringify(newPlaceData)));
   };
-
-  // const initPlaceData = useCallback(async () => {
-  //   const params = { populationSort: true };
-  //   const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-  //     'get',
-  //     'place',
-  //     params
-  //   );
-  //   if (!placeData) return;
-  //   LocationStore.setPlacesData([...placeData.data.list]);
-  //   [...placeData.data.list].forEach((data: PlaceDataType) => {
-  //     LocationStore.setCategories(data.name, data.categories);
-  //   });
-  // }, [LocationStore]);
 
   useEffect(() => {
     document.body.setAttribute('style', `overflow-y:auto`);
