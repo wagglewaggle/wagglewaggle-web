@@ -1,26 +1,32 @@
+import { useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import { PlaceStatus } from 'components/common';
+import { PlaceStatus, LinkCopyPopup } from 'components/common';
 import { useStore } from 'stores';
 import { palette, locationNames } from 'constants/';
+import { handleShareLinkClick } from 'util/';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import { ReactComponent as CctvIcon } from 'assets/icons/drawer/cctv.svg';
 import { ReactComponent as ShareIcon } from 'assets/icons/drawer/share.svg';
 import { ReactComponent as NaviIcon } from 'assets/icons/drawer/navi.svg';
+import linkCheckIcon from 'assets/icons/link-check-icon.svg';
 
 const CongestionSummary = () => {
+  const [linkCopied, setLinkCopied] = useState<boolean>(false);
+  const copyLinkRef = useRef<HTMLInputElement>(null);
   const { ThemeStore, LocationStore, CustomDrawerStore } = useStore().MobxStore;
   const { placeName, categories, locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isAppeared = CustomDrawerStore.drawerStatus.expanded === 'appeared';
-
-  const handleShareClick = () => {
-    console.log('clicked share button');
-  };
+  const searchName = locationNames[placeName ?? ''] ?? placeName ?? '';
 
   const handleNaviClick = () => {
-    console.log('clicked navi button');
+    if (!locationData?.x || !locationData?.y) return;
+    window.open(
+      `https://map.kakao.com/link/to/${searchName},${locationData.x},${locationData.y}`,
+      '_blank'
+    );
   };
 
   return (
@@ -37,7 +43,7 @@ const CongestionSummary = () => {
       )}
       <Header>
         <LocationWrap>
-          <Title>{locationNames?.[placeName ?? ''] ?? placeName}</Title>
+          <Title>{searchName}</Title>
           <Type>{categories?.[placeName ?? '']?.[0]?.type ?? ''}</Type>
         </LocationWrap>
         <StatusWrap>
@@ -56,16 +62,27 @@ const CongestionSummary = () => {
         </IconWrap>
       </IconsWrap>
       <Address>{locationData?.address ?? ''}</Address>
-      <ButtonsWrap>
-        <CustomButton variant='share' onClick={handleShareClick}>
-          <ShareIcon />
-          공유하기
-        </CustomButton>
-        <CustomButton variant='navi' onClick={handleNaviClick}>
-          <NaviIcon />
-          길찾기
-        </CustomButton>
-      </ButtonsWrap>
+      {linkCopied ? (
+        <LinkCopyPopup isDarkTheme={isDarkTheme}>
+          <img src={linkCheckIcon} alt='link-copy-check' />
+          링크가 복사되었습니다.
+        </LinkCopyPopup>
+      ) : (
+        <ButtonsWrap>
+          <CustomButton
+            variant='share'
+            onClick={() => handleShareLinkClick(copyLinkRef.current, setLinkCopied)}
+          >
+            <ShareIcon />
+            공유하기
+          </CustomButton>
+          <CustomButton variant='navi' onClick={handleNaviClick}>
+            <NaviIcon />
+            길찾기
+          </CustomButton>
+        </ButtonsWrap>
+      )}
+      <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />
     </Wrap>
   );
 };
@@ -189,3 +206,7 @@ const CustomButton = styled('button', {
     opacity: 0.9,
   },
 }));
+
+const HiddenLink = styled('input')({
+  display: 'none',
+});

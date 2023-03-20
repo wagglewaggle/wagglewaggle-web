@@ -16,3 +16,4 @@ export { default as ReviewWriteButton } from './ReviewContents/ReviewWriteButton
 export { SearchData } from './DrawerContents/SearchContents';
 export { SuggestData } from './DrawerContents/SearchContents';
 export { ResultData } from './DrawerContents/SearchContents';
+export { LinkCopyPopup } from './styledComponents';
