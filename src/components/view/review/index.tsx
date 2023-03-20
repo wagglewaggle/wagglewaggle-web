@@ -55,6 +55,10 @@ const Review = () => {
   }, [pathname]);
 
   useEffect(() => {
+    sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
+  }, []);
+
+  useEffect(() => {
     if (ReviewStore.reviews.length > 0) return;
     getReviews();
   }, [ReviewStore, getReviews]);

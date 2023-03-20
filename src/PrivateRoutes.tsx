@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Login, Register, List, Map, Review, Error } from './components/view';
 import ReviewWritePage from 'components/view/review/ReviewWritePage';
@@ -7,12 +7,16 @@ import { useStore } from 'stores';
 
 const PrivateRoutes = () => {
   const navigate = useNavigate();
+  const { pathname, search } = useLocation();
   const { AuthStore } = useStore().MobxStore;
 
   useEffect(() => {
     if (AuthStore.authorized || sessionStorage.getItem('@wagglewaggle_authorized')) return;
+    if (!sessionStorage.getItem('@wagglewaggle_navigate')) {
+      sessionStorage.setItem('@wagglewaggle_navigate', `${pathname}${search}`);
+    }
     navigate('/login');
-  }, [AuthStore.authorized, navigate]);
+  }, [AuthStore.authorized, navigate, pathname, search]);
 
   return (
     <Routes>

@@ -15,7 +15,7 @@ declare global {
 const Map = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
-  const { CustomDrawerStore, LocationStore, CustomDialogStore, AuthStore } = useStore().MobxStore;
+  const { CustomDrawerStore, LocationStore, AuthStore } = useStore().MobxStore;
 
   const handleWordClick = useCallback(
     (searchWord: string) => {
@@ -61,8 +61,8 @@ const Map = () => {
   }, [LocationStore.placesData.length, AuthStore.authorized]);
 
   useEffect(() => {
-    CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');
-  }, [CustomDialogStore]);
+    sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
+  }, []);
 
   useEffect(() => {
     if (!CustomDrawerStore.searchValue || !search) {

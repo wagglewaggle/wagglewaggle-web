@@ -24,7 +24,10 @@ const Login = () => {
 
   const handleLoggedIn = useCallback(
     (userExists: boolean) => {
-      navigate(`/${userExists ? 'map' : 'register'}`);
+      navigate(
+        sessionStorage.getItem('@wagglewaggle_navigate') ?? `/${userExists ? 'map' : 'register'}`
+      );
+      sessionStorage.removeItem('@wagglewaggle_navigate');
     },
     [navigate]
   );

@@ -65,8 +65,9 @@ const List = observer(() => {
   }, [AuthStore, AuthStore.authorized]);
 
   useEffect(() => {
+    if (!AuthStore.authorized) return;
     CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');
-  }, [CustomDialogStore]);
+  }, [AuthStore.authorized, CustomDialogStore]);
 
   useEffect(() => {
     const newDrawerState = pathname === '/list';
