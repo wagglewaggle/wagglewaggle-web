@@ -1,5 +1,6 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { TextField, styled } from '@mui/material';
 import { Wrap } from 'components/view/review';
 import { useStore } from 'stores';
@@ -11,7 +12,7 @@ const ReviewWritePage = () => {
   const [submittable, setSubmittable] = useState<boolean>(false);
   const [reviewInput, setReviewInput] = useState<string>('');
   const [searchParams] = useSearchParams();
-  const { ThemeStore, ReviewStore, ScreenSizeStore } = useStore().MobxStore;
+  const { ThemeStore, ReviewStore, ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const isDarkTheme = ThemeStore.theme === 'dark';
@@ -29,7 +30,11 @@ const ReviewWritePage = () => {
     setReviewInput(e.target.value);
   };
 
-  const handleSubmitClick = async () => {
+  const handleCloseDialog = () => {
+    CustomDialogStore.setOpen(false);
+  };
+
+  const handleSubmit = async () => {
     const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(placeName) ? 'SKT' : 'KT';
     const requestUrl = `${requestType}/${placeIdx}/review-post`;
     const postResponse = await axiosRequest('post', requestUrl, {
@@ -40,6 +45,22 @@ const ReviewWritePage = () => {
     ReviewStore.setReviews(getResponse?.data.list);
     setReviewInput('');
     navigate(`/review/${placeIdx}?name=${placeName}`);
+    handleCloseDialog();
+  };
+
+  const handleSubmitClick = () => {
+    CustomDialogStore.openNotificationDialog({
+      title: '작성완료',
+      content: '해당 게시물을 업로드 하시겠어요?',
+      leftButton: {
+        title: '취소',
+        handleClick: handleCloseDialog,
+      },
+      rightButton: {
+        title: '확인',
+        handleClick: handleSubmit,
+      },
+    });
   };
 
   useEffect(() => {
@@ -71,7 +92,7 @@ const ReviewWritePage = () => {
   );
 };
 
-export default ReviewWritePage;
+export default observer(ReviewWritePage);
 
 const HeaderWrap = styled('div', {
   shouldForwardProp: (prop: string) => !['width', ''].includes(prop),

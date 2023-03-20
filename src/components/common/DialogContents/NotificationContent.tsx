@@ -76,6 +76,7 @@ const CustomButton = styled('button', {
   borderBottomLeftRadius: isLeft || noLeftButton ? 8 : 0,
   borderBottomRightRadius: isLeft ? 0 : 8,
   width: '100%',
+  height: 52,
   color: isLeft ? palette.black : palette.white,
   fontSize: 14,
   fontWeight: 600,

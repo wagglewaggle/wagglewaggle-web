@@ -114,11 +114,14 @@ const CustomDialogWrap = styled(Dialog, {
   isDarkTheme: boolean;
 }>(({ width, height, variant, screenType, isDarkTheme }) => ({
   '& .MuiPaper-root': {
-    height: 492,
+    height: variant === 'noti' ? 'auto' : 492,
     backgroundColor: 'transparent',
     boxShadow: 'none',
     overflow: 'hidden',
-    maxHeight: `${height - (screenType === 'mobile' && variant === 'intro' ? 12 : 0)}px`,
+    maxHeight:
+      variant === 'noti'
+        ? 'auto'
+        : `${height - (screenType === 'mobile' && variant === 'intro' ? 12 : 0)}px`,
   },
   '& .MuiDialogContent-root': {
     padding: variant === 'noti' ? 0 : 'auto',

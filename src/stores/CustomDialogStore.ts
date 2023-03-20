@@ -3,6 +3,7 @@ import { AccidentType, CctvType, DialogVariantType, NotiDialogOptions } from 'ty
 
 export class CustomDialogStore {
   open: boolean = false;
+  openTimeout?: NodeJS.Timeout;
   variant: DialogVariantType = 'intro';
   accidentList: AccidentType[] = [];
   cctvList: CctvType[] = [];
@@ -16,16 +17,26 @@ export class CustomDialogStore {
     makeAutoObservable(this);
   }
 
+  clearTimeout = () => {
+    if (this.open && this.openTimeout) {
+      clearTimeout(this.openTimeout);
+    }
+  };
+
+  initVariables = () => {
+    this.accidentList = [];
+    this.cctvList = [];
+    this.notiOptions = {
+      title: '',
+      content: '',
+      rightButton: { title: '', handleClick: () => {} },
+    };
+  };
+
   setOpen = (newStatus: boolean) => {
     this.open = newStatus;
     if (!this.open) {
-      this.accidentList = [];
-      this.cctvList = [];
-      this.notiOptions = {
-        title: '',
-        content: '',
-        rightButton: { title: '', handleClick: () => {} },
-      };
+      this.openTimeout = setTimeout(this.initVariables, 1000);
     }
   };
 
@@ -33,17 +44,20 @@ export class CustomDialogStore {
     this.variant = 'accident';
     this.accidentList = newAccidentLists;
     this.open = true;
+    this.clearTimeout();
   };
 
   openCctvDialog = (newCctvLists: CctvType[]) => {
     this.variant = 'cctv';
     this.cctvList = newCctvLists;
     this.open = true;
+    this.clearTimeout();
   };
 
   openNotificationDialog = (options: NotiDialogOptions) => {
     this.variant = 'noti';
     this.open = true;
     this.notiOptions = options;
+    this.clearTimeout();
   };
 }
