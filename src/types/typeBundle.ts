@@ -171,6 +171,16 @@ interface WriterType {
   status: string;
 }
 
+export interface NotiDialogOptions {
+  title: string;
+  content: string;
+  subContent?: string;
+  leftButton?: { title: string; handleClick: () => void };
+  rightButton: { title: string; handleClick: () => void };
+}
+
+export type DialogVariantType = 'intro' | 'accident' | 'cctv' | 'noti';
+
 export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
 
 export type ScreenType = 'mobile' | 'tablet' | 'pc';

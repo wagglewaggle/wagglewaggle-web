@@ -1,11 +1,16 @@
 import { makeAutoObservable } from 'mobx';
-import { AccidentType, CctvType } from 'types/typeBundle';
+import { AccidentType, CctvType, DialogVariantType, NotiDialogOptions } from 'types/typeBundle';
 
 export class CustomDialogStore {
   open: boolean = false;
-  variant: 'intro' | 'accident' | 'cctv' = 'intro';
+  variant: DialogVariantType = 'intro';
   accidentList: AccidentType[] = [];
   cctvList: CctvType[] = [];
+  notiOptions: NotiDialogOptions = {
+    title: '',
+    content: '',
+    rightButton: { title: '', handleClick: () => {} },
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -16,6 +21,11 @@ export class CustomDialogStore {
     if (!this.open) {
       this.accidentList = [];
       this.cctvList = [];
+      this.notiOptions = {
+        title: '',
+        content: '',
+        rightButton: { title: '', handleClick: () => {} },
+      };
     }
   };
 
@@ -29,5 +39,11 @@ export class CustomDialogStore {
     this.variant = 'cctv';
     this.cctvList = newCctvLists;
     this.open = true;
+  };
+
+  openNotificationDialog = (options: NotiDialogOptions) => {
+    this.variant = 'noti';
+    this.open = true;
+    this.notiOptions = options;
   };
 }

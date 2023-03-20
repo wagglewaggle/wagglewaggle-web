@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Dialog, DialogTitle, DialogContent, IconButton, styled } from '@mui/material';
-import { IntroContent, AccidentContent, CctvContent } from './DialogContents';
+import { IntroContent, AccidentContent, CctvContent, NotificationContent } from './DialogContents';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 import Lottie from 'react-lottie-player';
-import { ScreenType } from 'types/typeBundle';
+import { ScreenType, DialogVariantType } from 'types/typeBundle';
 import logo from 'assets/icons/logo-filled-icon.svg';
 import closeIcon from 'assets/icons/close-icon.svg';
 import accidentIcon from 'assets/icons/accident-icon.svg';
@@ -73,19 +73,23 @@ const CustomDialog = observer(() => {
         variant={CustomDialogStore.variant}
         width={dialogWidth - (CustomDialogStore.variant === 'intro' ? 16 : 0)}
       >
-        <DialogTitle>
-          {CustomDialogStore.variant === 'intro' && <CustomIcon src={logo} alt='logo' />}
-          {CustomDialogStore.variant === 'accident' && (
-            <CustomIcon src={accidentIcon} alt='accident' />
-          )}
-        </DialogTitle>
+        {CustomDialogStore.variant !== 'noti' && (
+          <DialogTitle>
+            {CustomDialogStore.variant === 'intro' && <CustomIcon src={logo} alt='logo' />}
+            {CustomDialogStore.variant === 'accident' && (
+              <CustomIcon src={accidentIcon} alt='accident' />
+            )}
+          </DialogTitle>
+        )}
         <CustomContent width={dialogWidth} variant={CustomDialogStore.variant}>
           {CustomDialogStore.variant === 'intro' ? (
             <IntroContent />
           ) : CustomDialogStore.variant === 'accident' ? (
             <AccidentContent />
-          ) : (
+          ) : CustomDialogStore.variant === 'cctv' ? (
             <CctvContent />
+          ) : (
+            <NotificationContent />
           )}
         </CustomContent>
         {CustomDialogStore.variant === 'accident' && <AccidentEmpty isDarkTheme={isDarkTheme} />}
@@ -105,7 +109,7 @@ const CustomDialogWrap = styled(Dialog, {
 })<{
   width: number;
   height: number;
-  variant: 'intro' | 'accident' | 'cctv';
+  variant: DialogVariantType;
   screenType: ScreenType;
   isDarkTheme: boolean;
 }>(({ width, height, variant, screenType, isDarkTheme }) => ({
@@ -117,8 +121,12 @@ const CustomDialogWrap = styled(Dialog, {
     maxHeight: `${height - (screenType === 'mobile' && variant === 'intro' ? 12 : 0)}px`,
   },
   '& .MuiDialogContent-root': {
-    width: `${width - (variant === 'cctv' ? 48 : variant === 'intro' ? 56 : 40)}px`,
-    height: variant === 'cctv' ? 'fit-content' : 'skip',
+    padding: variant === 'noti' ? 0 : 'auto',
+    width:
+      variant === 'noti'
+        ? 311
+        : `${width - (variant === 'cctv' ? 48 : variant === 'intro' ? 56 : 40)}px`,
+    height: ['cctv', 'noti'].includes(variant) ? 'fit-content' : 'skip',
     overflow: 'auto',
     '& img': {
       filter: isDarkTheme ? 'none' : 'invert(1)',
@@ -141,7 +149,7 @@ const CustomDialogWrap = styled(Dialog, {
 
 const CloseButtonWrap = styled('div', {
   shouldForwardProp: (prop: string) => !['width', 'variant'].includes(prop),
-})<{ width: number; variant: 'intro' | 'accident' | 'cctv' }>(({ width, variant }) => ({
+})<{ width: number; variant: DialogVariantType }>(({ width, variant }) => ({
   padding: 0,
   width: `${width - (variant === 'intro' ? 8 : 0)}px`,
   textAlign: 'end',
@@ -159,12 +167,12 @@ const DialogPart = styled('div', {
   shouldForwardProp: (prop: string) => !['width', 'variant', 'isDarkTheme'].includes(prop),
 })<{
   isDarkTheme: boolean;
-  variant: 'intro' | 'accident' | 'cctv';
+  variant: DialogVariantType;
   width: number;
 }>(({ isDarkTheme, variant, width }) => ({
   borderRadius: 8,
   width: '100%',
-  height: '100%',
+  height: variant === 'noti' ? 'fit-content' : '100%',
   color: isDarkTheme ? palette.white : palette.black,
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   '& h2': {
@@ -185,7 +193,7 @@ const CustomContent = styled(DialogContent, {
   shouldForwardProp: (prop: string) => !['width', 'variant'].includes(prop),
 })<{
   width: number;
-  variant: 'intro' | 'accident' | 'cctv';
+  variant: DialogVariantType;
 }>(({ width, variant }) => ({
   position: 'relative',
   width: `${width - 48 - (variant === 'intro' ? 16 : 0)}px`,
