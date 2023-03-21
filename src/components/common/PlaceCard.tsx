@@ -32,6 +32,7 @@ const PlaceCard = observer((props: propsType) => {
     : false;
 
   const handlePlaceCardClick = () => {
+    CustomDrawerStore.setPlaceDataLoading(true);
     if (!fromBottomSheet) {
       CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
     }

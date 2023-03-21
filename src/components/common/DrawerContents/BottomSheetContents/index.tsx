@@ -66,6 +66,7 @@ const BottomSheet = () => {
       'get',
       `place/${requestType}/${placeId}`
     );
+    CustomDrawerStore.setPlaceDataLoading(false);
     if (!response) return;
     const { data } = response;
     LocationStore.setLocationData(data);

@@ -9,6 +9,7 @@ export class CustomDrawerStore {
   searchValue: string = '';
   includesInputBox: boolean = false;
   drawerStatus: DrawerStatusType = { expanded: 'removed' };
+  placeDataLoading: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -45,5 +46,9 @@ export class CustomDrawerStore {
 
   setDrawerStatus = (newStatus: Partial<DrawerStatusType>) => {
     this.drawerStatus = { ...this.drawerStatus, ...newStatus };
+  };
+
+  setPlaceDataLoading = (newStatus: boolean) => {
+    this.placeDataLoading = newStatus;
   };
 }
