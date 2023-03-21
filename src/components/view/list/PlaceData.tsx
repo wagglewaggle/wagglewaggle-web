@@ -6,6 +6,7 @@ import { PlaceCard, Footer } from 'components/common';
 import { useStore } from 'stores';
 import { CategoryType, PlaceDataType, ScreenType } from 'types/typeBundle';
 import { palette } from 'constants/';
+import _ from 'lodash';
 import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
 
 const useStyles = makeStyles(() => ({
@@ -69,7 +70,7 @@ const PlaceData = observer((props: propsType) => {
   }, [placeData]);
 
   useEffect(() => {
-    const newRenderData: PlaceDataType[] = JSON.parse(JSON.stringify(placeData));
+    const newRenderData: PlaceDataType[] = _.cloneDeep(placeData);
     setRenderData(
       newRenderData.filter((place: PlaceDataType) => {
         const categories: string[] = place.categories.map(
