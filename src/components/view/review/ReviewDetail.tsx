@@ -42,6 +42,7 @@ const ReviewDetail = () => {
       {(reviewDetail?.replies ?? []).map((reply: ReplyType, idx: number) => (
         <ReplyCard
           key={`reply-card-${reply.idx}`}
+          shortened
           reply={reply}
           isLast={idx === (reviewDetail?.replies.length ?? 0) - 1}
         />

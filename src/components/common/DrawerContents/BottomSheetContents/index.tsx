@@ -16,7 +16,7 @@ import { palette, locationNames, locationRequestTypes, districts } from 'constan
 type ExpandedType = 'removed' | 'appeared' | 'expanded' | 'full';
 
 const BottomSheet = () => {
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const {
@@ -49,8 +49,8 @@ const BottomSheet = () => {
   }, [navigate, variant, CustomDrawerStore, LocationStore]);
 
   const initLocationData = useCallback(async () => {
-    if (search.length === 0) return;
     const placeName = searchParams.get('name') ?? '';
+    if (!placeName || pathnameArr.includes('review')) return;
     LocationStore.setPlaceName(placeName);
     const requestType: string = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName
@@ -71,8 +71,7 @@ const BottomSheet = () => {
     const { data } = response;
     LocationStore.setLocationData(data);
     UserNavigatorStore.setDataLocation([data.x, data.y]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
+  }, [CustomDrawerStore, LocationStore, UserNavigatorStore, navigate, pathnameArr, searchParams]);
 
   const initRelatedLocations = useCallback(async () => {
     if (

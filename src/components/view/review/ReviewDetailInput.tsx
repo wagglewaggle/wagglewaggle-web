@@ -10,7 +10,7 @@ import { ReactComponent as SubmitIcon } from 'assets/icons/review/write-submit.s
 const ReviewDetailInput = () => {
   const [reviewInput, setReviewInput] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const [, , placeIdx, placeType, reviewPostIdx] = useLocation().pathname.split('/');
+  const pathnameArr = useLocation().pathname.split('/');
   const { ReviewStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
 
@@ -19,6 +19,10 @@ const ReviewDetailInput = () => {
   };
 
   const handleSubmit = async () => {
+    if (pathnameArr.includes('reply')) {
+      pathnameArr.splice(2, 1);
+    }
+    const [, , placeIdx, placeType, reviewPostIdx] = pathnameArr;
     const postResponse = await axiosRequest(
       'post',
       `${placeType}/${placeIdx}/review-post/${reviewPostIdx}/reply/${
@@ -46,6 +50,7 @@ const ReviewDetailInput = () => {
       <CustomInput
         ref={inputRef}
         multiline
+        autoFocus
         placeholder='댓글을 입력해주세요.'
         value={reviewInput}
         onChange={handleChange}

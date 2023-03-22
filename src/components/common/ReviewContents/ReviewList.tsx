@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
@@ -17,6 +17,7 @@ interface PropsType {
 const ReviewList = (props: PropsType) => {
   const { reviews, shouldIncludeOnClick, fromBottomSheet } = props;
   const { pathname } = useLocation();
+  const pathnameArr = pathname.split('/');
   const { ReviewStore, LocationStore } = useStore().MobxStore;
   const { locationData } = LocationStore;
   const placeName = locationNames[locationData?.name ?? ''] || (locationData?.name ?? '');
@@ -28,7 +29,11 @@ const ReviewList = (props: PropsType) => {
   };
 
   useEffect(() => {
-    const [, , placeIdx, type, postIdx] = pathname.split('/');
+    const pathnameArr = pathname.split('/');
+    if (pathnameArr.includes('reply')) {
+      pathnameArr.splice(2, 1);
+    }
+    const [, , placeIdx, type, postIdx] = pathnameArr;
     if (!type || !postIdx) {
       ReviewStore.initReviewDetail();
       return;
@@ -37,13 +42,17 @@ const ReviewList = (props: PropsType) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ReviewStore, pathname]);
 
-  useEffect(() => {
-    ReviewStore.setHeaderTitleStatus({ visible: true, title: `${placeName} 실시간 리뷰` });
-  }, [ReviewStore, placeName]);
+  useLayoutEffect(() => {
+    ReviewStore.setHeaderTitleStatus({
+      visible: pathnameArr.length < 4,
+      title: `${placeName} 실시간 리뷰`,
+    });
+  }, [ReviewStore, placeName, pathnameArr]);
 
   useEffect(() => {
-    ReviewStore.setWriteReviewButtonVisible(true);
-  }, [ReviewStore]);
+    if (!pathnameArr.includes('review')) return;
+    ReviewStore.setWriteReviewButtonVisible(pathnameArr.length < 4);
+  }, [ReviewStore, pathnameArr]);
 
   return (
     <ReviewsWrap shouldIncludeOnClick={shouldIncludeOnClick}>

@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { ReviewType, ReviewDetailType } from 'types/typeBundle';
+import { ReviewType, ReviewDetailType, ReplyType } from 'types/typeBundle';
 
 type HeaderTitleStatusType = {
   visible: boolean;
@@ -14,6 +14,7 @@ type ReplyStatusType = {
 export class ReviewStore {
   reviews: ReviewType[] = [];
   reviewDetail: ReviewDetailType | null = null;
+  selectedReply: ReplyType | null = null;
   writeReviewButtonVisible: boolean = false;
   headerTitleStatus: HeaderTitleStatusType = { visible: true, title: '' };
   replyStatus: ReplyStatusType = { writeMode: false };
@@ -28,6 +29,10 @@ export class ReviewStore {
 
   setReviewDetail = (newReview: ReviewDetailType) => {
     this.reviewDetail = newReview;
+  };
+
+  setSelectedReply = (newSelectedReply: ReplyType) => {
+    this.selectedReply = newSelectedReply;
   };
 
   setWriteReviewButtonVisible = (newStatus: boolean) => {

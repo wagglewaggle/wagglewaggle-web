@@ -14,6 +14,7 @@ import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 
 interface PropsType {
+  isReplyPage?: boolean;
   navigateToHome?: () => void;
   handleSearchClick?: () => void;
 }
@@ -41,7 +42,7 @@ const LeftButton = (props: { backUrlInfo?: string; isExpanded?: boolean }) => {
 };
 
 const CustomHeader = (props: PropsType) => {
-  const { navigateToHome, handleSearchClick } = props;
+  const { isReplyPage, navigateToHome, handleSearchClick } = props;
   const {
     ThemeStore,
     CustomDrawerStore,
@@ -100,13 +101,17 @@ const CustomHeader = (props: PropsType) => {
         <SubHeaderWrap>
           {!navigateToHome ? (
             <SubHeader>
-              <LeftButton
-                backUrlInfo={
-                  ReviewStore.reviewDetail
-                    ? `/review/${placeIdx}?name=${placeName}`
-                    : `/map/${placeIdx}${search}`
-                }
-              />
+              {isReplyPage ? (
+                <LeftButton />
+              ) : (
+                <LeftButton
+                  backUrlInfo={
+                    ReviewStore.reviewDetail
+                      ? `/review/${placeIdx}?name=${placeName}`
+                      : `/map/${placeIdx}${search}`
+                  }
+                />
+              )}
               {headerTitleStatus.visible && headerTitleStatus.title}
             </SubHeader>
           ) : !isExpanded ? (

@@ -25,10 +25,10 @@ const Review = () => {
     : 'KT';
 
   const getReviews = useCallback(async () => {
-    if (!requestType || !placeIdx) return;
+    if (!requestType || !placeIdx || pathnameArr.length > 3) return;
     const response = await axiosRequest('get', `${requestType}/${placeIdx}/review-post`);
     ReviewStore.setReviews(response?.data.list);
-  }, [ReviewStore, placeIdx, requestType]);
+  }, [ReviewStore, placeIdx, requestType, pathnameArr]);
 
   const initLocationData = useCallback(async () => {
     LocationStore.setPlaceName(placeName);
@@ -42,8 +42,9 @@ const Review = () => {
   }, [LocationStore, placeName, placeIdx, requestType]);
 
   useEffect(() => {
+    if (pathnameArr.length > 3) return;
     initLocationData();
-  }, [initLocationData]);
+  }, [initLocationData, pathnameArr]);
 
   useEffect(() => {
     if (LocationStore.placesData.length !== 0 || !AuthStore.authorized) return;
