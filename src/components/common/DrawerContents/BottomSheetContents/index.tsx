@@ -33,7 +33,6 @@ const BottomSheet = () => {
   const EXPANDED_HEIGHT = -Math.round(ScreenSizeStore.screenHeight * 0.6);
   const APPEARED_HEIGHT = -196;
   const CANCEL_HEIGHT = (Math.abs(FULL_HEIGHT) - Math.abs(EXPANDED_HEIGHT)) * 0.95;
-  const pathnameArr = pathname.split('/');
   const sheetRef = useRef<HTMLDivElement>(null);
   const [relatedPlaces, setRelatedPlaces] = useState<string[]>([]);
   const [positionY, setPositionY] = useState<number>(APPEARED_HEIGHT);
@@ -50,6 +49,7 @@ const BottomSheet = () => {
 
   const initLocationData = useCallback(async () => {
     const placeName = searchParams.get('name') ?? '';
+    const pathnameArr = pathname.split('/');
     if (!placeName || pathnameArr.includes('review')) return;
     LocationStore.setPlaceName(placeName);
     const requestType: string = locationRequestTypes.skt.includes(
@@ -71,7 +71,7 @@ const BottomSheet = () => {
     const { data } = response;
     LocationStore.setLocationData(data);
     UserNavigatorStore.setDataLocation([data.x, data.y]);
-  }, [CustomDrawerStore, LocationStore, UserNavigatorStore, navigate, pathnameArr, searchParams]);
+  }, [CustomDrawerStore, LocationStore, UserNavigatorStore, navigate, pathname, searchParams]);
 
   const initRelatedLocations = useCallback(async () => {
     if (
@@ -125,6 +125,7 @@ const BottomSheet = () => {
 
   const bind = useDrag(
     (props) => {
+      const pathnameArr = pathname.split('/');
       if (pathnameArr.includes('review')) return;
       const { direction, movement, last, cancel } = props;
       const [, dy] = direction;
