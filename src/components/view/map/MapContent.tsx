@@ -1,20 +1,20 @@
-import { useState, useLayoutEffect, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { useStore } from 'stores';
 import { PlaceDataType, CategoryType } from 'types/typeBundle';
-import { symbols, mapSelectedSymbols, geometry, locationRequestTypes, palette } from 'constants/';
+import { symbols, mapSelectedSymbols, geometry, palette } from 'constants/';
 import _ from 'lodash';
 
 const { kakao } = window;
-let map: any;
-let mainClusterer: any;
-let subClusterer: any;
 let overlay: any;
 const mapInfo: { lat: number; lng: number } = { lat: 0, lng: 0 };
 const MapContent = () => {
-  const [renderData, setRenderData] = useState<PlaceDataType[]>([]);
+  const [kakaoMap, setKakaoMap] = useState<any>(null);
+  const [allMarkers, setAllMarkers] = useState<any[]>([]);
+  const [allSelectedMarkers, setAllSelectedMarkers] = useState<any[]>([]);
+  const [markerNamesOnMap, setMarkerNamesOnMap] = useState<string[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -24,13 +24,6 @@ const MapContent = () => {
     useStore().MobxStore;
   const { drawerStatus } = CustomDrawerStore;
   const { locationData, placesData } = LocationStore;
-  const categories = (LocationStore.categories ?? [])?.[placeName];
-
-  const onDragEnd = useCallback(() => {
-    if (!map || !map.getDraggable()) return;
-    const center = map.getCenter();
-    [mapInfo.lat, mapInfo.lng] = [center.Ma, center.La];
-  }, []);
 
   const getSymbol = useCallback(
     (categories: CategoryType[]) => {
@@ -43,68 +36,75 @@ const MapContent = () => {
     [primaryCategories]
   );
 
-  const setMarkerOnMap = (
-    variant: 'selected' | 'place',
-    lat: number,
-    lng: number,
-    map: any,
-    name: string,
-    markerImage: string | null,
-    mainMarker?: boolean
-  ) => {
-    const markerSize = variant === 'selected' ? 48 : 24;
-    const kakaoMarkerSize = new kakao.maps.Size(markerSize, markerSize);
-    const marker = new kakao.maps.Marker({
-      image: markerImage && new kakao.maps.MarkerImage(markerImage, kakaoMarkerSize),
-      position: new kakao.maps.LatLng(lat + 0.0003, lng),
-      title: name,
-      clickable: !mainMarker,
-    });
-    marker.setMap(map);
-    kakao.maps.event.addListener(marker, 'click', () => {
-      const clickedPlaceData = placesData.find((place: PlaceDataType) => place.name === marker.Gb);
-      if (!clickedPlaceData) return;
-      CustomDrawerStore.setIncludesInput(false);
-      navigate(`/map/detail/${clickedPlaceData.idx}?name=${marker.Gb}`);
-    });
-    mainMarker && mainClusterer?.addMarkers([marker]);
-    !mainMarker && subClusterer?.addMarkers([marker]);
-  };
+  const setMarkerOnMap = useCallback(
+    (
+      variant: 'selected' | 'place',
+      lat: number,
+      lng: number,
+      name: string,
+      markerImage: string | null,
+      mainMarker?: boolean
+    ) => {
+      const markerSize = variant === 'selected' ? 48 : 24;
+      const kakaoMarkerSize = new kakao.maps.Size(markerSize, markerSize);
+      const marker = new kakao.maps.Marker({
+        image: markerImage && new kakao.maps.MarkerImage(markerImage, kakaoMarkerSize),
+        position: new kakao.maps.LatLng(lat + 0.0003, lng),
+        title: name,
+        clickable: !mainMarker,
+      });
+      kakao.maps.event.addListener(marker, 'click', () => {
+        const clickedPlaceData = placesData.find(
+          (place: PlaceDataType) => place.name === marker.Gb
+        );
+        if (!clickedPlaceData) return;
+        CustomDrawerStore.setIncludesInput(false);
+        navigate(`/map/detail/${clickedPlaceData.idx}?name=${marker.Gb}`);
+      });
+      return marker;
+    },
+    [CustomDrawerStore, navigate, placesData]
+  );
 
-  const getKakaoMap = () => {
+  const getKakaoMap = useCallback(() => {
     const [latitude, longitude] = UserNavigatorStore.dataLocation;
     const latOffset =
       (drawerStatus.expanded === 'expanded' ? 0.00001 : 0.0000035) * ScreenSizeStore.screenHeight;
-    map = new kakao.maps.Map(mapRef.current, {
+    const map = new kakao.maps.Map(mapRef.current, {
       center: new kakao.maps.LatLng(latitude - latOffset, longitude),
       level: 5,
       tileAnimation: false,
       speed: 3,
     });
-    mainClusterer = new kakao.maps.MarkerClusterer({ map });
-    subClusterer = new kakao.maps.MarkerClusterer({ map });
-    [mapInfo.lat, mapInfo.lng] = [latitude - latOffset, longitude];
-    const photoImage = mapSelectedSymbols?.[getSymbol(categories ?? [])] ?? null;
-    kakao.maps.event.addListener(map, 'dragend', onDragEnd);
-    if (!photoImage) return;
-    setMarkerOnMap('selected', latitude, longitude, map, placeName, photoImage, true);
-  };
+    setKakaoMap(map);
+  }, [ScreenSizeStore.screenHeight, UserNavigatorStore.dataLocation, drawerStatus.expanded]);
 
-  const setMapCenter = () => {
-    if (!map) return;
+  const setKakaoMapLocationInfo = useCallback(() => {
+    const [latitude, longitude] = UserNavigatorStore.dataLocation;
+    const latOffset =
+      (drawerStatus.expanded === 'expanded' ? 0.00001 : 0.0000035) * ScreenSizeStore.screenHeight;
+    [mapInfo.lat, mapInfo.lng] = [latitude - latOffset, longitude];
+  }, [ScreenSizeStore.screenHeight, UserNavigatorStore.dataLocation, drawerStatus.expanded]);
+
+  const setMapCenter = useCallback(() => {
     const [latitude, longitude] = UserNavigatorStore.dataLocation;
     const isExpanded = drawerStatus.expanded === 'expanded';
     const latOffset = (isExpanded ? 0.00001 : 0.0000035) * ScreenSizeStore.screenHeight;
-    map.setDraggable(!isExpanded);
-    map.setZoomable(!isExpanded);
-    map.setLevel(5);
-    map.setCenter(
+    kakaoMap.setDraggable(!isExpanded);
+    kakaoMap.setZoomable(!isExpanded);
+    kakaoMap.setLevel(5);
+    kakaoMap.panTo(
       new kakao.maps.LatLng(
         isExpanded ? latitude - latOffset : mapInfo.lat,
         isExpanded ? longitude : mapInfo.lng
       )
     );
-  };
+  }, [
+    ScreenSizeStore.screenHeight,
+    UserNavigatorStore.dataLocation,
+    drawerStatus.expanded,
+    kakaoMap,
+  ]);
 
   const processGeometryCoordinates = (
     coordinates: [number, number][][],
@@ -121,9 +121,9 @@ const MapContent = () => {
     overlay?.setMap(null);
     if (!locationData) return;
     const locationName = locationData.name;
-    if (locationRequestTypes.skt.includes(placeName)) return;
     const coordinates: [number, number][][] | [number, number][][][] =
-      geometry[locationName].coordinates;
+      geometry?.[locationName]?.coordinates;
+    if (!coordinates) return;
     const geometryType: 'Polygon' | 'MultiPolygon' = geometry[locationName].type;
     const polygonPath: [number, number][] = [];
     if (geometryType === 'Polygon') {
@@ -142,52 +142,98 @@ const MapContent = () => {
       fillColor: palette.red,
       fillOpacity: 0.4,
     });
-  }, [locationData, placeName]);
+    overlay.setMap(kakaoMap);
+  }, [locationData, kakaoMap]);
 
-  useLayoutEffect(() => {
-    getKakaoMap();
-    highlightMap();
-    overlay?.setMap(map);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [UserNavigatorStore.dataLocation]);
+  const setMapOpacityOverlay = useCallback(() => {
+    if (!kakaoMap) return;
+    kakaoMap.setMaxLevel(10);
+    new kakao.maps.Circle({
+      center: new kakao.maps.LatLng(37.625638, 127.038941),
+      radius: 1000000,
+      fillColor: palette.white,
+      fillOpacity: 0.4,
+    }).setMap(kakaoMap);
+  }, [kakaoMap]);
 
   useEffect(() => {
-    setRenderData(placesData);
-  }, [placesData]);
+    if (!kakaoMap) {
+      getKakaoMap();
+    }
+    setKakaoMapLocationInfo();
+    highlightMap();
+  }, [
+    kakaoMap,
+    UserNavigatorStore.dataLocation,
+    highlightMap,
+    getKakaoMap,
+    setKakaoMapLocationInfo,
+  ]);
+
+  useEffect(() => {
+    if (!kakaoMap) return;
+    setMapOpacityOverlay();
+  }, [kakaoMap, setMapOpacityOverlay]);
+
+  useEffect(() => {
+    if (allMarkers.length > 0) return;
+    setAllMarkers(
+      placesData.map((place: PlaceDataType) => {
+        const { name, categories, x, y } = place;
+        return setMarkerOnMap('place', x, y, name, symbols[getSymbol(categories)]);
+      })
+    );
+    setAllSelectedMarkers(
+      placesData.map((place: PlaceDataType) => {
+        const { name, categories, x, y } = place;
+        return setMarkerOnMap('selected', x, y, name, mapSelectedSymbols[getSymbol(categories)]);
+      })
+    );
+  }, [allMarkers, placesData, getSymbol, setMarkerOnMap]);
 
   useEffect(() => {
     const newRenderData: PlaceDataType[] = _.cloneDeep(placesData);
-    setRenderData(
-      newRenderData.filter((place: PlaceDataType) => {
-        const categories: string[] = place.categories.map(
-          (category: CategoryType) => category.type
-        );
-        return (
-          CategoryStore.selectedCategory === '전체' ||
-          categories.includes(CategoryStore.selectedCategory)
-        );
-      })
+    setMarkerNamesOnMap(
+      newRenderData
+        .filter(
+          (place: PlaceDataType) =>
+            CategoryStore.selectedCategory === '전체' ||
+            place.categories
+              .map((category: CategoryType) => category.type)
+              .includes(CategoryStore.selectedCategory)
+        )
+        .map((place: PlaceDataType) => place.name)
     );
   }, [placesData, CategoryStore.selectedCategory]);
 
   useEffect(() => {
     if (drawerStatus.expanded !== 'removed') return;
-    mainClusterer?.clear();
-    subClusterer?.clear();
     overlay?.setMap(null);
-    renderData.forEach((place: PlaceDataType) => {
-      const { name, categories, x, y } = place;
-      setMarkerOnMap('place', x, y, map, name, symbols[getSymbol(categories)]);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drawerStatus.expanded, renderData, getSymbol]);
+    allSelectedMarkers.forEach((marker: any) => marker.setMap(null));
+  }, [drawerStatus.expanded, allSelectedMarkers]);
 
   useEffect(() => {
-    if (!['expanded', 'appeared'].includes(drawerStatus.expanded)) return;
-    if (CustomDrawerStore.placeDataLoading) return;
+    if (!kakaoMap) return;
+    allMarkers.forEach((marker: any) => {
+      if (!markerNamesOnMap.includes(marker.Gb) || marker.Gb === placeName) {
+        marker.setMap(null);
+        return;
+      }
+      marker.setMap(kakaoMap);
+    });
+    allSelectedMarkers.forEach((marker: any) => {
+      if (marker.Gb !== placeName) {
+        marker.setMap(null);
+        return;
+      }
+      marker.setMap(kakaoMap);
+    });
+  }, [allMarkers, allSelectedMarkers, markerNamesOnMap, placeName, kakaoMap]);
+
+  useEffect(() => {
+    if (!kakaoMap || !['expanded', 'appeared'].includes(drawerStatus.expanded)) return;
     setMapCenter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drawerStatus.expanded, CustomDrawerStore.placeDataLoading]);
+  }, [kakaoMap, drawerStatus.expanded, setMapCenter]);
 
   return (
     <Wrap top={['removed', 'appeared'].includes(drawerStatus.expanded) ? 105 : 48}>
