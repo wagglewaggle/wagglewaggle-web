@@ -17,3 +17,4 @@ export { SearchData } from './DrawerContents/SearchContents';
 export { SuggestData } from './DrawerContents/SearchContents';
 export { ResultData } from './DrawerContents/SearchContents';
 export { LinkCopyPopup } from './styledComponents';
+export { default as LeftButton } from './HeaderContents/LeftButton';

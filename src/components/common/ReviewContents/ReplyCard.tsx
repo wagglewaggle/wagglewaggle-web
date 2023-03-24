@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material';
 import ReviewCardHeader from './ReviewCardHeader';
 import { palette } from 'constants/';
@@ -37,21 +37,13 @@ const ReplyCardContent = (props: ContentType) => {
     userName,
     updatedDate,
     content,
-    isReplyPage,
   } = props;
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
   const { ReviewStore } = useStore().MobxStore;
 
   const handleWriteRereplyClick = () => {
     if (isRereply) return;
     ReviewStore.setSelectedReply(reply);
     ReviewStore.setReplyStatus({ writeMode: true, replyIdx: idx });
-    const pathnameArr = pathname.split('/');
-    if (isReplyPage) return;
-    pathnameArr.splice(2, 0, 'reply');
-    pathnameArr.push(String(reply.idx));
-    navigate(pathnameArr.join('/'));
   };
 
   return (
@@ -68,19 +60,15 @@ const ReplyCardContent = (props: ContentType) => {
 
 const ReplyCard = (props: PropsType) => {
   const { reply, shortened, isLast, isReplyPage } = props;
+  const { pathname, search } = useLocation();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const { ReviewStore } = useStore().MobxStore;
   const { user, updatedDate, content, levelReplies, idx } = reply;
   const rereplies = levelReplies.slice(0, shortened ? 3 : levelReplies.length);
 
   const handleShowMoreClick = () => {
     ReviewStore.setSelectedReply(reply);
-    const pathnameArr = pathname.split('/');
-    if (isReplyPage) return;
-    pathnameArr.splice(2, 0, 'reply');
-    pathnameArr.push(String(reply.idx));
-    navigate(pathnameArr.join('/'));
+    navigate(`${pathname}${search}`);
   };
 
   return (
@@ -153,6 +141,7 @@ const ShowMoreButton = styled('button')({
   borderBottom: `1px solid ${palette.grey[300]}`,
   width: '100%',
   height: 52,
+  minHeight: 52,
   backgroundcolor: palette.grey[200],
   color: palette.black,
   fontSize: 14,

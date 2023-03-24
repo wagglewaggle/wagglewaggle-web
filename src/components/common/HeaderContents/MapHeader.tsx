@@ -38,15 +38,17 @@ const MapHeader = (props: PropsType) => {
     <>
       {!isExpanded ? (
         <>
-          <Logo onClick={navigateToHome} />
           <SubHeader>
+            <Logo onClick={navigateToHome} />
+          </SubHeader>
+          <IconButtonsWrap>
             <CustomIconButton onClick={handleSearchClick}>
               <SearchIcon />
             </CustomIconButton>
             <CustomIconButton>
               <PersonIcon />
             </CustomIconButton>
-          </SubHeader>
+          </IconButtonsWrap>
         </>
       ) : (
         <>
@@ -72,5 +74,10 @@ const SubHeader = styled('div')({
   fontSize: 18,
   fontWeight: 600,
   lineHeight: '24px',
+  gap: 8,
+});
+
+const IconButtonsWrap = styled('div')({
+  display: 'flex',
   gap: 8,
 });

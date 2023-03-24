@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { Divider, styled } from '@mui/material';
+import { Drawer, Divider, styled } from '@mui/material';
 import { useStore } from 'stores';
 import ReviewDetailInput from './ReviewDetailInput';
-import { ReviewCard, ReplyCard } from 'components/common';
+import { ReviewCard, ReplyCard, CustomHeader } from 'components/common';
 import { ReviewDetailType, PlaceDataType, CategoryType, ReplyType } from 'types/typeBundle';
 import { palette, symbolsComponents } from 'constants/';
 import { getImageSymbol } from 'util/';
@@ -17,6 +17,10 @@ const ReviewDetail = () => {
   const { placesData } = LocationStore;
   const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
   const placeName = searchParams.get('name');
+
+  const handleCloseDrawer = () => {
+    ReviewStore.setReviewDetail(null);
+  };
 
   useEffect(() => {
     ReviewStore.setWriteReviewButtonVisible(false);
@@ -32,7 +36,13 @@ const ReviewDetail = () => {
   }, [placesData, placeName, primaryCategories]);
 
   return (
-    <>
+    <ReviewDetailDrawer
+      open={!!ReviewStore.reviewDetail}
+      anchor='right'
+      onClose={handleCloseDrawer}
+    >
+      <CustomHeader />
+      <BlankArea />
       <PlaceTag>
         {symbolsComponents[symbol] ?? ''}
         {placeName}
@@ -48,11 +58,22 @@ const ReviewDetail = () => {
         />
       ))}
       {ReviewStore.replyStatus.writeMode && <ReviewDetailInput />}
-    </>
+    </ReviewDetailDrawer>
   );
 };
 
 export default observer(ReviewDetail);
+
+const ReviewDetailDrawer = styled(Drawer)({
+  '& .MuiPaper-root': {
+    width: '100%',
+    maxWidth: 430,
+  },
+});
+
+const BlankArea = styled('div')({
+  marginTop: 49,
+});
 
 const PlaceTag = styled('div')({
   display: 'flex',

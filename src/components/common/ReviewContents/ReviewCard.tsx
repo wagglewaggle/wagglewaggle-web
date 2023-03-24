@@ -3,7 +3,8 @@ import { styled } from '@mui/material';
 import ReviewCardHeader from './ReviewCardHeader';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
-import { ReviewType } from 'types/typeBundle';
+import axiosRequest from 'api/axiosRequest';
+import { ReviewType, ReviewDetailType } from 'types/typeBundle';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
@@ -17,15 +18,24 @@ interface PropsType {
 
 const ReviewCard = (props: PropsType) => {
   const { review, shouldIncludeOnClick, isDetail, disableBottom } = props;
-  const navigate = useNavigate();
   const { pathname, search } = useLocation();
+  const navigate = useNavigate();
+  const { ReviewStore } = useStore().MobxStore;
+  if (!review) return <></>;
   const { writer, updatedDate, content, pinReviewPostCount, replyCount, isPin, place, idx } =
     review;
-  const { ReviewStore } = useStore().MobxStore;
+
+  const getReviewDetail = async (type: string, placeIdx: string, postIdx: number) => {
+    const response = await axiosRequest('get', `${type}/${placeIdx}/review-post/${postIdx}`);
+    if (!response?.data) return;
+    ReviewStore.setReviewDetail(response.data as ReviewDetailType);
+  };
 
   const handleClick = () => {
     if (!shouldIncludeOnClick) return;
-    navigate(`${pathname}/${place.type}/${idx}${search}`);
+    const pathnameArr = pathname.split('/');
+    getReviewDetail(place.type, pathnameArr[pathnameArr.length - 1], idx);
+    navigate(`${pathname}${search}`);
   };
 
   const handleWriteReplyClick = () => {

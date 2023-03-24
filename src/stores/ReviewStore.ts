@@ -27,11 +27,11 @@ export class ReviewStore {
     this.reviews = reviews;
   };
 
-  setReviewDetail = (newReview: ReviewDetailType) => {
+  setReviewDetail = (newReview: ReviewDetailType | null) => {
     this.reviewDetail = newReview;
   };
 
-  setSelectedReply = (newSelectedReply: ReplyType) => {
+  setSelectedReply = (newSelectedReply: ReplyType | null) => {
     this.selectedReply = newSelectedReply;
   };
 
@@ -45,9 +45,5 @@ export class ReviewStore {
 
   setReplyStatus = (newStatus: ReplyStatusType) => {
     this.replyStatus = newStatus;
-  };
-
-  initReviewDetail = () => {
-    this.reviewDetail = null;
   };
 }

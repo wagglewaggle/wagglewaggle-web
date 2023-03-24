@@ -9,15 +9,15 @@ import { ReactComponent as ShareIcon } from 'assets/icons/drawer/share.svg';
 import { ReactComponent as OptionsIcon } from 'assets/icons/drawer/options.svg';
 
 type PropsType = {
-  isReplyPage?: boolean;
   placeIdx: number;
   placeName: string;
   search: string;
+  isMainReviewPage?: boolean;
   isMyReview: boolean;
 };
 
 const ReplyHeader = (props: PropsType) => {
-  const { isReplyPage, placeIdx, placeName, search, isMyReview } = props;
+  const { placeIdx, placeName, search, isMainReviewPage, isMyReview } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
@@ -39,50 +39,41 @@ const ReplyHeader = (props: PropsType) => {
   };
 
   return (
-    <>
-      {isReplyPage ? (
-        <SubHeader>
-          <LeftButton />
-          {headerTitleStatus.visible && headerTitleStatus.title}
-        </SubHeader>
+    <Wrap>
+      <LeftButton
+        backUrlInfo={
+          ReviewStore.reviewDetail
+            ? `/review/${placeIdx}?name=${placeName}`
+            : `/map/${placeIdx}${search}`
+        }
+      />
+      {isMainReviewPage ? (
+        <>{headerTitleStatus.title}</>
       ) : (
-        <SubHeader>
-          <LeftButton
-            backUrlInfo={
-              ReviewStore.reviewDetail
-                ? `/review/${placeIdx}?name=${placeName}`
-                : `/map/${placeIdx}${search}`
-            }
+        <>
+          <IconsWrap>
+            <CustomIconButton onClick={handleShareClick}>
+              <ShareIcon />
+            </CustomIconButton>
+            <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />
+            <CustomIconButton onClick={handleOptionsClick}>
+              <OptionsIcon />
+            </CustomIconButton>
+          </IconsWrap>
+          <HeaderSelectMenu
+            anchorEl={anchorEl}
+            isMyReview={isMyReview}
+            handleMenuClose={handleMenuClose}
           />
-          {headerTitleStatus.visible ? (
-            <>{headerTitleStatus.title}</>
-          ) : (
-            <>
-              <IconsWrap>
-                <CustomIconButton onClick={handleShareClick}>
-                  <ShareIcon />
-                </CustomIconButton>
-                <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />
-                <CustomIconButton onClick={handleOptionsClick}>
-                  <OptionsIcon />
-                </CustomIconButton>
-              </IconsWrap>
-              <HeaderSelectMenu
-                anchorEl={anchorEl}
-                isMyReview={isMyReview}
-                handleMenuClose={handleMenuClose}
-              />
-            </>
-          )}
-        </SubHeader>
+        </>
       )}
-    </>
+    </Wrap>
   );
 };
 
 export default observer(ReplyHeader);
 
-const SubHeader = styled('div')({
+const Wrap = styled('div')({
   display: 'flex',
   alignItems: 'center',
   width: '100%',

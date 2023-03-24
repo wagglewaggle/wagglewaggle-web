@@ -2,6 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
+import ReplyPage from './ReplyPage';
 import { CustomHeader, ReviewList } from 'components/common';
 import ReviewDetail from './ReviewDetail';
 import { useStore } from 'stores';
@@ -29,6 +30,17 @@ const Review = () => {
     const response = await axiosRequest('get', `${requestType}/${placeIdx}/review-post`);
     ReviewStore.setReviews(response?.data.list);
   }, [ReviewStore, placeIdx, requestType, pathnameArr]);
+
+  const handleReviewClose = useCallback(() => {
+    if (ReviewStore.selectedReply) {
+      ReviewStore.setSelectedReply(null);
+      return;
+    }
+    if (ReviewStore.reviewDetail) {
+      ReviewStore.setReviewDetail(null);
+      return;
+    }
+  }, [ReviewStore]);
 
   const initLocationData = useCallback(async () => {
     LocationStore.setPlaceName(placeName);
@@ -60,19 +72,23 @@ const Review = () => {
   }, []);
 
   useEffect(() => {
+    window.addEventListener('popstate', handleReviewClose, true);
+
+    return () => window.removeEventListener('popstate', handleReviewClose, true);
+  }, [handleReviewClose]);
+
+  useEffect(() => {
     if (ReviewStore.reviews.length > 0) return;
     getReviews();
   }, [ReviewStore, getReviews]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
-      <CustomHeader />
+      <CustomHeader isMainReviewPage />
       <BlankArea />
-      {ReviewStore.reviewDetail ? (
-        <ReviewDetail />
-      ) : (
-        <ReviewList reviews={ReviewStore.reviews} shouldIncludeOnClick />
-      )}
+      <ReviewList reviews={ReviewStore.reviews} shouldIncludeOnClick />
+      <ReviewDetail />
+      <ReplyPage />
     </Wrap>
   );
 };

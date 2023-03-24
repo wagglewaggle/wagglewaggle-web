@@ -1,11 +1,10 @@
-import { useEffect, useLayoutEffect } from 'react';
+import { Fragment, useEffect, useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import { ReviewDetailType, ReviewType } from 'types/typeBundle';
+import { ReviewType } from 'types/typeBundle';
 import { palette, locationNames } from 'constants/';
 import { useStore } from 'stores';
-import axiosRequest from 'api/axiosRequest';
 import ReviewCard from './ReviewCard';
 
 interface PropsType {
@@ -21,26 +20,6 @@ const ReviewList = (props: PropsType) => {
   const { ReviewStore, LocationStore } = useStore().MobxStore;
   const { locationData } = LocationStore;
   const placeName = locationNames[locationData?.name ?? ''] || (locationData?.name ?? '');
-
-  const getReviewDetail = async (type: string, placeIdx: string, postIdx: string) => {
-    const response = await axiosRequest('get', `${type}/${placeIdx}/review-post/${postIdx}`);
-    if (!response?.data) return;
-    ReviewStore.setReviewDetail(response.data as ReviewDetailType);
-  };
-
-  useEffect(() => {
-    const pathnameArr = pathname.split('/');
-    if (pathnameArr.includes('reply')) {
-      pathnameArr.splice(2, 1);
-    }
-    const [, , placeIdx, type, postIdx] = pathnameArr;
-    if (!type || !postIdx) {
-      ReviewStore.initReviewDetail();
-      return;
-    }
-    getReviewDetail(type, placeIdx, postIdx);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ReviewStore, pathname]);
 
   useLayoutEffect(() => {
     ReviewStore.setHeaderTitleStatus({

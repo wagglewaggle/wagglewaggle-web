@@ -9,13 +9,13 @@ import { palette, locationNames, locationRequestTypes } from 'constants/';
 import { FavoritePlaceType } from 'types/typeBundle';
 
 interface PropsType {
-  isReplyPage?: boolean;
   navigateToHome?: () => void;
   handleSearchClick?: () => void;
+  isMainReviewPage?: boolean;
 }
 
 const CustomHeader = (props: PropsType) => {
-  const { isReplyPage, navigateToHome, handleSearchClick } = props;
+  const { navigateToHome, handleSearchClick, isMainReviewPage } = props;
   const {
     ThemeStore,
     CustomDrawerStore,
@@ -63,10 +63,10 @@ const CustomHeader = (props: PropsType) => {
         <SubHeaderWrap>
           {!navigateToHome ? (
             <ReplyHeader
-              isReplyPage={isReplyPage}
               placeIdx={placeIdx}
               placeName={placeName}
               search={search}
+              isMainReviewPage={isMainReviewPage}
               isMyReview={
                 sessionStorage.getItem('@wagglewaggle_user_nickname') ===
                 ReviewStore.reviewDetail?.writer.nickname

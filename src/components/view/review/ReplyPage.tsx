@@ -1,53 +1,40 @@
-import { useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { styled } from '@mui/material';
+import { Drawer, styled } from '@mui/material';
 import { useStore } from 'stores';
-import { CustomHeader, ReplyCard } from 'components/common';
+import { ReplyCard, LeftButton } from 'components/common';
 import ReviewDetailInput from './ReviewDetailInput';
-import { ReplyType, ReviewDetailType } from 'types/typeBundle';
 import { palette } from 'constants/';
-import axiosRequest from 'api/axiosRequest';
 
 const ReplyPage = () => {
-  const { pathname } = useLocation();
-  const pathnameArr = pathname.split('/');
-  const [, , , placeIdx, requestType, postIdx, replyIdx] = pathnameArr;
   const { ReviewStore } = useStore().MobxStore;
 
-  const getSelectedReply = useCallback(async () => {
-    const response = await axiosRequest('get', `${requestType}/${placeIdx}/review-post/${postIdx}`);
-    if (!response?.data) return;
-    ReviewStore.setReviewDetail(response.data as ReviewDetailType);
-  }, [ReviewStore, placeIdx, requestType, postIdx]);
-
-  useEffect(() => {
-    ReviewStore.setWriteReviewButtonVisible(false);
-    if (ReviewStore.selectedReply) return;
-    getSelectedReply();
-  }, [ReviewStore, ReviewStore.selectedReply, getSelectedReply]);
-
-  useEffect(() => {
-    const selectedReply = ReviewStore.reviewDetail?.replies.find(
-      (reply: ReplyType) => reply.idx === Number(replyIdx)
-    );
-    if (!selectedReply) return;
-    ReviewStore.setSelectedReply(selectedReply);
-  }, [ReviewStore, ReviewStore.reviewDetail, replyIdx]);
+  const handleCloseDrawer = () => {
+    ReviewStore.setSelectedReply(null);
+  };
 
   return (
-    <Wrap>
-      <CustomHeader isReplyPage />
-      <BlankArea />
-      {ReviewStore.selectedReply && (
-        <ReplyCard reply={ReviewStore.selectedReply} isLast isReplyPage />
-      )}
-      {ReviewStore.replyStatus.writeMode && <ReviewDetailInput />}
-    </Wrap>
+    <ReplyDrawer open={!!ReviewStore.selectedReply} anchor='right' onClose={handleCloseDrawer}>
+      <Wrap>
+        <SubHeader>
+          <LeftButton />
+        </SubHeader>
+        {ReviewStore.selectedReply && (
+          <ReplyCard reply={ReviewStore.selectedReply} isLast isReplyPage />
+        )}
+        {ReviewStore.replyStatus.writeMode && <ReviewDetailInput />}
+      </Wrap>
+    </ReplyDrawer>
   );
 };
 
 export default observer(ReplyPage);
+
+const ReplyDrawer = styled(Drawer)({
+  '& .MuiPaper-root': {
+    width: '100%',
+    maxWidth: 430,
+  },
+});
 
 const Wrap = styled('div')({
   display: 'flex',
@@ -58,7 +45,16 @@ const Wrap = styled('div')({
   zIndex: 100,
 });
 
-const BlankArea = styled('div')({
+const SubHeader = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  borderBottom: `1px solid ${palette.grey[300]}`,
+  padding: '0 24px',
   width: '100%',
   height: 48,
+  minHeight: 48,
+  fontSize: 18,
+  fontWeight: 600,
+  lineHeight: '24px',
+  gap: 8,
 });
