@@ -39,6 +39,7 @@ const ReviewCard = (props: PropsType) => {
         profilePhoto={defaultPhoto}
         userName={writer.name}
         updatedDate={updatedDate}
+        removeOptions
       />
       <ReviewContent isDetail={isDetail}>{content}</ReviewContent>
       <IconsInfoWrap>

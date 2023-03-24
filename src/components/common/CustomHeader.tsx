@@ -1,45 +1,18 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { IconButton, styled } from '@mui/material';
+import { styled } from '@mui/material';
 import { CustomChips } from 'components/common';
+import { ReplyHeader, MapHeader } from './HeaderContents';
 import { useStore } from 'stores';
-import axiosRequest from 'api/axiosRequest';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
 import { FavoritePlaceType } from 'types/typeBundle';
-import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
-import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
-import { ReactComponent as PersonIcon } from 'assets/icons/person-icon.svg';
-import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
-import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 
 interface PropsType {
   isReplyPage?: boolean;
   navigateToHome?: () => void;
   handleSearchClick?: () => void;
 }
-
-const LeftButton = (props: { backUrlInfo?: string; isExpanded?: boolean }) => {
-  const { backUrlInfo, isExpanded } = props;
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const { ReviewStore, CustomDrawerStore } = useStore().MobxStore;
-
-  const handleRefresh = () => {
-    if (!pathname.split('/').includes('review')) {
-      isExpanded && CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
-      return;
-    }
-    navigate((backUrlInfo as string) ?? -1);
-    ReviewStore.initReviewDetail();
-  };
-
-  return (
-    <CustomIconButton onClick={handleRefresh}>
-      <LeftIcon />
-    </CustomIconButton>
-  );
-};
 
 const CustomHeader = (props: PropsType) => {
   const { isReplyPage, navigateToHome, handleSearchClick } = props;
@@ -50,12 +23,10 @@ const CustomHeader = (props: PropsType) => {
     LocationStore,
     AuthStore,
     ScreenSizeStore,
-    ReviewStore,
   } = useStore().MobxStore;
   const { pathname, search } = useLocation();
   const [searchParams] = useSearchParams();
   const { locationData } = LocationStore;
-  const { headerTitleStatus } = ReviewStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isExpanded = ['expanded', 'full'].includes(CustomDrawerStore.drawerStatus.expanded);
   const isReviewPage = pathname.split('/').includes('review');
@@ -67,19 +38,9 @@ const CustomHeader = (props: PropsType) => {
   )
     ? 'SKT'
     : 'KT';
+
   const handleClickChip = (chip: string) => {
     CategoryStore.setSelectedCategory(chip);
-  };
-
-  const handleHeartClick = async () => {
-    const pathnameArr = pathname.split('/');
-    const placeIdx = Number(pathnameArr[pathnameArr.length - 1]);
-    const requestParams = { idx: placeIdx, type: requestType };
-    const pinned = LocationStore.currentLocationPinned;
-    pinned
-      ? await axiosRequest('delete', 'pin-place', requestParams)
-      : await axiosRequest('post', 'pin-place', requestParams);
-    LocationStore.handlePinChange(pinned);
   };
 
   useEffect(() => {
@@ -100,45 +61,20 @@ const CustomHeader = (props: PropsType) => {
       <HeaderWrap>
         <SubHeaderWrap>
           {!navigateToHome ? (
-            <SubHeader>
-              {isReplyPage ? (
-                <LeftButton />
-              ) : (
-                <LeftButton
-                  backUrlInfo={
-                    ReviewStore.reviewDetail
-                      ? `/review/${placeIdx}?name=${placeName}`
-                      : `/map/${placeIdx}${search}`
-                  }
-                />
-              )}
-              {headerTitleStatus.visible && headerTitleStatus.title}
-            </SubHeader>
-          ) : !isExpanded ? (
-            <>
-              <Logo onClick={navigateToHome} />
-              <SubHeader>
-                <CustomIconButton onClick={handleSearchClick}>
-                  <SearchIcon />
-                </CustomIconButton>
-                <CustomIconButton>
-                  <PersonIcon />
-                </CustomIconButton>
-              </SubHeader>
-            </>
+            <ReplyHeader
+              isReplyPage={isReplyPage}
+              placeIdx={placeIdx}
+              placeName={placeName}
+              search={search}
+            />
           ) : (
-            <>
-              <SubHeader>
-                <LeftButton isExpanded={isExpanded} />
-                {placeName}
-              </SubHeader>
-              <CustomIconButton
-                pinned={LocationStore.currentLocationPinned}
-                onClick={handleHeartClick}
-              >
-                <HeartIcon />
-              </CustomIconButton>
-            </>
+            <MapHeader
+              isExpanded={isExpanded}
+              requestType={requestType}
+              placeName={placeName}
+              navigateToHome={navigateToHome}
+              handleSearchClick={handleSearchClick}
+            />
           )}
         </SubHeaderWrap>
       </HeaderWrap>
@@ -190,30 +126,6 @@ const SubHeaderWrap = styled('div')({
   alignItems: 'center',
   width: '100%',
 });
-
-const SubHeader = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  fontSize: 18,
-  fontWeight: 600,
-  lineHeight: '24px',
-  gap: 8,
-});
-
-const CustomIconButton = styled(IconButton, {
-  shouldForwardProp: (prop: string) => prop !== 'pinned',
-})<{ pinned?: boolean }>(({ pinned }) => ({
-  padding: 0,
-  width: 24,
-  height: 24,
-  '& svg': {
-    width: 24,
-    height: 24,
-  },
-  '& path': {
-    fill: pinned === true ? palette.violet : pinned === false ? palette.grey[400] : palette.black,
-  },
-}));
 
 const ChipsWrap = styled('div')({
   padding: '0 24px',

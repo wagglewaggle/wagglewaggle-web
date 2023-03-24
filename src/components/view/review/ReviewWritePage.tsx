@@ -20,7 +20,6 @@ const ReviewWritePage = () => {
   const placeIdx = pathnameArr[pathnameArr.length - 1];
   const searchPlaceName = searchParams.get('name') ?? '';
   const placeName = locationNames[searchPlaceName] ?? searchPlaceName;
-  const textareaMinHeight = ScreenSizeStore.screenHeight - 95;
 
   const handleCancelClick = () => {
     navigate(-1);
@@ -81,7 +80,6 @@ const ReviewWritePage = () => {
         </SubmitButton>
       </HeaderWrap>
       <CustomReviewField
-        minHeight={textareaMinHeight}
         multiline
         autoFocus
         placeholder={`${placeName}에 관련하여 실시간 상황 공유 또는 질문해보세요. 와글와글 크루들이 답변해줄 거에요.`}
@@ -131,9 +129,7 @@ const SubmitButton = styled('span', {
   cursor: 'pointer',
 }));
 
-const CustomReviewField = styled(TextField, {
-  shouldForwardProp: (prop: string) => prop !== 'minHeight',
-})<{ minHeight: number }>(({ minHeight }) => ({
+const CustomReviewField = styled(TextField)({
   marginTop: 48,
   padding: '20px 24px',
   height: 'fit-content',
@@ -144,9 +140,9 @@ const CustomReviewField = styled(TextField, {
     display: 'none',
   },
   '& textarea': {
-    minHeight,
+    minHeight: 'calc(100vh - 100px)',
     fontSize: 14,
     fontWeight: 400,
     lineHeight: '20px',
   },
-}));
+});
