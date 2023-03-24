@@ -1,14 +1,42 @@
+import { MouseEvent } from 'react';
 import { Menu, MenuItem, styled } from '@mui/material';
 import { palette } from 'constants/';
 
 type PropsType = {
   anchorEl: null | HTMLElement;
-  handleMenuClose: () => void;
+  isMyReview: boolean;
+  handleMenuClose: (e: MouseEvent) => void;
 };
 
 const HeaderSelectMenu = (props: PropsType) => {
-  const { anchorEl, handleMenuClose } = props;
+  const { anchorEl, isMyReview, handleMenuClose } = props;
   const open = Boolean(anchorEl);
+  const selectItems = isMyReview ? ['수정하기', '삭제하기', '신고하기'] : ['신고하기'];
+
+  const reportReview = () => {
+    console.log('report');
+  };
+
+  const editReview = () => {
+    console.log('edit');
+  };
+
+  const deleteReview = () => {
+    console.log('delete');
+  };
+
+  const handleMenuItemClick = (e: MouseEvent<HTMLLIElement>) => {
+    e.stopPropagation();
+    const { textContent } = e.target as HTMLInputElement;
+    if (textContent === '수정하기') {
+      editReview();
+    } else if (textContent === '삭제하기') {
+      deleteReview();
+    } else if (textContent === '신고하기') {
+      reportReview();
+    }
+    handleMenuClose(e);
+  };
 
   return (
     <CustomMenu
@@ -18,8 +46,8 @@ const HeaderSelectMenu = (props: PropsType) => {
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       transformOrigin={{ vertical: -5, horizontal: 65 }}
     >
-      {['수정하기', '삭제하기', '신고하기'].map((item: string) => (
-        <CustomMenuItem key={`menu-item-${item}`} value={item} dense>
+      {selectItems.map((item: string) => (
+        <CustomMenuItem key={`menu-item-${item}`} value={item} onClick={handleMenuItemClick} dense>
           {item}
         </CustomMenuItem>
       ))}

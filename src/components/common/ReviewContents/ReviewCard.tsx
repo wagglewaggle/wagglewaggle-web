@@ -37,7 +37,7 @@ const ReviewCard = (props: PropsType) => {
     <ReviewWrap isDetail={isDetail} disableBottom={disableBottom} onClick={handleClick}>
       <ReviewCardHeader
         profilePhoto={defaultPhoto}
-        userName={writer.name}
+        userName={writer.nickname}
         updatedDate={updatedDate}
         removeOptions
       />

@@ -44,7 +44,7 @@ const axiosRequest = async (
   );
 
   tokenAxiosInstance.interceptors.response.use(
-    (res) => {
+    async (res) => {
       const { accessToken, refreshToken } = res.data;
       if (accessToken) {
         localStorage.setItem('@wagglewaggle_access_token', accessToken);
@@ -56,6 +56,12 @@ const axiosRequest = async (
           ? localStorage
           : sessionStorage;
         webStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
+      }
+      if (!sessionStorage.getItem('@wagglewaggle_user_nickname')) {
+        const response = await axiosRequest('get', 'user/setting');
+        if (response?.data) {
+          sessionStorage.setItem('@wagglewaggle_user_nickname', response.data.nickname);
+        }
       }
       return res;
     },

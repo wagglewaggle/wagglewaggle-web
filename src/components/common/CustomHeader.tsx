@@ -23,6 +23,7 @@ const CustomHeader = (props: PropsType) => {
     LocationStore,
     AuthStore,
     ScreenSizeStore,
+    ReviewStore,
   } = useStore().MobxStore;
   const { pathname, search } = useLocation();
   const [searchParams] = useSearchParams();
@@ -66,6 +67,10 @@ const CustomHeader = (props: PropsType) => {
               placeIdx={placeIdx}
               placeName={placeName}
               search={search}
+              isMyReview={
+                sessionStorage.getItem('@wagglewaggle_user_nickname') ===
+                ReviewStore.reviewDetail?.writer.nickname
+              }
             />
           ) : (
             <MapHeader

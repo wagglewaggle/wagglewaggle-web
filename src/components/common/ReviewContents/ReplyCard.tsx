@@ -90,7 +90,7 @@ const ReplyCard = (props: PropsType) => {
         isLast={isLast && levelReplies.length === 0}
         idx={idx}
         isReplyPage={isReplyPage}
-        userName={user.name}
+        userName={user.nickname}
         updatedDate={updatedDate}
         content={content}
       />
@@ -102,7 +102,7 @@ const ReplyCard = (props: PropsType) => {
             isRereply
             isReplyPage={isReplyPage}
             handleShowMoreClick={handleShowMoreClick}
-            userName={rereply.user.name}
+            userName={rereply.user.nickname}
             updatedDate={rereply.updatedDate}
             content={rereply.content}
           />

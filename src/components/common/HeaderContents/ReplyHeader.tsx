@@ -13,10 +13,11 @@ type PropsType = {
   placeIdx: number;
   placeName: string;
   search: string;
+  isMyReview: boolean;
 };
 
 const ReplyHeader = (props: PropsType) => {
-  const { isReplyPage, placeIdx, placeName, search } = props;
+  const { isReplyPage, placeIdx, placeName, search, isMyReview } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
@@ -28,10 +29,12 @@ const ReplyHeader = (props: PropsType) => {
   };
 
   const handleOptionsClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setAnchorEl(e.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (e: MouseEvent) => {
+    e.stopPropagation();
     setAnchorEl(null);
   };
 
@@ -64,7 +67,11 @@ const ReplyHeader = (props: PropsType) => {
                   <OptionsIcon />
                 </CustomIconButton>
               </IconsWrap>
-              <HeaderSelectMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} />
+              <HeaderSelectMenu
+                anchorEl={anchorEl}
+                isMyReview={isMyReview}
+                handleMenuClose={handleMenuClose}
+              />
             </>
           )}
         </SubHeader>

@@ -18,10 +18,12 @@ const ReviewCardHeader = (props: PropsType) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOptionsClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setAnchorEl(e.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (e: MouseEvent) => {
+    e.stopPropagation();
     setAnchorEl(null);
   };
 
@@ -37,7 +39,11 @@ const ReviewCardHeader = (props: PropsType) => {
           <OptionsIcon />
         </CustomIconButton>
       )}
-      <HeaderSelectMenu anchorEl={anchorEl} handleMenuClose={handleMenuClose} />
+      <HeaderSelectMenu
+        anchorEl={anchorEl}
+        isMyReview={sessionStorage.getItem('@wagglewaggle_user_nickname') === userName}
+        handleMenuClose={handleMenuClose}
+      />
     </Header>
   );
 };
