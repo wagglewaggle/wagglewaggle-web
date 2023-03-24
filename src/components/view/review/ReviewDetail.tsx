@@ -20,6 +20,7 @@ const ReviewDetail = () => {
 
   const handleCloseDrawer = () => {
     ReviewStore.setReviewDetail(null);
+    ReviewStore.setReplyStatus({ writeMode: false });
   };
 
   useEffect(() => {

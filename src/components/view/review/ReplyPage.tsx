@@ -10,6 +10,7 @@ const ReplyPage = () => {
 
   const handleCloseDrawer = () => {
     ReviewStore.setSelectedReply(null);
+    ReviewStore.setReplyStatus({ writeMode: false });
   };
 
   return (
@@ -40,7 +41,6 @@ const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-  minHeight: '100vh',
   backgroundColor: palette.white,
   zIndex: 100,
 });
@@ -50,7 +50,7 @@ const SubHeader = styled('div')({
   alignItems: 'center',
   borderBottom: `1px solid ${palette.grey[300]}`,
   padding: '0 24px',
-  width: '100%',
+  width: 'calc(100% - 48px)',
   height: 48,
   minHeight: 48,
   fontSize: 18,

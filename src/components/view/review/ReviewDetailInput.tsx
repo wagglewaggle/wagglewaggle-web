@@ -1,17 +1,16 @@
 import { useState, useRef, ChangeEvent } from 'react';
-import { useLocation } from 'react-router-dom';
 import { TextField, IconButton, styled } from '@mui/material';
 import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
-import { ReviewDetailType } from 'types/typeBundle';
+import { ReplyType, ReviewDetailType } from 'types/typeBundle';
 import { ReactComponent as SubmitIcon } from 'assets/icons/review/write-submit.svg';
 
 const ReviewDetailInput = () => {
   const [reviewInput, setReviewInput] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const pathnameArr = useLocation().pathname.split('/');
   const { ReviewStore, ThemeStore } = useStore().MobxStore;
+  const { reviewDetail, selectedReply } = ReviewStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -19,15 +18,13 @@ const ReviewDetailInput = () => {
   };
 
   const handleSubmit = async () => {
-    if (pathnameArr.includes('reply')) {
-      pathnameArr.splice(2, 1);
-    }
-    const [, , placeIdx, placeType, reviewPostIdx] = pathnameArr;
+    const reviewIdx = reviewDetail?.idx;
+    const placeInfo = reviewDetail?.place;
+    if (!reviewIdx || !placeInfo) return;
+    const replyIdx = selectedReply?.idx;
     const postResponse = await axiosRequest(
       'post',
-      `${placeType}/${placeIdx}/review-post/${reviewPostIdx}/reply/${
-        ReviewStore.replyStatus.replyIdx ?? ''
-      }`,
+      `${placeInfo.type}/${placeInfo.idx}/review-post/${reviewIdx}/reply/${replyIdx ?? ''}`,
       {
         content: reviewInput,
       }
@@ -36,10 +33,14 @@ const ReviewDetailInput = () => {
     setReviewInput('');
     const getResponse = await axiosRequest(
       'get',
-      `${placeType}/${placeIdx}/review-post/${reviewPostIdx}`
+      `${placeInfo.type}/${placeInfo.idx}/review-post/${reviewIdx}`
     );
     if (!getResponse?.data) return;
     ReviewStore.setReviewDetail(getResponse.data as ReviewDetailType);
+    const newSelectedReply = ReviewStore.reviewDetail?.replies.find(
+      (reply: ReplyType) => reply.idx === replyIdx
+    );
+    newSelectedReply && ReviewStore.setSelectedReply(newSelectedReply);
     ReviewStore.setReplyStatus({ writeMode: false });
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     inputRef.current?.blur();

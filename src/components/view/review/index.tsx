@@ -34,10 +34,12 @@ const Review = () => {
   const handleReviewClose = useCallback(() => {
     if (ReviewStore.selectedReply) {
       ReviewStore.setSelectedReply(null);
+      ReviewStore.setReplyStatus({ writeMode: false });
       return;
     }
     if (ReviewStore.reviewDetail) {
       ReviewStore.setReviewDetail(null);
+      ReviewStore.setReplyStatus({ writeMode: false });
       return;
     }
   }, [ReviewStore]);

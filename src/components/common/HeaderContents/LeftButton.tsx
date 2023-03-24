@@ -12,6 +12,7 @@ const LeftButton = (props: PropsType) => {
   const { ReviewStore, CustomDrawerStore } = useStore().MobxStore;
 
   const handleReviewClose = () => {
+    ReviewStore.setReplyStatus({ writeMode: false });
     if (ReviewStore.selectedReply) {
       ReviewStore.setSelectedReply(null);
       return;
