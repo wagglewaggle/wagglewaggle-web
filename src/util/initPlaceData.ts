@@ -2,9 +2,9 @@ import { MobxStore } from 'App';
 import axiosRequest from 'api/axiosRequest';
 import { PlaceDataType } from 'types/typeBundle';
 
-const initPlaceData = async () => {
+const initPlaceData = async (crowdedFirst?: boolean) => {
   const { LocationStore } = MobxStore;
-  const params = { populationSort: true };
+  const params = { populationSort: crowdedFirst ?? true };
   const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
     'get',
     'place',

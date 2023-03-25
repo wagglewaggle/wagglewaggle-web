@@ -7,6 +7,7 @@ export class LocationStore {
   suggestionExists: boolean = false;
   locationData: LocationDataType | null = null;
   placesData: PlaceDataType[] = [];
+  currentPlaceOrder: '혼잡도 높은 순' | '혼잡도 낮은 순' = '혼잡도 높은 순';
   currentLocationPinned: boolean = false;
 
   constructor() {
@@ -31,6 +32,10 @@ export class LocationStore {
 
   setPlacesData = (newPlacesData: PlaceDataType[]) => {
     this.placesData = newPlacesData;
+  };
+
+  setCurrentPlaceOrder = (newOrder: '혼잡도 높은 순' | '혼잡도 낮은 순') => {
+    this.currentPlaceOrder = newOrder;
   };
 
   setCurrentLocationPinned = (newStatus: boolean) => {

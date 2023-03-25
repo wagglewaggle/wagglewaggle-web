@@ -6,6 +6,7 @@ import { PlaceCard, Footer } from 'components/common';
 import { useStore } from 'stores';
 import { CategoryType, PlaceDataType, ScreenType } from 'types/typeBundle';
 import { palette } from 'constants/';
+import { initPlaceData } from 'util/';
 import _ from 'lodash';
 import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
 
@@ -21,7 +22,7 @@ const useStyles = makeStyles(() => ({
     },
     '& li': {
       padding: '0 5px',
-      width: 96,
+      width: '100%',
     },
     '& .MuiPaper-root': {
       display: 'flex',
@@ -34,35 +35,19 @@ const useStyles = makeStyles(() => ({
 
 interface propsType {
   placeData: PlaceDataType[];
-  handlePlaceDataChange: (newPlaceData: PlaceDataType[]) => void;
 }
 
 const PlaceData = observer((props: propsType) => {
-  const { placeData, handlePlaceDataChange } = props;
+  const { placeData } = props;
   const [renderData, setRenderData] = useState<PlaceDataType[]>([]);
-  const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
   const classes = useStyles();
-  const { ScreenSizeStore, ThemeStore, CategoryStore } = useStore().MobxStore;
+  const { LocationStore, ScreenSizeStore, ThemeStore, CategoryStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
-    setPlaceOrder(e.target.value as string);
-    const statusArr: string[] = [
-      'VERY_RELAXATION',
-      'RELAXATION',
-      'NORMAL',
-      'CROWDED',
-      'VERY_CROWDED',
-    ];
-    handlePlaceDataChange(
-      placeData.sort((prev: PlaceDataType, next: PlaceDataType) => {
-        const prevLevel = statusArr.indexOf(prev.population.level);
-        const nextLevel = statusArr.indexOf(next.population.level);
-        if (prevLevel > nextLevel) return e.target.value === '복잡한 순' ? -1 : 1;
-        else if (nextLevel > prevLevel) return e.target.value === '복잡한 순' ? 1 : -1;
-        return 0;
-      })
-    );
+    const selectedOrder = e.target.value;
+    LocationStore.setCurrentPlaceOrder(selectedOrder as '혼잡도 높은 순' | '혼잡도 낮은 순');
+    initPlaceData(selectedOrder === '혼잡도 높은 순');
   };
 
   useEffect(() => {
@@ -94,12 +79,15 @@ const PlaceData = observer((props: propsType) => {
         <CustomSelect
           isDarkTheme={isDarkTheme}
           onChange={handleChangeSelect}
-          value={placeOrder}
+          value={LocationStore.currentPlaceOrder}
           SelectDisplayProps={{ style: { paddingRight: '24px' } }}
+          IconComponent={(props) => <DownIcon {...props} />}
           MenuProps={{
             classes: { root: classes.menu },
+            transformOrigin: { vertical: 0, horizontal: 92.5 },
             sx: {
               '& .MuiPaper-root': {
+                width: 'fit-content',
                 color: palette.grey[isDarkTheme ? 400 : 500],
                 backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
               },
@@ -109,9 +97,8 @@ const PlaceData = observer((props: propsType) => {
               },
             },
           }}
-          IconComponent={(props) => <DownIcon {...props} />}
         >
-          {['복잡한 순', '여유로운 순'].map((menu: string, idx: number) => (
+          {['혼잡도 높은 순', '혼잡도 낮은 순'].map((menu: string, idx: number) => (
             <CustomMenuItem key={`menu-${idx}`} value={menu} dense>
               {menu}
             </CustomMenuItem>

@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import PlaceData from './PlaceData';
-import { PlaceDataType } from 'types/typeBundle';
 import { initPlaceData } from 'util/';
 import { useStore } from 'stores';
 
@@ -13,6 +12,7 @@ const List = observer(() => {
     useStore().MobxStore;
   const navigate = useNavigate();
   const { search, pathname } = useLocation();
+  const { placesData } = LocationStore;
 
   const handleLatestListChange = (newList: string[]) => {
     localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
@@ -22,7 +22,7 @@ const List = observer(() => {
     CustomDrawerStore.setSearchValue(searchWord);
     CustomDrawerStore.openDrawer(
       'list',
-      <ResultData placeData={LocationStore.placesData} searchWord={searchWord} />
+      <ResultData placeData={placesData} searchWord={searchWord} />
     );
   };
 
@@ -50,19 +50,15 @@ const List = observer(() => {
     onDrawerClose();
   };
 
-  const handlePlaceDataChange = (newPlaceData: PlaceDataType[]) => {
-    LocationStore.setPlacesData(JSON.parse(JSON.stringify(newPlaceData)));
-  };
-
   useEffect(() => {
     document.body.setAttribute('style', `overflow-y:auto`);
   }, [pathname]);
 
   useEffect(() => {
-    if (!AuthStore.authorized) return;
+    if (!AuthStore.authorized || placesData.length > 0) return;
     initPlaceData();
     AuthStore.initializeFavorites();
-  }, [AuthStore, AuthStore.authorized]);
+  }, [AuthStore, AuthStore.authorized, placesData.length]);
 
   useEffect(() => {
     if (!AuthStore.authorized) return;
@@ -98,10 +94,7 @@ const List = observer(() => {
   return (
     <Wrap>
       <CustomHeader navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
-      <PlaceData
-        placeData={LocationStore.placesData}
-        handlePlaceDataChange={handlePlaceDataChange}
-      />
+      <PlaceData placeData={placesData} />
       <NavigationIcons />
     </Wrap>
   );
