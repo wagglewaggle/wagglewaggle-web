@@ -1,6 +1,7 @@
 import { useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, styled } from '@mui/material';
+import { useStore } from 'stores';
 import { palette } from 'constants/';
 import axiosRequest from 'api/axiosRequest';
 import defaultImage from 'assets/icons/register/default-photo.png';
@@ -8,15 +9,21 @@ import cancelButton from 'assets/icons/register/cancel-button.png';
 import errorIcon from 'assets/icons/register/error-icon.png';
 import okIcon from 'assets/icons/register/ok-icon.png';
 
-type NicknameStatusType = 'empty' | 'dup' | 'long' | 'ok';
+type NicknameStatusType = 'empty' | 'dup' | 'long' | 'using' | 'ok';
+type PropsType = {
+  isEdit?: boolean;
+  currentNickname?: string | null;
+};
 
 let debouncer: NodeJS.Timeout;
-const Register = () => {
+const Register = (props: PropsType) => {
+  const { isEdit, currentNickname } = props;
   const [profilePicture, setProfilePicture] = useState<string>(defaultImage);
-  const [nickname, setNickname] = useState<string>('');
+  const [nickname, setNickname] = useState<string>(currentNickname ?? '');
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatusType>('empty');
   const [serverErrorMessage, setServerErrorMessage] = useState<string>('');
   const navigate = useNavigate();
+  const { ProfileStore } = useStore().MobxStore;
 
   const checkNicknameStatus = async (nickname: string) => {
     if (nickname.length > 8) {
@@ -25,6 +32,10 @@ const Register = () => {
     }
     if (nickname.length === 0) {
       setNicknameStatus('empty');
+      return;
+    }
+    if (nickname === currentNickname) {
+      setNicknameStatus('using');
       return;
     }
     const response = await axiosRequest('get', 'user/validate/nickname', { nickname });
@@ -59,12 +70,18 @@ const Register = () => {
   const handleStartClick = async () => {
     if (nicknameStatus !== 'ok') return;
     await axiosRequest('put', 'user/setting', { nickname });
+    sessionStorage.setItem('@wagglewaggle_user_nickname', nickname);
+    if (isEdit) {
+      ProfileStore.setUserNickname(nickname);
+      ProfileStore.setEditPageOpen(false);
+      return;
+    }
     navigate('/map');
   };
 
   return (
     <Wrap>
-      프로필 설정
+      {!isEdit && '프로필 설정'}
       <PictureWrap>
         <ProfilePicture src={profilePicture} alt='profile-picture' />
         <CancelButton
@@ -98,7 +115,9 @@ const Register = () => {
           {nicknameStatus !== 'empty' && (
             <FeedbackIcon src={nicknameStatus === 'ok' ? okIcon : errorIcon} alt='feedback-icon' />
           )}
-          {nicknameStatus === 'dup' ? (
+          {nicknameStatus === 'using' ? (
+            '현재 사용중인 닉네임입니다.'
+          ) : nicknameStatus === 'dup' ? (
             <>{serverErrorMessage}</>
           ) : nicknameStatus === 'long' ? (
             '닉네임은 최대 9글자를 초과할 수 없습니다.'
@@ -187,6 +206,7 @@ const NicknameStatusWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'variant',
 })<{ status: NicknameStatusType }>(({ status }) => ({
   display: 'flex',
+  alignItems: 'center',
   color: status === 'ok' ? palette.green : palette.red,
   fontSize: 12,
   fontWeight: 500,

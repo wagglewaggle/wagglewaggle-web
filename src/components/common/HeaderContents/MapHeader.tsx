@@ -20,7 +20,7 @@ type PropsType = {
 
 const MapHeader = (props: PropsType) => {
   const { isExpanded, requestType, placeName, navigateToHome, handleSearchClick } = props;
-  const { LocationStore } = useStore().MobxStore;
+  const { LocationStore, ProfileStore } = useStore().MobxStore;
   const { pathname } = useLocation();
 
   const handleHeartClick = async () => {
@@ -34,6 +34,10 @@ const MapHeader = (props: PropsType) => {
     LocationStore.handlePinChange(pinned);
   };
 
+  const handleProfilePageOpen = () => {
+    ProfileStore.setProfilePageOpen(true);
+  };
+
   return (
     <>
       {!isExpanded ? (
@@ -45,7 +49,7 @@ const MapHeader = (props: PropsType) => {
             <CustomIconButton onClick={handleSearchClick}>
               <SearchIcon />
             </CustomIconButton>
-            <CustomIconButton>
+            <CustomIconButton onClick={handleProfilePageOpen}>
               <PersonIcon />
             </CustomIconButton>
           </IconButtonsWrap>

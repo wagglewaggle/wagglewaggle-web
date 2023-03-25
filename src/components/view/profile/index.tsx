@@ -1,0 +1,270 @@
+import { useEffect } from 'react';
+import { observer } from 'mobx-react';
+import { Drawer, Divider, styled } from '@mui/material';
+import { CustomIconButton } from 'components/common/HeaderContents/common';
+import EditProfile from './EditProfile';
+import FavoritesPages from './FavoritesPages';
+import { useStore } from 'stores';
+import { palette } from 'constants/';
+import axiosRequest from 'api/axiosRequest';
+import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
+import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
+import { ReactComponent as HeartIcon } from 'assets/icons/profile/heart.svg';
+import { ReactComponent as EditIcon } from 'assets/icons/profile/edit.svg';
+import { ReactComponent as QuestionIcon } from 'assets/icons/profile/question.svg';
+import defaultPhoto from 'assets/icons/register/default-photo.png';
+
+const Profile = () => {
+  const { AuthStore, ProfileStore, CustomDialogStore } = useStore().MobxStore;
+
+  const handleProfilePageClose = () => {
+    ProfileStore.setProfilePageOpen(false);
+  };
+
+  const handleCloseDialog = () => {
+    CustomDialogStore.setOpen(false);
+  };
+
+  const handleEditProfileClick = () => {
+    ProfileStore.setEditPageOpen(true);
+  };
+
+  const handleFavoritesClick = () => {
+    ProfileStore.setFavoritesPageOpen(true);
+    ProfileStore.setFavoritesTab('place');
+  };
+
+  const handleMyPostsClick = () => {
+    // ProfileStore.setFavoritesPageOpen(true);
+    // ProfileStore.setFavoritesTab('post');
+  };
+
+  const handleInquiryClick = () => {
+    CustomDialogStore.openNotificationDialog({
+      title: '1:1 문의',
+      content: 'wagglewaggle2@gmail.com으로\r\n문의 사항을 보내주세요.',
+      rightButton: {
+        title: '확인',
+        handleClick: handleCloseDialog,
+      },
+    });
+  };
+
+  const handleAuthChange = () => {
+    handleCloseDialog();
+  };
+
+  const onLogout = () => {
+    AuthStore.logout();
+    handleProfilePageClose();
+    handleCloseDialog();
+    CustomDialogStore.openNotificationDialog({
+      title: '로그아웃',
+      content: '로그아웃이 완료되었습니다.',
+      rightButton: {
+        title: '확인',
+        handleClick: handleAuthChange,
+      },
+    });
+  };
+
+  const handleLogoutClick = () => {
+    CustomDialogStore.openNotificationDialog({
+      title: '로그아웃',
+      content: '해당 기기에서 로그아웃됩니다.',
+      leftButton: {
+        title: '취소',
+        handleClick: handleCloseDialog,
+      },
+      rightButton: {
+        title: '로그아웃',
+        handleClick: onLogout,
+      },
+    });
+  };
+
+  const onDeactivate = async () => {
+    const response = await axiosRequest('put', 'user/deactivate');
+    if (!response?.data) return;
+    handleProfilePageClose();
+    handleCloseDialog();
+    CustomDialogStore.openNotificationDialog({
+      title: '회원 탈퇴',
+      content: '회원 탈퇴가 완료되었습니다.',
+      rightButton: {
+        title: '확인',
+        handleClick: handleAuthChange,
+      },
+    });
+  };
+
+  const handleDeactivateClick = () => {
+    CustomDialogStore.openNotificationDialog({
+      title: '회원 탈퇴',
+      content: '탈퇴 시 서비스 사용이 어려우며,\r\n탈퇴 후 재가입은 7일 뒤 가능합니다.',
+      leftButton: {
+        title: '취소',
+        handleClick: handleCloseDialog,
+      },
+      rightButton: {
+        title: '회원탈퇴',
+        handleClick: onDeactivate,
+      },
+    });
+  };
+
+  useEffect(() => {
+    const userNickname = sessionStorage.getItem('@wagglewaggle_user_nickname');
+    if (!ProfileStore.profilePageOpen || !userNickname) return;
+    ProfileStore.setUserNickname(userNickname);
+  }, [ProfileStore, ProfileStore.profilePageOpen]);
+
+  return (
+    <>
+      <ProfileDrawer
+        open={ProfileStore.profilePageOpen}
+        onClose={handleProfilePageClose}
+        anchor='right'
+      >
+        <CustomHeader>
+          <CustomIconButton onClick={handleProfilePageClose}>
+            <LeftIcon />
+          </CustomIconButton>
+        </CustomHeader>
+        <UserInfoWrap>
+          <UserWrap>
+            <UserPicture src={defaultPhoto} alt='user-pic' />
+            <UserNickname>{ProfileStore.userNickname}</UserNickname>
+          </UserWrap>
+          <EditButton onClick={handleEditProfileClick}>프로필 수정</EditButton>
+        </UserInfoWrap>
+        <FeaturesWrap onClick={handleFavoritesClick}>
+          <FeatureTitleWrap>
+            <HeartIcon />
+            관심장소
+          </FeatureTitleWrap>
+          <RightIcon />
+        </FeaturesWrap>
+        <FeaturesWrap onClick={handleMyPostsClick}>
+          <FeatureTitleWrap>
+            <EditIcon />
+            내가 작성한 글
+          </FeatureTitleWrap>
+          <RightIcon />
+        </FeaturesWrap>
+        <FeaturesWrap onClick={handleInquiryClick}>
+          <FeatureTitleWrap>
+            <QuestionIcon />
+            1:1 문의
+          </FeatureTitleWrap>
+          <RightIcon />
+        </FeaturesWrap>
+        <CustomDivider />
+        <FeaturesWrap shady onClick={handleLogoutClick}>
+          <FeatureTitleWrap shady>로그아웃</FeatureTitleWrap>
+          <RightIcon />
+        </FeaturesWrap>
+        <FeaturesWrap shady onClick={handleDeactivateClick}>
+          <FeatureTitleWrap shady>회원 탈퇴</FeatureTitleWrap>
+          <RightIcon />
+        </FeaturesWrap>
+      </ProfileDrawer>
+      <EditProfile />
+      <FavoritesPages />
+    </>
+  );
+};
+
+export default observer(Profile);
+
+const ProfileDrawer = styled(Drawer)({
+  '& .MuiPaper-root': {
+    width: '100%',
+    maxWidth: 430,
+  },
+});
+
+const CustomHeader = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  borderBottom: `1px solid ${palette.grey[300]}`,
+  padding: '12px 24px',
+  width: 'calc(100% - 48px)',
+  height: 28,
+});
+
+const UserInfoWrap = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  padding: '32px 24px',
+  width: 'calc(100% - 48px)',
+});
+
+const UserWrap = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+});
+
+const UserPicture = styled('img')({
+  width: 36,
+  height: 36,
+});
+
+const UserNickname = styled('span')({
+  fontSize: 24,
+  fontWeight: 600,
+  lineHeight: '24px',
+});
+
+const EditButton = styled('button')({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  border: `1px solid ${palette.violet}`,
+  borderRadius: 4,
+  padding: '8px 10px',
+  width: 84,
+  minWidth: 'fit-content',
+  height: 36,
+  color: palette.violet,
+  fontSize: 14,
+  fontWeight: 600,
+  lineHeight: '20px',
+  backgroundColor: palette.white,
+  cursor: 'pointer',
+});
+
+const FeaturesWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'shady',
+})<{ shady?: boolean }>(({ shady }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '16px 24px',
+  width: 'calc(100% - 48px)',
+  cursor: 'pointer',
+  '& svg': {
+    width: 20,
+    height: 20,
+  },
+  '& path': {
+    fill: shady ? palette.grey[500] : palette.grey[600],
+  },
+}));
+
+const FeatureTitleWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'shady',
+})<{ shady?: boolean }>(({ shady }) => ({
+  display: 'flex',
+  color: shady ? palette.grey[500] : palette.grey[600],
+  fontSize: 14,
+  fontWeight: 600,
+  lineHeight: '20px',
+  gap: 6,
+}));
+
+const CustomDivider = styled(Divider)({
+  border: `3px solid ${palette.grey[200]}`,
+  margin: '6px 0',
+});

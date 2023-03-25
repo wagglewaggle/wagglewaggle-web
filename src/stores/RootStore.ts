@@ -9,6 +9,7 @@ import {
   ReviewStore,
   ThemeStore,
   UserNavigatorStore,
+  ProfileStore,
 } from 'stores';
 
 export default class RootStore {
@@ -22,4 +23,5 @@ export default class RootStore {
   ReviewStore: ReviewStore = new ReviewStore();
   ThemeStore: ThemeStore = new ThemeStore();
   UserNavigatorStore: UserNavigatorStore = new UserNavigatorStore();
+  ProfileStore: ProfileStore = new ProfileStore();
 }

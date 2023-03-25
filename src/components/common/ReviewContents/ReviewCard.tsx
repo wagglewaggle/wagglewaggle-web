@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import ReviewCardHeader from './ReviewCardHeader';
-import { palette } from 'constants/';
+import { palette, symbolsComponents, locationNames } from 'constants/';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { ReviewType, PinnedReviewType } from 'types/typeBundle';
@@ -16,10 +16,14 @@ interface PropsType {
   shouldIncludeOnClick?: boolean;
   isDetail?: boolean;
   disableBottom?: boolean;
+  tagData?: {
+    symbol: string;
+    placeName: string | null;
+  };
 }
 
 const ReviewCard = (props: PropsType) => {
-  const { review, shouldIncludeOnClick, isDetail, disableBottom } = props;
+  const { review, shouldIncludeOnClick, isDetail, disableBottom, tagData } = props;
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { ReviewStore, AuthStore } = useStore().MobxStore;
@@ -40,11 +44,12 @@ const ReviewCard = (props: PropsType) => {
 
   const handlePinReviewClick = async (e: MouseEvent) => {
     e.stopPropagation();
-    const deleteIdx = AuthStore.pinnedReviews.find(
-      (review: PinnedReviewType) => review.reviewPost.idx === idx
-    )?.idx;
     const response = isPin
-      ? await axiosRequest('delete', 'pin-review-post', { idx: deleteIdx })
+      ? await axiosRequest('delete', 'pin-review-post', {
+          idx: AuthStore.pinnedReviews.find(
+            (review: PinnedReviewType) => review.reviewPost.idx === idx
+          )?.idx,
+        })
       : await axiosRequest('post', 'pin-review-post', { idx });
     if (!response?.data) return;
     ReviewStore.initReviews(place.type as 'SKT' | 'KT', place.idx);
@@ -59,27 +64,61 @@ const ReviewCard = (props: PropsType) => {
   };
 
   return (
-    <ReviewWrap isDetail={isDetail} disableBottom={disableBottom} onClick={handleClick}>
-      <ReviewCardHeader
-        profilePhoto={defaultPhoto}
-        userName={writer.nickname}
-        updatedDate={updatedDate}
-        removeOptions
-      />
-      <ReviewContent isDetail={isDetail}>{content}</ReviewContent>
-      <IconsInfoWrap>
-        <IconsWrap isPinned={isPin} onClick={handlePinReviewClick}>
-          <HeartIcon /> {String(pinReviewPostCount).padStart(2, '0')}
-        </IconsWrap>
-        <IconsWrap onClick={handleWriteReplyClick}>
-          <ChatIcon /> {String(replyCount).padStart(2, '0')}
-        </IconsWrap>
-      </IconsInfoWrap>
-    </ReviewWrap>
+    <>
+      {tagData && (
+        <PlaceTag>
+          {symbolsComponents[tagData.symbol] ?? ''}
+          {locationNames?.[tagData.placeName ?? ''] ?? tagData.placeName ?? ''}
+        </PlaceTag>
+      )}
+      <ReviewWrap isDetail={isDetail} disableBottom={disableBottom} onClick={handleClick}>
+        <ReviewCardHeader
+          profilePhoto={defaultPhoto}
+          userName={writer.nickname}
+          updatedDate={updatedDate}
+          removeOptions
+        />
+        <ReviewContent isDetail={isDetail}>{content}</ReviewContent>
+        <IconsInfoWrap>
+          <IconsWrap isPinned={isPin} onClick={handlePinReviewClick}>
+            <HeartIcon /> {String(pinReviewPostCount).padStart(2, '0')}
+          </IconsWrap>
+          <IconsWrap onClick={handleWriteReplyClick}>
+            <ChatIcon /> {String(replyCount).padStart(2, '0')}
+          </IconsWrap>
+        </IconsInfoWrap>
+      </ReviewWrap>
+    </>
   );
 };
 
 export default observer(ReviewCard);
+
+const PlaceTag = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  borderRadius: 4,
+  padding: 4,
+  margin: '20px 24px 0',
+  width: 'fit-content',
+  height: 16,
+  backgroundColor: 'rgba(96, 92, 255, 0.2)',
+  color: palette.violet,
+  fontSize: 12,
+  fontWeight: 500,
+  lineHeight: '16px',
+  gap: 2,
+  '& svg': {
+    width: 16,
+    height: 16,
+  },
+  '& rect': {
+    fill: palette.violet,
+  },
+  '& path': {
+    fill: palette.white,
+  },
+});
 
 const ReviewWrap = styled('div', {
   shouldForwardProp: (prop: string) => !['isDetail', 'disableBottom'].includes(prop),

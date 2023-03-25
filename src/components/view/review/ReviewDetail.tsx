@@ -6,7 +6,7 @@ import { useStore } from 'stores';
 import ReviewDetailInput from './ReviewDetailInput';
 import { ReviewCard, ReplyCard, CustomHeader } from 'components/common';
 import { ReviewDetailType, PlaceDataType, CategoryType, ReplyType } from 'types/typeBundle';
-import { palette, symbolsComponents } from 'constants/';
+import { palette } from 'constants/';
 import { getImageSymbol } from 'util/';
 
 const ReviewDetail = () => {
@@ -44,11 +44,11 @@ const ReviewDetail = () => {
     >
       <CustomHeader />
       <BlankArea />
-      <PlaceTag>
-        {symbolsComponents[symbol] ?? ''}
-        {placeName}
-      </PlaceTag>
-      <ReviewCard review={reviewDetail as ReviewDetailType} isDetail />
+      <ReviewCard
+        review={reviewDetail as ReviewDetailType}
+        isDetail
+        tagData={{ symbol, placeName }}
+      />
       <CustomDivider />
       {(reviewDetail?.replies ?? []).map((reply: ReplyType, idx: number) => (
         <ReplyCard
@@ -74,32 +74,6 @@ const ReviewDetailDrawer = styled(Drawer)({
 
 const BlankArea = styled('div')({
   marginTop: 49,
-});
-
-const PlaceTag = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  borderRadius: 4,
-  padding: 4,
-  margin: '20px 24px 0',
-  width: 'fit-content',
-  height: 16,
-  backgroundColor: 'rgba(96, 92, 255, 0.2)',
-  color: palette.violet,
-  fontSize: 12,
-  fontWeight: 500,
-  lineHeight: '16px',
-  gap: 2,
-  '& svg': {
-    width: 16,
-    height: 16,
-  },
-  '& rect': {
-    fill: palette.violet,
-  },
-  '& path': {
-    fill: palette.white,
-  },
 });
 
 const CustomDivider = styled(Divider)({

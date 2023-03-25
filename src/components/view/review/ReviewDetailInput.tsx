@@ -3,7 +3,7 @@ import { TextField, IconButton, styled } from '@mui/material';
 import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
-import { ReplyType, ReviewDetailType } from 'types/typeBundle';
+import { ReplyType } from 'types/typeBundle';
 import { ReactComponent as SubmitIcon } from 'assets/icons/review/write-submit.svg';
 
 const ReviewDetailInput = () => {
@@ -31,12 +31,7 @@ const ReviewDetailInput = () => {
     );
     if (!postResponse?.data) return;
     setReviewInput('');
-    const getResponse = await axiosRequest(
-      'get',
-      `${placeInfo.type}/${placeInfo.idx}/review-post/${reviewIdx}`
-    );
-    if (!getResponse?.data) return;
-    ReviewStore.setReviewDetail(getResponse.data as ReviewDetailType);
+    ReviewStore.initReviewDetail(placeInfo.type as 'SKT' | 'KT', placeInfo.idx, reviewIdx);
     const newSelectedReply = ReviewStore.reviewDetail?.replies.find(
       (reply: ReplyType) => reply.idx === replyIdx
     );

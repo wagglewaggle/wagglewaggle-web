@@ -27,8 +27,7 @@ const Review = () => {
 
   const getReviews = useCallback(async () => {
     if (!requestType || !placeIdx || pathnameArr.length > 3) return;
-    const response = await axiosRequest('get', `${requestType}/${placeIdx}/review-post`);
-    ReviewStore.setReviews(response?.data.list);
+    ReviewStore.initReviews(requestType, placeIdx);
   }, [ReviewStore, placeIdx, requestType, pathnameArr]);
 
   const handleReviewClose = useCallback(() => {

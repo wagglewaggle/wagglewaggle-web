@@ -12,3 +12,4 @@ export { LocationStore } from './LocationStore';
 export { ReviewStore } from './ReviewStore';
 export { ThemeStore } from './ThemeStore';
 export { UserNavigatorStore } from './UserNavigatorStore';
+export { ProfileStore } from './ProfileStore';

@@ -6,7 +6,7 @@ const axiosRequest = async (
   path: string,
   params: object = {}
 ) => {
-  const { ErrorStore, AuthStore } = MobxStore;
+  const { ErrorStore, AuthStore, ProfileStore } = MobxStore;
   const SERVER_URL: string | undefined = process.env.REACT_APP_SERVER_URL;
   if (!SERVER_URL) return;
 
@@ -64,6 +64,7 @@ const axiosRequest = async (
         const response = await axiosRequest('get', 'user/setting');
         if (response?.data) {
           sessionStorage.setItem('@wagglewaggle_user_nickname', response.data.nickname);
+          ProfileStore.setUserNickname(response.data.nickname);
         }
       }
       return res;

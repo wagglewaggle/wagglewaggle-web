@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { isIOS } from 'react-device-detect';
 import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
@@ -7,7 +7,7 @@ import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
 import { CustomDialog, CustomDrawer, ReviewWriteButton } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
-import { Login, BrowserPage } from './components/view';
+import { Login, Profile, BrowserPage } from './components/view';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
@@ -128,17 +128,20 @@ const App = observer(() => {
           <BrowserRouter>
             <Routes>
               <Route path='/landing' element={<BrowserPage />} />
-              <Route
+              {/* <Route
                 path='/login'
                 element={isWebView ? <Login /> : <Navigate replace to='/landing' />}
               />
               <Route
                 path='/*'
                 element={isWebView ? <PrivateRoutes /> : <Navigate replace to='/landing' />}
-              />
+              /> */}
+              <Route path='/login' element={<Login />} />
+              <Route path='/*' element={<PrivateRoutes />} />
             </Routes>
             <CustomDrawer />
             <ReviewWriteButton />
+            <Profile />
           </BrowserRouter>
         </ServiceWrap>
         <CustomDialog />

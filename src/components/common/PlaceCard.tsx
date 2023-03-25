@@ -21,7 +21,8 @@ const PlaceCard = observer((props: propsType) => {
   const { place, fromBottomSheet } = props;
   const [categories, setCategories] = useState<string>('');
   const [symbol, setSymbol] = useState<string>('');
-  const { LocationStore, ThemeStore, CustomDrawerStore, AuthStore } = useStore().MobxStore;
+  const { LocationStore, ThemeStore, CustomDrawerStore, AuthStore, ProfileStore } =
+    useStore().MobxStore;
   const navigate = useNavigate();
   const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -32,6 +33,8 @@ const PlaceCard = observer((props: propsType) => {
     : false;
 
   const handlePlaceCardClick = () => {
+    ProfileStore.setProfilePageOpen(false);
+    ProfileStore.setFavoritesPageOpen(false);
     CustomDrawerStore.setPlaceDataLoading(true);
     if (!fromBottomSheet) {
       CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
