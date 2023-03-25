@@ -85,6 +85,12 @@ export interface FavoritePlaceType {
   place: PlaceDataType;
 }
 
+export interface PinnedReviewType {
+  createdDate: string;
+  idx: number;
+  reviewPost: ReviewType;
+}
+
 export interface FavoritesType {
   places: FavoritePlaceType[];
 }

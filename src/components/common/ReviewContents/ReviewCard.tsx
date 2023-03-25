@@ -1,10 +1,12 @@
+import { MouseEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import ReviewCardHeader from './ReviewCardHeader';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import { ReviewType, ReviewDetailType } from 'types/typeBundle';
+import { ReviewType, PinnedReviewType } from 'types/typeBundle';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
@@ -20,15 +22,13 @@ const ReviewCard = (props: PropsType) => {
   const { review, shouldIncludeOnClick, isDetail, disableBottom } = props;
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
-  const { ReviewStore } = useStore().MobxStore;
+  const { ReviewStore, AuthStore } = useStore().MobxStore;
   if (!review) return <></>;
-  const { writer, updatedDate, content, pinReviewPostCount, replyCount, isPin, place, idx } =
+  const { writer, updatedDate, content, pinReviewPostCount, replyCount, place, isPin, idx } =
     review;
 
   const getReviewDetail = async (type: string, placeIdx: string, postIdx: number) => {
-    const response = await axiosRequest('get', `${type}/${placeIdx}/review-post/${postIdx}`);
-    if (!response?.data) return;
-    ReviewStore.setReviewDetail(response.data as ReviewDetailType);
+    ReviewStore.initReviewDetail(type as 'SKT' | 'KT', placeIdx, postIdx);
   };
 
   const handleClick = () => {
@@ -36,6 +36,21 @@ const ReviewCard = (props: PropsType) => {
     const pathnameArr = pathname.split('/');
     getReviewDetail(place.type, pathnameArr[pathnameArr.length - 1], idx);
     navigate(`${pathname}${search}`);
+  };
+
+  const handlePinReviewClick = async (e: MouseEvent) => {
+    e.stopPropagation();
+    const deleteIdx = AuthStore.pinnedReviews.find(
+      (review: PinnedReviewType) => review.reviewPost.idx === idx
+    )?.idx;
+    const response = isPin
+      ? await axiosRequest('delete', 'pin-review-post', { idx: deleteIdx })
+      : await axiosRequest('post', 'pin-review-post', { idx });
+    if (!response?.data) return;
+    ReviewStore.initReviews(place.type as 'SKT' | 'KT', place.idx);
+    ReviewStore.reviewDetail &&
+      ReviewStore.initReviewDetail(place.type as 'SKT' | 'KT', place.idx, idx);
+    AuthStore.initializePinnedReviews();
   };
 
   const handleWriteReplyClick = () => {
@@ -53,7 +68,7 @@ const ReviewCard = (props: PropsType) => {
       />
       <ReviewContent isDetail={isDetail}>{content}</ReviewContent>
       <IconsInfoWrap>
-        <IconsWrap isPinned={isPin}>
+        <IconsWrap isPinned={isPin} onClick={handlePinReviewClick}>
           <HeartIcon /> {String(pinReviewPostCount).padStart(2, '0')}
         </IconsWrap>
         <IconsWrap onClick={handleWriteReplyClick}>
@@ -64,7 +79,7 @@ const ReviewCard = (props: PropsType) => {
   );
 };
 
-export default ReviewCard;
+export default observer(ReviewCard);
 
 const ReviewWrap = styled('div', {
   shouldForwardProp: (prop: string) => !['isDetail', 'disableBottom'].includes(prop),

@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import axiosRequest from 'api/axiosRequest';
 import { ReviewType, ReviewDetailType, ReplyType } from 'types/typeBundle';
 
 type HeaderTitleStatusType = {
@@ -27,8 +28,22 @@ export class ReviewStore {
     this.reviews = reviews;
   };
 
+  initReviews = async (requestType: 'SKT' | 'KT', placeIdx: number | string) => {
+    const response = await axiosRequest('get', `${requestType}/${placeIdx}/review-post`);
+    this.setReviews(response?.data.list);
+  };
+
   setReviewDetail = (newReview: ReviewDetailType | null) => {
     this.reviewDetail = newReview;
+  };
+
+  initReviewDetail = async (
+    placeType: 'SKT' | 'KT',
+    placeIdx: number | string,
+    reviewIdx: number | string
+  ) => {
+    const response = await axiosRequest('get', `${placeType}/${placeIdx}/review-post/${reviewIdx}`);
+    this.setReviewDetail(response?.data as ReviewDetailType);
   };
 
   setSelectedReply = (newSelectedReply: ReplyType | null) => {

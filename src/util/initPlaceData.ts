@@ -16,6 +16,7 @@ const initPlaceData = async (crowdedFirst?: boolean) => {
     LocationStore.setCategories(data.name, data.categories);
   });
   AuthStore.initializeFavorites();
+  AuthStore.initializePinnedReviews();
 };
 
 export default initPlaceData;

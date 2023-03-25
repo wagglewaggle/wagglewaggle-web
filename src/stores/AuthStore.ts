@@ -1,11 +1,12 @@
 import { makeAutoObservable } from 'mobx';
 import axiosRequest from 'api/axiosRequest';
-import { FavoritesType, FavoritePlaceType } from 'types/typeBundle';
+import { FavoritesType, PinnedReviewType } from 'types/typeBundle';
 
 export class AuthStore {
   authorized: boolean = false;
   isLoggingIn: boolean = false;
   favorites: FavoritesType = { places: [] };
+  pinnedReviews: PinnedReviewType[] = [];
   autoLoginChecked: boolean = true;
 
   constructor() {
@@ -16,13 +17,20 @@ export class AuthStore {
     this.favorites = favorites;
   };
 
-  setUserFavorites = (favorites: FavoritePlaceType[]) => {
-    this.favorites.places = favorites;
+  setPinnedReviews = (reviews: PinnedReviewType[]) => {
+    this.pinnedReviews = reviews;
   };
 
   initializeFavorites = async () => {
     const { data } = (await axiosRequest('get', 'pin-place')) as { data: FavoritesType };
     this.setFavorites(data);
+  };
+
+  initializePinnedReviews = async () => {
+    const { data } = (await axiosRequest('get', 'pin-review-post')) as {
+      data: { list: PinnedReviewType[] };
+    };
+    this.setPinnedReviews(data.list);
   };
 
   setAuthorized = (newStatus: boolean) => {
@@ -47,5 +55,6 @@ export class AuthStore {
     this.authorized = false;
     this.favorites = { places: [] };
     localStorage.clear();
+    sessionStorage.clear();
   };
 }
