@@ -3,7 +3,7 @@ import axiosRequest from 'api/axiosRequest';
 import { PlaceDataType } from 'types/typeBundle';
 
 const initPlaceData = async (crowdedFirst?: boolean) => {
-  const { LocationStore } = MobxStore;
+  const { LocationStore, AuthStore } = MobxStore;
   const params = { populationSort: crowdedFirst ?? true };
   const placeData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
     'get',
@@ -15,6 +15,7 @@ const initPlaceData = async (crowdedFirst?: boolean) => {
   [...placeData.data.list].forEach((data: PlaceDataType) => {
     LocationStore.setCategories(data.name, data.categories);
   });
+  AuthStore.initializeFavorites();
 };
 
 export default initPlaceData;

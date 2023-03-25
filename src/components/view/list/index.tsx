@@ -55,10 +55,9 @@ const List = observer(() => {
   }, [pathname]);
 
   useEffect(() => {
-    if (!AuthStore.authorized || placesData.length > 0) return;
+    if (!AuthStore.authorized) return;
     initPlaceData();
-    AuthStore.initializeFavorites();
-  }, [AuthStore, AuthStore.authorized, placesData.length]);
+  }, [AuthStore.authorized, placesData.length]);
 
   useEffect(() => {
     if (!AuthStore.authorized) return;
