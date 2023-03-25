@@ -16,9 +16,11 @@ const CustomDialog = observer(() => {
   const [dialogWidth, setDialogWidth] = useState<number>(408);
   const [dialogHeight, setDialogHeight] = useState<number>(408);
   const [animationData, setAnimationData] = useState<object | null>(null);
+  const { screenType } = ScreenSizeStore;
+  const { variant, open } = CustomDialogStore;
 
   const closeDialog = () => {
-    if (CustomDialogStore.variant === 'intro') {
+    if (variant === 'intro') {
       sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
     }
     CustomDialogStore.setOpen(false);
@@ -27,73 +29,62 @@ const CustomDialog = observer(() => {
   useEffect(() => {
     setAnimationData(
       require(`assets/lottie/${ThemeStore.theme}/Notice${
-        ScreenSizeStore.screenType === 'mobile' ? '-mobile' : ''
+        screenType === 'mobile' ? '-mobile' : ''
       }.json`)
     );
-  }, [ScreenSizeStore.screenType, ThemeStore.theme]);
+  }, [screenType, ThemeStore.theme]);
 
   useEffect(() => {
-    if (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'cctv') {
+    if (screenType === 'mobile' && variant === 'cctv') {
       setDialogWidth(300);
       return;
     }
-    setDialogWidth(
-      (ScreenSizeStore.screenType === 'mobile' ? 295 : 408) -
-        (CustomDialogStore.variant === 'cctv' ? 40 : 0)
-    );
-  }, [ScreenSizeStore.screenType, CustomDialogStore.variant]);
+    setDialogWidth((screenType === 'mobile' ? 295 : 408) - (variant === 'cctv' ? 40 : 0));
+  }, [screenType, variant]);
 
   useEffect(() => {
-    setDialogHeight(
-      CustomDialogStore.variant === 'intro'
-        ? 492
-        : CustomDialogStore.variant === 'accident'
-        ? 408
-        : 360
-    );
-  }, [CustomDialogStore.variant]);
+    setDialogHeight(variant === 'intro' ? 492 : variant === 'accident' ? 408 : 360);
+  }, [variant]);
 
   return (
     <CustomDialogWrap
       width={dialogWidth}
       height={dialogHeight}
-      variant={CustomDialogStore.variant}
-      screenType={ScreenSizeStore.screenType}
+      variant={variant}
+      screenType={screenType}
       isDarkTheme={isDarkTheme}
-      open={CustomDialogStore.open}
+      open={open}
       onClose={closeDialog}
     >
-      <CloseButtonWrap width={dialogWidth} variant={CustomDialogStore.variant}>
+      <CloseButtonWrap width={variant === 'noti' ? 311 : dialogWidth} variant={variant}>
         <IconButton onClick={closeDialog}>
           <img src={closeIcon} alt='close' />
         </IconButton>
       </CloseButtonWrap>
       <DialogPart
         isDarkTheme={isDarkTheme}
-        variant={CustomDialogStore.variant}
-        width={dialogWidth - (CustomDialogStore.variant === 'intro' ? 16 : 0)}
+        variant={variant}
+        width={variant === 'noti' ? 311 : dialogWidth - (variant === 'intro' ? 16 : 0)}
       >
-        {CustomDialogStore.variant !== 'noti' && (
+        {variant !== 'noti' && (
           <DialogTitle>
-            {CustomDialogStore.variant === 'intro' && <CustomIcon src={logo} alt='logo' />}
-            {CustomDialogStore.variant === 'accident' && (
-              <CustomIcon src={accidentIcon} alt='accident' />
-            )}
+            {variant === 'intro' && <CustomIcon src={logo} alt='logo' />}
+            {variant === 'accident' && <CustomIcon src={accidentIcon} alt='accident' />}
           </DialogTitle>
         )}
-        <CustomContent width={dialogWidth} variant={CustomDialogStore.variant}>
-          {CustomDialogStore.variant === 'intro' ? (
+        <CustomContent width={dialogWidth} variant={variant}>
+          {variant === 'intro' ? (
             <IntroContent />
-          ) : CustomDialogStore.variant === 'accident' ? (
+          ) : variant === 'accident' ? (
             <AccidentContent />
-          ) : CustomDialogStore.variant === 'cctv' ? (
+          ) : variant === 'cctv' ? (
             <CctvContent />
           ) : (
             <NotificationContent />
           )}
         </CustomContent>
-        {CustomDialogStore.variant === 'accident' && <AccidentEmpty isDarkTheme={isDarkTheme} />}
-        {CustomDialogStore.variant === 'intro' && animationData && (
+        {variant === 'accident' && <AccidentEmpty isDarkTheme={isDarkTheme} />}
+        {variant === 'intro' && animationData && (
           <CustomLottie loop play animationData={animationData} />
         )}
       </DialogPart>
@@ -174,7 +165,7 @@ const DialogPart = styled('div', {
   width: number;
 }>(({ isDarkTheme, variant, width }) => ({
   borderRadius: 8,
-  width: '100%',
+  width,
   height: variant === 'noti' ? 'fit-content' : '100%',
   color: isDarkTheme ? palette.white : palette.black,
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
