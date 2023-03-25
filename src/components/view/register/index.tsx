@@ -10,16 +10,41 @@ import okIcon from 'assets/icons/register/ok-icon.png';
 
 type NicknameStatusType = 'empty' | 'dup' | 'long' | 'ok';
 
+let debouncer: NodeJS.Timeout;
 const Register = () => {
   const [profilePicture, setProfilePicture] = useState<string>(defaultImage);
   const [nickname, setNickname] = useState<string>('');
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatusType>('empty');
+  const [serverErrorMessage, setServerErrorMessage] = useState<string>('');
   const navigate = useNavigate();
+
+  const checkNicknameStatus = async (nickname: string) => {
+    if (nickname.length > 8) {
+      setNicknameStatus('long');
+      return;
+    }
+    if (nickname.length === 0) {
+      setNicknameStatus('empty');
+      return;
+    }
+    const response = await axiosRequest('get', 'user/validate/nickname', { nickname });
+    if (response?.data) {
+      setServerErrorMessage(response.data.message);
+      setNicknameStatus('dup');
+      return;
+    }
+    setServerErrorMessage('');
+    setNicknameStatus('ok');
+  };
 
   const handleNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newNickname = e.target.value;
     setNickname(newNickname);
-    setNicknameStatus(newNickname.length > 9 ? 'long' : newNickname.length === 0 ? 'empty' : 'ok');
+
+    debouncer && clearTimeout(debouncer);
+    debouncer = setTimeout(() => {
+      checkNicknameStatus(newNickname);
+    }, 500);
   };
 
   const handleProfileCancelClick = () => {
@@ -73,13 +98,15 @@ const Register = () => {
           {nicknameStatus !== 'empty' && (
             <FeedbackIcon src={nicknameStatus === 'ok' ? okIcon : errorIcon} alt='feedback-icon' />
           )}
-          {nicknameStatus === 'dup'
-            ? '중복되는 닉네임입니다.'
-            : nicknameStatus === 'long'
-            ? '닉네임은 최대 9글자를 초과할 수 없습니다.'
-            : nicknameStatus === 'ok'
-            ? '사용 가능한 닉네임입니다.'
-            : ''}
+          {nicknameStatus === 'dup' ? (
+            <>{serverErrorMessage}</>
+          ) : nicknameStatus === 'long' ? (
+            '닉네임은 최대 9글자를 초과할 수 없습니다.'
+          ) : nicknameStatus === 'ok' ? (
+            '사용 가능한 닉네임입니다.'
+          ) : (
+            ''
+          )}
         </NicknameStatusWrap>
       </NicknameWrap>
       <ButtonWrap>

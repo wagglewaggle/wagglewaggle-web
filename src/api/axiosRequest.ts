@@ -39,6 +39,9 @@ const axiosRequest = async (
         });
         sessionStorage.removeItem('@wagglewaggle_reissuing');
       }
+      if (['ERR_0006007', 'ERR_0006010'].includes(errorCode)) {
+        return err.response;
+      }
       return err;
     }
   );
@@ -83,6 +86,7 @@ const axiosRequest = async (
       : await selectedAxiosInstance.delete(`${SERVER_URL}/${path}`, { data: { ...params } });
   } catch (e) {
     ErrorStore.setStatusCode((e as AxiosError).response?.status || null);
+    console.log(e);
   }
 };
 

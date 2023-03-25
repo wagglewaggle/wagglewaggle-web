@@ -19,7 +19,7 @@ const Content = (props: ContentPropsType) => {
           <TextContent>{content}</TextContent>
         </TextWrap>
         {device !== 'mobile' && subContentImage && (
-          <SubContentImage src={subContentImage} alt='sub-content' />
+          <SubContentImage src={subContentImage} alt='sub-content' device={device} />
         )}
       </SubWrap>
       <ContentImage src={contentImage} alt='content' device={device} />
@@ -83,7 +83,10 @@ const ContentImage = styled('img', {
   height: 427,
 }));
 
-const SubContentImage = styled('img')({
+const SubContentImage = styled('img', {
+  shouldForwardProp: (prop: string) => prop !== 'device',
+})<{ device: 'mobile' | 'tablet' | 'pc' }>(({ device }) => ({
+  marginTop: device === 'mobile' ? 0 : 243,
   width: 96,
   height: 111,
-});
+}));
