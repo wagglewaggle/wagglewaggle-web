@@ -1,17 +1,16 @@
 import { useState, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import { palette } from 'constants/';
-import { LinkCopyPopup } from './styledComponents';
-import { handleShareLinkClick } from 'util/';
+import { LinkCopyPopup } from 'components/common';
 import { useStore } from 'stores';
+import { handleShareLinkClick } from 'util/';
+import { palette } from 'constants/';
 import linkCheckIcon from 'assets/icons/link-check-icon.svg';
 
-const Footer = observer(() => {
+const BrowserPageFooter = () => {
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
   const { ThemeStore } = useStore().MobxStore;
-  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const isDarkTheme = ThemeStore.theme === 'dark';
 
   const handleContactUsClick = () => {
     window.open('https://forms.gle/AcsYE7WzCkQQwisP7', '_blank');
@@ -19,8 +18,9 @@ const Footer = observer(() => {
 
   return (
     <Wrap>
-      <Buttons isDarkTheme={isDarkTheme}>
-        <button onClick={handleContactUsClick}>Contact Us</button>|
+      <Buttons>
+        <button onClick={handleContactUsClick}>Contact Us</button>
+        <button>|</button>
         <button onClick={() => handleShareLinkClick(copyLinkRef?.current, setLinkCopied)}>
           Share Link
         </button>
@@ -36,9 +36,9 @@ const Footer = observer(() => {
       <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />
     </Wrap>
   );
-});
+};
 
-export default Footer;
+export default BrowserPageFooter;
 
 const Wrap = styled('div')({
   display: 'flex',
@@ -46,27 +46,31 @@ const Wrap = styled('div')({
   flexDirection: 'column',
   justifyContent: 'flex-end',
   alignItems: 'center',
-  paddingTop: 48,
+  padding: '28px 0',
+  width: '100%',
+  backgroundColor: palette.grey[100],
+  gap: 16,
 });
 
-const Buttons = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Buttons = styled('div')({
   display: 'flex',
   justifyContent: 'space-between',
-  marginBottom: 8,
-  width: 191,
   '& button': {
     border: 'none',
+    width: 'fit-content',
     backgroundColor: 'transparent',
+    color: palette.black,
+    fontSize: 14,
+    fontWeight: 600,
+    lineHeight: '20px',
     cursor: 'pointer',
-    color: isDarkTheme ? palette.white : palette.black,
   },
-}));
+  '& button:nth-of-type(2)': {
+    cursor: 'initial',
+  },
+});
 
 const TeamName = styled('div')({
-  marginTop: 8,
-  height: 44,
   color: palette.grey[500],
   fontSize: 12,
   fontWeight: 500,

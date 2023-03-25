@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { isIOS } from 'react-device-detect';
 import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
@@ -7,7 +7,7 @@ import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
 import { CustomDialog, CustomDrawer, ReviewWriteButton } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
-import { Login } from './components/view';
+import { Login, BrowserPage } from './components/view';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
@@ -26,7 +26,8 @@ const App = observer(() => {
   } = MobxStore;
   const { ref, width, height } = useResizeObserver();
   const history = createBrowserHistory();
-  const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const isDarkTheme = ThemeStore.theme === 'dark';
+  const isWebView = !!(window as unknown as { ReactNativeWebView: unknown }).ReactNativeWebView;
 
   const disableIosInputAutoZoom = () => {
     const metaEl = document.querySelector('meta[name=viewport]');
@@ -82,7 +83,7 @@ const App = observer(() => {
   }, [ScreenSizeStore, width, height]);
 
   useEffect(() => {
-    if ((window as unknown as { ReactNativeWebView: unknown }).ReactNativeWebView) {
+    if (isWebView) {
       document.addEventListener('message', reactNativeListener); // android
       window.addEventListener('message', reactNativeListener); // ios
       return;
@@ -126,8 +127,15 @@ const App = observer(() => {
         <ServiceWrap ref={ref}>
           <BrowserRouter>
             <Routes>
-              <Route path='/login' element={<Login />} />
-              <Route path='/*' element={<PrivateRoutes />} />
+              <Route path='/landing' element={<BrowserPage />} />
+              <Route
+                path='/login'
+                element={isWebView ? <Login /> : <Navigate replace to='/landing' />}
+              />
+              <Route
+                path='/*'
+                element={isWebView ? <PrivateRoutes /> : <Navigate replace to='/landing' />}
+              />
             </Routes>
             <CustomDrawer />
             <ReviewWriteButton />
@@ -157,7 +165,6 @@ const ServiceWrap = styled('div')({
   flexDirection: 'column',
   alignItems: 'center',
   width: '100%',
-  maxWidth: 430,
   height: 'fit-content',
   minHeight: '100vh',
 });
