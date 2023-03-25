@@ -5,6 +5,7 @@ import { TextField, styled } from '@mui/material';
 import { Wrap } from 'components/view/review';
 import { useStore } from 'stores';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
+import { ReviewType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
 import { ReactComponent as CloseIcon } from 'assets/icons/close-icon.svg';
 
@@ -34,14 +35,26 @@ const ReviewWritePage = () => {
   };
 
   const handleSubmit = async () => {
+    const { editMode } = ReviewStore.editReviewOptions;
     const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(placeName) ? 'SKT' : 'KT';
     const requestUrl = `${requestType}/${placeIdx}/review-post`;
-    const postResponse = await axiosRequest('post', requestUrl, {
-      content: reviewInput,
-    });
-    if (!postResponse?.data) return;
+    const response = await axiosRequest(
+      editMode ? 'put' : 'post',
+      `${requestUrl}/${editMode ? ReviewStore.reviewDetail?.idx : ''}`,
+      {
+        content: reviewInput.trim(),
+      }
+    );
+    if (!response?.data) return;
     const getResponse = await axiosRequest('get', requestUrl);
     ReviewStore.setReviews(getResponse?.data.list);
+    editMode &&
+      ReviewStore.setReviewDetail(
+        getResponse?.data.list.find(
+          (review: ReviewType) => review.idx === ReviewStore.reviewDetail?.idx
+        )
+      );
+    ReviewStore.setEditOptions({ editMode: false, content: '' });
     setReviewInput('');
     navigate(`/review/${placeIdx}?name=${placeName}`);
     handleCloseDialog();
@@ -69,6 +82,10 @@ const ReviewWritePage = () => {
   useEffect(() => {
     setSubmittable(reviewInput.length > 0);
   }, [reviewInput]);
+
+  useEffect(() => {
+    setReviewInput(ReviewStore.editReviewOptions.content);
+  }, [ReviewStore.editReviewOptions]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>

@@ -1,5 +1,8 @@
 import { MouseEvent } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, MenuItem, styled } from '@mui/material';
+import { useStore } from 'stores';
+import axiosRequest from 'api/axiosRequest';
 import { palette } from 'constants/';
 
 type PropsType = {
@@ -10,6 +13,9 @@ type PropsType = {
 
 const HeaderSelectMenu = (props: PropsType) => {
   const { anchorEl, isMyReview, handleMenuClose } = props;
+  const { ReviewStore, CustomDialogStore } = useStore().MobxStore;
+  const { search, pathname } = useLocation();
+  const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const selectItems = isMyReview ? ['수정하기', '삭제하기', '신고하기'] : ['신고하기'];
 
@@ -18,11 +24,45 @@ const HeaderSelectMenu = (props: PropsType) => {
   };
 
   const editReview = () => {
-    console.log('edit');
+    ReviewStore.setEditOptions({
+      editMode: true,
+      content: ReviewStore.reviewDetail?.content ?? '',
+    });
+    const pathnameArr = pathname.split('/');
+    pathnameArr.splice(2, 0, 'write');
+    navigate(`${pathnameArr.join('/')}${search}`);
   };
 
-  const deleteReview = () => {
-    console.log('delete');
+  const onDeleteReview = async () => {
+    const { reviewDetail } = ReviewStore;
+    if (!reviewDetail) return;
+    const response = await axiosRequest(
+      'delete',
+      `${reviewDetail.place.type}/${reviewDetail.place.idx}/review-post/${reviewDetail.idx}`
+    );
+    if (!response?.data) return;
+    handleCloseDialog();
+    ReviewStore.initReviews(reviewDetail.place.type as 'SKT' | 'KT', reviewDetail.place.idx);
+    ReviewStore.setReviewDetail(null);
+  };
+
+  const handleCloseDialog = () => {
+    CustomDialogStore.setOpen(false);
+  };
+
+  const deleteReview = async () => {
+    CustomDialogStore.openNotificationDialog({
+      title: '게시물 삭제',
+      content: '해당 게시물을 정말 삭제하시겠어요?',
+      leftButton: {
+        title: '취소',
+        handleClick: handleCloseDialog,
+      },
+      rightButton: {
+        title: '삭제',
+        handleClick: onDeleteReview,
+      },
+    });
   };
 
   const handleMenuItemClick = (e: MouseEvent<HTMLLIElement>) => {

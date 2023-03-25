@@ -12,6 +12,11 @@ type ReplyStatusType = {
   replyIdx?: number;
 };
 
+type EditOptionsType = {
+  editMode: boolean;
+  content: string;
+};
+
 export class ReviewStore {
   reviews: ReviewType[] = [];
   reviewDetail: ReviewDetailType | null = null;
@@ -19,6 +24,10 @@ export class ReviewStore {
   writeReviewButtonVisible: boolean = false;
   headerTitleStatus: HeaderTitleStatusType = { visible: true, title: '' };
   replyStatus: ReplyStatusType = { writeMode: false };
+  editReviewOptions: EditOptionsType = {
+    editMode: false,
+    content: '',
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -26,6 +35,10 @@ export class ReviewStore {
 
   setReviews = (reviews: ReviewType[]) => {
     this.reviews = reviews;
+  };
+
+  setEditOptions = (newEditMode: EditOptionsType) => {
+    this.editReviewOptions = newEditMode;
   };
 
   initReviews = async (requestType: 'SKT' | 'KT', placeIdx: number | string) => {

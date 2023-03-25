@@ -26,11 +26,12 @@ const ReviewDetailInput = () => {
       'post',
       `${placeInfo.type}/${placeInfo.idx}/review-post/${reviewIdx}/reply/${replyIdx ?? ''}`,
       {
-        content: reviewInput,
+        content: reviewInput.trim(),
       }
     );
     if (!postResponse?.data) return;
     setReviewInput('');
+    ReviewStore.initReviews(placeInfo.type as 'SKT' | 'KT', placeInfo.idx);
     ReviewStore.initReviewDetail(placeInfo.type as 'SKT' | 'KT', placeInfo.idx, reviewIdx);
     const newSelectedReply = ReviewStore.reviewDetail?.replies.find(
       (reply: ReplyType) => reply.idx === replyIdx
