@@ -3,8 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { useStore } from 'stores';
-import { PlaceDataType, CategoryType } from 'types/typeBundle';
-import { symbols, mapSelectedSymbols, geometry, palette } from 'constants/';
+import { PlaceDataType, CategoryType, StatusType } from 'types/typeBundle';
+import { symbols, geometry, palette } from 'constants/';
+import { getMapSelectedSymbol } from 'util/';
 import _ from 'lodash';
 
 const { kakao } = window;
@@ -13,7 +14,7 @@ const mapInfo: { lat: number; lng: number } = { lat: 0, lng: 0 };
 const MapContent = () => {
   const [kakaoMap, setKakaoMap] = useState<any>(null);
   const [allMarkers, setAllMarkers] = useState<any[]>([]);
-  const [allSelectedMarkers, setAllSelectedMarkers] = useState<any[]>([]);
+  const [allSelectedMarkers, setAllSelectedMarkers] = useState<{[key: string]: any}>({});
   const [markerNamesOnMap, setMarkerNamesOnMap] = useState<string[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const MapContent = () => {
     useStore().MobxStore;
   const { drawerStatus } = CustomDrawerStore;
   const { locationData, placesData } = LocationStore;
+  const locationStatus = locationData?.population.level ?? ''
 
   const getSymbol = useCallback(
     (categories: CategoryType[]) => {
@@ -45,7 +47,7 @@ const MapContent = () => {
       markerImage: string | null,
       mainMarker?: boolean
     ) => {
-      const markerSize = variant === 'selected' ? 48 : 24;
+      const markerSize = variant === 'selected' ? 64 : 30;
       const kakaoMarkerSize = new kakao.maps.Size(markerSize, markerSize);
       const marker = new kakao.maps.Marker({
         image: markerImage && new kakao.maps.MarkerImage(markerImage, kakaoMarkerSize),
@@ -133,17 +135,26 @@ const MapContent = () => {
         processGeometryCoordinates(subCoordinates, polygonPath)
       );
     }
+    const overlayColors = {
+      'VERY_RELAXATION': palette.blue,
+      'RELAXATION': palette.green,
+      'NORMAL': palette.yellow,
+      'CROWDED': palette.orange,
+      'VERY_CROWDED': palette.red
+    }
+    const overlayColor = overlayColors?.[locationStatus as StatusType]
+    if (!overlayColor) return;
     overlay = new window.kakao.maps.Polygon({
       path: polygonPath,
       strokeWeight: 1,
-      strokeColor: palette.red,
+      strokeColor:  overlayColor,
       strokeOpacity: 1,
       strokeStyle: 'solid',
-      fillColor: palette.red,
+      fillColor: overlayColor,
       fillOpacity: 0.4,
     });
     overlay.setMap(kakaoMap);
-  }, [locationData, kakaoMap]);
+  }, [locationData, kakaoMap, locationStatus]);
 
   const setMapOpacityOverlay = useCallback(() => {
     if (!kakaoMap) return;
@@ -183,13 +194,17 @@ const MapContent = () => {
         return setMarkerOnMap('place', x, y, name, symbols[getSymbol(categories)]);
       })
     );
-    setAllSelectedMarkers(
-      placesData.map((place: PlaceDataType) => {
+    const selectedMarkers: {[key: string]: any} = {};
+    (['VERY_CROWDED', 'CROWDED', 'NORMAL', 'RELAXATION', 'VERY_RELAXATION'] as StatusType[]).forEach((status: StatusType) => {
+      selectedMarkers[status] = []
+      placesData.forEach((place: PlaceDataType) => {
         const { name, categories, x, y } = place;
-        return setMarkerOnMap('selected', x, y, name, mapSelectedSymbols[getSymbol(categories)]);
+        selectedMarkers[status].push(setMarkerOnMap('selected', x, y, name, getMapSelectedSymbol(getSymbol(categories), status)));
       })
-    );
-  }, [allMarkers, placesData, getSymbol, setMarkerOnMap]);
+    })
+    setAllSelectedMarkers(selectedMarkers)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placesData, getSymbol, setMarkerOnMap]);
 
   useEffect(() => {
     const newRenderData: PlaceDataType[] = _.cloneDeep(placesData);
@@ -209,8 +224,8 @@ const MapContent = () => {
   useEffect(() => {
     if (drawerStatus.expanded !== 'removed') return;
     overlay?.setMap(null);
-    allSelectedMarkers.forEach((marker: any) => marker.setMap(null));
-  }, [drawerStatus.expanded, allSelectedMarkers]);
+    allSelectedMarkers[locationStatus] && allSelectedMarkers[locationStatus].forEach((marker: any) => marker.setMap(null));
+  }, [drawerStatus.expanded, allSelectedMarkers, locationStatus]);
 
   useEffect(() => {
     if (!kakaoMap) return;
@@ -221,14 +236,15 @@ const MapContent = () => {
       }
       marker.setMap(kakaoMap);
     });
-    allSelectedMarkers.forEach((marker: any) => {
+    allSelectedMarkers[locationStatus] && allSelectedMarkers[locationStatus].forEach((marker: any) => {
       if (marker.Gb !== placeName) {
         marker.setMap(null);
         return;
       }
+      if (locationData?.name !== placeName) return;
       marker.setMap(kakaoMap);
     });
-  }, [allMarkers, allSelectedMarkers, markerNamesOnMap, placeName, kakaoMap]);
+  }, [allMarkers, locationStatus, allSelectedMarkers, markerNamesOnMap, locationData, placeName, kakaoMap]);
 
   useEffect(() => {
     if (!kakaoMap || !['expanded', 'appeared'].includes(drawerStatus.expanded)) return;
