@@ -22,6 +22,7 @@ const axiosRequest = async (
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    config.headers['ngrok-skip-browser-warning'] = 'any';
     return config;
   });
 
@@ -45,6 +46,12 @@ const axiosRequest = async (
       return err;
     }
   );
+
+  tokenAxiosInstance.interceptors.request.use((config) => {
+    if (!config.headers) return config;
+    config.headers['ngrok-skip-browser-warning'] = 'any';
+    return config;
+  })
 
   tokenAxiosInstance.interceptors.response.use(
     async (res) => {

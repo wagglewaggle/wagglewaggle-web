@@ -51,10 +51,12 @@ const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  width: '100%',
 });
 
 const ReviewCardsWrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   marginTop: 16,
+  width: '100%',
 });
