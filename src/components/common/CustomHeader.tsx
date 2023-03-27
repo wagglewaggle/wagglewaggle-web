@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { CustomChips } from 'components/common';
-import { ReplyHeader, MapHeader } from './HeaderContents';
+import { MapHeader } from './HeaderContents';
 import { useStore } from 'stores';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
 import { FavoritePlaceType } from 'types/typeBundle';
@@ -11,11 +11,10 @@ import { FavoritePlaceType } from 'types/typeBundle';
 interface PropsType {
   navigateToHome?: () => void;
   handleSearchClick?: () => void;
-  isMainReviewPage?: boolean;
 }
 
 const CustomHeader = (props: PropsType) => {
-  const { navigateToHome, handleSearchClick, isMainReviewPage } = props;
+  const { navigateToHome, handleSearchClick } = props;
   const {
     ThemeStore,
     CustomDrawerStore,
@@ -23,17 +22,12 @@ const CustomHeader = (props: PropsType) => {
     LocationStore,
     AuthStore,
     ScreenSizeStore,
-    ReviewStore,
   } = useStore().MobxStore;
-  const { pathname, search } = useLocation();
   const [searchParams] = useSearchParams();
   const { locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isExpanded = ['expanded', 'full'].includes(CustomDrawerStore.drawerStatus.expanded);
-  const isReviewPage = pathname.split('/').includes('review');
   const placeName = searchParams.get('name') ?? '';
-  const pathnameArr = pathname.split('/');
-  const placeIdx = Number(pathnameArr[2]);
   const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
     locationNames[placeName] || placeName
   )
@@ -45,45 +39,32 @@ const CustomHeader = (props: PropsType) => {
   };
 
   useEffect(() => {
-    if (isReviewPage || !locationData?.name) return;
+    if (!locationData?.name) return;
     LocationStore.setCurrentLocationPinned(
       AuthStore.favorites.places
         .map((favorite: FavoritePlaceType) => favorite.place.name)
         .includes(locationData.name)
     );
-  }, [isReviewPage, search, locationData?.name, requestType, LocationStore, AuthStore.favorites]);
+  }, [locationData?.name, LocationStore, AuthStore.favorites]);
 
   return (
     <Wrap
       screenWidth={ScreenSizeStore.screenWidth}
       isDarkTheme={isDarkTheme}
-      height={isReviewPage || isExpanded ? 48 : 104}
+      height={isExpanded ? 48 : 104}
     >
       <HeaderWrap>
         <SubHeaderWrap>
-          {!navigateToHome ? (
-            <ReplyHeader
-              placeIdx={placeIdx}
-              placeName={placeName}
-              search={search}
-              isMainReviewPage={isMainReviewPage}
-              isMyReview={
-                sessionStorage.getItem('@wagglewaggle_user_nickname') ===
-                ReviewStore.reviewDetail?.writer.nickname
-              }
-            />
-          ) : (
-            <MapHeader
-              isExpanded={isExpanded}
-              requestType={requestType}
-              placeName={placeName}
-              navigateToHome={navigateToHome}
-              handleSearchClick={handleSearchClick}
-            />
-          )}
+          <MapHeader
+            isExpanded={isExpanded}
+            requestType={requestType}
+            placeName={placeName}
+            navigateToHome={navigateToHome}
+            handleSearchClick={handleSearchClick}
+          />
         </SubHeaderWrap>
       </HeaderWrap>
-      {!isReviewPage && !isExpanded && (
+      {!isExpanded && (
         <ChipsWrap>
           <CustomChips
             selectedCategory={CategoryStore.selectedCategory}

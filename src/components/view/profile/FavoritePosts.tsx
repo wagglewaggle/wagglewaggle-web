@@ -23,22 +23,22 @@ const FavoritePosts = (props: PropsType) => {
         />
       ) : (
         <ReviewCardsWrap>
-          {favPosts.map((post: PinnedReviewType) => {
-            return (
-              <ReviewCard
-                key={`favorite-post-${post.idx}`}
-                review={post.reviewPost}
-                tagData={{
-                  symbol: getImageSymbol(
-                    LocationStore.categories[post.reviewPost.place.name].map(
-                      (category: CategoryType) => category.type
-                    )
-                  ),
-                  placeName: post.reviewPost.place.name,
-                }}
-              />
-            );
-          })}
+          {favPosts.map((post: PinnedReviewType) => (
+            <ReviewCard
+              key={`favorite-post-${post.idx}`}
+              review={post.reviewPost}
+              shouldIncludeOnClick
+              fromProfile
+              tagData={{
+                symbol: getImageSymbol(
+                  LocationStore.categories[post.reviewPost.place.name].map(
+                    (category: CategoryType) => category.type
+                  )
+                ),
+                placeName: post.reviewPost.place.name,
+              }}
+            />
+          ))}
         </ReviewCardsWrap>
       )}
     </Wrap>

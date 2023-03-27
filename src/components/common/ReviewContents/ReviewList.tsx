@@ -16,22 +16,23 @@ interface PropsType {
 const ReviewList = (props: PropsType) => {
   const { reviews, shouldIncludeOnClick, fromBottomSheet } = props;
   const { pathname } = useLocation();
-  const pathnameArr = pathname.split('/');
   const { ReviewStore, LocationStore } = useStore().MobxStore;
   const { locationData } = LocationStore;
   const placeName = locationNames[locationData?.name ?? ''] || (locationData?.name ?? '');
 
   useLayoutEffect(() => {
+    const pathnameArr = pathname.split('/');
     ReviewStore.setHeaderTitleStatus({
       visible: pathnameArr.length < 4,
       title: `${placeName} 실시간 리뷰`,
     });
-  }, [ReviewStore, placeName, pathnameArr]);
+  }, [ReviewStore, placeName, pathname]);
 
   useEffect(() => {
+    const pathnameArr = pathname.split('/');
     if (!pathnameArr.includes('review')) return;
     ReviewStore.setWriteReviewButtonVisible(pathnameArr.length < 4);
-  }, [ReviewStore, pathnameArr]);
+  }, [ReviewStore, pathname]);
 
   return (
     <ReviewsWrap shouldIncludeOnClick={shouldIncludeOnClick}>

@@ -1,24 +1,23 @@
 import { useEffect, useCallback } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import ReplyPage from './ReplyPage';
-import { CustomHeader, ReviewList } from 'components/common';
-import ReviewDetail from './ReviewDetail';
+import { ReviewList } from 'components/common';
+import { CustomIconButton } from 'components/common/HeaderContents/common';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { LocationDataType } from 'types/typeBundle';
 import { initPlaceData } from 'util/';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
+import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 
 const Review = () => {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { LocationStore, ReviewStore, ThemeStore, AuthStore } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
-  const pathnameArr = pathname.split('/');
   const placeName = searchParams.get('name') ?? '';
-  const placeIdx = pathnameArr[pathnameArr.length - 1];
   const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
     locationNames[placeName] || placeName
   )
@@ -26,25 +25,22 @@ const Review = () => {
     : 'KT';
 
   const getReviews = useCallback(async () => {
+    const pathnameArr = pathname.split('/');
+    const placeIdx = pathnameArr[pathnameArr.length - 1];
     if (!requestType || !placeIdx || pathnameArr.length > 3) return;
     ReviewStore.initReviews(requestType, placeIdx);
-  }, [ReviewStore, placeIdx, requestType, pathnameArr]);
+  }, [ReviewStore, requestType, pathname]);
 
-  const handleReviewClose = useCallback(() => {
-    if (ReviewStore.selectedReply) {
-      ReviewStore.setSelectedReply(null);
-      ReviewStore.setReplyStatus({ writeMode: false });
-      return;
-    }
-    if (ReviewStore.reviewDetail) {
-      ReviewStore.setReviewDetail(null);
-      ReviewStore.setReplyStatus({ writeMode: false });
-      return;
-    }
-  }, [ReviewStore]);
+  const handleReviewClose = () => {
+    navigate(
+      `/map/detail/${LocationStore.locationData?.idx}?name=${LocationStore.locationData?.name}`
+    );
+  };
 
   const initLocationData = useCallback(async () => {
+    const pathnameArr = pathname.split('/');
     LocationStore.setPlaceName(placeName);
+    const placeIdx = pathnameArr[pathnameArr.length - 1];
     const response: { data: LocationDataType } | undefined = await axiosRequest(
       'get',
       `place/${requestType}/${placeIdx}`
@@ -52,12 +48,13 @@ const Review = () => {
     if (!response) return;
     const { data } = response;
     LocationStore.setLocationData(data);
-  }, [LocationStore, placeName, placeIdx, requestType]);
+  }, [LocationStore, pathname, placeName, requestType]);
 
   useEffect(() => {
+    const pathnameArr = pathname.split('/');
     if (pathnameArr.length > 3) return;
     initLocationData();
-  }, [initLocationData, pathnameArr]);
+  }, [initLocationData, pathname]);
 
   useEffect(() => {
     if (LocationStore.placesData.length !== 0 || !AuthStore.authorized) return;
@@ -73,23 +70,20 @@ const Review = () => {
   }, []);
 
   useEffect(() => {
-    window.addEventListener('popstate', handleReviewClose, true);
-
-    return () => window.removeEventListener('popstate', handleReviewClose, true);
-  }, [handleReviewClose]);
-
-  useEffect(() => {
     if (ReviewStore.reviews.length > 0) return;
     getReviews();
   }, [ReviewStore, getReviews]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
-      <CustomHeader isMainReviewPage />
+      <SubHeader>
+        <CustomIconButton onClick={handleReviewClose}>
+          <LeftIcon />
+        </CustomIconButton>
+        {ReviewStore.headerTitleStatus.title}
+      </SubHeader>
       <BlankArea />
       <ReviewList reviews={ReviewStore.reviews} shouldIncludeOnClick />
-      <ReviewDetail />
-      <ReplyPage />
     </Wrap>
   );
 };
@@ -112,4 +106,23 @@ export const Wrap = styled('div', {
 const BlankArea = styled('div')({
   width: '100%',
   height: 48,
+});
+
+const SubHeader = styled('div')({
+  position: 'fixed',
+  top: 0,
+  display: 'flex',
+  alignItems: 'center',
+  borderBottom: `1px solid ${palette.grey[300]}`,
+  padding: '0 24px',
+  width: 'calc(100% - 48px)',
+  maxWidth: 382,
+  height: 48,
+  minHeight: 48,
+  fontSize: 18,
+  fontWeight: 600,
+  lineHeight: '24px',
+  backgroundColor: palette.white,
+  gap: 8,
+  zIndex: 10,
 });

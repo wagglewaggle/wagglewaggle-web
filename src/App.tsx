@@ -8,6 +8,8 @@ import { styled } from '@mui/material';
 import { CustomDialog, CustomDrawer, ReviewWriteButton } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
 import { Login, Profile, BrowserPage } from './components/view';
+import ReplyPage from 'components/view/review/ReplyPage';
+import ReviewDetail from 'components/view/review/ReviewDetail';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
@@ -142,6 +144,8 @@ const App = observer(() => {
             <CustomDrawer />
             <ReviewWriteButton />
             <Profile />
+            <ReviewDetail />
+            <ReplyPage />
           </BrowserRouter>
         </ServiceWrap>
         <CustomDialog />

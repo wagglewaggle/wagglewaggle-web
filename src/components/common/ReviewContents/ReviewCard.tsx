@@ -16,6 +16,7 @@ interface PropsType {
   shouldIncludeOnClick?: boolean;
   isDetail?: boolean;
   disableBottom?: boolean;
+  fromProfile?: boolean;
   tagData?: {
     symbol: string;
     placeName: string | null;
@@ -23,7 +24,7 @@ interface PropsType {
 }
 
 const ReviewCard = (props: PropsType) => {
-  const { review, shouldIncludeOnClick, isDetail, disableBottom, tagData } = props;
+  const { review, shouldIncludeOnClick, isDetail, disableBottom, fromProfile, tagData } = props;
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { ReviewStore, AuthStore } = useStore().MobxStore;
@@ -31,14 +32,14 @@ const ReviewCard = (props: PropsType) => {
   const { writer, updatedDate, content, pinReviewPostCount, replyCount, place, isPin, idx } =
     review;
 
-  const getReviewDetail = async (type: string, placeIdx: string, postIdx: number) => {
+  const getReviewDetail = async (type: string, placeIdx: number | string, postIdx: number) => {
     ReviewStore.initReviewDetail(type as 'SKT' | 'KT', placeIdx, postIdx);
   };
 
   const handleClick = () => {
     if (!shouldIncludeOnClick) return;
     const pathnameArr = pathname.split('/');
-    getReviewDetail(place.type, pathnameArr[pathnameArr.length - 1], idx);
+    getReviewDetail(place.type, fromProfile ? place.idx : pathnameArr[pathnameArr.length - 1], idx);
     navigate(`${pathname}${search}`);
   };
 

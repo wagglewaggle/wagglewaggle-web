@@ -3,7 +3,7 @@ import { CustomIconButton } from './common';
 import { useStore } from 'stores';
 import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 
-type PropsType = { backUrlInfo?: string; isExpanded?: boolean };
+type PropsType = { isExpanded?: boolean };
 
 const LeftButton = (props: PropsType) => {
   const { isExpanded } = props;

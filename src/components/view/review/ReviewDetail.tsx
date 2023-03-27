@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, Divider, styled } from '@mui/material';
 import { useStore } from 'stores';
 import ReviewDetailInput from './ReviewDetailInput';
-import { ReviewCard, ReplyCard, CustomHeader } from 'components/common';
+import { ReviewCard, ReplyCard } from 'components/common';
+import { ReplyHeader } from 'components/common/HeaderContents';
 import { ReviewDetailType, PlaceDataType, CategoryType, ReplyType } from 'types/typeBundle';
 import { palette } from 'constants/';
 import { getImageSymbol } from 'util/';
@@ -12,15 +13,20 @@ import { getImageSymbol } from 'util/';
 const ReviewDetail = () => {
   const [symbol, setSymbol] = useState<string>('');
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { ReviewStore, LocationStore } = useStore().MobxStore;
   const { reviewDetail } = ReviewStore;
   const { placesData } = LocationStore;
   const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
   const placeName = searchParams.get('name');
+  const fromProfile = !pathname.split('/').includes('review');
+  const selectedPlaceName = fromProfile && reviewDetail ? reviewDetail.place.name : placeName;
 
   const handleCloseDrawer = () => {
     ReviewStore.setReviewDetail(null);
     ReviewStore.setReplyStatus({ writeMode: false });
+    navigate(-1);
   };
 
   useEffect(() => {
@@ -31,10 +37,10 @@ const ReviewDetail = () => {
 
   useEffect(() => {
     const placeCategories = placesData
-      .find((data: PlaceDataType) => data.name === placeName)
+      .find((data: PlaceDataType) => data.name === selectedPlaceName)
       ?.categories?.map((category: CategoryType) => category.type);
     setSymbol(getImageSymbol(placeCategories ?? []) ?? '');
-  }, [placesData, placeName, primaryCategories]);
+  }, [reviewDetail, placesData, selectedPlaceName, primaryCategories]);
 
   return (
     <ReviewDetailDrawer
@@ -42,12 +48,12 @@ const ReviewDetail = () => {
       anchor='right'
       onClose={handleCloseDrawer}
     >
-      <CustomHeader />
+      <ReplyHeader isMyReview handleCloseDrawer={handleCloseDrawer} />
       <BlankArea />
       <ReviewCard
         review={reviewDetail as ReviewDetailType}
         isDetail
-        tagData={{ symbol, placeName }}
+        tagData={{ symbol, placeName: selectedPlaceName }}
       />
       <CustomDivider />
       {(reviewDetail?.replies ?? []).map((reply: ReplyType, idx: number) => (
