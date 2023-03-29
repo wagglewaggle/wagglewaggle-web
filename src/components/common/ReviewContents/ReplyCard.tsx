@@ -24,7 +24,7 @@ interface ContentType {
   handleShowMoreClick: () => void;
   idx: number;
   userNickname: string;
-  updatedDate: string;
+  createdDate: string;
   content: string;
   isReplyPage?: boolean;
 }
@@ -38,7 +38,7 @@ const ReplyCardContent = (props: ContentType) => {
     handleShowMoreClick = () => {},
     idx,
     userNickname,
-    updatedDate,
+    createdDate,
     content,
   } = props;
   const { ReviewStore } = useStore().MobxStore;
@@ -59,7 +59,7 @@ const ReplyCardContent = (props: ContentType) => {
         requestUrl={requestUrl}
         profilePhoto={defaultPhoto}
         userNickname={userNickname}
-        updatedDate={updatedDate}
+        createdDate={createdDate}
         removeOptions={isDeleted}
       />
       <ReplyContent>{content}</ReplyContent>
@@ -78,7 +78,7 @@ const ReplyCard = (props: PropsType) => {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { ReviewStore } = useStore().MobxStore;
-  const { user, status, updatedDate, content, levelReplies, idx } = reply;
+  const { user, status, createdDate, content, levelReplies, idx } = reply;
   const rereplies = levelReplies.slice(0, shortened ? 3 : levelReplies.length);
   if (!review) return <></>;
   const { place, idx: reviewIdx } = review;
@@ -98,7 +98,7 @@ const ReplyCard = (props: PropsType) => {
         isReplyPage={isReplyPage}
         handleShowMoreClick={handleShowMoreClick}
         userNickname={status !== 'DELETED' ? user.nickname : '(알수없음)'}
-        updatedDate={updatedDate}
+        createdDate={createdDate}
         content={status !== 'DELETED' ? content : '(삭제된 댓글입니다.)'}
       />
       {rereplies.map((rereply: RereplyType, idx: number) => (
@@ -112,7 +112,7 @@ const ReplyCard = (props: PropsType) => {
             isReplyPage={isReplyPage}
             handleShowMoreClick={handleShowMoreClick}
             userNickname={rereply.status !== 'DELETED' ? rereply.user.nickname : '(알수없음)'}
-            updatedDate={rereply.updatedDate}
+            createdDate={rereply.createdDate}
             content={rereply.status !== 'DELETED' ? rereply.content : '(삭제된 댓글입니다.)'}
           />
         </Fragment>

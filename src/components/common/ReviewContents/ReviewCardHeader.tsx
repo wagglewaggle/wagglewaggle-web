@@ -10,13 +10,13 @@ type PropsType = {
   replyContent: string;
   profilePhoto: string;
   userNickname: string;
-  updatedDate: string;
+  createdDate: string;
   requestUrl: string;
   removeOptions: boolean;
 };
 
 const ReviewCardHeader = (props: PropsType) => {
-  const { replyContent, profilePhoto, userNickname, updatedDate, requestUrl, removeOptions } =
+  const { replyContent, profilePhoto, userNickname, createdDate, requestUrl, removeOptions } =
     props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -35,7 +35,7 @@ const ReviewCardHeader = (props: PropsType) => {
       <CustomAvatar alt='profile-pic' src={profilePhoto} />
       <WriterInfoWrap>
         <span>{userNickname}</span>
-        <span>{`${getTimeDiff(updatedDate)}`}</span>
+        <span>{`${getTimeDiff(createdDate)}`}</span>
       </WriterInfoWrap>
       {!removeOptions && (
         <CustomIconButton onClick={handleOptionsClick}>

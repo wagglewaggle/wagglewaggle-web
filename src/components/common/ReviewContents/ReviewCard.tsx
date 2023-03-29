@@ -32,7 +32,7 @@ const ReviewCard = (props: PropsType) => {
   const {
     writer,
     status,
-    updatedDate,
+    createdDate,
     content,
     pinReviewPostCount,
     replyCount,
@@ -82,7 +82,7 @@ const ReviewCard = (props: PropsType) => {
           replyContent={content}
           profilePhoto={defaultPhoto}
           userNickname={status !== 'DELETED' ? writer.nickname : '(알수없음)'}
-          updatedDate={updatedDate}
+          createdDate={createdDate}
           requestUrl={`${place.type}/${place.idx}/review-post/${idx}`}
           removeOptions
         />

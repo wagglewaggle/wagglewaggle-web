@@ -1,6 +1,6 @@
-const getTimeDiff = (updatedDate: string) => {
+const getTimeDiff = (createdDate: string) => {
   const newTimePassed: number = Math.round(
-    (new Date().getTime() - new Date(updatedDate || '').getTime()) / 60000
+    (new Date().getTime() - new Date(createdDate || '').getTime()) / 60000
   );
   return newTimePassed >= 525600
     ? `${Math.floor(newTimePassed / 525600)}년 전`
