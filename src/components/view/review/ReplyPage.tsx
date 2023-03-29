@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, styled } from '@mui/material';
@@ -10,17 +11,34 @@ import { palette } from 'constants/';
 import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 
 const ReplyPage = () => {
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const firstRender = useRef(true);
   const navigate = useNavigate();
   const { ReviewStore } = useStore().MobxStore;
+  const paperElement = drawerRef.current?.querySelector('.MuiPaper-root');
 
   const handleCloseDrawer = () => {
     ReviewStore.setSelectedReply(null);
     ReviewStore.setReplyStatus({ writeMode: false });
+    firstRender.current = true;
     navigate(-1);
   };
 
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    paperElement?.scrollTo({ top: paperElement.scrollHeight + 130, behavior: 'smooth' });
+  }, [paperElement, ReviewStore.selectedReply?.levelReplies.length]);
+
   return (
-    <ReplyDrawer open={!!ReviewStore.selectedReply} anchor='right' onClose={handleCloseDrawer}>
+    <ReplyDrawer
+      open={!!ReviewStore.selectedReply}
+      anchor='right'
+      onClose={handleCloseDrawer}
+      ref={drawerRef}
+    >
       <Wrap>
         <SubHeader>
           <CustomIconButton onClick={handleCloseDrawer}>
@@ -36,7 +54,7 @@ const ReplyPage = () => {
             isReplyPage
           />
         )}
-        {ReviewStore.replyStatus.writeMode && <ReviewDetailInput />}
+        <ReviewDetailInput />
       </Wrap>
     </ReplyDrawer>
   );

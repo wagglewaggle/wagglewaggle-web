@@ -22,7 +22,7 @@ interface ContentType {
   isLast: boolean;
   isRereply?: boolean;
   handleShowMoreClick?: () => void;
-  idx?: number;
+  idx: number;
   userNickname: string;
   updatedDate: string;
   content: string;
@@ -42,7 +42,9 @@ const ReplyCardContent = (props: ContentType) => {
     content,
   } = props;
   const { ReviewStore } = useStore().MobxStore;
-  const isDeleted = reply.status === 'DELETED';
+  const isDeleted = isRereply
+    ? reply.levelReplies.find((rereply: RereplyType) => rereply.idx === idx)?.status === 'DELETED'
+    : reply.status === 'DELETED';
 
   const handleWriteRereplyClick = () => {
     if (isRereply) return;
@@ -103,6 +105,7 @@ const ReplyCard = (props: PropsType) => {
             reply={reply}
             requestUrl={`${place.type}/${place.idx}/review-post/${reviewIdx}/reply/${rereply.idx}`}
             isLast={isLast && idx === levelReplies.length - 1}
+            idx={rereply.idx}
             isRereply
             isReplyPage={isReplyPage}
             handleShowMoreClick={handleShowMoreClick}

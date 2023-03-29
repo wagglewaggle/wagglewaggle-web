@@ -69,11 +69,6 @@ const ReviewCard = (props: PropsType) => {
     AuthStore.initializePinnedReviews();
   };
 
-  const handleWriteReplyClick = () => {
-    if (!isDetail) return;
-    ReviewStore.setReplyStatus({ writeMode: true });
-  };
-
   return (
     <>
       {tagData && (
@@ -98,7 +93,7 @@ const ReviewCard = (props: PropsType) => {
             <IconsWrap isPinned={isPin} onClick={handlePinReviewClick}>
               <HeartIcon /> {String(pinReviewPostCount).padStart(2, '0')}
             </IconsWrap>
-            <IconsWrap onClick={handleWriteReplyClick}>
+            <IconsWrap>
               <ChatIcon /> {String(replyCount).padStart(2, '0')}
             </IconsWrap>
           </IconsInfoWrap>

@@ -10,7 +10,7 @@ const ReviewDetailInput = () => {
   const [reviewInput, setReviewInput] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { ReviewStore, ThemeStore } = useStore().MobxStore;
-  const { reviewDetail, selectedReply } = ReviewStore;
+  const { reviewDetail, selectedReply, replyStatus } = ReviewStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,13 +32,12 @@ const ReviewDetailInput = () => {
     if (!postResponse?.data) return;
     setReviewInput('');
     ReviewStore.initReviews(placeInfo.type as 'SKT' | 'KT', placeInfo.idx);
-    ReviewStore.initReviewDetail(placeInfo.type as 'SKT' | 'KT', placeInfo.idx, reviewIdx);
+    await ReviewStore.initReviewDetail(placeInfo.type as 'SKT' | 'KT', placeInfo.idx, reviewIdx);
     const newSelectedReply = ReviewStore.reviewDetail?.replies.find(
       (reply: ReplyType) => reply.idx === replyIdx
     );
     newSelectedReply && ReviewStore.setSelectedReply(newSelectedReply);
     ReviewStore.setReplyStatus({ writeMode: false });
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     inputRef.current?.blur();
   };
 
@@ -47,7 +46,7 @@ const ReviewDetailInput = () => {
       <CustomInput
         ref={inputRef}
         multiline
-        autoFocus
+        autoFocus={replyStatus.writeMode}
         placeholder='댓글을 입력해주세요.'
         value={reviewInput}
         onChange={handleChange}

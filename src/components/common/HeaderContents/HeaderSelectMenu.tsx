@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, MenuItem, styled } from '@mui/material';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
+import { ReplyType } from 'types/typeBundle';
 import { palette } from 'constants/';
 
 type PropsType = {
@@ -17,7 +18,7 @@ const HeaderSelectMenu = (props: PropsType) => {
   const { ReviewStore, CustomDialogStore } = useStore().MobxStore;
   const { search, pathname } = useLocation();
   const navigate = useNavigate();
-  const { reviewDetail } = ReviewStore;
+  const { reviewDetail, selectedReply } = ReviewStore;
   const open = Boolean(anchorEl);
   const selectItems = isMyReview ? ['수정하기', '삭제하기', '신고하기'] : ['신고하기'];
   const reviewRequestUrl = `${reviewDetail?.place.type}/${reviewDetail?.place.idx}/review-post/${reviewDetail?.idx}`;
@@ -42,11 +43,15 @@ const HeaderSelectMenu = (props: PropsType) => {
     if (!response?.data || !reviewDetail) return;
     handleCloseDialog();
     ReviewStore.initReviews(reviewDetail.place.type as 'SKT' | 'KT', reviewDetail.place.idx);
-    ReviewStore.initReviewDetail(
+    await ReviewStore.initReviewDetail(
       reviewDetail.place.type as 'SKT' | 'KT',
       reviewDetail.place.idx,
       reviewDetail.idx
     );
+    const newSelectedReply = ReviewStore.reviewDetail?.replies.find(
+      (reply: ReplyType) => reply.idx === selectedReply?.idx
+    );
+    newSelectedReply && ReviewStore.setSelectedReply(newSelectedReply);
   };
 
   const handleCloseDialog = () => {
