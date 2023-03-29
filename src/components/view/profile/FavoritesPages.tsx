@@ -12,7 +12,7 @@ import { palette } from 'constants/';
 const FavoritesPage = () => {
   const [favPlaces, setFavPlaces] = useState<FavoritePlaceType[]>([]);
   const [favPosts, setFavPosts] = useState<PinnedReviewType[]>([]);
-  const { ProfileStore } = useStore().MobxStore;
+  const { ProfileStore, ReviewStore } = useStore().MobxStore;
   const { profilePageOpen, favoritesPageOpen, favoritesTab } = ProfileStore;
   const tabs: ('place' | 'post')[] = ['place', 'post'];
 
@@ -40,7 +40,7 @@ const FavoritesPage = () => {
     if (!profilePageOpen) return;
     getFavoritePosts();
     getFavoritePlaces();
-  }, [getFavoritePosts, getFavoritePlaces, profilePageOpen]);
+  }, [getFavoritePosts, getFavoritePlaces, profilePageOpen, ReviewStore.reviews]);
 
   return (
     <FavoritesDrawer open={favoritesPageOpen} onClose={handleFavoritesPageClose} anchor='right'>

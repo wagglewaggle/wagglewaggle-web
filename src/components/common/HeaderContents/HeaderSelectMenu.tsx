@@ -6,18 +6,21 @@ import axiosRequest from 'api/axiosRequest';
 import { palette } from 'constants/';
 
 type PropsType = {
+  requestUrl?: string;
   anchorEl: null | HTMLElement;
   isMyReview: boolean;
   handleMenuClose: (e: MouseEvent) => void;
 };
 
 const HeaderSelectMenu = (props: PropsType) => {
-  const { anchorEl, isMyReview, handleMenuClose } = props;
+  const { requestUrl, anchorEl, isMyReview, handleMenuClose } = props;
   const { ReviewStore, CustomDialogStore } = useStore().MobxStore;
   const { search, pathname } = useLocation();
   const navigate = useNavigate();
+  const { reviewDetail } = ReviewStore;
   const open = Boolean(anchorEl);
   const selectItems = isMyReview ? ['수정하기', '삭제하기', '신고하기'] : ['신고하기'];
+  const reviewRequestUrl = `${reviewDetail?.place.type}/${reviewDetail?.place.idx}/review-post/${reviewDetail?.idx}`;
 
   const reportReview = () => {
     console.log('report');
@@ -34,16 +37,16 @@ const HeaderSelectMenu = (props: PropsType) => {
   };
 
   const onDeleteReview = async () => {
-    const { reviewDetail } = ReviewStore;
-    if (!reviewDetail) return;
-    const response = await axiosRequest(
-      'delete',
-      `${reviewDetail.place.type}/${reviewDetail.place.idx}/review-post/${reviewDetail.idx}`
-    );
-    if (!response?.data) return;
+    if (!requestUrl && !reviewRequestUrl) return;
+    const response = await axiosRequest('delete', requestUrl ?? reviewRequestUrl);
+    if (!response?.data || !reviewDetail) return;
     handleCloseDialog();
     ReviewStore.initReviews(reviewDetail.place.type as 'SKT' | 'KT', reviewDetail.place.idx);
-    ReviewStore.setReviewDetail(null);
+    ReviewStore.initReviewDetail(
+      reviewDetail.place.type as 'SKT' | 'KT',
+      reviewDetail.place.idx,
+      reviewDetail.idx
+    );
   };
 
   const handleCloseDialog = () => {
@@ -99,7 +102,6 @@ export default HeaderSelectMenu;
 
 const CustomMenu = styled(Menu)({
   '& li': {
-    borderBottom: `1px solid ${palette.grey[300]}`,
     height: 36,
   },
   '& li:last-of-type': {

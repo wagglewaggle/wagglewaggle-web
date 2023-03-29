@@ -48,7 +48,12 @@ const ReviewDetail = () => {
       anchor='right'
       onClose={handleCloseDrawer}
     >
-      <ReplyHeader isMyReview handleCloseDrawer={handleCloseDrawer} />
+      <ReplyHeader
+        isMyReview={
+          sessionStorage.getItem('@wagglewaggle_user_nickname') === reviewDetail?.writer.nickname
+        }
+        handleCloseDrawer={handleCloseDrawer}
+      />
       <BlankArea />
       <ReviewCard
         review={reviewDetail as ReviewDetailType}
@@ -60,6 +65,7 @@ const ReviewDetail = () => {
         <ReplyCard
           key={`reply-card-${reply.idx}`}
           shortened
+          review={reviewDetail as ReviewDetailType}
           reply={reply}
           isLast={idx === (reviewDetail?.replies.length ?? 0) - 1}
         />

@@ -5,6 +5,7 @@ import { useStore } from 'stores';
 import { ReplyCard } from 'components/common';
 import { CustomIconButton } from 'components/common/HeaderContents/common';
 import ReviewDetailInput from './ReviewDetailInput';
+import { ReviewDetailType } from 'types/typeBundle';
 import { palette } from 'constants/';
 import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 
@@ -28,7 +29,12 @@ const ReplyPage = () => {
         </SubHeader>
         <BlankArea />
         {ReviewStore.selectedReply && (
-          <ReplyCard reply={ReviewStore.selectedReply} isLast isReplyPage />
+          <ReplyCard
+            review={ReviewStore.reviewDetail as ReviewDetailType}
+            reply={ReviewStore.selectedReply}
+            isLast
+            isReplyPage
+          />
         )}
         {ReviewStore.replyStatus.writeMode && <ReviewDetailInput />}
       </Wrap>

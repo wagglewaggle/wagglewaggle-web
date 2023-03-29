@@ -8,13 +8,14 @@ import { ReactComponent as OptionsIcon } from 'assets/icons/drawer/options.svg';
 
 type PropsType = {
   profilePhoto: string;
-  userName: string;
+  userNickname: string;
   updatedDate: string;
-  removeOptions?: boolean;
+  requestUrl: string;
+  removeOptions: boolean;
 };
 
 const ReviewCardHeader = (props: PropsType) => {
-  const { profilePhoto, userName, updatedDate, removeOptions } = props;
+  const { profilePhoto, userNickname, updatedDate, requestUrl, removeOptions } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOptionsClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -31,7 +32,7 @@ const ReviewCardHeader = (props: PropsType) => {
     <Header>
       <CustomAvatar alt='profile-pic' src={profilePhoto} />
       <WriterInfoWrap>
-        <span>{userName}</span>
+        <span>{userNickname}</span>
         <span>{`${getTimeDiff(updatedDate)}`}</span>
       </WriterInfoWrap>
       {!removeOptions && (
@@ -40,8 +41,9 @@ const ReviewCardHeader = (props: PropsType) => {
         </CustomIconButton>
       )}
       <HeaderSelectMenu
+        requestUrl={requestUrl}
         anchorEl={anchorEl}
-        isMyReview={sessionStorage.getItem('@wagglewaggle_user_nickname') === userName}
+        isMyReview={sessionStorage.getItem('@wagglewaggle_user_nickname') === userNickname}
         handleMenuClose={handleMenuClose}
       />
     </Header>

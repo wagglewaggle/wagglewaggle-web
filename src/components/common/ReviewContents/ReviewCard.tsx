@@ -29,8 +29,18 @@ const ReviewCard = (props: PropsType) => {
   const navigate = useNavigate();
   const { ReviewStore, AuthStore } = useStore().MobxStore;
   if (!review) return <></>;
-  const { writer, updatedDate, content, pinReviewPostCount, replyCount, place, isPin, idx } =
-    review;
+  const {
+    writer,
+    status,
+    updatedDate,
+    content,
+    pinReviewPostCount,
+    replyCount,
+    place,
+    isPin,
+    idx,
+  } = review;
+  const isDeleted = status === 'DELETED';
 
   const getReviewDetail = async (type: string, placeIdx: number | string, postIdx: number) => {
     ReviewStore.initReviewDetail(type as 'SKT' | 'KT', placeIdx, postIdx);
@@ -75,19 +85,24 @@ const ReviewCard = (props: PropsType) => {
       <ReviewWrap isDetail={isDetail} disableBottom={disableBottom} onClick={handleClick}>
         <ReviewCardHeader
           profilePhoto={defaultPhoto}
-          userName={writer.nickname}
+          userNickname={status !== 'DELETED' ? writer.nickname : '(알수없음)'}
           updatedDate={updatedDate}
+          requestUrl={`${place.type}/${place.idx}/review-post/${idx}`}
           removeOptions
         />
-        <ReviewContent isDetail={isDetail}>{content}</ReviewContent>
-        <IconsInfoWrap>
-          <IconsWrap isPinned={isPin} onClick={handlePinReviewClick}>
-            <HeartIcon /> {String(pinReviewPostCount).padStart(2, '0')}
-          </IconsWrap>
-          <IconsWrap onClick={handleWriteReplyClick}>
-            <ChatIcon /> {String(replyCount).padStart(2, '0')}
-          </IconsWrap>
-        </IconsInfoWrap>
+        <ReviewContent isDetail={isDetail}>
+          {!isDeleted ? content : '(삭제된 리뷰입니다.)'}
+        </ReviewContent>
+        {!isDeleted && (
+          <IconsInfoWrap>
+            <IconsWrap isPinned={isPin} onClick={handlePinReviewClick}>
+              <HeartIcon /> {String(pinReviewPostCount).padStart(2, '0')}
+            </IconsWrap>
+            <IconsWrap onClick={handleWriteReplyClick}>
+              <ChatIcon /> {String(replyCount).padStart(2, '0')}
+            </IconsWrap>
+          </IconsInfoWrap>
+        )}
       </ReviewWrap>
     </>
   );

@@ -4,12 +4,13 @@ import { styled } from '@mui/material';
 import ReviewCardHeader from './ReviewCardHeader';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
-import { ReplyType, RereplyType } from 'types/typeBundle';
+import { ReplyType, ReviewDetailType, RereplyType } from 'types/typeBundle';
 import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
 
 interface PropsType {
   reply: ReplyType;
+  review: ReviewDetailType;
   shortened?: boolean;
   isLast: boolean;
   isReplyPage?: boolean;
@@ -17,11 +18,12 @@ interface PropsType {
 
 interface ContentType {
   reply: ReplyType;
+  requestUrl: string;
   isLast: boolean;
   isRereply?: boolean;
   handleShowMoreClick?: () => void;
   idx?: number;
-  userName: string;
+  userNickname: string;
   updatedDate: string;
   content: string;
   isReplyPage?: boolean;
@@ -30,15 +32,17 @@ interface ContentType {
 const ReplyCardContent = (props: ContentType) => {
   const {
     reply,
+    requestUrl,
     isLast,
     isRereply,
     handleShowMoreClick = () => {},
     idx,
-    userName,
+    userNickname,
     updatedDate,
     content,
   } = props;
   const { ReviewStore } = useStore().MobxStore;
+  const isDeleted = reply.status === 'DELETED';
 
   const handleWriteRereplyClick = () => {
     if (isRereply) return;
@@ -48,23 +52,33 @@ const ReplyCardContent = (props: ContentType) => {
 
   return (
     <ReplyWrap isLast={isLast} isRereply={isRereply} onClick={handleShowMoreClick}>
-      <ReviewCardHeader profilePhoto={defaultPhoto} userName={userName} updatedDate={updatedDate} />
+      <ReviewCardHeader
+        requestUrl={requestUrl}
+        profilePhoto={defaultPhoto}
+        userNickname={userNickname}
+        updatedDate={updatedDate}
+        removeOptions={isDeleted}
+      />
       <ReplyContent>{content}</ReplyContent>
-      <IconsInfoWrap>
-        <IconsWrap isPinned={false}>좋아요 {1 > 0 && String(0).padStart(2, '0')}</IconsWrap>
-        {!isRereply && <IconsWrap onClick={handleWriteRereplyClick}>답글쓰기</IconsWrap>}
-      </IconsInfoWrap>
+      {!isDeleted && (
+        <IconsInfoWrap>
+          <IconsWrap isPinned={false}>좋아요 {1 > 0 && String(0).padStart(2, '0')}</IconsWrap>
+          {!isRereply && <IconsWrap onClick={handleWriteRereplyClick}>답글쓰기</IconsWrap>}
+        </IconsInfoWrap>
+      )}
     </ReplyWrap>
   );
 };
 
 const ReplyCard = (props: PropsType) => {
-  const { reply, shortened, isLast, isReplyPage } = props;
+  const { reply, review, shortened, isLast, isReplyPage } = props;
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { ReviewStore } = useStore().MobxStore;
-  const { user, updatedDate, content, levelReplies, idx } = reply;
+  const { user, status, updatedDate, content, levelReplies, idx } = reply;
   const rereplies = levelReplies.slice(0, shortened ? 3 : levelReplies.length);
+  if (!review) return <></>;
+  const { place, idx: reviewIdx } = review;
 
   const handleShowMoreClick = () => {
     ReviewStore.setSelectedReply(reply);
@@ -75,24 +89,26 @@ const ReplyCard = (props: PropsType) => {
     <>
       <ReplyCardContent
         reply={reply}
+        requestUrl={`${place.type}/${place.idx}/review-post/${reviewIdx}/reply/${idx}`}
         isLast={isLast && levelReplies.length === 0}
         idx={idx}
         isReplyPage={isReplyPage}
-        userName={user.nickname}
+        userNickname={status !== 'DELETED' ? user.nickname : '(알수없음)'}
         updatedDate={updatedDate}
-        content={content}
+        content={status !== 'DELETED' ? content : '(삭제된 댓글입니다.)'}
       />
       {rereplies.map((rereply: RereplyType, idx: number) => (
         <Fragment key={`rereply-${rereply.idx}`}>
           <ReplyCardContent
             reply={reply}
+            requestUrl={`${place.type}/${place.idx}/review-post/${reviewIdx}/reply/${rereply.idx}`}
             isLast={isLast && idx === levelReplies.length - 1}
             isRereply
             isReplyPage={isReplyPage}
             handleShowMoreClick={handleShowMoreClick}
-            userName={rereply.user.nickname}
+            userNickname={rereply.status !== 'DELETED' ? rereply.user.nickname : '(알수없음)'}
             updatedDate={rereply.updatedDate}
-            content={rereply.content}
+            content={rereply.status !== 'DELETED' ? rereply.content : '(삭제된 댓글입니다.)'}
           />
         </Fragment>
       ))}
