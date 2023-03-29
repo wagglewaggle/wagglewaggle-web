@@ -7,6 +7,7 @@ import { palette } from 'constants/';
 import { ReactComponent as OptionsIcon } from 'assets/icons/drawer/options.svg';
 
 type PropsType = {
+  replyContent: string;
   profilePhoto: string;
   userNickname: string;
   updatedDate: string;
@@ -15,7 +16,8 @@ type PropsType = {
 };
 
 const ReviewCardHeader = (props: PropsType) => {
-  const { profilePhoto, userNickname, updatedDate, requestUrl, removeOptions } = props;
+  const { replyContent, profilePhoto, userNickname, updatedDate, requestUrl, removeOptions } =
+    props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOptionsClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -41,6 +43,7 @@ const ReviewCardHeader = (props: PropsType) => {
         </CustomIconButton>
       )}
       <HeaderSelectMenu
+        replyContent={replyContent}
         requestUrl={requestUrl}
         anchorEl={anchorEl}
         isMyReview={sessionStorage.getItem('@wagglewaggle_user_nickname') === userNickname}

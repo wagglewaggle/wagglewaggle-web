@@ -11,11 +11,12 @@ import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 
 type PropsType = {
   isMyReview: boolean;
+  replyContent?: string;
   handleCloseDrawer: () => void;
 };
 
 const ReplyHeader = (props: PropsType) => {
-  const { isMyReview, handleCloseDrawer } = props;
+  const { isMyReview, replyContent = '', handleCloseDrawer } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
@@ -51,6 +52,7 @@ const ReplyHeader = (props: PropsType) => {
         </IconsWrap>
       </SubHeader>
       <HeaderSelectMenu
+        replyContent={replyContent}
         anchorEl={anchorEl}
         isMyReview={isMyReview}
         handleMenuClose={handleMenuClose}

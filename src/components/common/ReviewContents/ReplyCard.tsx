@@ -55,6 +55,7 @@ const ReplyCardContent = (props: ContentType) => {
   return (
     <ReplyWrap isLast={isLast} isRereply={isRereply} onClick={handleShowMoreClick}>
       <ReviewCardHeader
+        replyContent={content}
         requestUrl={requestUrl}
         profilePhoto={defaultPhoto}
         userNickname={userNickname}

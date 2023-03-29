@@ -1,11 +1,9 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { TextField, styled } from '@mui/material';
-import { Wrap } from 'components/view/review';
+import { TextField, Drawer, styled } from '@mui/material';
 import { useStore } from 'stores';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
-import { ReviewType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
 import { ReactComponent as CloseIcon } from 'assets/icons/close-icon.svg';
 
@@ -13,18 +11,14 @@ const ReviewWritePage = () => {
   const [submittable, setSubmittable] = useState<boolean>(false);
   const [reviewInput, setReviewInput] = useState<string>('');
   const [searchParams] = useSearchParams();
-  const { ThemeStore, ReviewStore, ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
+  const { ReviewStore, ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const isDarkTheme = ThemeStore.theme === 'dark';
   const pathnameArr = pathname.split('/');
+  const { editMode } = ReviewStore.editReviewOptions;
   const placeIdx = pathnameArr[pathnameArr.length - 1];
   const searchPlaceName = searchParams.get('name') ?? '';
   const placeName = locationNames[searchPlaceName] ?? searchPlaceName;
-
-  const handleCancelClick = () => {
-    navigate(-1);
-  };
 
   const handleReviewChange = (e: ChangeEvent<HTMLInputElement>) => {
     setReviewInput(e.target.value);
@@ -32,10 +26,24 @@ const ReviewWritePage = () => {
 
   const handleCloseDialog = () => {
     CustomDialogStore.setOpen(false);
+    handleCloseDrawer();
+  };
+
+  const getReviews = async (requestUrl: string) => {
+    const response = await axiosRequest('get', requestUrl);
+    ReviewStore.setReviews(response?.data.list);
+  };
+
+  const getReviewDetail = async (requestUrl: string) => {
+    if (!editMode) return;
+    const response = await axiosRequest(
+      'get',
+      `${requestUrl}/${editMode ? ReviewStore.reviewDetail?.idx : ''}`
+    );
+    ReviewStore.setReviewDetail(response?.data);
   };
 
   const handleSubmit = async () => {
-    const { editMode } = ReviewStore.editReviewOptions;
     const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(placeName) ? 'SKT' : 'KT';
     const requestUrl = `${requestType}/${placeIdx}/review-post`;
     const response = await axiosRequest(
@@ -46,17 +54,9 @@ const ReviewWritePage = () => {
       }
     );
     if (!response?.data) return;
-    const getResponse = await axiosRequest('get', requestUrl);
-    ReviewStore.setReviews(getResponse?.data.list);
-    editMode &&
-      ReviewStore.setReviewDetail(
-        getResponse?.data.list.find(
-          (review: ReviewType) => review.idx === ReviewStore.reviewDetail?.idx
-        )
-      );
-    ReviewStore.setEditOptions({ editMode: false, content: '' });
-    setReviewInput('');
-    navigate(`/review/${placeIdx}?name=${placeName}`);
+    getReviews(requestUrl);
+    getReviewDetail(requestUrl);
+    ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
     handleCloseDialog();
   };
 
@@ -75,12 +75,14 @@ const ReviewWritePage = () => {
     });
   };
 
-  useEffect(() => {
-    ReviewStore.setWriteReviewButtonVisible(false);
-  }, [ReviewStore]);
+  const handleCloseDrawer = () => {
+    ReviewStore.setOpenReviewWritePage(false);
+    setReviewInput('');
+    navigate(-1);
+  };
 
   useEffect(() => {
-    setSubmittable(reviewInput.length > 0);
+    setSubmittable(reviewInput?.length > 0);
   }, [reviewInput]);
 
   useEffect(() => {
@@ -88,9 +90,13 @@ const ReviewWritePage = () => {
   }, [ReviewStore.editReviewOptions]);
 
   return (
-    <Wrap isDarkTheme={isDarkTheme}>
+    <ReviewWriteDrawer
+      open={ReviewStore.openReviewWritePage}
+      anchor='right'
+      onClose={handleCloseDrawer}
+    >
       <HeaderWrap width={ScreenSizeStore.screenWidth - 48}>
-        <CustomCloseIcon onClick={handleCancelClick} />
+        <CustomCloseIcon onClick={handleCloseDrawer} />
         <span>{placeName}</span>
         <SubmitButton submittable={submittable} onClick={handleSubmitClick}>
           완료
@@ -103,11 +109,18 @@ const ReviewWritePage = () => {
         value={reviewInput}
         onChange={handleReviewChange}
       />
-    </Wrap>
+    </ReviewWriteDrawer>
   );
 };
 
 export default observer(ReviewWritePage);
+
+const ReviewWriteDrawer = styled(Drawer)({
+  '& .MuiPaper-root': {
+    width: '100%',
+    maxWidth: 430,
+  },
+});
 
 const HeaderWrap = styled('div', {
   shouldForwardProp: (prop: string) => !['width', ''].includes(prop),

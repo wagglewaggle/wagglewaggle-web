@@ -15,6 +15,8 @@ type ReplyStatusType = {
 type EditOptionsType = {
   editMode: boolean;
   content: string;
+  requestUrl: string;
+  type: 'review' | 'reply';
 };
 
 export class ReviewStore {
@@ -24,9 +26,12 @@ export class ReviewStore {
   writeReviewButtonVisible: boolean = false;
   headerTitleStatus: HeaderTitleStatusType = { visible: true, title: '' };
   replyStatus: ReplyStatusType = { writeMode: false };
+  openReviewWritePage: boolean = false;
   editReviewOptions: EditOptionsType = {
     editMode: false,
     content: '',
+    requestUrl: '',
+    type: 'review',
   };
 
   constructor() {
@@ -73,5 +78,9 @@ export class ReviewStore {
 
   setReplyStatus = (newStatus: ReplyStatusType) => {
     this.replyStatus = newStatus;
+  };
+
+  setOpenReviewWritePage = (open: boolean) => {
+    this.openReviewWritePage = open;
   };
 }

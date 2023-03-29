@@ -1,4 +1,5 @@
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useEffect, useRef, ChangeEvent } from 'react';
+import { observer } from 'mobx-react';
 import { TextField, IconButton, styled } from '@mui/material';
 import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
@@ -10,7 +11,8 @@ const ReviewDetailInput = () => {
   const [reviewInput, setReviewInput] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { ReviewStore, ThemeStore } = useStore().MobxStore;
-  const { reviewDetail, selectedReply, replyStatus } = ReviewStore;
+  const { reviewDetail, selectedReply, replyStatus, editReviewOptions } = ReviewStore;
+  const { editMode, content, requestUrl, type } = editReviewOptions;
   const isDarkTheme = ThemeStore.theme === 'dark';
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,14 +24,16 @@ const ReviewDetailInput = () => {
     const placeInfo = reviewDetail?.place;
     if (!reviewIdx || !placeInfo) return;
     const replyIdx = selectedReply?.idx;
-    const postResponse = await axiosRequest(
-      'post',
-      `${placeInfo.type}/${placeInfo.idx}/review-post/${reviewIdx}/reply/${replyIdx ?? ''}`,
+    const response = await axiosRequest(
+      editMode ? 'put' : 'post',
+      editMode
+        ? requestUrl
+        : `${placeInfo.type}/${placeInfo.idx}/review-post/${reviewIdx}/reply/${replyIdx ?? ''}`,
       {
         content: reviewInput.trim(),
       }
     );
-    if (!postResponse?.data) return;
+    if (!response?.data) return;
     setReviewInput('');
     ReviewStore.initReviews(placeInfo.type as 'SKT' | 'KT', placeInfo.idx);
     await ReviewStore.initReviewDetail(placeInfo.type as 'SKT' | 'KT', placeInfo.idx, reviewIdx);
@@ -38,27 +42,34 @@ const ReviewDetailInput = () => {
     );
     newSelectedReply && ReviewStore.setSelectedReply(newSelectedReply);
     ReviewStore.setReplyStatus({ writeMode: false });
+    ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
     inputRef.current?.blur();
   };
+
+  useEffect(() => {
+    if (!editMode || type === 'review') return;
+    setReviewInput(content ?? '');
+    inputRef.current?.focus();
+  }, [content, editMode, type]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
       <CustomInput
-        ref={inputRef}
         multiline
         autoFocus={replyStatus.writeMode}
         placeholder='댓글을 입력해주세요.'
         value={reviewInput}
         onChange={handleChange}
+        inputProps={{ ref: inputRef }}
       />
-      <CustomIconButton submittable={reviewInput.length > 0} onClick={handleSubmit}>
+      <CustomIconButton submittable={reviewInput?.length > 0} onClick={handleSubmit}>
         <SubmitIcon />
       </CustomIconButton>
     </Wrap>
   );
 };
 
-export default ReviewDetailInput;
+export default observer(ReviewDetailInput);
 
 const Wrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',

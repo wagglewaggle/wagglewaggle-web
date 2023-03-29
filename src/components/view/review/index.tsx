@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { ReviewList } from 'components/common';
 import { CustomIconButton } from 'components/common/HeaderContents/common';
+import ReviewWritePage from './ReviewWritePage';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { LocationDataType } from 'types/typeBundle';
@@ -70,6 +71,10 @@ const Review = () => {
   }, []);
 
   useEffect(() => {
+    ReviewStore.setWriteReviewButtonVisible(true);
+  }, [ReviewStore]);
+
+  useEffect(() => {
     if (ReviewStore.reviews.length > 0) return;
     getReviews();
   }, [ReviewStore, getReviews]);
@@ -84,6 +89,7 @@ const Review = () => {
       </SubHeader>
       <BlankArea />
       <ReviewList reviews={ReviewStore.reviews} shouldIncludeOnClick />
+      <ReviewWritePage />
     </Wrap>
   );
 };

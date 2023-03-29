@@ -20,6 +20,7 @@ const ReplyPage = () => {
   const handleCloseDrawer = () => {
     ReviewStore.setSelectedReply(null);
     ReviewStore.setReplyStatus({ writeMode: false });
+    ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
     firstRender.current = true;
     navigate(-1);
   };

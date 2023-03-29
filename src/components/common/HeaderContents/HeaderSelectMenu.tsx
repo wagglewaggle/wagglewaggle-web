@@ -7,6 +7,7 @@ import { ReplyType } from 'types/typeBundle';
 import { palette } from 'constants/';
 
 type PropsType = {
+  replyContent: string;
   requestUrl?: string;
   anchorEl: null | HTMLElement;
   isMyReview: boolean;
@@ -14,7 +15,7 @@ type PropsType = {
 };
 
 const HeaderSelectMenu = (props: PropsType) => {
-  const { requestUrl, anchorEl, isMyReview, handleMenuClose } = props;
+  const { replyContent, requestUrl, anchorEl, isMyReview, handleMenuClose } = props;
   const { ReviewStore, CustomDialogStore } = useStore().MobxStore;
   const { search, pathname } = useLocation();
   const navigate = useNavigate();
@@ -30,11 +31,15 @@ const HeaderSelectMenu = (props: PropsType) => {
   const editReview = () => {
     ReviewStore.setEditOptions({
       editMode: true,
-      content: ReviewStore.reviewDetail?.content ?? '',
+      content: requestUrl ? replyContent : reviewDetail?.content ?? '',
+      requestUrl: requestUrl ?? '',
+      type: requestUrl ? 'reply' : 'review',
     });
-    const pathnameArr = pathname.split('/');
-    pathnameArr.splice(2, 0, 'write');
-    navigate(`${pathnameArr.join('/')}${search}`);
+    if (!requestUrl) {
+      ReviewStore.setOpenReviewWritePage(true);
+      navigate(`${pathname}${search}`);
+      return;
+    }
   };
 
   const onDeleteReview = async () => {

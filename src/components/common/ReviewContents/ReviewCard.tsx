@@ -79,6 +79,7 @@ const ReviewCard = (props: PropsType) => {
       )}
       <ReviewWrap isDetail={isDetail} disableBottom={disableBottom} onClick={handleClick}>
         <ReviewCardHeader
+          replyContent={content}
           profilePhoto={defaultPhoto}
           userNickname={status !== 'DELETED' ? writer.nickname : '(알수없음)'}
           updatedDate={updatedDate}

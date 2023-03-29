@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
@@ -28,22 +28,16 @@ const ReviewList = (props: PropsType) => {
     });
   }, [ReviewStore, placeName, pathname]);
 
-  useEffect(() => {
-    const pathnameArr = pathname.split('/');
-    if (!pathnameArr.includes('review')) return;
-    ReviewStore.setWriteReviewButtonVisible(pathnameArr.length < 4);
-  }, [ReviewStore, pathname]);
-
   return (
     <ReviewsWrap shouldIncludeOnClick={shouldIncludeOnClick}>
-      {reviews.length === 0 ? (
+      {reviews?.length === 0 ? (
         <NoReviewWrap>
           <NoReviewHeader>작성된 리뷰가 없어요.</NoReviewHeader>
           <NoReviewContent>{`지금 해당 장소에 계시다면\r\n첫번째 리뷰를 남겨주세요 🥰`}</NoReviewContent>
         </NoReviewWrap>
       ) : (
         <>
-          {reviews.map((review: ReviewType, idx: number) => (
+          {(reviews ?? []).map((review: ReviewType, idx: number) => (
             <ReviewCard
               key={`review-${review.idx}`}
               review={review}

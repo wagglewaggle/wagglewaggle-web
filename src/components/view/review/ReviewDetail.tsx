@@ -29,12 +29,12 @@ const ReviewDetail = () => {
   const handleCloseDrawer = () => {
     ReviewStore.setReviewDetail(null);
     ReviewStore.setReplyStatus({ writeMode: false });
+    ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
     firstRender.current = true;
     navigate(-1);
   };
 
   useEffect(() => {
-    ReviewStore.setWriteReviewButtonVisible(false);
     ReviewStore.setHeaderTitleStatus({ visible: false });
     ReviewStore.setReplyStatus({ writeMode: false });
   }, [ReviewStore]);
@@ -52,7 +52,7 @@ const ReviewDetail = () => {
       return;
     }
     paperElement?.scrollTo({ top: paperElement.scrollHeight + 130, behavior: 'smooth' });
-  }, [paperElement, reviewDetail?.replies.length]);
+  }, [paperElement, reviewDetail?.replies?.length]);
 
   return (
     <ReviewDetailDrawer
@@ -66,6 +66,7 @@ const ReviewDetail = () => {
           sessionStorage.getItem('@wagglewaggle_user_nickname') === reviewDetail?.writer.nickname
         }
         handleCloseDrawer={handleCloseDrawer}
+        replyContent={reviewDetail?.content}
       />
       <BlankArea />
       <ReviewCard
