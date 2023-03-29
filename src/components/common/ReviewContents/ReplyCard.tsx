@@ -21,7 +21,7 @@ interface ContentType {
   requestUrl: string;
   isLast: boolean;
   isRereply?: boolean;
-  handleShowMoreClick?: () => void;
+  handleShowMoreClick: () => void;
   idx: number;
   userNickname: string;
   updatedDate: string;
@@ -96,6 +96,7 @@ const ReplyCard = (props: PropsType) => {
         isLast={isLast && levelReplies.length === 0}
         idx={idx}
         isReplyPage={isReplyPage}
+        handleShowMoreClick={handleShowMoreClick}
         userNickname={status !== 'DELETED' ? user.nickname : '(알수없음)'}
         updatedDate={updatedDate}
         content={status !== 'DELETED' ? content : '(삭제된 댓글입니다.)'}
