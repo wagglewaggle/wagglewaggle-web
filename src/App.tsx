@@ -10,6 +10,7 @@ import PrivateRoutes from './PrivateRoutes';
 import { Login, Profile, BrowserPage } from './components/view';
 import ReplyPage from 'components/view/review/ReplyPage';
 import ReviewDetail from 'components/view/review/ReviewDetail';
+import ReviewWritePage from 'components/view/review/ReviewWritePage';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
@@ -146,6 +147,7 @@ const App = observer(() => {
             <Profile />
             <ReviewDetail />
             <ReplyPage />
+            <ReviewWritePage />
           </BrowserRouter>
         </ServiceWrap>
         <CustomDialog />

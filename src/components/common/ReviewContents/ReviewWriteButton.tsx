@@ -9,11 +9,21 @@ const ReviewWriteButton = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const { ReviewStore, ScreenSizeStore } = useStore().MobxStore;
-  const pathnameArr = pathname.split('/');
-  const placeIdx = pathnameArr[pathnameArr.length - 1];
 
   const handleClick = () => {
-    navigate(`/review/write/${placeIdx}${search}`);
+    ReviewStore.setEditOptions({
+      editMode: false,
+      content: '',
+      requestUrl: '',
+      type: 'review',
+    });
+    ReviewStore.setOpenReviewWritePage(true);
+    const pathnameArr = pathname.split('/');
+    pathnameArr.splice(1, 1, 'review');
+    const reviewPagePath = pathnameArr.join('/');
+    // history 객체 관련 뒤로가기 버튼 정상 동작을 위해 2번 navigate 함
+    navigate(`${reviewPagePath}${search}`);
+    navigate(`${reviewPagePath}${search}`);
   };
 
   return (
