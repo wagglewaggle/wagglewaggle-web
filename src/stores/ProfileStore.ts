@@ -5,6 +5,7 @@ export class ProfileStore {
   profilePageOpen: boolean = false;
   editPageOpen: boolean = false;
   favoritesPageOpen: boolean = false;
+  termsPageOpen: boolean = false;
   favoritesTab: 'place' | 'post' = 'place';
 
   constructor() {
@@ -29,5 +30,9 @@ export class ProfileStore {
 
   setFavoritesTab = (newTab: 'place' | 'post') => {
     this.favoritesTab = newTab;
+  };
+
+  setTermsPageOpen = (status: boolean) => {
+    this.termsPageOpen = status;
   };
 }
