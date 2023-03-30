@@ -139,11 +139,11 @@ const Wrap = styled('div')({
   maxWidth: 327,
   height: '100vh',
   whiteSpace: 'pre-line',
-  gap: 16,
+  gap: 8,
 });
 
 const Lottie = styled('div')({
-  margin: '24px 0 43px',
+  margin: '16px 0 35px',
   width: 245,
   height: 225,
 });
@@ -180,7 +180,7 @@ const CustomImgButton = styled('img')({
 const OptionWrap = styled('div')({
   display: 'flex',
   justifyContent: 'center',
-  margin: '4px 0 24px',
+  margin: '24px 0',
   fontSize: 14,
   fontWeight: 600,
   lineHeight: '20px',
