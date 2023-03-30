@@ -18,7 +18,7 @@ type PropsType = {
 let debouncer: NodeJS.Timeout;
 const Register = (props: PropsType) => {
   const { isEdit, currentNickname } = props;
-  const [profilePicture, setProfilePicture] = useState<string>(defaultImage);
+  const [profilePicture] = useState<string>(defaultImage);
   const [nickname, setNickname] = useState<string>(currentNickname ?? '');
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatusType>('empty');
   const [serverErrorMessage, setServerErrorMessage] = useState<string>('');
@@ -58,9 +58,10 @@ const Register = (props: PropsType) => {
     }, 500);
   };
 
-  const handleProfileCancelClick = () => {
-    setProfilePicture(defaultImage);
-  };
+  // CancelButton은 이미지 업로드 기능 구현 시 기능 추가 예정
+  // const handleProfileCancelClick = () => {
+  //   setProfilePicture(defaultImage);
+  // };
 
   const handleNicknameCancelClick = () => {
     setNickname('');
@@ -84,12 +85,13 @@ const Register = (props: PropsType) => {
       {!isEdit && '프로필 설정'}
       <PictureWrap>
         <ProfilePicture src={profilePicture} alt='profile-picture' />
-        <CancelButton
+        {/* CancelButton은 이미지 업로드 기능 구현 시 기능 추가 예정 */}
+        {/* <CancelButton
           src={cancelButton}
           variant='profile'
           alt='cancel-button'
           onClick={handleProfileCancelClick}
-        />
+        /> */}
       </PictureWrap>
       <NicknameWrap>
         닉네임
@@ -130,7 +132,7 @@ const Register = (props: PropsType) => {
       </NicknameWrap>
       <ButtonWrap>
         <StartButton onClick={handleStartClick} status={nicknameStatus}>
-          와글와글 시작하기
+          {!isEdit ? '입력 완료' : '변경하기'}
         </StartButton>
       </ButtonWrap>
     </Wrap>
