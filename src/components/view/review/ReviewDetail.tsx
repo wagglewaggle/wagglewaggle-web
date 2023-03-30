@@ -70,6 +70,7 @@ const ReviewDetail = () => {
       anchor='right'
       onClose={() => handleCloseDrawer()}
       ref={drawerRef}
+      transitionDuration={{ enter: 250, exit: 0 }}
     >
       <ReplyHeader
         isMyReview={

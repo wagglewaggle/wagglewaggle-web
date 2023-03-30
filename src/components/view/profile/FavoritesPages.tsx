@@ -59,6 +59,7 @@ const FavoritesPage = () => {
       open={favoritesPageOpen}
       onClose={() => handleFavoritesPageClose()}
       anchor='right'
+      transitionDuration={{ enter: 250, exit: 0 }}
     >
       <ProfileHeader handleLeftClick={handleFavoritesPageClose} title='관심 목록' />
       <CustomTabs value={tabs.indexOf(favoritesTab)} onChange={handleTabChange}>

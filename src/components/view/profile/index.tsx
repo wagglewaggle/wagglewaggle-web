@@ -145,7 +145,12 @@ const Profile = () => {
 
   return (
     <>
-      <ProfileDrawer open={profilePageOpen} onClose={() => handleProfilePageClose()} anchor='right'>
+      <ProfileDrawer
+        open={profilePageOpen}
+        onClose={() => handleProfilePageClose()}
+        anchor='right'
+        transitionDuration={{ enter: 250, exit: 0 }}
+      >
         <CustomHeader>
           <CustomIconButton onClick={() => handleProfilePageClose()}>
             <LeftIcon />

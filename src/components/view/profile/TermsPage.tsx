@@ -49,6 +49,7 @@ const TermsPage = () => {
       open={ProfileStore.termsPageOpen}
       onClose={() => handleTermsDrawerClose()}
       anchor='right'
+      transitionDuration={{ enter: 250, exit: 0 }}
     >
       <ProfileHeader handleLeftClick={handleTermsDrawerClose} title='서비스 이용약관' />
       <ContentWrap>

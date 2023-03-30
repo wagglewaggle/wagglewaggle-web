@@ -103,6 +103,7 @@ const ReviewWritePage = () => {
       open={ReviewStore.openReviewWritePage}
       anchor='right'
       onClose={() => handleCloseDrawer()}
+      transitionDuration={{ enter: 250, exit: 0 }}
     >
       <HeaderWrap width={ScreenSizeStore.screenWidth - 48}>
         <CustomCloseIcon onClick={() => handleCloseDrawer()} />

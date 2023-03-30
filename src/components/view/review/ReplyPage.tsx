@@ -48,6 +48,7 @@ const ReplyPage = () => {
       anchor='right'
       onClose={() => handleCloseDrawer()}
       ref={drawerRef}
+      transitionDuration={{ enter: 250, exit: 0 }}
     >
       <Wrap>
         <SubHeader>
