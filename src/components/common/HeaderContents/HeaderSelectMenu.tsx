@@ -21,11 +21,44 @@ const HeaderSelectMenu = (props: PropsType) => {
   const navigate = useNavigate();
   const { reviewDetail, selectedReply } = ReviewStore;
   const open = Boolean(anchorEl);
-  const selectItems = isMyReview ? ['수정하기', '삭제하기', '신고하기'] : ['신고하기'];
+  const selectItems = isMyReview ? ['수정하기', '삭제하기'] : ['신고하기'];
   const reviewRequestUrl = `${reviewDetail?.place.type}/${reviewDetail?.place.idx}/review-post/${reviewDetail?.idx}`;
 
+  const onReportReview = async () => {
+    if (!requestUrl && !reviewRequestUrl) return;
+    const requestUrlArr = (requestUrl ?? reviewRequestUrl).split('/');
+    const targetIdx = requestUrlArr[requestUrlArr.length - 1];
+    const reportRequestUrl = `report/${requestUrl ? 'reply' : 'review-post'}/${targetIdx}`;
+    const response = await axiosRequest('post', reportRequestUrl);
+    handleCloseDialog();
+    // @ts-expect-error The following message only comes from server when duplicate report request has been sent
+    const errMessage: string | undefined = response?.response?.data?.message;
+    const notiDialogContent = `${requestUrl ? '댓글' : '게시물'} 신고`;
+    CustomDialogStore.openNotificationDialog({
+      title: `${requestUrl ? '댓글' : '게시물'} 신고`,
+      content: errMessage ?? `${notiDialogContent}가 완료되었습니다.`,
+      rightButton: {
+        title: '확인',
+        handleClick: handleCloseDialog,
+      },
+    });
+  };
+
   const reportReview = () => {
-    console.log('report');
+    CustomDialogStore.openNotificationDialog({
+      title: `${requestUrl ? '댓글' : '게시물'} 신고`,
+      content: '하위 사유에 해당되는 경우에 신고해주세요.',
+      subContent:
+        '욕설 및 비방 / 혐오 표현 / 음란물 / 홍보 / 도배 / 불법 정보 유포 / 개인정보 노출',
+      leftButton: {
+        title: '취소',
+        handleClick: handleCloseDialog,
+      },
+      rightButton: {
+        title: '신고',
+        handleClick: onReportReview,
+      },
+    });
   };
 
   const editReview = () => {

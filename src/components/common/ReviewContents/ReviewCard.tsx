@@ -7,6 +7,7 @@ import { palette, symbolsComponents, locationNames } from 'constants/';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { ReviewType, PinnedReviewType } from 'types/typeBundle';
+import { reviewStrConstants } from 'constants/';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
@@ -40,7 +41,10 @@ const ReviewCard = (props: PropsType) => {
     isPin,
     idx,
   } = review;
-  const isDeleted = status === 'DELETED';
+  const { deleted, reportDeleted, maskedUserNickname, deleteMaskedReview, reportMaskedReview } =
+    reviewStrConstants;
+  const isDeleted = status === deleted;
+  const isReported = status === reportDeleted;
 
   const getReviewDetail = async (type: string, placeIdx: number | string, postIdx: number) => {
     ReviewStore.initReviewDetail(type as 'SKT' | 'KT', placeIdx, postIdx);
@@ -81,15 +85,15 @@ const ReviewCard = (props: PropsType) => {
         <ReviewCardHeader
           replyContent={content}
           profilePhoto={defaultPhoto}
-          userNickname={status !== 'DELETED' ? writer.nickname : '(알수없음)'}
+          userNickname={isDeleted || isReported ? maskedUserNickname : writer.nickname}
           createdDate={createdDate}
           requestUrl={`${place.type}/${place.idx}/review-post/${idx}`}
           removeOptions
         />
         <ReviewContent isDetail={isDetail}>
-          {!isDeleted ? content : '(삭제된 리뷰입니다.)'}
+          {isDeleted ? deleteMaskedReview : isReported ? reportMaskedReview : content}
         </ReviewContent>
-        {!isDeleted && (
+        {!isDeleted && !isReported && (
           <IconsInfoWrap>
             <IconsWrap isPinned={isPin} onClick={handlePinReviewClick}>
               <HeartIcon /> {String(pinReviewPostCount).padStart(2, '0')}

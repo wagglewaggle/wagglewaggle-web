@@ -5,6 +5,7 @@ import ReviewCardHeader from './ReviewCardHeader';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
 import { ReplyType, ReviewDetailType, RereplyType } from 'types/typeBundle';
+import { reviewStrConstants } from 'constants/';
 import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
 
@@ -42,9 +43,14 @@ const ReplyCardContent = (props: ContentType) => {
     content,
   } = props;
   const { ReviewStore } = useStore().MobxStore;
+  const { deleted, reportDeleted } = reviewStrConstants;
   const isDeleted = isRereply
-    ? reply.levelReplies.find((rereply: RereplyType) => rereply.idx === idx)?.status === 'DELETED'
-    : reply.status === 'DELETED';
+    ? reply.levelReplies.find((rereply: RereplyType) => rereply.idx === idx)?.status === deleted
+    : reply.status === deleted;
+  const isReported = isRereply
+    ? reply.levelReplies.find((rereply: RereplyType) => rereply.idx === idx)?.status ===
+      reportDeleted
+    : reply.status === reportDeleted;
 
   const handleWriteRereplyClick = () => {
     if (isRereply) return;
@@ -60,10 +66,10 @@ const ReplyCardContent = (props: ContentType) => {
         profilePhoto={defaultPhoto}
         userNickname={userNickname}
         createdDate={createdDate}
-        removeOptions={isDeleted}
+        removeOptions={isDeleted || isReported}
       />
       <ReplyContent>{content}</ReplyContent>
-      {!isDeleted && (
+      {!isDeleted && !isReported && (
         <IconsInfoWrap>
           <IconsWrap isPinned={false}>좋아요 {1 > 0 && String(0).padStart(2, '0')}</IconsWrap>
           {!isRereply && <IconsWrap onClick={handleWriteRereplyClick}>답글쓰기</IconsWrap>}
@@ -82,6 +88,10 @@ const ReplyCard = (props: PropsType) => {
   const rereplies = levelReplies.slice(0, shortened ? 3 : levelReplies.length);
   if (!review) return <></>;
   const { place, idx: reviewIdx } = review;
+  const { deleted, reportDeleted, maskedUserNickname, deleteMaskedReply, reportMaskedReply } =
+    reviewStrConstants;
+  const isDeleted = status === deleted;
+  const isReported = status === reportDeleted;
 
   const handleShowMoreClick = () => {
     ReviewStore.setSelectedReply(reply);
@@ -97,9 +107,9 @@ const ReplyCard = (props: PropsType) => {
         idx={idx}
         isReplyPage={isReplyPage}
         handleShowMoreClick={handleShowMoreClick}
-        userNickname={status !== 'DELETED' ? user.nickname : '(알수없음)'}
+        userNickname={isDeleted || isReported ? maskedUserNickname : user.nickname}
         createdDate={createdDate}
-        content={status !== 'DELETED' ? content : '(삭제된 댓글입니다.)'}
+        content={isDeleted ? deleteMaskedReply : isReported ? reportMaskedReply : content}
       />
       {rereplies.map((rereply: RereplyType, idx: number) => (
         <Fragment key={`rereply-${rereply.idx}`}>
@@ -111,9 +121,19 @@ const ReplyCard = (props: PropsType) => {
             isRereply
             isReplyPage={isReplyPage}
             handleShowMoreClick={handleShowMoreClick}
-            userNickname={rereply.status !== 'DELETED' ? rereply.user.nickname : '(알수없음)'}
+            userNickname={
+              ![deleted, reportDeleted].includes(rereply.status)
+                ? rereply.user.nickname
+                : maskedUserNickname
+            }
             createdDate={rereply.createdDate}
-            content={rereply.status !== 'DELETED' ? rereply.content : '(삭제된 댓글입니다.)'}
+            content={
+              rereply.status === deleted
+                ? deleteMaskedReply
+                : rereply.status === reportDeleted
+                ? reportMaskedReply
+                : rereply.content
+            }
           />
         </Fragment>
       ))}

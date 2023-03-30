@@ -64,6 +64,7 @@ const Wrap = styled('div', {
   shouldForwardProp: (prop: string) => !['isDarkTheme', 'reviewCount'].includes(prop),
 })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
+  flexGrow: 1,
   flexDirection: 'column',
   alignItems: 'center',
   padding: '20px 0 16px',
