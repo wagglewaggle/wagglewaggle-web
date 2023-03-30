@@ -51,12 +51,18 @@ const ReviewDetail = () => {
   }, [reviewDetail, placesData, selectedPlaceName, primaryCategories]);
 
   useEffect(() => {
+    if (!reviewDetail || !paperElement) return;
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
-    paperElement?.scrollTo({ top: paperElement.scrollHeight + 130, behavior: 'smooth' });
-  }, [paperElement, reviewDetail?.replies?.length]);
+    paperElement?.scrollTo({ top: paperElement.scrollHeight, behavior: 'smooth' });
+  }, [paperElement, reviewDetail]);
+
+  useEffect(() => {
+    if (!!ReviewStore.reviewDetail) return;
+    firstRender.current = true;
+  }, [ReviewStore.reviewDetail]);
 
   useEffect(() => {
     if (!ReviewStore.reviewDetail) return;
@@ -76,7 +82,7 @@ const ReviewDetail = () => {
         isMyReview={
           sessionStorage.getItem('@wagglewaggle_user_nickname') === reviewDetail?.writer.nickname
         }
-        handleCloseDrawer={handleCloseDrawer}
+        handleCloseDrawer={() => handleCloseDrawer(true)}
         replyContent={reviewDetail?.content}
       />
       <BlankArea />

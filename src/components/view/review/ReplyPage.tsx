@@ -34,7 +34,7 @@ const ReplyPage = () => {
       firstRender.current = false;
       return;
     }
-    paperElement?.scrollTo({ top: paperElement.scrollHeight + 130, behavior: 'smooth' });
+    paperElement?.scrollTo({ top: paperElement.scrollHeight, behavior: 'smooth' });
   }, [paperElement, ReviewStore.selectedReply?.levelReplies.length]);
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const ReplyPage = () => {
     >
       <Wrap>
         <SubHeader>
-          <CustomIconButton onClick={() => handleCloseDrawer()}>
+          <CustomIconButton onClick={() => handleCloseDrawer(true)}>
             <LeftIcon />
           </CustomIconButton>
         </SubHeader>

@@ -16,6 +16,7 @@ const FavoritesPage = () => {
   const navigate = useNavigate();
   const { ProfileStore, ReviewStore } = useStore().MobxStore;
   const { profilePageOpen, favoritesPageOpen, favoritesTab } = ProfileStore;
+  const { reviewDetail, selectedReply } = ReviewStore;
   const tabs: ('place' | 'post')[] = ['place', 'post'];
 
   const handleFavoritesPageClose = useCallback(
@@ -44,9 +45,10 @@ const FavoritesPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!ProfileStore.favoritesPageOpen) return;
+    if (!favoritesPageOpen) return;
+    if (!!reviewDetail || !!selectedReply) return;
     window.onpopstate = () => handleFavoritesPageClose(true);
-  }, [handleFavoritesPageClose, ProfileStore.favoritesPageOpen]);
+  }, [handleFavoritesPageClose, favoritesPageOpen, reviewDetail, selectedReply]);
 
   useEffect(() => {
     if (!profilePageOpen) return;
@@ -61,7 +63,7 @@ const FavoritesPage = () => {
       anchor='right'
       transitionDuration={{ enter: 250, exit: 0 }}
     >
-      <ProfileHeader handleLeftClick={handleFavoritesPageClose} title='관심 목록' />
+      <ProfileHeader handleLeftClick={() => handleFavoritesPageClose(true)} title='관심 목록' />
       <CustomTabs value={tabs.indexOf(favoritesTab)} onChange={handleTabChange}>
         <CustomTab label={`장소 ${favPlaces.length}`} />
         <CustomTab label={`게시물 ${favPosts.length}`} />
