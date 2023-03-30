@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { useStore } from 'stores';
@@ -21,7 +21,8 @@ type PropsType = {
 const MapHeader = (props: PropsType) => {
   const { isExpanded, requestType, placeName, navigateToHome, handleSearchClick } = props;
   const { LocationStore, ProfileStore } = useStore().MobxStore;
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const navigate = useNavigate();
 
   const handleHeartClick = async () => {
     const pathnameArr = pathname.split('/');
@@ -35,6 +36,7 @@ const MapHeader = (props: PropsType) => {
   };
 
   const handleProfilePageOpen = () => {
+    navigate(`${pathname}${search}`);
     ProfileStore.setProfilePageOpen(true);
   };
 

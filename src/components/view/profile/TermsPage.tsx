@@ -1,3 +1,5 @@
+import { useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, styled } from '@mui/material';
 import ProfileHeader from './ProfileHeader';
@@ -25,14 +27,29 @@ const TermsWithLists = (props: ListsPropsType) => {
 };
 
 const TermsPage = () => {
+  const navigate = useNavigate();
   const { ProfileStore } = useStore().MobxStore;
 
-  const handleTermsDrawerClose = () => {
-    ProfileStore.setTermsPageOpen(false);
-  };
+  const handleTermsDrawerClose = useCallback(
+    (isPopState?: boolean) => {
+      ProfileStore.setTermsPageOpen(false);
+      if (isPopState) return;
+      navigate(-1);
+    },
+    [ProfileStore, navigate]
+  );
+
+  useEffect(() => {
+    if (!ProfileStore.termsPageOpen) return;
+    window.onpopstate = () => handleTermsDrawerClose(true);
+  }, [handleTermsDrawerClose, ProfileStore.termsPageOpen]);
 
   return (
-    <TermsDrawer open={ProfileStore.termsPageOpen} onClose={handleTermsDrawerClose} anchor='right'>
+    <TermsDrawer
+      open={ProfileStore.termsPageOpen}
+      onClose={() => handleTermsDrawerClose()}
+      anchor='right'
+    >
       <ProfileHeader handleLeftClick={handleTermsDrawerClose} title='서비스 이용약관' />
       <ContentWrap>
         <Title>와글와글 개인정보처리 방침</Title>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, styled } from '@mui/material';
@@ -17,13 +17,17 @@ const ReplyPage = () => {
   const { ReviewStore } = useStore().MobxStore;
   const paperElement = drawerRef.current?.querySelector('.MuiPaper-root');
 
-  const handleCloseDrawer = () => {
-    ReviewStore.setSelectedReply(null);
-    ReviewStore.setReplyStatus({ writeMode: false });
-    ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
-    firstRender.current = true;
-    navigate(-1);
-  };
+  const handleCloseDrawer = useCallback(
+    (isPopState?: boolean) => {
+      ReviewStore.setSelectedReply(null);
+      ReviewStore.setReplyStatus({ writeMode: false });
+      ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
+      firstRender.current = true;
+      if (isPopState) return;
+      navigate(-1);
+    },
+    [ReviewStore, navigate]
+  );
 
   useEffect(() => {
     if (firstRender.current) {
@@ -33,16 +37,21 @@ const ReplyPage = () => {
     paperElement?.scrollTo({ top: paperElement.scrollHeight + 130, behavior: 'smooth' });
   }, [paperElement, ReviewStore.selectedReply?.levelReplies.length]);
 
+  useEffect(() => {
+    if (!ReviewStore.selectedReply) return;
+    window.onpopstate = () => handleCloseDrawer(true);
+  }, [handleCloseDrawer, ReviewStore.selectedReply]);
+
   return (
     <ReplyDrawer
       open={!!ReviewStore.selectedReply}
       anchor='right'
-      onClose={handleCloseDrawer}
+      onClose={() => handleCloseDrawer()}
       ref={drawerRef}
     >
       <Wrap>
         <SubHeader>
-          <CustomIconButton onClick={handleCloseDrawer}>
+          <CustomIconButton onClick={() => handleCloseDrawer()}>
             <LeftIcon />
           </CustomIconButton>
         </SubHeader>

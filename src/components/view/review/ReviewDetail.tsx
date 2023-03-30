@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, Divider, styled } from '@mui/material';
@@ -26,13 +26,17 @@ const ReviewDetail = () => {
   const fromProfile = !pathname.split('/').includes('review');
   const selectedPlaceName = fromProfile && reviewDetail ? reviewDetail.place.name : placeName;
 
-  const handleCloseDrawer = () => {
-    ReviewStore.setReviewDetail(null);
-    ReviewStore.setReplyStatus({ writeMode: false });
-    ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
-    firstRender.current = true;
-    navigate(-1);
-  };
+  const handleCloseDrawer = useCallback(
+    (isPopState?: boolean) => {
+      ReviewStore.setReviewDetail(null);
+      ReviewStore.setReplyStatus({ writeMode: false });
+      ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
+      firstRender.current = true;
+      if (isPopState) return;
+      navigate(-1);
+    },
+    [ReviewStore, navigate]
+  );
 
   useEffect(() => {
     ReviewStore.setHeaderTitleStatus({ visible: false });
@@ -54,11 +58,17 @@ const ReviewDetail = () => {
     paperElement?.scrollTo({ top: paperElement.scrollHeight + 130, behavior: 'smooth' });
   }, [paperElement, reviewDetail?.replies?.length]);
 
+  useEffect(() => {
+    if (!ReviewStore.reviewDetail) return;
+    if (!!ReviewStore.selectedReply) return;
+    window.onpopstate = () => handleCloseDrawer(true);
+  }, [handleCloseDrawer, ReviewStore.reviewDetail, ReviewStore.selectedReply]);
+
   return (
     <ReviewDetailDrawer
       open={!!ReviewStore.reviewDetail}
       anchor='right'
-      onClose={handleCloseDrawer}
+      onClose={() => handleCloseDrawer()}
       ref={drawerRef}
     >
       <ReplyHeader

@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, Divider, styled } from '@mui/material';
 import { CustomIconButton } from 'components/common/HeaderContents/common';
 import EditProfile from './EditProfile';
 import FavoritesPages from './FavoritesPages';
+import TermsPage from './TermsPage';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 import axiosRequest from 'api/axiosRequest';
@@ -12,24 +14,35 @@ import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 import { ReactComponent as HeartIcon } from 'assets/icons/profile/heart.svg';
 import { ReactComponent as EditIcon } from 'assets/icons/profile/edit.svg';
 import { ReactComponent as QuestionIcon } from 'assets/icons/profile/question.svg';
+import { ReactComponent as LockIcon } from 'assets/icons/profile/lock.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
 
 const Profile = () => {
+  const { pathname, search } = useLocation();
+  const navigate = useNavigate();
   const { AuthStore, ProfileStore, CustomDialogStore } = useStore().MobxStore;
+  const { profilePageOpen, termsPageOpen, editPageOpen, favoritesPageOpen } = ProfileStore;
 
-  const handleProfilePageClose = () => {
-    ProfileStore.setProfilePageOpen(false);
-  };
+  const handleProfilePageClose = useCallback(
+    (isPopState?: boolean) => {
+      ProfileStore.setProfilePageOpen(false);
+      if (isPopState) return;
+      navigate(-1);
+    },
+    [ProfileStore, navigate]
+  );
 
   const handleCloseDialog = () => {
     CustomDialogStore.setOpen(false);
   };
 
   const handleEditProfileClick = () => {
+    navigate(`${pathname}${search}`);
     ProfileStore.setEditPageOpen(true);
   };
 
   const handleFavoritesClick = () => {
+    navigate(`${pathname}${search}`);
     ProfileStore.setFavoritesPageOpen(true);
     ProfileStore.setFavoritesTab('place');
   };
@@ -48,6 +61,11 @@ const Profile = () => {
         handleClick: handleCloseDialog,
       },
     });
+  };
+
+  const handleTermsClick = () => {
+    navigate(`${pathname}${search}`);
+    ProfileStore.setTermsPageOpen(true);
   };
 
   const handleAuthChange = () => {
@@ -114,20 +132,22 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    if (!profilePageOpen) return;
+    if (termsPageOpen || editPageOpen || favoritesPageOpen) return;
+    window.onpopstate = () => handleProfilePageClose(true);
+  }, [handleProfilePageClose, profilePageOpen, termsPageOpen, editPageOpen, favoritesPageOpen]);
+
+  useEffect(() => {
     const userNickname = sessionStorage.getItem('@wagglewaggle_user_nickname');
-    if (!ProfileStore.profilePageOpen || !userNickname) return;
+    if (!profilePageOpen || !userNickname) return;
     ProfileStore.setUserNickname(userNickname);
-  }, [ProfileStore, ProfileStore.profilePageOpen]);
+  }, [ProfileStore, profilePageOpen]);
 
   return (
     <>
-      <ProfileDrawer
-        open={ProfileStore.profilePageOpen}
-        onClose={handleProfilePageClose}
-        anchor='right'
-      >
+      <ProfileDrawer open={profilePageOpen} onClose={() => handleProfilePageClose()} anchor='right'>
         <CustomHeader>
-          <CustomIconButton onClick={handleProfilePageClose}>
+          <CustomIconButton onClick={() => handleProfilePageClose()}>
             <LeftIcon />
           </CustomIconButton>
         </CustomHeader>
@@ -159,6 +179,13 @@ const Profile = () => {
           </FeatureTitleWrap>
           <RightIcon />
         </FeaturesWrap>
+        <FeaturesWrap onClick={handleTermsClick}>
+          <FeatureTitleWrap>
+            <LockIcon />
+            서비스 이용약관
+          </FeatureTitleWrap>
+          <RightIcon />
+        </FeaturesWrap>
         <CustomDivider />
         <FeaturesWrap shady onClick={handleLogoutClick}>
           <FeatureTitleWrap shady>로그아웃</FeatureTitleWrap>
@@ -171,6 +198,7 @@ const Profile = () => {
       </ProfileDrawer>
       <EditProfile />
       <FavoritesPages />
+      <TermsPage />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect, useCallback, ChangeEvent } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { TextField, Drawer, styled } from '@mui/material';
@@ -75,11 +75,15 @@ const ReviewWritePage = () => {
     });
   };
 
-  const handleCloseDrawer = () => {
-    ReviewStore.setOpenReviewWritePage(false);
-    setReviewInput('');
-    navigate(-1);
-  };
+  const handleCloseDrawer = useCallback(
+    (isPopState?: boolean) => {
+      ReviewStore.setOpenReviewWritePage(false);
+      setReviewInput('');
+      if (isPopState) return;
+      navigate(-1);
+    },
+    [ReviewStore, navigate]
+  );
 
   useEffect(() => {
     setSubmittable(reviewInput?.length > 0);
@@ -89,14 +93,19 @@ const ReviewWritePage = () => {
     setReviewInput(ReviewStore.editReviewOptions.content);
   }, [ReviewStore.editReviewOptions]);
 
+  useEffect(() => {
+    if (!ReviewStore.openReviewWritePage) return;
+    window.onpopstate = () => handleCloseDrawer(true);
+  }, [handleCloseDrawer, ReviewStore.openReviewWritePage]);
+
   return (
     <ReviewWriteDrawer
       open={ReviewStore.openReviewWritePage}
       anchor='right'
-      onClose={handleCloseDrawer}
+      onClose={() => handleCloseDrawer()}
     >
       <HeaderWrap width={ScreenSizeStore.screenWidth - 48}>
-        <CustomCloseIcon onClick={handleCloseDrawer} />
+        <CustomCloseIcon onClick={() => handleCloseDrawer()} />
         <span>{placeName}</span>
         <SubmitButton submittable={submittable} onClick={handleSubmitClick}>
           완료

@@ -1,3 +1,5 @@
+import { useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, styled } from '@mui/material';
 import ProfileHeader from './ProfileHeader';
@@ -5,16 +7,27 @@ import Register from '../register';
 import { useStore } from 'stores';
 
 const EditProfile = () => {
+  const navigate = useNavigate();
   const { ProfileStore } = useStore().MobxStore;
 
-  const handleEditPageClose = () => {
-    ProfileStore.setEditPageOpen(false);
-  };
+  const handleEditPageClose = useCallback(
+    (isPopState?: boolean) => {
+      ProfileStore.setEditPageOpen(false);
+      if (isPopState) return;
+      navigate(-1);
+    },
+    [ProfileStore, navigate]
+  );
+
+  useEffect(() => {
+    if (!ProfileStore.editPageOpen) return;
+    window.onpopstate = () => handleEditPageClose(true);
+  }, [handleEditPageClose, ProfileStore.editPageOpen]);
 
   return (
     <EditProfileDrawer
       open={ProfileStore.editPageOpen}
-      onClose={handleEditPageClose}
+      onClose={() => handleEditPageClose()}
       anchor='right'
     >
       <ProfileHeader handleLeftClick={handleEditPageClose} title='프로필 수정' />

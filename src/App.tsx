@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { isIOS } from 'react-device-detect';
 import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
@@ -139,7 +139,10 @@ const App = observer(() => {
                 path='/*'
                 element={isWebView ? <PrivateRoutes /> : <Navigate replace to='/landing' />}
               /> */}
-              <Route path='/login' element={<Login />} />
+              <Route
+                path='/login'
+                element={!AuthStore.authorized ? <Login /> : <Navigate replace to='/map' />}
+              />
               <Route path='/*' element={<PrivateRoutes />} />
             </Routes>
             <CustomDrawer />
