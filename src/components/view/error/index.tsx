@@ -35,7 +35,7 @@ const Error = observer(() => {
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      animationData: require(`assets/lottie/${ThemeStore.theme}/Error.json`),
+      animationData: require(`assets/lottie/${ThemeStore.theme}/Character.json`),
     });
   }, [ThemeStore.theme]);
 

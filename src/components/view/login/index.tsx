@@ -1,21 +1,23 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
+import lottie from 'lottie-web';
 import googleIcon from 'assets/icons/login/google.png';
 import kakaoIcon from 'assets/icons/login/kakao.png';
 import naverIcon from 'assets/icons/login/naver.png';
-import { ReactComponent as LoginIllust } from 'assets/icons/login/login-illust.svg';
+import { ReactComponent as WaggleWaggleLogo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as CheckIcon } from 'assets/icons/login/check.svg';
 import { palette } from 'constants/';
 import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
 
 const Login = () => {
+  const lottieContainer = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { AuthStore } = useStore().MobxStore;
+  const { AuthStore, ThemeStore } = useStore().MobxStore;
   const { autoLoginChecked } = AuthStore;
 
   const handleAutoLoginClick = () => {
@@ -91,15 +93,21 @@ const Login = () => {
     AuthStore.initAutoLoginChecked();
   }, [AuthStore]);
 
+  useEffect(() => {
+    if (!lottieContainer.current) return;
+    lottie.loadAnimation({
+      container: lottieContainer.current,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: require(`assets/lottie/${ThemeStore.theme}/Character.json`),
+    });
+  }, [ThemeStore.theme]);
+
   return (
     <Wrap>
-      <Header>
-        {`와글와글에 오신 것을\r\n 환영합니다.`}
-        <SubHeader>
-          {`지금 가려는 곳의 혼잡도가 궁금하다면\r\n와글와글에서 확인해보세요.`}
-        </SubHeader>
-      </Header>
-      <CustomLoginIllust />
+      <CustomWaggleWaggleLogo />
+      <Lottie ref={lottieContainer}></Lottie>
       <ButtonWrap variant='kakao' onClick={handleKakaoClick}>
         <CustomImgButton src={kakaoIcon} alt='kakao' />
         카카오로 로그인
@@ -125,6 +133,7 @@ export default observer(Login);
 const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
+  justifyContent: 'center',
   alignItems: 'center',
   width: 327,
   maxWidth: 327,
@@ -133,27 +142,15 @@ const Wrap = styled('div')({
   gap: 16,
 });
 
-const Header = styled('h1')({
-  margin: '32px 0 0',
-  width: '100%',
-  color: palette.black,
-  fontSize: 24,
-  fontWeight: 600,
-  lineHeight: '32px',
+const Lottie = styled('div')({
+  margin: '24px 0 43px',
+  width: 245,
+  height: 225,
 });
 
-const SubHeader = styled('div')({
-  margin: '16px 0 0',
-  color: palette.grey[500],
-  fontSize: 14,
-  fontWeight: 400,
-  lineHeight: '20px',
-});
-
-const CustomLoginIllust = styled(LoginIllust)({
-  margin: '16px 0',
-  width: '100%',
-  height: 262,
+const CustomWaggleWaggleLogo = styled(WaggleWaggleLogo)({
+  width: 206,
+  height: 100,
 });
 
 const ButtonWrap = styled('div', {
