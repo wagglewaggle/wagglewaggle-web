@@ -39,6 +39,7 @@ const axiosRequest = async (
             sessionStorage.getItem('@wagglewaggle_refresh_token'),
         });
         sessionStorage.removeItem('@wagglewaggle_reissuing');
+        return apiAxiosInstance(err.config);
       }
       if (['ERR_0006007', 'ERR_0006010'].includes(errorCode)) {
         return err.response;
@@ -51,7 +52,7 @@ const axiosRequest = async (
     if (!config.headers) return config;
     config.headers['ngrok-skip-browser-warning'] = 'any';
     return config;
-  })
+  });
 
   tokenAxiosInstance.interceptors.response.use(
     async (res) => {
