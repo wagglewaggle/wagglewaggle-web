@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { styled } from '@mui/material';
+import { Drawer, styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import PlaceData from './PlaceData';
 import { initPlaceData } from 'util/';
@@ -91,15 +91,24 @@ const List = observer(() => {
   }, [CustomDrawerStore, search]);
 
   return (
-    <Wrap>
-      <CustomHeader navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
-      <PlaceData placeData={placesData} />
-      <NavigationIcons />
-    </Wrap>
+    <ListDrawer open anchor='right' transitionDuration={0}>
+      <Wrap>
+        <CustomHeader navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
+        <PlaceData placeData={placesData} />
+        <NavigationIcons />
+      </Wrap>
+    </ListDrawer>
   );
 });
 
 export default List;
+
+const ListDrawer = styled(Drawer)({
+  '& .MuiPaper-root': {
+    width: '100%',
+    maxWidth: 430,
+  },
+});
 
 const Wrap = styled('div')({
   display: 'flex',

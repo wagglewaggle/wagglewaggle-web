@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { styled } from '@mui/material';
+import { Drawer, styled } from '@mui/material';
 import { ReviewList } from 'components/common';
 import { CustomIconButton } from 'components/common/HeaderContents/common';
 import { useStore } from 'stores';
@@ -79,20 +79,29 @@ const Review = () => {
   }, [ReviewStore, getReviews]);
 
   return (
-    <Wrap isDarkTheme={isDarkTheme}>
-      <SubHeader>
-        <CustomIconButton onClick={handleReviewClose}>
-          <LeftIcon />
-        </CustomIconButton>
-        {ReviewStore.headerTitleStatus.title}
-      </SubHeader>
-      <BlankArea />
-      <ReviewList reviews={ReviewStore.reviews} shouldIncludeOnClick />
-    </Wrap>
+    <ReviewDrawer open anchor='right' transitionDuration={0}>
+      <Wrap isDarkTheme={isDarkTheme}>
+        <SubHeader>
+          <CustomIconButton onClick={handleReviewClose}>
+            <LeftIcon />
+          </CustomIconButton>
+          {ReviewStore.headerTitleStatus.title}
+        </SubHeader>
+        <BlankArea />
+        <ReviewList reviews={ReviewStore.reviews} shouldIncludeOnClick />
+      </Wrap>
+    </ReviewDrawer>
   );
 };
 
 export default observer(Review);
+
+const ReviewDrawer = styled(Drawer)({
+  '& .MuiPaper-root': {
+    width: '100%',
+    maxWidth: 430,
+  },
+});
 
 export const Wrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
@@ -103,13 +112,13 @@ export const Wrap = styled('div', {
   height: 'auto',
   minHeight: '100vh',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
-  boxShadow: '0px -10px 40px rgb(0 0 0 / 30%)',
   zIndex: 100,
 }));
 
 const BlankArea = styled('div')({
   width: '100%',
   height: 48,
+  minHeight: 48,
 });
 
 const SubHeader = styled('div')({

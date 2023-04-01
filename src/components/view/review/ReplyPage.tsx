@@ -34,6 +34,7 @@ const ReplyPage = () => {
       firstRender.current = false;
       return;
     }
+    if (!paperElement) return;
     paperElement?.scrollTo({ top: paperElement.scrollHeight, behavior: 'smooth' });
   }, [paperElement, ReviewStore.selectedReply?.levelReplies.length]);
 

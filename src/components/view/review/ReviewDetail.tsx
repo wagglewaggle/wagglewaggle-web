@@ -51,13 +51,14 @@ const ReviewDetail = () => {
   }, [reviewDetail, placesData, selectedPlaceName, primaryCategories]);
 
   useEffect(() => {
-    if (!reviewDetail || !paperElement) return;
+    if (!reviewDetail || (!paperElement && !pathname.split('/').includes('review'))) return;
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
-    paperElement?.scrollTo({ top: paperElement.scrollHeight, behavior: 'smooth' });
-  }, [paperElement, reviewDetail]);
+    if (!paperElement) return;
+    paperElement.scrollTo({ top: paperElement.scrollHeight, behavior: 'smooth' });
+  }, [paperElement, reviewDetail, pathname]);
 
   useEffect(() => {
     if (!!ReviewStore.reviewDetail) return;
