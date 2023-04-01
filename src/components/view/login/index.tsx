@@ -101,6 +101,7 @@ const Login = () => {
       autoplay: true,
       animationData: require(`assets/lottie/${ThemeStore.theme}/Character.json`),
     });
+    return () => lottie.destroy();
   }, [ThemeStore.theme]);
 
   return (
