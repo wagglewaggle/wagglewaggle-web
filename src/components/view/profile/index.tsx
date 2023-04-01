@@ -70,12 +70,12 @@ const Profile = () => {
 
   const handleAuthChange = () => {
     handleCloseDialog();
+    navigate('/login');
   };
 
   const onLogout = () => {
     AuthStore.logout();
-    navigate('/login');
-    handleProfilePageClose();
+    handleProfilePageClose(true);
     handleCloseDialog();
     CustomDialogStore.openNotificationDialog({
       title: '로그아웃',
@@ -105,7 +105,7 @@ const Profile = () => {
   const onDeactivate = async () => {
     const response = await axiosRequest('put', 'user/deactivate');
     if (!response?.data) return;
-    handleProfilePageClose();
+    handleProfilePageClose(true);
     handleCloseDialog();
     CustomDialogStore.openNotificationDialog({
       title: '회원 탈퇴',
