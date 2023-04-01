@@ -57,7 +57,7 @@ const Login = () => {
     const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
     window.open(
       `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
-      '_blank'
+      '_self'
     );
   };
 
@@ -80,9 +80,8 @@ const Login = () => {
     const platform = pathname.split('/')?.[3] ?? null;
     if (!authCode || !platform) return;
     if (AuthStore.isLoggingIn) return;
-
     requestJwt(authCode, platform);
-  }, [AuthStore, searchParams, pathname, requestJwt]);
+  }, [AuthStore, searchParams, pathname, navigate, requestJwt]);
 
   useEffect(() => {
     if (!AuthStore.authorized) return;

@@ -74,6 +74,7 @@ const Profile = () => {
 
   const onLogout = () => {
     AuthStore.logout();
+    navigate('/login');
     handleProfilePageClose();
     handleCloseDialog();
     CustomDialogStore.openNotificationDialog({
