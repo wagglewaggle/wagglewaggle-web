@@ -3,7 +3,8 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { TextField, Drawer, styled } from '@mui/material';
 import { useStore } from 'stores';
-import { palette, locationNames, locationRequestTypes } from 'constants/';
+import { palette, locationNames } from 'constants/';
+import { RequestType } from 'types/typeBundle';
 import axiosRequest from 'api/axiosRequest';
 import { ReactComponent as CloseIcon } from 'assets/icons/close-icon.svg';
 
@@ -11,10 +12,11 @@ const ReviewWritePage = () => {
   const [submittable, setSubmittable] = useState<boolean>(false);
   const [reviewInput, setReviewInput] = useState<string>('');
   const [searchParams] = useSearchParams();
-  const { ReviewStore, ScreenSizeStore, CustomDialogStore } = useStore().MobxStore;
+  const { ReviewStore, ScreenSizeStore, CustomDialogStore, LocationStore } = useStore().MobxStore;
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const pathnameArr = pathname.split('/');
+  const { placesData } = LocationStore;
   const { editMode } = ReviewStore.editReviewOptions;
   const placeIdx = pathnameArr[pathnameArr.length - 1];
   const searchPlaceName = searchParams.get('name') ?? '';
@@ -44,7 +46,10 @@ const ReviewWritePage = () => {
   };
 
   const handleSubmit = async () => {
-    const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(placeName) ? 'SKT' : 'KT';
+    const requestType: RequestType | undefined = placesData.find(
+      (data) => data.name === searchPlaceName
+    )?.type;
+    if (!requestType) return;
     const requestUrl = `${requestType}/${placeIdx}/review-post`;
     const response = await axiosRequest(
       editMode ? 'put' : 'post',

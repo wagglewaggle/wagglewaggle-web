@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import axiosRequest from 'api/axiosRequest';
-import { ReviewType, ReviewDetailType, ReplyType } from 'types/typeBundle';
+import { ReviewType, ReviewDetailType, ReplyType, RequestType } from 'types/typeBundle';
 
 type HeaderTitleStatusType = {
   visible: boolean;
@@ -46,7 +46,7 @@ export class ReviewStore {
     this.editReviewOptions = newEditMode;
   };
 
-  initReviews = async (requestType: 'SKT' | 'KT', placeIdx: number | string) => {
+  initReviews = async (requestType: RequestType, placeIdx: number | string) => {
     const response = await axiosRequest('get', `${requestType}/${placeIdx}/review-post`);
     this.setReviews(response?.data.list);
   };
@@ -56,7 +56,7 @@ export class ReviewStore {
   };
 
   initReviewDetail = async (
-    placeType: 'SKT' | 'KT',
+    placeType: RequestType,
     placeIdx: number | string,
     reviewIdx: number | string
   ) => {

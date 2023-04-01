@@ -10,8 +10,8 @@ import RealtimeReviews from './RealtimeReviews';
 import RelatedLocations from './RelatedLocations';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import { LocationDataType, PlaceDataType } from 'types/typeBundle';
-import { palette, locationNames, locationRequestTypes, districts } from 'constants/';
+import { LocationDataType, PlaceDataType, RequestType } from 'types/typeBundle';
+import { palette, locationNames, districts } from 'constants/';
 
 type ExpandedType = 'removed' | 'appeared' | 'expanded' | 'full';
 
@@ -29,6 +29,7 @@ const BottomSheet = () => {
   } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const { variant, drawerStatus } = CustomDrawerStore;
+  const { placesData } = LocationStore;
   const FULL_HEIGHT = -ScreenSizeStore.screenHeight;
   const EXPANDED_HEIGHT = -Math.round(ScreenSizeStore.screenHeight * 0.6);
   const APPEARED_HEIGHT = -196;
@@ -52,13 +53,11 @@ const BottomSheet = () => {
     const pathnameArr = pathname.split('/');
     if (!placeName || pathnameArr.includes('review')) return;
     LocationStore.setPlaceName(placeName);
-    const requestType: string = locationRequestTypes.skt.includes(
-      locationNames[placeName] || placeName
-    )
-      ? 'SKT'
-      : 'KT';
+    const requestType: RequestType | undefined = placesData.find(
+      (data) => data.name === placeName
+    )?.type;
     const placeId: string = pathnameArr[pathnameArr.length - 1];
-    if (!Number(placeId)) {
+    if (!requestType || !Number(placeId)) {
       navigate(`/${CustomDrawerStore.variant}`);
       return;
     }
@@ -71,7 +70,15 @@ const BottomSheet = () => {
     const { data } = response;
     LocationStore.setLocationData(data);
     UserNavigatorStore.setDataLocation([data.x, data.y]);
-  }, [CustomDrawerStore, LocationStore, UserNavigatorStore, navigate, pathname, searchParams]);
+  }, [
+    CustomDrawerStore,
+    LocationStore,
+    UserNavigatorStore,
+    navigate,
+    pathname,
+    searchParams,
+    placesData,
+  ]);
 
   const initRelatedLocations = useCallback(async () => {
     if (

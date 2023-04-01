@@ -5,6 +5,7 @@ import { useStore } from 'stores';
 import LeftButton from './LeftButton';
 import { CustomIconButton } from './common';
 import axiosRequest from 'api/axiosRequest';
+import { RequestType } from 'types/typeBundle';
 import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 import { ReactComponent as PersonIcon } from 'assets/icons/person-icon.svg';
@@ -12,7 +13,7 @@ import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 
 type PropsType = {
   isExpanded: boolean;
-  requestType: 'KT' | 'SKT';
+  requestType?: RequestType;
   placeName: string;
   navigateToHome?: () => void;
   handleSearchClick?: () => void;
@@ -25,6 +26,7 @@ const MapHeader = (props: PropsType) => {
   const navigate = useNavigate();
 
   const handleHeartClick = async () => {
+    if (!requestType) return;
     const pathnameArr = pathname.split('/');
     const placeIdx = Number(pathnameArr[pathnameArr.length - 1]);
     const requestParams = { idx: placeIdx, type: requestType };

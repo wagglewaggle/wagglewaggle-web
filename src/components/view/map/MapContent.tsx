@@ -14,7 +14,7 @@ const mapInfo: { lat: number; lng: number } = { lat: 0, lng: 0 };
 const MapContent = () => {
   const [kakaoMap, setKakaoMap] = useState<any>(null);
   const [allMarkers, setAllMarkers] = useState<any[]>([]);
-  const [allSelectedMarkers, setAllSelectedMarkers] = useState<{[key: string]: any}>({});
+  const [allSelectedMarkers, setAllSelectedMarkers] = useState<{ [key: string]: any }>({});
   const [markerNamesOnMap, setMarkerNamesOnMap] = useState<string[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const MapContent = () => {
     useStore().MobxStore;
   const { drawerStatus } = CustomDrawerStore;
   const { locationData, placesData } = LocationStore;
-  const locationStatus = locationData?.population.level ?? ''
+  const locationStatus = locationData?.population?.level ?? '';
 
   const getSymbol = useCallback(
     (categories: CategoryType[]) => {
@@ -136,18 +136,18 @@ const MapContent = () => {
       );
     }
     const overlayColors = {
-      'VERY_RELAXATION': palette.blue,
-      'RELAXATION': palette.green,
-      'NORMAL': palette.yellow,
-      'CROWDED': palette.orange,
-      'VERY_CROWDED': palette.red
-    }
-    const overlayColor = overlayColors?.[locationStatus as StatusType]
+      VERY_RELAXATION: palette.blue,
+      RELAXATION: palette.green,
+      NORMAL: palette.yellow,
+      CROWDED: palette.orange,
+      VERY_CROWDED: palette.red,
+    };
+    const overlayColor = overlayColors?.[locationStatus as StatusType];
     if (!overlayColor) return;
     overlay = new window.kakao.maps.Polygon({
       path: polygonPath,
       strokeWeight: 1,
-      strokeColor:  overlayColor,
+      strokeColor: overlayColor,
       strokeOpacity: 1,
       strokeStyle: 'solid',
       fillColor: overlayColor,
@@ -194,15 +194,25 @@ const MapContent = () => {
         return setMarkerOnMap('place', x, y, name, symbols[getSymbol(categories)]);
       })
     );
-    const selectedMarkers: {[key: string]: any} = {};
-    (['VERY_CROWDED', 'CROWDED', 'NORMAL', 'RELAXATION', 'VERY_RELAXATION'] as StatusType[]).forEach((status: StatusType) => {
-      selectedMarkers[status] = []
+    const selectedMarkers: { [key: string]: any } = {};
+    (
+      ['VERY_CROWDED', 'CROWDED', 'NORMAL', 'RELAXATION', 'VERY_RELAXATION'] as StatusType[]
+    ).forEach((status: StatusType) => {
+      selectedMarkers[status] = [];
       placesData.forEach((place: PlaceDataType) => {
         const { name, categories, x, y } = place;
-        selectedMarkers[status].push(setMarkerOnMap('selected', x, y, name, getMapSelectedSymbol(getSymbol(categories), status)));
-      })
-    })
-    setAllSelectedMarkers(selectedMarkers)
+        selectedMarkers[status].push(
+          setMarkerOnMap(
+            'selected',
+            x,
+            y,
+            name,
+            getMapSelectedSymbol(getSymbol(categories), status)
+          )
+        );
+      });
+    });
+    setAllSelectedMarkers(selectedMarkers);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [placesData, getSymbol, setMarkerOnMap]);
 
@@ -224,7 +234,8 @@ const MapContent = () => {
   useEffect(() => {
     if (drawerStatus.expanded !== 'removed') return;
     overlay?.setMap(null);
-    allSelectedMarkers[locationStatus] && allSelectedMarkers[locationStatus].forEach((marker: any) => marker.setMap(null));
+    allSelectedMarkers[locationStatus] &&
+      allSelectedMarkers[locationStatus].forEach((marker: any) => marker.setMap(null));
   }, [drawerStatus.expanded, allSelectedMarkers, locationStatus]);
 
   useEffect(() => {
@@ -236,15 +247,24 @@ const MapContent = () => {
       }
       marker.setMap(kakaoMap);
     });
-    allSelectedMarkers[locationStatus] && allSelectedMarkers[locationStatus].forEach((marker: any) => {
-      if (marker.Gb !== placeName) {
-        marker.setMap(null);
-        return;
-      }
-      if (locationData?.name !== placeName) return;
-      marker.setMap(kakaoMap);
-    });
-  }, [allMarkers, locationStatus, allSelectedMarkers, markerNamesOnMap, locationData, placeName, kakaoMap]);
+    allSelectedMarkers[locationStatus] &&
+      allSelectedMarkers[locationStatus].forEach((marker: any) => {
+        if (marker.Gb !== placeName) {
+          marker.setMap(null);
+          return;
+        }
+        if (locationData?.name !== placeName) return;
+        marker.setMap(kakaoMap);
+      });
+  }, [
+    allMarkers,
+    locationStatus,
+    allSelectedMarkers,
+    markerNamesOnMap,
+    locationData,
+    placeName,
+    kakaoMap,
+  ]);
 
   useEffect(() => {
     if (!kakaoMap || !['expanded', 'appeared'].includes(drawerStatus.expanded)) return;

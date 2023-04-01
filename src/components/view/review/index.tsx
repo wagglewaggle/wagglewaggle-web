@@ -6,9 +6,9 @@ import { ReviewList } from 'components/common';
 import { CustomIconButton } from 'components/common/HeaderContents/common';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import { LocationDataType } from 'types/typeBundle';
+import { LocationDataType, RequestType } from 'types/typeBundle';
 import { initPlaceData } from 'util/';
-import { palette, locationNames, locationRequestTypes } from 'constants/';
+import { palette } from 'constants/';
 import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 
 const Review = () => {
@@ -17,12 +17,11 @@ const Review = () => {
   const navigate = useNavigate();
   const { LocationStore, ReviewStore, ThemeStore, AuthStore } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
+  const { placesData } = LocationStore;
   const placeName = searchParams.get('name') ?? '';
-  const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
-    locationNames[placeName] || placeName
-  )
-    ? 'SKT'
-    : 'KT';
+  const requestType: RequestType | undefined = placesData.find(
+    (data) => data.name === placeName
+  )?.type;
 
   const getReviews = useCallback(async () => {
     const pathnameArr = pathname.split('/');
@@ -38,6 +37,7 @@ const Review = () => {
   };
 
   const initLocationData = useCallback(async () => {
+    if (!requestType) return;
     const pathnameArr = pathname.split('/');
     LocationStore.setPlaceName(placeName);
     const placeIdx = pathnameArr[pathnameArr.length - 1];

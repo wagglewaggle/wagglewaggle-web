@@ -5,24 +5,24 @@ import { IconButton, styled } from '@mui/material';
 import _ from 'lodash';
 import { ReviewList } from 'components/common';
 import { useStore } from 'stores';
-import { palette, locationNames, locationRequestTypes } from 'constants/';
+import { RequestType } from 'types/typeBundle';
+import { palette } from 'constants/';
 import axiosRequest from 'api/axiosRequest';
 import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 
 const RealtimeReviews = () => {
   const { pathname } = useLocation();
-  const { ThemeStore, ReviewStore } = useStore().MobxStore;
+  const { ThemeStore, ReviewStore, LocationStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isDarkTheme = ThemeStore.theme === 'dark';
+  const { placesData } = LocationStore;
   const placeName = searchParams.get('name') ?? '';
   const pathnameArr = pathname.split('/');
   const placeIdx = Number(pathnameArr[3]) || Number(pathnameArr[2]);
-  const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
-    locationNames[placeName] || placeName
-  )
-    ? 'SKT'
-    : 'KT';
+  const requestType: RequestType | undefined = placesData.find(
+    (data) => data.name === placeName
+  )?.type;
 
   const handleOpenReviewPage = () => {
     navigate(`/review/${placeIdx}?name=${placeName}`);

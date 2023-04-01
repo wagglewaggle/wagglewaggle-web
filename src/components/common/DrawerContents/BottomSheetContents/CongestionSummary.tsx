@@ -47,7 +47,7 @@ const CongestionSummary = () => {
           <Type>{categories?.[placeName ?? '']?.[0]?.type ?? ''}</Type>
         </LocationWrap>
         <StatusWrap>
-          <PlaceStatus status={locationData?.population.level} />
+          <PlaceStatus status={locationData?.population?.level} />
         </StatusWrap>
       </Header>
       <IconsWrap>

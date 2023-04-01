@@ -5,8 +5,8 @@ import { styled } from '@mui/material';
 import { CustomChips } from 'components/common';
 import { MapHeader } from './HeaderContents';
 import { useStore } from 'stores';
-import { palette, locationNames, locationRequestTypes } from 'constants/';
-import { FavoritePlaceType } from 'types/typeBundle';
+import { palette } from 'constants/';
+import { FavoritePlaceType, RequestType } from 'types/typeBundle';
 
 interface PropsType {
   navigateToHome?: () => void;
@@ -24,15 +24,13 @@ const CustomHeader = (props: PropsType) => {
     ScreenSizeStore,
   } = useStore().MobxStore;
   const [searchParams] = useSearchParams();
-  const { locationData } = LocationStore;
+  const { locationData, placesData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isExpanded = ['expanded', 'full'].includes(CustomDrawerStore.drawerStatus.expanded);
   const placeName = searchParams.get('name') ?? '';
-  const requestType: 'SKT' | 'KT' = locationRequestTypes.skt.includes(
-    locationNames[placeName] || placeName
-  )
-    ? 'SKT'
-    : 'KT';
+  const requestType: RequestType | undefined = placesData.find(
+    (data) => data.name === placeName
+  )?.type;
 
   const handleClickChip = (chip: string) => {
     CategoryStore.setSelectedCategory(chip);

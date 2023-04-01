@@ -13,7 +13,7 @@ export interface PopulationType {
 export interface PlaceDataType {
   idx: number;
   name: string;
-  type: string;
+  type: RequestType;
   categories: CategoryType[];
   poiId: number;
   x: number;
@@ -190,6 +190,8 @@ export type DialogVariantType = 'intro' | 'accident' | 'cctv' | 'noti';
 export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
 
 export type ScreenType = 'mobile' | 'tablet' | 'pc';
+
+export type RequestType = 'SKT' | 'KT' | 'EXTRA';
 
 export type BgType =
   | 'AmusementPark'
