@@ -17,7 +17,7 @@ const Review = () => {
   const navigate = useNavigate();
   const { LocationStore, ReviewStore, ThemeStore, AuthStore } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
-  const { placesData } = LocationStore;
+  const { placesData, locationData } = LocationStore;
   const placeName = searchParams.get('name') ?? '';
   const requestType: RequestType | undefined = placesData.find(
     (data) => data.name === placeName
@@ -31,9 +31,7 @@ const Review = () => {
   }, [ReviewStore, requestType, pathname]);
 
   const handleReviewClose = () => {
-    navigate(
-      `/map/detail/${LocationStore.locationData?.idx}?name=${LocationStore.locationData?.name}`
-    );
+    navigate(`/map/detail/${locationData?.idx}?name=${locationData?.name}`);
   };
 
   const initLocationData = useCallback(async () => {
@@ -57,9 +55,9 @@ const Review = () => {
   }, [initLocationData, pathname]);
 
   useEffect(() => {
-    if (LocationStore.placesData.length !== 0 || !AuthStore.authorized) return;
+    if (placesData.length !== 0 || !AuthStore.authorized) return;
     initPlaceData();
-  }, [AuthStore.authorized, LocationStore.placesData.length]);
+  }, [AuthStore.authorized, placesData.length]);
 
   useEffect(() => {
     document.body.setAttribute('style', `overflow-y:auto`);

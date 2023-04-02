@@ -16,16 +16,17 @@ const Map = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const { CustomDrawerStore, LocationStore, AuthStore } = useStore().MobxStore;
+  const { placesData } = LocationStore;
 
   const handleWordClick = useCallback(
     (searchWord: string) => {
       CustomDrawerStore.setSearchValue(searchWord);
       CustomDrawerStore.openDrawer(
         'map',
-        <ResultData placeData={LocationStore.placesData} searchWord={searchWord} />
+        <ResultData placeData={placesData} searchWord={searchWord} />
       );
     },
-    [CustomDrawerStore, LocationStore.placesData]
+    [CustomDrawerStore, placesData]
   );
 
   const handleLatestListChange = (newList: string[]) => {
@@ -56,9 +57,9 @@ const Map = () => {
   }, [pathname]);
 
   useEffect(() => {
-    if (LocationStore.placesData.length !== 0 || !AuthStore.authorized) return;
+    if (placesData.length !== 0 || !AuthStore.authorized) return;
     initPlaceData();
-  }, [LocationStore.placesData.length, AuthStore.authorized]);
+  }, [placesData.length, AuthStore.authorized]);
 
   useEffect(() => {
     sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');

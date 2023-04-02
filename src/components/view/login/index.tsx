@@ -18,7 +18,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { AuthStore, ThemeStore } = useStore().MobxStore;
-  const { autoLoginChecked } = AuthStore;
+  const { autoLoginChecked, isLoggingIn, authorized } = AuthStore;
 
   const handleAutoLoginClick = () => {
     AuthStore.setAutoLoginChecked();
@@ -79,9 +79,9 @@ const Login = () => {
     const authCode = searchParams.get('code');
     const platform = pathname.split('/')?.[3] ?? null;
     if (!authCode || !platform) return;
-    if (AuthStore.isLoggingIn) return;
+    if (isLoggingIn || authorized) return;
     requestJwt(authCode, platform);
-  }, [AuthStore, searchParams, pathname, navigate, requestJwt]);
+  }, [isLoggingIn, authorized, searchParams, pathname, navigate, requestJwt]);
 
   useEffect(() => {
     if (!AuthStore.authorized) return;
