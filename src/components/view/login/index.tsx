@@ -3,7 +3,8 @@ import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import lottie from 'lottie-web';
-import googleIcon from 'assets/icons/login/google.png';
+// 구글 로그인은 딥링크 구현되면 다시 구현할 예정
+// import googleIcon from 'assets/icons/login/google.png';
 import kakaoIcon from 'assets/icons/login/kakao.png';
 import naverIcon from 'assets/icons/login/naver.png';
 import { ReactComponent as WaggleWaggleLogo } from 'assets/icons/logo-icon.svg';
@@ -52,14 +53,15 @@ const Login = () => {
     );
   };
 
-  const handleGoogleClick = () => {
-    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-    const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
-    window.open(
-      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
-      '_self'
-    );
-  };
+  // 구글 로그인은 딥링크 구현되면 다시 구현할 예정
+  // const handleGoogleClick = () => {
+  //   const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  //   const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
+  //   window.open(
+  //     `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
+  //     '_self'
+  //   );
+  // };
 
   const requestJwt = useCallback(
     async (authCode: string, platform: string) => {
@@ -116,10 +118,11 @@ const Login = () => {
         <CustomImgButton src={naverIcon} alt='naver' />
         네이버로 로그인
       </ButtonWrap>
-      <ButtonWrap variant='google' onClick={handleGoogleClick}>
+      {/* 구글 로그인은 딥링크 구현되면 다시 구현할 예정 */}
+      {/* <ButtonWrap variant='google' onClick={handleGoogleClick}>
         <CustomImgButton src={googleIcon} alt='google' />
         Google로 로그인
-      </ButtonWrap>
+      </ButtonWrap> */}
       <OptionWrap onClick={handleAutoLoginClick}>
         <CustomCheckIcon autoLoginChecked={autoLoginChecked} />
         자동 로그인
