@@ -6,6 +6,7 @@ import LeftButton from './LeftButton';
 import { CustomIconButton } from './common';
 import axiosRequest from 'api/axiosRequest';
 import { RequestType } from 'types/typeBundle';
+import { locationNames } from 'constants/';
 import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 import { ReactComponent as PersonIcon } from 'assets/icons/person-icon.svg';
@@ -62,7 +63,7 @@ const MapHeader = (props: PropsType) => {
         <>
           <SubHeader>
             <LeftButton isExpanded={isExpanded} />
-            {placeName}
+            {locationNames[placeName] ?? placeName}
           </SubHeader>
           <CustomIconButton pinned={LocationStore.currentLocationPinned} onClick={handleHeartClick}>
             <HeartIcon />
