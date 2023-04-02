@@ -51,7 +51,11 @@ const TermsPage = () => {
       anchor='right'
       transitionDuration={{ enter: 250, exit: 0 }}
     >
-      <ProfileHeader handleLeftClick={handleTermsDrawerClose} title='서비스 이용약관' />
+      <ProfileHeader
+        handleLeftClick={handleTermsDrawerClose}
+        title='서비스 이용약관'
+        includesBorderBottom
+      />
       <BlankArea />
       <ContentWrap>
         <Title>와글와글 개인정보처리 방침</Title>

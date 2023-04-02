@@ -53,7 +53,11 @@ const MyPostsPage = () => {
       ref={drawerRef}
       transitionDuration={{ enter: 250, exit: 0 }}
     >
-      <ProfileHeader handleLeftClick={() => handleMyPostsPageClose(true)} title='내 글 목록' />
+      <ProfileHeader
+        handleLeftClick={() => handleMyPostsPageClose(true)}
+        title='내 글 목록'
+        includesBorderBottom={false}
+      />
       <BlankArea />
       <CustomTabs value={tabs.indexOf(pageListTab)} onChange={handleTabChange}>
         <CustomTab label='장소' />

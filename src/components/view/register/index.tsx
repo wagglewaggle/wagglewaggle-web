@@ -82,7 +82,7 @@ const Register = (props: PropsType) => {
 
   return (
     <Wrap>
-      {!isEdit && '프로필 설정'}
+      {!isEdit && <CustomHeader>{'프로필 설정'}</CustomHeader>}
       <PictureWrap>
         <ProfilePicture src={profilePicture} alt='profile-picture' />
         {/* CancelButton은 이미지 업로드 기능 구현 시 기능 추가 예정 */}
@@ -145,15 +145,29 @@ const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  margin: '12px 0 24px',
+  margin: '80px 0 24px',
   width: 327,
   maxWidth: 327,
-  height: 'calc(100vh - 36px)',
-  maxHeight: 'calc(100vh - 36px)',
+  height: 'calc(100vh - 104px)',
+  maxHeight: 'calc(100vh - 104px)',
   color: palette.black,
   fontSize: 18,
   fontWeight: 600,
   lineHeight: '24px',
+});
+
+const CustomHeader = styled('div')({
+  position: 'fixed',
+  top: 0,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '12px 0',
+  width: '100%',
+  maxWidth: 430,
+  height: 28,
+  backgroundColor: palette.white,
+  zIndex: 10,
 });
 
 const PictureWrap = styled('div')({

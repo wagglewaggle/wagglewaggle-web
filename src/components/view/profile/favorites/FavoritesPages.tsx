@@ -83,7 +83,11 @@ const FavoritesPage = () => {
       ref={drawerRef}
       transitionDuration={{ enter: 250, exit: 0 }}
     >
-      <ProfileHeader handleLeftClick={() => handleFavoritesPageClose(true)} title='관심 목록' />
+      <ProfileHeader
+        handleLeftClick={() => handleFavoritesPageClose(true)}
+        title='관심 목록'
+        includesBorderBottom={false}
+      />
       <CustomTabs value={tabs.indexOf(pageListTab)} onChange={handleTabChange}>
         <CustomTab label={`장소 ${favPlaces.data.length}`} />
         <CustomTab label={`게시물 ${favReviews.data.length}`} />

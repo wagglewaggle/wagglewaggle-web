@@ -2,15 +2,14 @@ import { useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, Divider, styled } from '@mui/material';
-import { CustomIconButton } from 'components/common/HeaderContents/common';
 import EditProfile from './EditProfile';
+import ProfileHeader from './common/ProfileHeader';
 import FavoritesPages from './favorites/FavoritesPages';
 import MyPostsPage from './myPosts/MyPostsPages';
 import TermsPage from './TermsPage';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 import axiosRequest from 'api/axiosRequest';
-import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 import { ReactComponent as HeartIcon } from 'assets/icons/profile/heart.svg';
 import { ReactComponent as EditIcon } from 'assets/icons/profile/edit.svg';
@@ -154,11 +153,12 @@ const Profile = () => {
         anchor='right'
         transitionDuration={{ enter: 250, exit: 0 }}
       >
-        <CustomHeader>
-          <CustomIconButton onClick={() => handleProfilePageClose()}>
-            <LeftIcon />
-          </CustomIconButton>
-        </CustomHeader>
+        <ProfileHeader
+          handleLeftClick={() => handleProfilePageClose()}
+          title=''
+          includesBorderBottom={false}
+        />
+        <BlankArea />
         <UserInfoWrap>
           <UserWrap>
             <UserPicture src={defaultPhoto} alt='user-pic' />
@@ -219,15 +219,6 @@ const ProfileDrawer = styled(Drawer)({
     width: '100%',
     maxWidth: 430,
   },
-});
-
-const CustomHeader = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  borderBottom: `1px solid ${palette.grey[300]}`,
-  padding: '12px 24px',
-  width: 'calc(100% - 48px)',
-  height: 28,
 });
 
 const UserInfoWrap = styled('div')({
@@ -304,4 +295,10 @@ const FeatureTitleWrap = styled('div', {
 const CustomDivider = styled(Divider)({
   border: `3px solid ${palette.grey[200]}`,
   margin: '6px 0',
+});
+
+const BlankArea = styled('div')({
+  width: '100%',
+  height: 48,
+  minHeight: 48,
 });

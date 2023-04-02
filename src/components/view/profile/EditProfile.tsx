@@ -31,7 +31,11 @@ const EditProfile = () => {
       anchor='right'
       transitionDuration={{ enter: 250, exit: 0 }}
     >
-      <ProfileHeader handleLeftClick={handleEditPageClose} title='프로필 수정' />
+      <ProfileHeader
+        handleLeftClick={handleEditPageClose}
+        title='프로필 수정'
+        includesBorderBottom
+      />
       <Register isEdit currentNickname={localStorage.getItem('@wagglewaggle_user_nickname')} />
     </EditProfileDrawer>
   );
