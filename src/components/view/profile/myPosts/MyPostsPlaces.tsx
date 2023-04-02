@@ -36,7 +36,7 @@ const MyPostsPlaces = () => {
                 ...post,
                 writer: {
                   ...post.writer,
-                  nickname: sessionStorage.getItem('@wagglewaggle_user_nickname') ?? '(알수없음)',
+                  nickname: localStorage.getItem('@wagglewaggle_user_nickname') ?? '(알수없음)',
                 },
               }}
               shouldIncludeOnClick

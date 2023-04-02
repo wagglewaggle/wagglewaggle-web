@@ -71,7 +71,7 @@ const Register = (props: PropsType) => {
   const handleStartClick = async () => {
     if (nicknameStatus !== 'ok') return;
     await axiosRequest('put', 'user/setting', { nickname });
-    sessionStorage.setItem('@wagglewaggle_user_nickname', nickname);
+    localStorage.setItem('@wagglewaggle_user_nickname', nickname);
     if (isEdit) {
       ProfileStore.setUserNickname(nickname);
       ProfileStore.setEditPageOpen(false);
@@ -148,8 +148,8 @@ const Wrap = styled('div')({
   margin: '12px 0 24px',
   width: 327,
   maxWidth: 327,
-  height: 'calc(100vh - 88px)',
-  maxHeight: 'calc(100vh - 88px)',
+  height: 'calc(100vh - 36px)',
+  maxHeight: 'calc(100vh - 36px)',
   color: palette.black,
   fontSize: 18,
   fontWeight: 600,

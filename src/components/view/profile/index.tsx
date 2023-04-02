@@ -141,7 +141,7 @@ const Profile = () => {
   }, [handleProfilePageClose, profilePageOpen, termsPageOpen, editPageOpen, favoritesPageOpen]);
 
   useEffect(() => {
-    const userNickname = sessionStorage.getItem('@wagglewaggle_user_nickname');
+    const userNickname = localStorage.getItem('@wagglewaggle_user_nickname');
     if (!profilePageOpen || !userNickname) return;
     ProfileStore.setUserNickname(userNickname);
   }, [ProfileStore, profilePageOpen]);
