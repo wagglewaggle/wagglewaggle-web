@@ -25,12 +25,17 @@ const ProfileHeader = (props: PropsType) => {
 export default ProfileHeader;
 
 const CustomHeader = styled('div')({
+  position: 'fixed',
+  top: 0,
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   padding: '12px 24px',
   width: 'calc(100% - 48px)',
+  maxWidth: 382,
   height: 28,
+  backgroundColor: palette.white,
+  zIndex: 10,
 });
 
 const Title = styled('span')({

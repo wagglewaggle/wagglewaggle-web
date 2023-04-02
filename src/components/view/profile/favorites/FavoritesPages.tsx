@@ -1,23 +1,21 @@
-import { useState, useEffect, useCallback, SyntheticEvent } from 'react';
+import { useRef, useEffect, useCallback, SyntheticEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, Tabs, Tab, styled } from '@mui/material';
-import ProfileHeader from './ProfileHeader';
+import ProfileHeader from '../common/ProfileHeader';
 import FavoritePlaces from './FavoritePlaces';
-import FavoritePosts from './FavoritePosts';
+import FavoriteReviews from './FavoriteReviews';
 import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
-import { FavoritePlaceType, PinnedReviewType } from 'types/typeBundle';
 import { palette } from 'constants/';
 
 const FavoritesPage = () => {
-  const [favPlaces, setFavPlaces] = useState<FavoritePlaceType[]>([]);
-  const [favPosts, setFavPosts] = useState<PinnedReviewType[]>([]);
+  const drawerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { ProfileStore, ReviewStore } = useStore().MobxStore;
-  const { profilePageOpen, favoritesPageOpen, favoritesTab } = ProfileStore;
+  const { profilePageOpen, favoritesPageOpen, favPlaces, favReviews, pageListTab } = ProfileStore;
   const { reviewDetail, selectedReply } = ReviewStore;
-  const tabs: ('place' | 'post')[] = ['place', 'post'];
+  const tabs: ('place' | 'review')[] = ['place', 'review'];
 
   const handleFavoritesPageClose = useCallback(
     (isPopState?: boolean) => {
@@ -29,20 +27,22 @@ const FavoritesPage = () => {
   );
 
   const handleTabChange = (_: SyntheticEvent, newTabIndex: number) => {
-    ProfileStore.setFavoritesTab(tabs[newTabIndex]);
+    ProfileStore.setPageListTab(tabs[newTabIndex]);
+    const paperElement = drawerRef.current?.querySelector('.MuiPaper-root');
+    paperElement?.scrollTo(0, 0);
   };
-
-  const getFavoritePosts = useCallback(async () => {
-    const response = await axiosRequest('get', 'pin-review-post');
-    if (!response?.data) return;
-    setFavPosts(response.data.list);
-  }, []);
 
   const getFavoritePlaces = useCallback(async () => {
     const response = await axiosRequest('get', 'pin-place');
     if (!response?.data) return;
-    setFavPlaces(response.data.places);
-  }, []);
+    ProfileStore.setFavPlaces(true, response.data.places);
+  }, [ProfileStore]);
+
+  const getFavoriteReviews = useCallback(async () => {
+    const response = await axiosRequest('get', 'pin-review-post');
+    if (!response?.data) return;
+    ProfileStore.setFavReviews(true, response.data.list);
+  }, [ProfileStore]);
 
   useEffect(() => {
     if (!favoritesPageOpen) return;
@@ -51,28 +51,45 @@ const FavoritesPage = () => {
   }, [handleFavoritesPageClose, favoritesPageOpen, reviewDetail, selectedReply]);
 
   useEffect(() => {
-    if (!profilePageOpen) return;
-    getFavoritePosts();
-    getFavoritePlaces();
-  }, [getFavoritePosts, getFavoritePlaces, profilePageOpen, ReviewStore.reviews]);
+    if (!profilePageOpen || !favoritesPageOpen || favPlaces.requested) return;
+    if (!favPlaces.requested) {
+      getFavoritePlaces();
+    }
+    if (!favReviews.requested) {
+      getFavoriteReviews();
+    }
+  }, [
+    getFavoritePlaces,
+    getFavoriteReviews,
+    profilePageOpen,
+    favoritesPageOpen,
+    favPlaces.requested,
+    favReviews.requested,
+  ]);
+
+  useEffect(() => {
+    if (favoritesPageOpen) return;
+    return () => {
+      ProfileStore.setFavPlaces(false, []);
+      ProfileStore.setFavReviews(false, []);
+    };
+  }, [ProfileStore, favoritesPageOpen]);
 
   return (
     <FavoritesDrawer
       open={favoritesPageOpen}
       onClose={() => handleFavoritesPageClose()}
       anchor='right'
+      ref={drawerRef}
       transitionDuration={{ enter: 250, exit: 0 }}
     >
       <ProfileHeader handleLeftClick={() => handleFavoritesPageClose(true)} title='관심 목록' />
-      <CustomTabs value={tabs.indexOf(favoritesTab)} onChange={handleTabChange}>
-        <CustomTab label={`장소 ${favPlaces.length}`} />
-        <CustomTab label={`게시물 ${favPosts.length}`} />
+      <CustomTabs value={tabs.indexOf(pageListTab)} onChange={handleTabChange}>
+        <CustomTab label={`장소 ${favPlaces.data.length}`} />
+        <CustomTab label={`게시물 ${favReviews.data.length}`} />
       </CustomTabs>
-      {favoritesTab === 'post' ? (
-        <FavoritePosts favPosts={favPosts} />
-      ) : (
-        <FavoritePlaces favPlaces={favPlaces} />
-      )}
+      <BlankArea />
+      {pageListTab === 'review' ? <FavoriteReviews /> : <FavoritePlaces />}
     </FavoritesDrawer>
   );
 };
@@ -89,8 +106,13 @@ const FavoritesDrawer = styled(Drawer)({
 });
 
 const CustomTabs = styled(Tabs)({
+  position: 'fixed',
+  top: 48,
   display: 'flex',
   width: '100%',
+  maxWidth: 430,
+  backgroundColor: palette.white,
+  zIndex: 10,
   '& .MuiTab-root': {
     color: palette.grey[400],
     fontSize: 14,
@@ -110,4 +132,10 @@ const CustomTabs = styled(Tabs)({
 
 const CustomTab = styled(Tab)({
   flex: 1,
+});
+
+const BlankArea = styled('div')({
+  width: '100%',
+  height: 94,
+  minHeight: 94,
 });

@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, styled } from '@mui/material';
-import ProfileHeader from './ProfileHeader';
+import ProfileHeader from './common/ProfileHeader';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 
@@ -52,6 +52,7 @@ const TermsPage = () => {
       transitionDuration={{ enter: 250, exit: 0 }}
     >
       <ProfileHeader handleLeftClick={handleTermsDrawerClose} title='서비스 이용약관' />
+      <BlankArea />
       <ContentWrap>
         <Title>와글와글 개인정보처리 방침</Title>
         <Content>
@@ -363,4 +364,10 @@ const CustomList = styled('li')({
   fontSize: 14,
   fontWeight: 400,
   lineHeight: '20px',
+});
+
+const BlankArea = styled('div')({
+  width: '100%',
+  height: 52,
+  minHeight: 52,
 });

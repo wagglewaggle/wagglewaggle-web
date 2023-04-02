@@ -69,9 +69,10 @@ const ReplyCardContent = (props: ContentType) => {
         removeOptions={isDeleted || isReported}
       />
       <ReplyContent>{content}</ReplyContent>
-      {!isDeleted && !isReported && (
+      {!isRereply && !isDeleted && !isReported && (
         <IconsInfoWrap>
-          <IconsWrap isPinned={false}>좋아요 {1 > 0 && String(0).padStart(2, '0')}</IconsWrap>
+          {/* 백엔드의 댓글 좋아요 기능이 완성되면 기능 추가 예정 */}
+          {/* <IconsWrap isPinned={false}>좋아요 {1 > 0 && String(0).padStart(2, '0')}</IconsWrap> */}
           {!isRereply && <IconsWrap onClick={handleWriteRereplyClick}>답글쓰기</IconsWrap>}
         </IconsInfoWrap>
       )}

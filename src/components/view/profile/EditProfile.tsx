@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, styled } from '@mui/material';
-import ProfileHeader from './ProfileHeader';
+import ProfileHeader from './common/ProfileHeader';
 import Register from '../register';
 import { useStore } from 'stores';
 

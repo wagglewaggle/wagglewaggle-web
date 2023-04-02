@@ -1,34 +1,27 @@
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import EmptyLists from './EmptyLists';
+import EmptyLists from '../common/EmptyLists';
 import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
 import { FavoritePlaceType } from 'types/typeBundle';
 
-type PropsType = {
-  favPlaces: FavoritePlaceType[];
-};
-
-const FavoritePlaces = (props: PropsType) => {
-  const { favPlaces } = props;
-  const { LocationStore } = useStore().MobxStore;
+const FavoritePlaces = () => {
+  const { ProfileStore, LocationStore } = useStore().MobxStore;
+  const { favPlaces } = ProfileStore;
 
   return (
     <Wrap>
-      {favPlaces.length === 0 ? (
-        <EmptyLists
-          title='관심 설정한 장소가 없어요.'
-          content='지금 바로 관심있는 장소에 좋아요를 눌러보세요!'
-        />
+      {favPlaces.data.length === 0 ? (
+        <EmptyLists title='작성한 게시물이 없어요' content='궁금한 장소에 게시물을 작성해보세요.' />
       ) : (
-        <>
-          {favPlaces.map((place: FavoritePlaceType) => (
+        <CardsWrap>
+          {favPlaces.data.map((place: FavoritePlaceType) => (
             <PlaceCard
               key={`fav-place-${place.place.name}`}
               place={{ ...place.place, categories: LocationStore.categories[place.place.name] }}
             />
           ))}
-        </>
+        </CardsWrap>
       )}
     </Wrap>
   );
@@ -40,6 +33,11 @@ const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '16px 24px',
+  padding: '0 24px',
   width: 'calc(100% - 48px)',
+});
+
+const CardsWrap = styled('div')({
+  padding: '16px 0',
+  width: '100%',
 });

@@ -1,29 +1,25 @@
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import EmptyLists from './EmptyLists';
+import EmptyLists from '../common/EmptyLists';
 import { ReviewCard } from 'components/common';
 import { getImageSymbol } from 'util/';
 import { useStore } from 'stores';
 import { CategoryType, PinnedReviewType } from 'types/typeBundle';
 
-type PropsType = {
-  favPosts: PinnedReviewType[];
-};
-
-const FavoritePosts = (props: PropsType) => {
-  const { favPosts } = props;
-  const { LocationStore } = useStore().MobxStore;
+const FavoriteReviews = () => {
+  const { ProfileStore, LocationStore } = useStore().MobxStore;
+  const { favReviews } = ProfileStore;
 
   return (
     <Wrap>
-      {favPosts.length === 0 ? (
+      {favReviews.data.length === 0 ? (
         <EmptyLists
-          title='즐겨찾기한 게시물이 없어요.'
-          content='지금 바로 관심있는 게시물을 즐겨찾기 해보세요!'
+          title='작성한 댓글이 없어요'
+          content='게시물에 댓글을 달아 소통과 정보 공유를 해보세요.'
         />
       ) : (
         <ReviewCardsWrap>
-          {favPosts.map((post: PinnedReviewType) => (
+          {favReviews.data.map((post: PinnedReviewType) => (
             <ReviewCard
               key={`favorite-post-${post.idx}`}
               review={post.reviewPost}
@@ -45,7 +41,7 @@ const FavoritePosts = (props: PropsType) => {
   );
 };
 
-export default observer(FavoritePosts);
+export default observer(FavoriteReviews);
 
 const Wrap = styled('div')({
   display: 'flex',

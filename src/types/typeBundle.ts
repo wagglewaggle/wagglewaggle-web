@@ -95,6 +95,15 @@ export interface FavoritesType {
   places: FavoritePlaceType[];
 }
 
+export interface MyReplyType {
+  content: string;
+  createdDate: string;
+  idx: number;
+  reviewPost: Partial<ReviewType>;
+  status: string;
+  updatedDate: string;
+}
+
 export interface ReviewType {
   content: string;
   createdDate: string;

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, MenuItem, styled } from '@mui/material';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import { ReplyType } from 'types/typeBundle';
+import { ReplyType, RequestType } from 'types/typeBundle';
 import { palette } from 'constants/';
 
 type PropsType = {
@@ -80,9 +80,9 @@ const HeaderSelectMenu = (props: PropsType) => {
     const response = await axiosRequest('delete', requestUrl ?? reviewRequestUrl);
     if (!response?.data || !reviewDetail) return;
     handleCloseDialog();
-    ReviewStore.initReviews(reviewDetail.place.type as 'SKT' | 'KT', reviewDetail.place.idx);
+    ReviewStore.initReviews(reviewDetail.place.type as RequestType, reviewDetail.place.idx);
     await ReviewStore.initReviewDetail(
-      reviewDetail.place.type as 'SKT' | 'KT',
+      reviewDetail.place.type as RequestType,
       reviewDetail.place.idx,
       reviewDetail.idx
     );

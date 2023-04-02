@@ -4,7 +4,8 @@ import { observer } from 'mobx-react';
 import { Drawer, Divider, styled } from '@mui/material';
 import { CustomIconButton } from 'components/common/HeaderContents/common';
 import EditProfile from './EditProfile';
-import FavoritesPages from './FavoritesPages';
+import FavoritesPages from './favorites/FavoritesPages';
+import MyPostsPage from './myPosts/MyPostsPages';
 import TermsPage from './TermsPage';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
@@ -44,12 +45,13 @@ const Profile = () => {
   const handleFavoritesClick = () => {
     navigate(`${pathname}${search}`);
     ProfileStore.setFavoritesPageOpen(true);
-    ProfileStore.setFavoritesTab('place');
+    ProfileStore.setPageListTab('place');
   };
 
   const handleMyPostsClick = () => {
-    // ProfileStore.setFavoritesPageOpen(true);
-    // ProfileStore.setFavoritesTab('post');
+    navigate(`${pathname}${search}`);
+    ProfileStore.setMyPostsPageOpen(true);
+    ProfileStore.setPageListTab('place');
   };
 
   const handleInquiryClick = () => {
@@ -204,6 +206,7 @@ const Profile = () => {
       </ProfileDrawer>
       <EditProfile />
       <FavoritesPages />
+      <MyPostsPage />
       <TermsPage />
     </>
   );

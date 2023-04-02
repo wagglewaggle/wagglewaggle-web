@@ -6,7 +6,7 @@ import ReviewCardHeader from './ReviewCardHeader';
 import { palette, symbolsComponents, locationNames } from 'constants/';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import { ReviewType, PinnedReviewType } from 'types/typeBundle';
+import { ReviewType, PinnedReviewType, RequestType } from 'types/typeBundle';
 import { reviewStrConstants } from 'constants/';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
@@ -47,7 +47,7 @@ const ReviewCard = (props: PropsType) => {
   const isReported = status === reportDeleted;
 
   const getReviewDetail = async (type: string, placeIdx: number | string, postIdx: number) => {
-    ReviewStore.initReviewDetail(type as 'SKT' | 'KT', placeIdx, postIdx);
+    ReviewStore.initReviewDetail(type as RequestType, placeIdx, postIdx);
   };
 
   const handleClick = () => {
@@ -67,9 +67,9 @@ const ReviewCard = (props: PropsType) => {
         })
       : await axiosRequest('post', 'pin-review-post', { idx });
     if (!response?.data) return;
-    ReviewStore.initReviews(place.type as 'SKT' | 'KT', place.idx);
+    ReviewStore.initReviews(place.type as RequestType, place.idx);
     ReviewStore.reviewDetail &&
-      ReviewStore.initReviewDetail(place.type as 'SKT' | 'KT', place.idx, idx);
+      ReviewStore.initReviewDetail(place.type as RequestType, place.idx, idx);
     AuthStore.initializePinnedReviews();
   };
 
