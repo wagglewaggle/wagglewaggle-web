@@ -30,6 +30,7 @@ const CustomHeader = styled('div')({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  borderBottom: `1px solid ${palette.grey[300]}`,
   padding: '12px 24px',
   width: 'calc(100% - 48px)',
   maxWidth: 382,

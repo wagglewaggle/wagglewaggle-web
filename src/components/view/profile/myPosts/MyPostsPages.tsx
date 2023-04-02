@@ -77,7 +77,7 @@ const MyPostsDrawer = styled(Drawer)({
 
 const CustomTabs = styled(Tabs)({
   position: 'fixed',
-  top: 48,
+  top: 52,
   display: 'flex',
   width: '100%',
   maxWidth: 430,

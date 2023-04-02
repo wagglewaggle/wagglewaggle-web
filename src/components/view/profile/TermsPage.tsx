@@ -327,7 +327,6 @@ const ContentWrap = styled('div')({
   flexDirection: 'column',
   padding: '40px 24px',
   width: 'calc(100% - 48px)',
-  borderTop: `1px solid ${palette.grey[300]}`,
   color: palette.black,
   '& p:last-of-type': {
     marginBottom: 44,
