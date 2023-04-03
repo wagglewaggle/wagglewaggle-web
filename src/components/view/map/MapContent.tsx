@@ -24,8 +24,9 @@ const MapContent = () => {
   const { UserNavigatorStore, CustomDrawerStore, LocationStore, ScreenSizeStore, CategoryStore } =
     useStore().MobxStore;
   const { drawerStatus } = CustomDrawerStore;
+  const { selectedCategories } = CategoryStore;
   const { locationData, placesData } = LocationStore;
-  const locationStatus = locationData?.population?.level ?? '';
+  const locationStatus = locationData?.population?.level ?? 'NO_STATUS';
 
   const getSymbol = useCallback(
     (categories: CategoryType[]) => {
@@ -158,10 +159,12 @@ const MapContent = () => {
 
   const setMapOpacityOverlay = useCallback(() => {
     if (!kakaoMap) return;
-    kakaoMap.setMaxLevel(10);
+    kakaoMap.setMaxLevel(13);
     new kakao.maps.Circle({
       center: new kakao.maps.LatLng(37.625638, 127.038941),
-      radius: 1000000,
+      radius: 2000000,
+      strokeColor: palette.white,
+      strokeOpacity: 0.4,
       fillColor: palette.white,
       fillOpacity: 0.4,
     }).setMap(kakaoMap);
@@ -196,7 +199,14 @@ const MapContent = () => {
     );
     const selectedMarkers: { [key: string]: any } = {};
     (
-      ['VERY_CROWDED', 'CROWDED', 'NORMAL', 'RELAXATION', 'VERY_RELAXATION'] as StatusType[]
+      [
+        'VERY_CROWDED',
+        'CROWDED',
+        'NORMAL',
+        'RELAXATION',
+        'VERY_RELAXATION',
+        'NO_STATUS',
+      ] as StatusType[]
     ).forEach((status: StatusType) => {
       selectedMarkers[status] = [];
       placesData.forEach((place: PlaceDataType) => {
@@ -222,14 +232,17 @@ const MapContent = () => {
       newRenderData
         .filter(
           (place: PlaceDataType) =>
-            CategoryStore.selectedCategory === '전체' ||
-            place.categories
-              .map((category: CategoryType) => category.type)
-              .includes(CategoryStore.selectedCategory)
+            selectedCategories === '전체' ||
+            !_.isEmpty(
+              _.intersection(
+                place.categories.map((category: CategoryType) => category.type),
+                selectedCategories
+              )
+            )
         )
         .map((place: PlaceDataType) => place.name)
     );
-  }, [placesData, CategoryStore.selectedCategory]);
+  }, [placesData, selectedCategories]);
 
   useEffect(() => {
     if (drawerStatus.expanded !== 'removed') return;

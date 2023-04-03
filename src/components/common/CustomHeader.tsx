@@ -64,10 +64,7 @@ const CustomHeader = (props: PropsType) => {
       </HeaderWrap>
       {!isExpanded && (
         <ChipsWrap>
-          <CustomChips
-            selectedCategory={CategoryStore.selectedCategory}
-            handleClickChip={handleClickChip}
-          />
+          <CustomChips handleClickChip={handleClickChip} />
         </ChipsWrap>
       )}
     </Wrap>

@@ -213,3 +213,17 @@ export type BgType =
   | 'Street'
   | 'Subway'
   | 'Tradition';
+
+export type ChipType =
+  | '전체'
+  | '강변'
+  | '봄 나들이'
+  | '골목 및 거리'
+  | '공원'
+  | '궁궐'
+  | '마을'
+  | '쇼핑몰'
+  | '지하철'
+  | '테마파크'
+  | '해변'
+  | '기타 지역';

@@ -42,6 +42,7 @@ const PlaceData = observer((props: propsType) => {
   const [renderData, setRenderData] = useState<PlaceDataType[]>([]);
   const classes = useStyles();
   const { LocationStore, ScreenSizeStore, ThemeStore, CategoryStore } = useStore().MobxStore;
+  const { selectedCategories } = CategoryStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
@@ -55,19 +56,19 @@ const PlaceData = observer((props: propsType) => {
   }, [placeData]);
 
   useEffect(() => {
-    const newRenderData: PlaceDataType[] = _.cloneDeep(placeData);
     setRenderData(
-      newRenderData.filter((place: PlaceDataType) => {
-        const categories: string[] = place.categories.map(
-          (category: CategoryType) => category.type
-        );
-        return (
-          CategoryStore.selectedCategory === '전체' ||
-          categories.includes(CategoryStore.selectedCategory)
-        );
-      })
+      _.cloneDeep(placeData).filter(
+        (place: PlaceDataType) =>
+          selectedCategories === '전체' ||
+          !_.isEmpty(
+            _.intersection(
+              place.categories.map((category: CategoryType) => category.type),
+              selectedCategories
+            )
+          )
+      )
     );
-  }, [placeData, CategoryStore.selectedCategory]);
+  }, [placeData, selectedCategories]);
 
   return (
     <Wrap>
