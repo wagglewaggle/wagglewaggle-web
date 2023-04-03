@@ -24,7 +24,7 @@ const PlaceCard = observer((props: propsType) => {
   const { LocationStore, ThemeStore, CustomDrawerStore, AuthStore, ProfileStore } =
     useStore().MobxStore;
   const navigate = useNavigate();
-  const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
+  const primaryCategories: string[] = useMemo(() => ['강변', '공원', '궁궐'], []);
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const isPinned = place.type
     ? AuthStore.favorites.places

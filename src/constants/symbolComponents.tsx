@@ -6,6 +6,7 @@ import { ReactComponent as Subway } from 'assets/symbols/subway.svg';
 import { ReactComponent as ThemePark } from 'assets/symbols/theme-park.svg';
 import { ReactComponent as Village } from 'assets/symbols/village.svg';
 import { ReactComponent as HanRiver } from 'assets/symbols/han-river.svg';
+import { ReactComponent as Beach } from 'assets/symbols/beach.svg';
 
 export const symbolsComponents: { [key: string]: React.ReactNode } = {
   궁궐: <Palace />,
@@ -15,5 +16,6 @@ export const symbolsComponents: { [key: string]: React.ReactNode } = {
   지하철: <Subway />,
   테마파크: <ThemePark />,
   마을: <Village />,
-  한강: <HanRiver />,
+  강변: <HanRiver />,
+  해변: <Beach />,
 };

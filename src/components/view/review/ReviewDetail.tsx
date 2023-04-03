@@ -21,7 +21,7 @@ const ReviewDetail = () => {
   const { reviewDetail } = ReviewStore;
   const { placesData } = LocationStore;
   const paperElement = drawerRef.current?.querySelector('.MuiPaper-root');
-  const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
+  const primaryCategories: string[] = useMemo(() => ['강변', '공원', '궁궐'], []);
   const placeName = searchParams.get('name');
   const fromProfile = !pathname.split('/').includes('review');
   const selectedPlaceName = fromProfile && reviewDetail ? reviewDetail.place.name : placeName;

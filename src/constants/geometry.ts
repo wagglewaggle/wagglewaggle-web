@@ -1,7 +1,7 @@
 import { LocationInfoType } from 'types/typeBundle';
 
 export const geometry: LocationInfoType = {
-  '잠실 관광특구': {
+  잠실: {
     type: 'Polygon',
     coordinates: [
       [

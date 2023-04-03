@@ -1,5 +1,5 @@
 const getImageSymbol = (categoryList: string[]) => {
-  const primaryCategories = ['한강', '공원', '궁궐'];
+  const primaryCategories = ['강변', '공원', '궁궐'];
   const addedSymbol: string[] = [];
   primaryCategories.forEach((category: string) => {
     if (categoryList.includes(category)) {

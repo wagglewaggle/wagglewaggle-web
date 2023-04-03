@@ -84,16 +84,21 @@ const BottomSheet = () => {
     if (
       !LocationStore.placeName ||
       !districts[locationNames[LocationStore.placeName] || LocationStore.placeName]
-    )
+    ) {
       return;
-    type responseType = { data: { ktPlaces: PlaceDataType[]; sktPlaces: PlaceDataType[] } };
+    }
+    type responseType = {
+      data: { ktPlaces: PlaceDataType[]; sktPlaces: PlaceDataType[]; extraPlaces: PlaceDataType[] };
+    };
     const response: responseType | undefined = await axiosRequest(
       'get',
       `location/${districts[locationNames[LocationStore.placeName] || LocationStore.placeName]}`
     );
-    if (!response?.data?.ktPlaces || !response?.data?.sktPlaces) return;
+    if (!response?.data?.ktPlaces || !response?.data?.ktPlaces || !response?.data?.extraPlaces) {
+      return;
+    }
     setRelatedPlaces(
-      [...response.data.ktPlaces, ...response.data.sktPlaces]
+      [...response.data.ktPlaces, ...response.data.sktPlaces, ...response.data.extraPlaces]
         .filter((place: PlaceDataType) => place.name !== LocationStore.placeName)
         .map((place: PlaceDataType) => place.name)
     );

@@ -20,7 +20,7 @@ const MapContent = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const placeName = searchParams.get('name') ?? '';
-  const primaryCategories = useMemo(() => ['한강', '공원', '궁궐'], []);
+  const primaryCategories = useMemo(() => ['강변', '공원', '궁궐'], []);
   const { UserNavigatorStore, CustomDrawerStore, LocationStore, ScreenSizeStore, CategoryStore } =
     useStore().MobxStore;
   const { drawerStatus } = CustomDrawerStore;
