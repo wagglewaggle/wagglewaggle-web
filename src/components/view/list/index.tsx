@@ -55,9 +55,9 @@ const List = observer(() => {
   }, [pathname]);
 
   useEffect(() => {
-    if (placesData.length !== 0 || !AuthStore.authorized) return;
+    if (!AuthStore.authorized) return;
     initPlaceData();
-  }, [AuthStore.authorized, placesData.length]);
+  }, [AuthStore.authorized]);
 
   useEffect(() => {
     if (!AuthStore.authorized) return;

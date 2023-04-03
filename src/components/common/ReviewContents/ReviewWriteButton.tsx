@@ -9,6 +9,8 @@ const ReviewWriteButton = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const { ReviewStore, ScreenSizeStore } = useStore().MobxStore;
+  const { writeReviewButtonVisible, openReviewWritePage, reviewDetail } = ReviewStore;
+  const isButtonHidden = !writeReviewButtonVisible || openReviewWritePage || !!reviewDetail;
 
   const handleClick = () => {
     ReviewStore.setEditOptions({
@@ -28,7 +30,7 @@ const ReviewWriteButton = () => {
 
   return (
     <>
-      {ReviewStore.writeReviewButtonVisible && (
+      {!isButtonHidden && (
         <Wrap onClick={handleClick} screenWidth={ScreenSizeStore.screenWidth}>
           <ChatIcon />
           리뷰쓰기
@@ -59,7 +61,7 @@ const Wrap = styled('div', {
   backgroundColor: palette.violet,
   boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.3)',
   cursor: 'pointer',
-  zIndex: 100,
+  zIndex: 1210,
   transform: 'translateX(-50%)',
   gap: 4,
   '& svg': {

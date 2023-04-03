@@ -28,7 +28,6 @@ const ReviewWritePage = () => {
 
   const handleCloseDialog = () => {
     CustomDialogStore.setOpen(false);
-    handleCloseDrawer();
   };
 
   const getReviews = async (requestUrl: string) => {
@@ -63,6 +62,7 @@ const ReviewWritePage = () => {
     getReviewDetail(requestUrl);
     ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
     handleCloseDialog();
+    handleCloseDrawer();
   };
 
   const handleSubmitClick = () => {
