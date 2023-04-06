@@ -14,7 +14,7 @@ interface PropsType {
 const CustomChips = (props: PropsType) => {
   const { handleClickChip } = props;
   const chipWrapRef = useRef<HTMLDivElement>(null);
-  const { ThemeStore, CategoryStore } = useStore().MobxStore;
+  const { ThemeStore, CategoryStore, ScreenSizeStore } = useStore().MobxStore;
   const { selectedCategories } = CategoryStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const CHIPS: ChipType[] = [
@@ -37,13 +37,24 @@ const CustomChips = (props: PropsType) => {
     backgroundColor: isDarkTheme ? palette.white : palette.black,
   };
 
+  const handleEndScroll = () => {
+    if (!chipWrapRef.current) return;
+    ScreenSizeStore.setChipScrollPosition(chipWrapRef.current.scrollLeft);
+  };
+
   useEffect(() => {
     if (selectedCategories !== '전체' || !chipWrapRef.current) return;
     chipWrapRef.current.scrollTo({ left: 0, behavior: 'smooth' });
   }, [selectedCategories]);
 
+  useEffect(() => {
+    if (!chipWrapRef.current || !ScreenSizeStore.chipScrollPosition) return;
+    chipWrapRef.current.scrollTo({ left: ScreenSizeStore.chipScrollPosition });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <ChipsWrap horizontal vertical={false} innerRef={chipWrapRef}>
+    <ChipsWrap horizontal innerRef={chipWrapRef} onEndScroll={handleEndScroll}>
       {CHIPS.map((chip, idx: number) => (
         <Chip
           key={`chip-${idx}`}
@@ -69,6 +80,7 @@ const ChipsWrap = styled(ScrollContainer)({
   gap: 10,
   cursor: 'pointer',
   userSelect: 'none',
+  overflowY: 'hidden',
 });
 
 const Chip = styled('div', {

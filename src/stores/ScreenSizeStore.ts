@@ -5,6 +5,7 @@ export class ScreenSizeStore {
   screenWidth: number = 0;
   screenHeight: number = 0;
   screenType: ScreenType = 'mobile';
+  chipScrollPosition: number | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -17,5 +18,9 @@ export class ScreenSizeStore {
 
   setScreenType = (newType: ScreenType) => {
     this.screenType = newType;
+  };
+
+  setChipScrollPosition = (newPosition: number) => {
+    this.chipScrollPosition = newPosition;
   };
 }
