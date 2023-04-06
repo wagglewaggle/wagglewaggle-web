@@ -4,7 +4,7 @@ import { styled } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { SearchBlock } from 'components/common';
 import { useStore } from 'stores';
-import { PlaceDataType, ScreenType } from 'types/typeBundle';
+import { PlaceDataType } from 'types/typeBundle';
 import { palette, locationNames } from 'constants/';
 
 interface propsType {
@@ -15,12 +15,12 @@ interface propsType {
   handleLatestListChange: (newList: string[]) => void;
 }
 
-const SuggestData = observer((props: propsType) => {
+const SuggestData = (props: propsType) => {
   const { placeData, searchValue, initialBlockList, handleWordClick, handleLatestListChange } =
     props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>(initialBlockList);
   const [suggestionList, setSuggestionList] = useState<PlaceDataType[]>([]);
-  const { LocationStore, ScreenSizeStore } = useStore().MobxStore;
+  const { LocationStore, CustomDrawerStore } = useStore().MobxStore;
 
   const handleRemoveLatestList = (list: string) => {
     const newList: string[] = JSON.parse(JSON.stringify(searchBlockList));
@@ -40,6 +40,7 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const handleListClick = (searchWord: string) => {
+    CustomDrawerStore.setSearchValue(searchWord);
     handleWordClick(locationNames[searchWord] || searchWord);
   };
 
@@ -56,7 +57,7 @@ const SuggestData = observer((props: propsType) => {
   }, [searchValue, getSuggestionList]);
 
   return (
-    <Wrap screenType={ScreenSizeStore.screenType} screenWidth={ScreenSizeStore.screenWidth}>
+    <Wrap>
       {suggestionList.map((list: PlaceDataType, idx: number) => {
         const searchValueIdx: number = (locationNames[list.name] || list.name).indexOf(searchValue);
         const location: string = locationNames[list.name] || list.name;
@@ -84,21 +85,20 @@ const SuggestData = observer((props: propsType) => {
       )}
     </Wrap>
   );
-});
+};
 
-export default SuggestData;
+export default observer(SuggestData);
 
-const Wrap = styled('div', {
-  shouldForwardProp: (prop: string) => !['screenType', 'screenWidth'].includes(prop),
-})<{ screenType: ScreenType; screenWidth: number }>(({ screenType, screenWidth }) => ({
+const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   margin: '5px 0 35px',
-  width: screenType === 'mobile' ? screenWidth : 400,
+  width: '100%',
+  maxWidth: 430,
   minHeight: 'calc(100vh - 97px)',
   maxHeight: 'calc(100vh - 97px)',
   overflow: 'hidden auto',
-}));
+});
 
 const ListWrap = styled('div')({
   display: 'flex',

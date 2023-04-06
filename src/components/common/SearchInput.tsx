@@ -8,7 +8,7 @@ import { palette } from 'constants/';
 import { useStore } from 'stores';
 import { ReactComponent as LeftArrowIcon } from 'assets/icons/left-icon.svg';
 
-const SearchInput = observer(() => {
+const SearchInput = () => {
   const navigate = useNavigate();
   const { ThemeStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -91,9 +91,9 @@ const SearchInput = observer(() => {
       )}
     </Wrap>
   );
-});
+};
 
-export default SearchInput;
+export default observer(SearchInput);
 
 const Wrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',

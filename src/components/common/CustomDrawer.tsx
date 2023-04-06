@@ -6,7 +6,7 @@ import BottomSheet from './DrawerContents/BottomSheetContents';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 
-const CustomDrawer = observer(() => {
+const CustomDrawer = () => {
   const { ThemeStore, CustomDialogStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const { locationData } = LocationStore;
@@ -38,9 +38,9 @@ const CustomDrawer = observer(() => {
       )}
     </>
   );
-});
+};
 
-export default CustomDrawer;
+export default observer(CustomDrawer);
 
 const SearchWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
@@ -48,8 +48,10 @@ const SearchWrap = styled('div', {
   position: 'fixed',
   top: 0,
   right: 0,
+  width: '100%',
+  maxWidth: 430,
   height: '100vh',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   boxShadow: '0 10px 20px rgba(0, 0, 0, 0.25)',
-  zIndex: 100,
+  zIndex: 1250,
 }));

@@ -1,9 +1,6 @@
 import { useState } from 'react';
-import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { SearchBlock } from 'components/common';
-import { ScreenType } from 'types/typeBundle';
-import { useStore } from 'stores';
 
 interface propsType {
   initialBlockList: string[];
@@ -11,10 +8,9 @@ interface propsType {
   handleLatestListChange: (newList: string[]) => void;
 }
 
-const SearchData = observer((props: propsType) => {
+const SearchData = (props: propsType) => {
   const { initialBlockList, handleWordClick, handleLatestListChange } = props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>(initialBlockList);
-  const { ScreenSizeStore } = useStore().MobxStore;
 
   const handleRemoveLatestList = (list: string) => {
     const newList: string[] = JSON.parse(JSON.stringify(searchBlockList));
@@ -34,7 +30,7 @@ const SearchData = observer((props: propsType) => {
   };
 
   return (
-    <Wrap screenType={ScreenSizeStore.screenType} screenWidth={ScreenSizeStore.screenWidth}>
+    <Wrap>
       <SearchBlock
         title='최근 검색어'
         blockList={searchBlockList}
@@ -44,18 +40,17 @@ const SearchData = observer((props: propsType) => {
       />
     </Wrap>
   );
-});
+};
 
 export default SearchData;
 
-const Wrap = styled('div', {
-  shouldForwardProp: (prop: string) => !['screenType', 'screenWidth'].includes(prop),
-})<{ screenType: ScreenType; screenWidth: number }>(({ screenType, screenWidth }) => ({
+const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   padding: '5px 24px 35px',
-  width: screenType === 'mobile' ? screenWidth - 48 : 352,
+  width: 'calc(100% - 48px)',
+  maxWidth: 430,
   minHeight: 'calc(100vh - 97px)',
   maxHeight: 'calc(100vh - 97px)',
   overflow: 'hidden auto',
-}));
+});

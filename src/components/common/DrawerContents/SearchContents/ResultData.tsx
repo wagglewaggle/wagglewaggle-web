@@ -5,7 +5,7 @@ import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
 import lottie from 'lottie-web';
 import axiosRequest from 'api/axiosRequest';
-import { PlaceDataType, ScreenType } from 'types/typeBundle';
+import { PlaceDataType } from 'types/typeBundle';
 import { palette, locationNames, districts } from 'constants/';
 
 interface propsType {
@@ -13,12 +13,12 @@ interface propsType {
   searchWord: string;
 }
 
-const ResultData = observer((props: propsType) => {
+const ResultData = (props: propsType) => {
   const { placeData, searchWord } = props;
   const [resultData, setResultData] = useState<PlaceDataType[]>([]);
   const [relatedData, setRelatedData] = useState<string[]>([]);
   const lottieContainer = useRef<HTMLDivElement>(null);
-  const { ScreenSizeStore, ThemeStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;
+  const { ThemeStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;
   const { placesData } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const relatedPlaces = placesData.filter((place: PlaceDataType) =>
@@ -92,7 +92,7 @@ const ResultData = observer((props: propsType) => {
   }, [getSuggestionList]);
 
   return (
-    <Wrap screenType={ScreenSizeStore.screenType} screenWidth={ScreenSizeStore.screenWidth}>
+    <Wrap>
       {resultData.length === 0 ? (
         <>
           <Empty>
@@ -125,22 +125,21 @@ const ResultData = observer((props: propsType) => {
       )}
     </Wrap>
   );
-});
+};
 
-export default ResultData;
+export default observer(ResultData);
 
-const Wrap = styled('div', {
-  shouldForwardProp: (prop: string) => !['screenType', 'screenWidth'].includes(prop),
-})<{ screenType: ScreenType; screenWidth: number }>(({ screenType, screenWidth }) => ({
+const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   padding: '5px 24px 35px',
-  width: screenType === 'mobile' ? screenWidth - 48 : 352,
+  width: 'calc(100% - 48px)',
+  maxWidth: 430,
   minHeight: 'calc(100vh - 97px)',
   maxHeight: 'calc(100vh - 97px)',
   overflow: 'hidden auto',
-}));
+});
 
 const Empty = styled('div')({
   margin: '40px 0 24px',

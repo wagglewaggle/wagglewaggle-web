@@ -35,6 +35,7 @@ const PlaceCard = observer((props: propsType) => {
   const handlePlaceCardClick = () => {
     ProfileStore.setProfilePageOpen(false);
     ProfileStore.setFavoritesPageOpen(false);
+    CustomDrawerStore.setIncludesInput(false);
     CustomDrawerStore.setPlaceDataLoading(true);
     if (!fromBottomSheet) {
       CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });

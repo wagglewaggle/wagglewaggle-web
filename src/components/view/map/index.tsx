@@ -40,6 +40,7 @@ const Map = () => {
   const handleSearchClick = () => {
     navigate('/map/search');
     CustomDrawerStore.setIncludesInput(true);
+    CustomDrawerStore.setDrawerStatus({ expanded: 'removed' });
     CustomDrawerStore.openDrawer(
       'map',
       <SearchData

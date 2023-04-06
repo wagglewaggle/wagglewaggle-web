@@ -7,9 +7,10 @@ import PlaceData from './PlaceData';
 import { initPlaceData } from 'util/';
 import { useStore } from 'stores';
 
-const List = observer(() => {
+const List = () => {
   const { CustomDialogStore, CustomDrawerStore, LocationStore, ErrorStore, AuthStore } =
     useStore().MobxStore;
+  const { open, includesInputBox } = CustomDrawerStore;
   const navigate = useNavigate();
   const { search, pathname } = useLocation();
   const { placesData } = LocationStore;
@@ -29,6 +30,7 @@ const List = observer(() => {
   const handleSearchClick = () => {
     navigate('/list/search');
     CustomDrawerStore.setIncludesInput(true);
+    CustomDrawerStore.setDrawerStatus({ expanded: 'removed' });
     CustomDrawerStore.openDrawer(
       'list',
       <SearchData
@@ -91,7 +93,7 @@ const List = observer(() => {
   }, [CustomDrawerStore, search]);
 
   return (
-    <ListDrawer open anchor='right' transitionDuration={0}>
+    <ListDrawer searchOpen={open && includesInputBox} open anchor='right' transitionDuration={0}>
       <Wrap>
         <CustomHeader navigateToHome={navigateToHome} handleSearchClick={handleSearchClick} />
         <PlaceData placeData={placesData} />
@@ -99,16 +101,19 @@ const List = observer(() => {
       </Wrap>
     </ListDrawer>
   );
-});
+};
 
-export default List;
+export default observer(List);
 
-const ListDrawer = styled(Drawer)({
+const ListDrawer = styled(Drawer, {
+  shouldForwardProp: (prop: string) => prop !== 'searchOpen',
+})<{ searchOpen: boolean }>(({ searchOpen }) => ({
   '& .MuiPaper-root': {
+    display: searchOpen ? 'none' : 'auto',
     width: '100%',
     maxWidth: 430,
   },
-});
+}));
 
 const Wrap = styled('div')({
   display: 'flex',
