@@ -160,7 +160,7 @@ const ReplyWrap = styled('div', {
   marginBottom: isLast ? 56 : 0,
   width: `calc(100% - ${isRereply ? 64 : 48}px)`,
   backgroundColor: isRereply ? palette.grey[200] : palette.white,
-  gap: 8,
+  gap: '8pt',
   cursor: isRereply ? 'pointer' : 'default',
 }));
 

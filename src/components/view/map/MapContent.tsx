@@ -124,7 +124,7 @@ const MapContent = () => {
 
   const highlightMap = useCallback(() => {
     overlay?.setMap(null);
-    if (!locationData) return;
+    if (!locationData || drawerStatus.expanded === 'removed') return;
     const locationName = locationData.name;
     const coordinates: [number, number][][] | [number, number][][][] =
       geometry?.[locationName]?.coordinates;
@@ -157,7 +157,7 @@ const MapContent = () => {
       fillOpacity: 0.4,
     });
     overlay.setMap(kakaoMap);
-  }, [locationData, kakaoMap, locationStatus]);
+  }, [locationData, kakaoMap, locationStatus, drawerStatus.expanded]);
 
   const setMapOpacityOverlay = useCallback(() => {
     if (!kakaoMap) return;

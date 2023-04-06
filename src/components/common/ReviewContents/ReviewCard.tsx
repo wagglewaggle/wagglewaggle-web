@@ -142,9 +142,9 @@ const ReviewWrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   borderBottom: isDetail || disableBottom ? 'none' : `1px solid ${palette.grey[300]}`,
-  padding: '20px 24px',
+  padding: `${isDetail ? 16 : 20}px 24px 20px`,
   width: 'calc(100% - 48px)',
-  gap: 8,
+  gap: isDetail ? 16 : '8pt',
 }));
 
 const ReviewContent = styled('div', {

@@ -29,7 +29,7 @@ const BottomSheet = () => {
   } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const { variant, drawerStatus } = CustomDrawerStore;
-  const { placesData } = LocationStore;
+  const { placesData, locationData } = LocationStore;
   const FULL_HEIGHT = -ScreenSizeStore.screenHeight;
   const EXPANDED_HEIGHT = -Math.round(ScreenSizeStore.screenHeight * 0.6);
   const APPEARED_HEIGHT = -196;
@@ -202,7 +202,7 @@ const BottomSheet = () => {
       )}
       <SheetWrap isDarkTheme={isDarkTheme} expanded={drawerStatus.expanded} ref={sheetRef}>
         <CongestionSummary />
-        <DetailedCongestion />
+        {locationData?.population?.level && <DetailedCongestion />}
         <RealtimeReviews />
         {relatedPlaces.length > 0 && <RelatedLocations places={relatedPlaces} />}
       </SheetWrap>

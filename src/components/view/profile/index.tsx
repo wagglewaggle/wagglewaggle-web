@@ -20,7 +20,7 @@ import defaultPhoto from 'assets/icons/register/default-photo.png';
 const Profile = () => {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
-  const { AuthStore, ProfileStore, CustomDialogStore } = useStore().MobxStore;
+  const { AuthStore, ProfileStore, CustomDialogStore, CustomDrawerStore } = useStore().MobxStore;
   const { profilePageOpen, termsPageOpen, editPageOpen, favoritesPageOpen } = ProfileStore;
 
   const handleProfilePageClose = useCallback(
@@ -76,6 +76,7 @@ const Profile = () => {
 
   const onLogout = () => {
     AuthStore.logout();
+    CustomDrawerStore.closeDrawer();
     handleProfilePageClose(true);
     handleCloseDialog();
     CustomDialogStore.openNotificationDialog({
@@ -106,6 +107,7 @@ const Profile = () => {
   const onDeactivate = async () => {
     const response = await axiosRequest('put', 'user/deactivate');
     if (!response?.data) return;
+    CustomDrawerStore.closeDrawer();
     handleProfilePageClose(true);
     handleCloseDialog();
     CustomDialogStore.openNotificationDialog({

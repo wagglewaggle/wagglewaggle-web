@@ -51,6 +51,7 @@ const Register = (props: PropsType) => {
   const handleNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newNickname = e.target.value;
     setNickname(newNickname);
+    setNicknameStatus('empty');
 
     debouncer && clearTimeout(debouncer);
     debouncer = setTimeout(() => {
