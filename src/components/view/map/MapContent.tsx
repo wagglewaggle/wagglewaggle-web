@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { useStore } from 'stores';
 import { PlaceDataType, CategoryType, StatusType } from 'types/typeBundle';
-import { symbols, geometry, palette } from 'constants/';
+import { symbols, geometry, palette, excludedCategories } from 'constants/';
 import { getMapSelectedSymbol } from 'util/';
 import _ from 'lodash';
 
@@ -30,7 +30,9 @@ const MapContent = () => {
 
   const getSymbol = useCallback(
     (categories: CategoryType[]) => {
-      const categoryList = categories.map((category: CategoryType) => category.type);
+      const categoryList = categories
+        .map((category: CategoryType) => category.type)
+        .filter((category: string) => !excludedCategories.includes(category));
       const symbolCandidate = categoryList.filter((category: string) =>
         primaryCategories.includes(category)
       );

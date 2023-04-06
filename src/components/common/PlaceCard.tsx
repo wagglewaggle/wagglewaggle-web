@@ -46,7 +46,7 @@ const PlaceCard = observer((props: propsType) => {
   useEffect(() => {
     if (!place.categories) return;
     const categoryList: string[] = place.categories.map((category: CategoryType) => category.type);
-    setCategories(categoryList.join(', '));
+    setCategories(categoryList.sort().join(', '));
     setSymbol(getImageSymbol(categoryList));
   }, [primaryCategories, place.categories]);
 

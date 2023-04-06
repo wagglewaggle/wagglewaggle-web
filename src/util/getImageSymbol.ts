@@ -1,3 +1,5 @@
+import { excludedCategories } from 'constants/';
+
 const getImageSymbol = (categoryList: string[]) => {
   const primaryCategories = ['강변', '공원', '궁궐'];
   const addedSymbol: string[] = [];
@@ -7,7 +9,9 @@ const getImageSymbol = (categoryList: string[]) => {
     }
   });
   categoryList.forEach((category: string) => {
-    addedSymbol.push(category);
+    if (!excludedCategories.includes(category)) {
+      addedSymbol.push(category);
+    }
   });
   return addedSymbol[0] ?? '';
 };

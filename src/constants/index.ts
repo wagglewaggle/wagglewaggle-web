@@ -7,3 +7,4 @@ export { urlPaths } from './urlPaths';
 export { districts } from './districts';
 export { bgPaths } from './bgPaths';
 export { reviewStrConstants } from './reviewStrConstants';
+export { excludedCategories } from './excludedCategories';

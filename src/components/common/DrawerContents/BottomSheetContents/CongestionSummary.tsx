@@ -11,6 +11,7 @@ import { ReactComponent as CctvIcon } from 'assets/icons/drawer/cctv.svg';
 import { ReactComponent as ShareIcon } from 'assets/icons/drawer/share.svg';
 import { ReactComponent as NaviIcon } from 'assets/icons/drawer/navi.svg';
 import linkCheckIcon from 'assets/icons/link-check-icon.svg';
+import { CategoryType } from 'types/typeBundle';
 
 const CongestionSummary = () => {
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
@@ -44,7 +45,12 @@ const CongestionSummary = () => {
       <Header>
         <LocationWrap>
           <Title>{searchName}</Title>
-          <Type>{categories?.[placeName ?? '']?.[0]?.type ?? ''}</Type>
+          <Type>
+            {(categories?.[placeName ?? ''] ?? [])
+              .map((category: CategoryType) => category.type)
+              .sort()
+              .join(', ')}
+          </Type>
         </LocationWrap>
         <StatusWrap>
           <PlaceStatus status={locationData?.population?.level} />
@@ -62,26 +68,25 @@ const CongestionSummary = () => {
         </IconWrap>
       </IconsWrap>
       <Address>{locationData?.address ?? ''}</Address>
-      {linkCopied ? (
+      {linkCopied && (
         <LinkCopyPopup isDarkTheme={isDarkTheme}>
           <img src={linkCheckIcon} alt='link-copy-check' />
           링크가 복사되었습니다.
         </LinkCopyPopup>
-      ) : (
-        <ButtonsWrap>
-          <CustomButton
-            variant='share'
-            onClick={() => handleShareLinkClick(copyLinkRef.current, setLinkCopied)}
-          >
-            <ShareIcon />
-            공유하기
-          </CustomButton>
-          <CustomButton variant='navi' onClick={handleNaviClick}>
-            <NaviIcon />
-            길찾기
-          </CustomButton>
-        </ButtonsWrap>
       )}
+      <ButtonsWrap>
+        <CustomButton
+          variant='share'
+          onClick={() => handleShareLinkClick(copyLinkRef.current, setLinkCopied)}
+        >
+          <ShareIcon />
+          공유하기
+        </CustomButton>
+        <CustomButton variant='navi' onClick={handleNaviClick}>
+          <NaviIcon />
+          길찾기
+        </CustomButton>
+      </ButtonsWrap>
       <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />
     </Wrap>
   );
