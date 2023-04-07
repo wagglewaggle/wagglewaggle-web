@@ -87,11 +87,13 @@ const ReviewDetail = () => {
         replyContent={reviewDetail?.content}
       />
       <BlankArea />
-      <ReviewCard
-        review={reviewDetail as ReviewDetailType}
-        isDetail
-        tagData={{ symbol, placeName: selectedPlaceName }}
-      />
+      {reviewDetail && (
+        <ReviewCard
+          review={reviewDetail as ReviewDetailType}
+          isDetail
+          tagData={{ symbol, placeName: selectedPlaceName }}
+        />
+      )}
       <CustomDivider />
       {(reviewDetail?.replies ?? []).map((reply: ReplyType, idx: number) => (
         <ReplyCard

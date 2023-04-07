@@ -8,3 +8,5 @@ export { districts } from './districts';
 export { bgPaths } from './bgPaths';
 export { reviewStrConstants } from './reviewStrConstants';
 export { excludedCategories } from './excludedCategories';
+export { koreanBadWords } from './koreanBadWords';
+export { englishBadWords } from './englishBadWords';

@@ -5,6 +5,7 @@ import ReviewCardHeader from './ReviewCardHeader';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
 import { ReplyType, ReviewDetailType, RereplyType } from 'types/typeBundle';
+import { filterBadWords } from 'util/';
 import { reviewStrConstants } from 'constants/';
 import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
@@ -61,14 +62,14 @@ const ReplyCardContent = (props: ContentType) => {
   return (
     <ReplyWrap isLast={isLast} isRereply={isRereply} onClick={handleShowMoreClick}>
       <ReviewCardHeader
-        replyContent={content}
+        replyContent={filterBadWords(content)}
         requestUrl={requestUrl}
         profilePhoto={defaultPhoto}
         userNickname={userNickname}
         createdDate={createdDate}
         removeOptions={isDeleted || isReported}
       />
-      <ReplyContent>{content}</ReplyContent>
+      <ReplyContent>{filterBadWords(content)}</ReplyContent>
       {!isRereply && !isDeleted && !isReported && (
         <IconsInfoWrap>
           {/* 백엔드의 댓글 좋아요 기능이 완성되면 기능 추가 예정 */}

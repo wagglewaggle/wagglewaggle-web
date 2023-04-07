@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import { Fragment, useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
@@ -38,12 +38,15 @@ const ReviewList = (props: PropsType) => {
       ) : (
         <>
           {(reviews ?? []).map((review: ReviewType, idx: number) => (
-            <ReviewCard
-              key={`review-${review.idx}`}
-              review={review}
-              shouldIncludeOnClick={shouldIncludeOnClick}
-              disableBottom={fromBottomSheet && idx === reviews.length - 1}
-            />
+            <Fragment key={`review-card-${review.idx}`}>
+              {review && (
+                <ReviewCard
+                  review={review}
+                  shouldIncludeOnClick={shouldIncludeOnClick}
+                  disableBottom={fromBottomSheet && idx === reviews.length - 1}
+                />
+              )}
+            </Fragment>
           ))}
         </>
       )}

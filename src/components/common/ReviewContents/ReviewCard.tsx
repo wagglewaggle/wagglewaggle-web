@@ -8,6 +8,7 @@ import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { ReviewType, PinnedReviewType, RequestType } from 'types/typeBundle';
 import { reviewStrConstants } from 'constants/';
+import { filterBadWords } from 'util/';
 import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
 import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import defaultPhoto from 'assets/icons/register/default-photo.png';
@@ -29,7 +30,6 @@ const ReviewCard = (props: PropsType) => {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { ReviewStore, AuthStore } = useStore().MobxStore;
-  if (!review) return <></>;
   const {
     writer,
     status,
@@ -83,7 +83,7 @@ const ReviewCard = (props: PropsType) => {
       )}
       <ReviewWrap isDetail={isDetail} disableBottom={disableBottom} onClick={handleClick}>
         <ReviewCardHeader
-          replyContent={content}
+          replyContent={filterBadWords(content)}
           profilePhoto={defaultPhoto}
           userNickname={isDeleted || isReported ? maskedUserNickname : writer.nickname}
           createdDate={createdDate}
@@ -91,7 +91,11 @@ const ReviewCard = (props: PropsType) => {
           removeOptions
         />
         <ReviewContent isDetail={isDetail}>
-          {isDeleted ? deleteMaskedReview : isReported ? reportMaskedReview : content}
+          {isDeleted
+            ? deleteMaskedReview
+            : isReported
+            ? reportMaskedReview
+            : filterBadWords(content)}
         </ReviewContent>
         {!isDeleted && !isReported && (
           <IconsInfoWrap>
