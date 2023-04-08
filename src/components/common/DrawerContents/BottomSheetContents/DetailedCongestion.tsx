@@ -163,6 +163,7 @@ const CommentsWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
 })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: palette.grey[isDarkTheme ? 400 : 500],
+  fontWeight: 500,
 }));
 
 const CustomDivider = styled('hr')({

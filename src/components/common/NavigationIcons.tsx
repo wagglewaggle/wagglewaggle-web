@@ -54,7 +54,7 @@ export default NavigationIcons;
 const Wrap = styled('div')({
   position: 'fixed',
   left: '50%',
-  bottom: 24,
+  bottom: 56,
   display: 'flex',
   filter: 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3))',
   cursor: 'pointer',

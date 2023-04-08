@@ -90,7 +90,7 @@ const CustomTabs = styled(Tabs)({
   '& .MuiTab-root': {
     color: palette.grey[400],
     fontSize: 14,
-    fontWeight: 600,
+    fontWeight: 700,
     lineHeight: '20px',
   },
   '& .Mui-selected': {

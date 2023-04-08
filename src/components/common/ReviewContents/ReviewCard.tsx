@@ -157,7 +157,7 @@ const ReviewContent = styled('div', {
   display: '-webkit-box',
   width: '100%',
   maxHeight: isDetail ? 'none' : 60,
-  height: isDetail ? 'auto' : 60,
+  height: 'auto',
   color: palette.grey[500],
   fontSize: 14,
   fontWeight: 400,

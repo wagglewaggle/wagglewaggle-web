@@ -17,7 +17,7 @@ interface propsType {
   fromBottomSheet?: boolean;
 }
 
-const PlaceCard = observer((props: propsType) => {
+const PlaceCard = (props: propsType) => {
   const { place, fromBottomSheet } = props;
   const [categories, setCategories] = useState<string>('');
   const [symbol, setSymbol] = useState<string>('');
@@ -82,9 +82,9 @@ const PlaceCard = observer((props: propsType) => {
       </IconsInfoWrap>
     </Wrap>
   );
-});
+};
 
-export default PlaceCard;
+export default observer(PlaceCard);
 
 const Wrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
@@ -135,8 +135,9 @@ const PlaceName = styled('span')({
 });
 
 const PlaceCategory = styled('span')({
-  fontSize: 14,
-  fontWeight: 400,
+  color: palette.grey[500],
+  fontSize: 12,
+  fontWeight: 500,
 });
 
 const StatusWrap = styled('div')({
