@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import { PlaceStatus, LinkCopyPopup } from 'components/common';
+import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
 import { palette, locationNames } from 'constants/';
 import { handleShareLinkClick } from 'util/';
@@ -10,11 +10,9 @@ import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
 import { ReactComponent as CctvIcon } from 'assets/icons/drawer/cctv.svg';
 import { ReactComponent as ShareIcon } from 'assets/icons/drawer/share.svg';
 import { ReactComponent as NaviIcon } from 'assets/icons/drawer/navi.svg';
-import linkCheckIcon from 'assets/icons/link-check-icon.svg';
 import { CategoryType } from 'types/typeBundle';
 
 const CongestionSummary = () => {
-  const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
   const { ThemeStore, LocationStore, CustomDrawerStore } = useStore().MobxStore;
   const { placeName, categories, locationData } = LocationStore;
@@ -68,17 +66,8 @@ const CongestionSummary = () => {
         </IconWrap>
       </IconsWrap>
       <Address>{locationData?.address ?? ''}</Address>
-      {linkCopied && (
-        <LinkCopyPopup isDarkTheme={isDarkTheme}>
-          <img src={linkCheckIcon} alt='link-copy-check' />
-          링크가 복사되었습니다.
-        </LinkCopyPopup>
-      )}
       <ButtonsWrap>
-        <CustomButton
-          variant='share'
-          onClick={() => handleShareLinkClick(copyLinkRef.current, setLinkCopied)}
-        >
+        <CustomButton variant='share' onClick={() => handleShareLinkClick(copyLinkRef.current)}>
           <ShareIcon />
           공유하기
         </CustomButton>

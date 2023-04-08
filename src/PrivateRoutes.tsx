@@ -2,14 +2,17 @@ import { useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
+import { LinkCopyPopup } from 'components/common';
 import { Login, Register, List, Map, Review, Error } from './components/view';
 import { useStore } from 'stores';
+import linkCheckIcon from 'assets/icons/link-check-icon.svg';
 
 const PrivateRoutes = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
-  const { AuthStore, UserNavigatorStore } = useStore().MobxStore;
+  const { AuthStore, UserNavigatorStore, ThemeStore } = useStore().MobxStore;
   const { deepLinkUrl } = UserNavigatorStore;
+  const isDarkTheme = ThemeStore.theme === 'dark';
   const isWebView = !!(window as unknown as { ReactNativeWebView: unknown }).ReactNativeWebView;
 
   useEffect(() => {
@@ -47,6 +50,12 @@ const PrivateRoutes = () => {
         <Route path='/' element={<Navigate to='/login' />} />
         <Route path='/*' element={<Navigate to='/not-found' />} />
       </Routes>
+      {UserNavigatorStore.shouldLinkPopupAppear && (
+        <LinkCopyPopup isDarkTheme={isDarkTheme}>
+          <img src={linkCheckIcon} alt='link-copy-check' />
+          링크가 복사되었습니다.
+        </LinkCopyPopup>
+      )}
     </Wrap>
   );
 };

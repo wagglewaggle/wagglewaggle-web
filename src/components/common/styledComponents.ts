@@ -4,6 +4,8 @@ import { palette } from 'constants/';
 export const LinkCopyPopup = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
 })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  position: 'fixed',
+  bottom: 22,
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -18,4 +20,6 @@ export const LinkCopyPopup = styled('div', {
   gap: 8,
   color: isDarkTheme ? palette.black : palette.white,
   backgroundColor: isDarkTheme ? palette.white : palette.black,
+  boxShadow: '0 10px 20px rgba(0, 0, 0, 0.25)',
+  zIndex: 1250,
 }));

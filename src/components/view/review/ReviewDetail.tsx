@@ -5,7 +5,7 @@ import { Drawer, Divider, styled } from '@mui/material';
 import { useStore } from 'stores';
 import ReviewDetailInput from './ReviewDetailInput';
 import { ReviewCard, ReplyCard } from 'components/common';
-import { ReplyHeader } from 'components/common/HeaderContents';
+import { ReviewHeader } from 'components/common/HeaderContents';
 import { ReviewDetailType, PlaceDataType, CategoryType, ReplyType } from 'types/typeBundle';
 import { palette } from 'constants/';
 import { getImageSymbol } from 'util/';
@@ -79,7 +79,7 @@ const ReviewDetail = () => {
       ref={drawerRef}
       transitionDuration={{ enter: 250, exit: 0 }}
     >
-      <ReplyHeader
+      <ReviewHeader
         isMyReview={
           localStorage.getItem('@wagglewaggle_user_nickname') === reviewDetail?.writer.nickname
         }

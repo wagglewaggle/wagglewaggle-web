@@ -1,5 +1,4 @@
 import { useState, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { HeaderSelectMenu } from 'components/common/HeaderContents';
 import { CustomIconButton } from './common';
@@ -15,14 +14,13 @@ type PropsType = {
   handleCloseDrawer: () => void;
 };
 
-const ReplyHeader = (props: PropsType) => {
+const ReviewHeader = (props: PropsType) => {
   const { isMyReview, replyContent = '', handleCloseDrawer } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [, setLinkCopied] = useState<boolean>(false);
   const copyLinkRef = useRef<HTMLInputElement>(null);
 
   const handleShareClick = () => {
-    handleShareLinkClick(copyLinkRef.current, setLinkCopied);
+    handleShareLinkClick(copyLinkRef.current);
   };
 
   const handleOptionsClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -61,11 +59,12 @@ const ReplyHeader = (props: PropsType) => {
   );
 };
 
-export default observer(ReplyHeader);
+export default ReviewHeader;
 
 const Wrap = styled('div')({
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'center',
   width: '100%',
   fontSize: 18,
   fontWeight: 600,

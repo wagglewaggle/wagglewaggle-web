@@ -25,14 +25,13 @@ const BrowserPageFooter = () => {
           Share Link
         </button>
       </Buttons>
-      {linkCopied ? (
+      {linkCopied && (
         <LinkCopyPopup isDarkTheme={isDarkTheme}>
           <img src={linkCheckIcon} alt='link-copy-check' />
           링크가 복사되었습니다.
         </LinkCopyPopup>
-      ) : (
-        <TeamName>© 2023 Team EXIT</TeamName>
       )}
+      <TeamName>© 2023 Team EXIT</TeamName>
       <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />
     </Wrap>
   );
@@ -48,6 +47,7 @@ const Wrap = styled('div')({
   alignItems: 'center',
   padding: '28px 0',
   width: '100%',
+  minHeight: 52,
   backgroundColor: palette.grey[100],
   gap: 16,
 });

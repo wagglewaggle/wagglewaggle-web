@@ -6,6 +6,7 @@ export class UserNavigatorStore {
   dataLocation: number[] = [37.49852498844754, 127.02851772308351];
   loaded: boolean = false;
   isUserLocation: boolean = false;
+  shouldLinkPopupAppear: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -30,5 +31,9 @@ export class UserNavigatorStore {
 
   setLoaded = (newStatus: boolean) => {
     this.loaded = newStatus;
+  };
+
+  setShouldLinkPopupAppear = (newStatus: boolean) => {
+    this.shouldLinkPopupAppear = newStatus;
   };
 }
