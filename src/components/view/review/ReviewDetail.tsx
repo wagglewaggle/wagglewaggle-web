@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, Divider, styled } from '@mui/material';
@@ -11,8 +11,6 @@ import { palette } from 'constants/';
 import { getImageSymbol } from 'util/';
 
 const ReviewDetail = () => {
-  const drawerRef = useRef<HTMLDivElement>(null);
-  const firstRender = useRef(true);
   const [symbol, setSymbol] = useState<string>('');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -20,7 +18,6 @@ const ReviewDetail = () => {
   const { ReviewStore, LocationStore } = useStore().MobxStore;
   const { reviewDetail } = ReviewStore;
   const { placesData } = LocationStore;
-  const paperElement = drawerRef.current?.querySelector('.MuiPaper-root');
   const primaryCategories: string[] = useMemo(() => ['강변', '공원', '궁궐'], []);
   const placeName = searchParams.get('name');
   const fromProfile = !pathname.split('/').includes('review');
@@ -31,7 +28,6 @@ const ReviewDetail = () => {
       ReviewStore.setReviewDetail(null);
       ReviewStore.setReplyStatus({ writeMode: false });
       ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
-      firstRender.current = true;
       if (isPopState) return;
       navigate(-1);
     },
@@ -51,25 +47,10 @@ const ReviewDetail = () => {
   }, [reviewDetail, placesData, selectedPlaceName, primaryCategories]);
 
   useEffect(() => {
-    if (!reviewDetail || (!paperElement && !pathname.split('/').includes('review'))) return;
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    if (!paperElement) return;
-    paperElement.scrollTo({ top: paperElement.scrollHeight, behavior: 'smooth' });
-  }, [paperElement, reviewDetail, pathname]);
-
-  useEffect(() => {
-    if (!!ReviewStore.reviewDetail) return;
-    firstRender.current = true;
-  }, [ReviewStore.reviewDetail]);
-
-  useEffect(() => {
     if (!reviewDetail || searchParams.get('reviewIdx')) return;
-    navigate(`${pathname}${search}&reviewIdx=${reviewDetail.idx}`);
+    navigate(`${pathname}${search}${search ? '&' : '?'}reviewIdx=${reviewDetail.idx}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reviewDetail, navigate]);
+  }, [reviewDetail, searchParams, navigate]);
 
   useEffect(() => {
     if (!ReviewStore.reviewDetail) return;
@@ -83,7 +64,6 @@ const ReviewDetail = () => {
       open={!!ReviewStore.reviewDetail}
       anchor='right'
       onClose={() => handleCloseDrawer()}
-      ref={drawerRef}
       transitionDuration={{ enter: 250, exit: 0 }}
     >
       <ReviewHeader

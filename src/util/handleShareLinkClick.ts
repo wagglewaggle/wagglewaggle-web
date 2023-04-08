@@ -8,7 +8,7 @@ const handleShareLinkClick = (
   if (!current) return;
   current.focus();
   current.select();
-  navigator.clipboard.writeText(current.value);
+  navigator.clipboard.writeText(current.value.replace('map', 'review').replace('list', 'review'));
   const { UserNavigatorStore } = MobxStore;
   UserNavigatorStore.setShouldLinkPopupAppear(true);
   setTimeout(() => {

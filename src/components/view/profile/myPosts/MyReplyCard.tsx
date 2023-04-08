@@ -1,7 +1,7 @@
 import { styled } from '@mui/material';
 import { MyReplyType, CategoryType, RequestType } from 'types/typeBundle';
 import { useStore } from 'stores';
-import { getImageSymbol, getTimeDiff } from 'util/';
+import { getImageSymbol, getTimeDiff, filterBadWords } from 'util/';
 import { palette, symbolsComponents, locationNames } from 'constants/';
 
 type PropsType = {
@@ -35,7 +35,7 @@ const MyReplyCard = (props: PropsType) => {
         {locationNames?.[place?.name ?? ''] ?? place?.name ?? ''}
       </PlaceTag>
       <UpdatedTime>{getTimeDiff(updatedDate ?? '')}</UpdatedTime>
-      <Content>{content}</Content>
+      <Content>{filterBadWords(content)}</Content>
     </Wrap>
   );
 };

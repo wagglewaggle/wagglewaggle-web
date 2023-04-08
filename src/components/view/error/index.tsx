@@ -14,7 +14,7 @@ import rightIcon from 'assets/icons/right-icon.svg';
 const Error = observer(() => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const lottieContainer = useRef<HTMLDivElement>(null);
-  const { ErrorStore, ThemeStore, CustomDrawerStore } = useStore().MobxStore;
+  const { ErrorStore, ThemeStore } = useStore().MobxStore;
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ const Error = observer(() => {
 
   const handleMoveHome = () => {
     ErrorStore.setStatusCode(null);
-    navigate(`/${CustomDrawerStore.variant}`);
+    navigate('/map');
   };
 
   useEffect(() => {

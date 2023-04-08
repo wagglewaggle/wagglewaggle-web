@@ -32,7 +32,7 @@ const MyPostsReplies = () => {
       ) : (
         <ReplyWrap>
           {myReplies.data.map((reply: MyReplyType) => (
-            <MyReplyCard reply={reply} />
+            <MyReplyCard key={`my-reply-${reply.idx}`} reply={reply} />
           ))}
         </ReplyWrap>
       )}

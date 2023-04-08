@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, styled } from '@mui/material';
@@ -11,32 +11,19 @@ import { palette } from 'constants/';
 import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 
 const ReplyPage = () => {
-  const drawerRef = useRef<HTMLDivElement>(null);
-  const firstRender = useRef(true);
   const navigate = useNavigate();
   const { ReviewStore } = useStore().MobxStore;
-  const paperElement = drawerRef.current?.querySelector('.MuiPaper-root');
 
   const handleCloseDrawer = useCallback(
     (isPopState?: boolean) => {
       ReviewStore.setSelectedReply(null);
       ReviewStore.setReplyStatus({ writeMode: false });
       ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
-      firstRender.current = true;
       if (isPopState) return;
       navigate(-1);
     },
     [ReviewStore, navigate]
   );
-
-  useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    if (!paperElement) return;
-    paperElement?.scrollTo({ top: paperElement.scrollHeight, behavior: 'smooth' });
-  }, [paperElement, ReviewStore.selectedReply?.levelReplies.length]);
 
   useEffect(() => {
     if (!ReviewStore.selectedReply) return;
@@ -48,7 +35,6 @@ const ReplyPage = () => {
       open={!!ReviewStore.selectedReply}
       anchor='right'
       onClose={() => handleCloseDrawer()}
-      ref={drawerRef}
       transitionDuration={{ enter: 250, exit: 0 }}
     >
       <Wrap>

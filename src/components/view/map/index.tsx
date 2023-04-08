@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import MapContent from './MapContent';
@@ -13,6 +13,7 @@ declare global {
 }
 
 const Map = () => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const { CustomDrawerStore, LocationStore, AuthStore } = useStore().MobxStore;
@@ -73,24 +74,10 @@ const Map = () => {
   }, [CustomDrawerStore, search, pathname]);
 
   useEffect(() => {
-    if (pathname === '/map' && !search) return;
-    if (search) {
-      CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
-      CustomDrawerStore.openDrawer('map', <></>);
-      return;
-    }
-    CustomDrawerStore.setIncludesInput(true);
-    CustomDrawerStore.openDrawer(
-      'map',
-      <SearchData
-        initialBlockList={JSON.parse(
-          localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
-        )}
-        handleWordClick={handleWordClick}
-        handleLatestListChange={handleLatestListChange}
-      />
-    );
-  }, [CustomDrawerStore, pathname, search, handleWordClick]);
+    if (pathname === '/map' && !searchParams.get('name')) return;
+    CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
+    CustomDrawerStore.openDrawer('map', <></>);
+  }, [CustomDrawerStore, pathname, searchParams, handleWordClick]);
 
   return (
     <>
