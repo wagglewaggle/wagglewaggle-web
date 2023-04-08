@@ -5,24 +5,31 @@ import { palette } from 'constants/';
 import { ContentPropsType } from '.';
 
 const Content = (props: ContentPropsType) => {
-  const { headerLogo, title, content, contentImage, subContentImage, shadyBackground } = props;
+  const { idx, headerLogo, title, content, contentImage, subContentImage, shadyBackground } = props;
   const { ScreenSizeStore } = useStore().MobxStore;
   const { screenWidth } = ScreenSizeStore;
   const device = screenWidth < 768 ? 'mobile' : screenWidth < 1024 ? 'tablet' : 'pc';
 
   return (
-    <Wrap shady={shadyBackground} device={device}>
-      <SubWrap>
-        <HeaderLogo src={headerLogo} alt='header' />
-        <TextWrap>
-          <TextTitle>{title}</TextTitle>
-          <TextContent>{content}</TextContent>
-        </TextWrap>
-        {device !== 'mobile' && subContentImage && (
-          <SubContentImage src={subContentImage} alt='sub-content' device={device} />
-        )}
+    <Wrap shady={shadyBackground} device={device} paddingBottom={idx === 1 ? 24 : 44}>
+      <SubWrap device={device}>
+        <ContentWrap>
+          <HeaderLogo src={headerLogo} alt='header' />
+          <TextWrap>
+            <TextTitle>{title}</TextTitle>
+            <TextContent>{content}</TextContent>
+          </TextWrap>
+          {device !== 'mobile' && subContentImage && (
+            <SubContentImage src={subContentImage} alt='sub-content' device={device} />
+          )}
+        </ContentWrap>
+        <ContentImage
+          src={contentImage}
+          alt='content'
+          device={device}
+          height={idx === 0 ? 427 : idx === 1 ? 437 : 478}
+        />
       </SubWrap>
-      <ContentImage src={contentImage} alt='content' device={device} />
     </Wrap>
   );
 };
@@ -30,25 +37,35 @@ const Content = (props: ContentPropsType) => {
 export default observer(Content);
 
 const Wrap = styled('div', {
-  shouldForwardProp: (prop: string) => !['shady', 'device'].includes(prop),
-})<{ shady: boolean; device: 'mobile' | 'tablet' | 'pc' }>(({ shady, device }) => ({
-  display: 'flex',
-  flexDirection: device === 'mobile' ? 'column' : 'row',
-  justifyContent: 'space-between',
-  alignItems: device === 'mobile' ? 'center' : 'flex-start',
-  padding: `56px ${device === 'mobile' ? 24 : 56}px 44px`,
-  width: `calc(100% - ${device === 'mobile' ? 48 : 112}px)`,
-  maxWidth: 768,
-  backgroundColor: shady ? palette.grey[100] : palette.white,
-  zIndex: 0,
-}));
+  shouldForwardProp: (prop: string) => !['shady', 'device', 'paddingBottom'].includes(prop),
+})<{ shady: boolean; device: 'mobile' | 'tablet' | 'pc'; paddingBottom: number }>(
+  ({ shady, device, paddingBottom }) => ({
+    display: 'flex',
+    justifyContent: 'center',
+    padding: `56px ${device === 'mobile' ? 24 : 56}px ${paddingBottom}px`,
+    width: `calc(100% - ${device === 'mobile' ? 48 : 112}px)`,
+    backgroundColor: shady ? palette.grey[100] : palette.white,
+    zIndex: 0,
+  })
+);
 
 const HeaderLogo = styled('img')({
   width: 48,
   height: 48,
 });
 
-const SubWrap = styled('div')({
+const SubWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'device',
+})<{ device: 'mobile' | 'tablet' | 'pc' }>(({ device }) => ({
+  display: 'flex',
+  flexDirection: device === 'mobile' ? 'column' : 'row',
+  justifyContent: 'space-between',
+  alignItems: device === 'mobile' ? 'center' : 'flex-start',
+  width: '100%',
+  maxWidth: 656,
+}));
+
+const ContentWrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
 });
@@ -76,11 +93,11 @@ const TextContent = styled('div')({
 });
 
 const ContentImage = styled('img', {
-  shouldForwardProp: (prop: string) => prop !== 'device',
-})<{ device: 'mobile' | 'tablet' | 'pc' }>(({ device }) => ({
-  marginTop: device === 'mobile' ? 32 : 120,
+  shouldForwardProp: (prop: string) => !['device', 'height'].includes(prop),
+})<{ device: 'mobile' | 'tablet' | 'pc'; height: number }>(({ device, height }) => ({
+  marginTop: device === 'mobile' ? 32 : 64,
   width: 327,
-  height: 427,
+  height,
 }));
 
 const SubContentImage = styled('img', {

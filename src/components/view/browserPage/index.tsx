@@ -4,8 +4,8 @@ import { useStore } from 'stores';
 import BrowserPageFooter from './BrowserPageFooter';
 import Content from './Content';
 import { ReactComponent as Logo } from 'assets/icons/logo-filled-icon.svg';
-import appStore from 'assets/browserPage/app-store.png';
-import googlePlay from 'assets/browserPage/google-play.png';
+// import appStore from 'assets/browserPage/app-store.png';
+// import googlePlay from 'assets/browserPage/google-play.png';
 import content1 from 'assets/browserPage/content-image-1.png';
 import content2 from 'assets/browserPage/content-image-2.png';
 import content3 from 'assets/browserPage/content-image-3.png';
@@ -16,6 +16,7 @@ import chatIcon from 'assets/browserPage/chat.svg';
 import { palette } from 'constants/';
 
 export type ContentPropsType = {
+  idx: number;
   headerLogo: string;
   title: string;
   content: string;
@@ -30,16 +31,18 @@ const BrowserPage = () => {
   const device = screenWidth < 768 ? 'mobile' : screenWidth < 1024 ? 'tablet' : 'pc';
   const bgImage = require(`assets/browserPage/${device}-header-bg.png`);
 
-  const handleAppleClick = () => {
-    window.open(
-      'https://apps.apple.com/us/app/%EC%99%80%EA%B8%80%EC%99%80%EA%B8%80-wagglewaggle/id1672827485',
-      '_blank'
-    );
-  };
+  // 앱 출시 후 아래 기능 활성화
+  // const handleAppleClick = () => {
+  //   window.open(
+  //     'https://apps.apple.com/us/app/%EC%99%80%EA%B8%80%EC%99%80%EA%B8%80-wagglewaggle/id1672827485',
+  //     '_blank'
+  //   );
+  // };
 
-  const handleGoogleClick = () => {
-    window.open('https://play.google.com/store/apps/details?id=com.exit.wagglewaggle', '_blank');
-  };
+  // 앱 출시 후 아래 기능 활성화
+  // const handleGoogleClick = () => {
+  //   window.open('https://play.google.com/store/apps/details?id=com.exit.wagglewaggle', '_blank');
+  // };
 
   return (
     <>
@@ -49,14 +52,24 @@ const BrowserPage = () => {
         <HeaderText device={device}>
           {`지금 그곳의${device === 'mobile' ? '\r\n' : ' '}혼잡도가 궁금하면\r\n와글와글에서`}
         </HeaderText>
-        <ButtonsArea>
+        <Description>
+          {'4월, 새로워진 와글와글로 돌아오겠습니다!\r\nGoogle Play 또는 App Store에서 만나요 :)'}
+        </Description>
+        {/* 앱 출시 후 아래 버튼 활성화 */}
+        {/* <ButtonsArea>
           <AppImage src={appStore} alt='app-store' onClick={handleAppleClick} />
           <AppImage src={googlePlay} alt='google-play' onClick={handleGoogleClick} />
-        </ButtonsArea>
+        </ButtonsArea> */}
       </HeaderWrap>
-      {contents.map((content: Omit<ContentPropsType, 'shadyBackground'>, idx: number) => (
-        <Content {...content} shadyBackground={idx % 2 === 1} key={`content-${content.title}`} />
+      {contents.map((content: Omit<ContentPropsType, 'idx' | 'shadyBackground'>, idx: number) => (
+        <Content
+          {...content}
+          idx={idx}
+          shadyBackground={idx % 2 === 1}
+          key={`content-${content.title}`}
+        />
       ))}
+      <BlankArea />
       <BrowserPageFooter />
     </>
   );
@@ -70,7 +83,7 @@ const HeaderWrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   width: `calc(100% - ${device === 'mobile' ? 48 : 112}px)`,
-  maxWidth: 768,
+  maxWidth: 656,
   height: device === 'mobile' ? 780 : 380,
   zIndex: 2,
 }));
@@ -89,7 +102,7 @@ const CustomLogo = styled(Logo)({
 const HeaderText = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'device',
 })<{ device: 'mobile' | 'tablet' | 'pc' }>(({ device }) => ({
-  margin: `${device === 'mobile' ? 64 : 48}px 0 32px`,
+  margin: `${device === 'mobile' ? 64 : 48}px 0 24px`,
   width: '100%',
   color: palette.white,
   fontSize: 32,
@@ -99,16 +112,27 @@ const HeaderText = styled('div', {
   textAlign: 'center',
 }));
 
-const ButtonsArea = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  gap: 12,
-});
+// 앱 출시 후 아래 기능 활성화
+// const ButtonsArea = styled('div')({
+//   display: 'flex',
+//   justifyContent: 'center',
+//   gap: 12,
+// });
 
-const AppImage = styled('img')({
-  width: 157.5,
-  height: 36,
-  cursor: 'pointer',
+// const AppImage = styled('img')({
+//   width: 157.5,
+//   height: 36,
+//   cursor: 'pointer',
+// });
+
+const Description = styled('div')({
+  width: '100%',
+  color: palette.white,
+  fontSize: 14,
+  fontWeight: 400,
+  lineHeight: '20px',
+  whiteSpace: 'pre-line',
+  textAlign: 'center',
 });
 
 const HeaderImage = styled('img', {
@@ -117,9 +141,16 @@ const HeaderImage = styled('img', {
   position: 'absolute',
   top: 0,
   width: '100%',
+  minWidth: 376,
   height: device === 'mobile' ? 780 : 380,
   zIndex: 1,
 }));
+
+const BlankArea = styled('div')({
+  width: '100%',
+  height: 24,
+  minHeight: 24,
+});
 
 const contents = [
   {
