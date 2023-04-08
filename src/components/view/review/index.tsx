@@ -6,7 +6,7 @@ import { ReviewList } from 'components/common';
 import { CustomIconButton } from 'components/common/HeaderContents/common';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import { LocationDataType, RequestType } from 'types/typeBundle';
+import { LocationDataType, RequestType, ReplyType } from 'types/typeBundle';
 import { initPlaceData } from 'util/';
 import { palette } from 'constants/';
 import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
@@ -18,6 +18,7 @@ const Review = () => {
   const { LocationStore, ReviewStore, ThemeStore, AuthStore } = useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const { placesData, locationData } = LocationStore;
+  const { reviewDetail, selectedReply } = ReviewStore;
   const placeName = searchParams.get('name') ?? '';
   const requestType: RequestType | undefined = placesData.find(
     (data) => data.name === placeName
@@ -30,9 +31,9 @@ const Review = () => {
     ReviewStore.initReviews(requestType, placeIdx);
   }, [ReviewStore, requestType, pathname]);
 
-  const handleReviewClose = () => {
+  const handleReviewClose = useCallback(() => {
     navigate(`/map/detail/${locationData?.idx}?name=${locationData?.name}`);
-  };
+  }, [navigate, locationData]);
 
   const initLocationData = useCallback(async () => {
     if (!requestType) return;
@@ -75,6 +76,29 @@ const Review = () => {
     if (ReviewStore.reviews.length > 0) return;
     getReviews();
   }, [ReviewStore, getReviews]);
+
+  useEffect(() => {
+    if (!!ReviewStore.reviewDetail || !!ReviewStore.selectedReply) return;
+    window.onpopstate = handleReviewClose;
+  }, [handleReviewClose, ReviewStore.reviewDetail, ReviewStore.selectedReply]);
+
+  useEffect(() => {
+    if (!!reviewDetail || !searchParams.get('reviewIdx') || !requestType) return;
+    const pathnameArr = pathname.split('/');
+    const placeIdx = pathnameArr[pathnameArr.length - 1];
+    ReviewStore.initReviewDetail(requestType, placeIdx, searchParams.get('reviewIdx') as string);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestType]);
+
+  useEffect(() => {
+    if (!!selectedReply || !reviewDetail || !searchParams.get('replyIdx')) return;
+    ReviewStore.setSelectedReply(
+      reviewDetail.replies.find(
+        (reply: ReplyType) => String(reply.idx) === searchParams.get('replyIdx')
+      ) ?? null
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reviewDetail]);
 
   return (
     <ReviewDrawer open anchor='right' transitionDuration={0}>

@@ -16,7 +16,7 @@ const ReviewDetail = () => {
   const [symbol, setSymbol] = useState<string>('');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const { ReviewStore, LocationStore } = useStore().MobxStore;
   const { reviewDetail } = ReviewStore;
   const { placesData } = LocationStore;
@@ -66,10 +66,17 @@ const ReviewDetail = () => {
   }, [ReviewStore.reviewDetail]);
 
   useEffect(() => {
+    if (!reviewDetail || searchParams.get('reviewIdx')) return;
+    navigate(`${pathname}${search}&reviewIdx=${reviewDetail.idx}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reviewDetail, navigate]);
+
+  useEffect(() => {
     if (!ReviewStore.reviewDetail) return;
     if (!!ReviewStore.selectedReply) return;
+    if (searchParams.get('reviewIdx')) return;
     window.onpopstate = () => handleCloseDrawer(true);
-  }, [handleCloseDrawer, ReviewStore.reviewDetail, ReviewStore.selectedReply]);
+  }, [handleCloseDrawer, ReviewStore.reviewDetail, ReviewStore.selectedReply, searchParams]);
 
   return (
     <ReviewDetailDrawer

@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material';
 import ReviewCardHeader from './ReviewCardHeader';
 import { palette } from 'constants/';
@@ -43,6 +43,9 @@ const ReplyCardContent = (props: ContentType) => {
     createdDate,
     content,
   } = props;
+  const [searchParams] = useSearchParams();
+  const { pathname, search } = useLocation();
+  const navigate = useNavigate();
   const { ReviewStore } = useStore().MobxStore;
   const { deleted, reportDeleted } = reviewStrConstants;
   const isDeleted = isRereply
@@ -57,6 +60,8 @@ const ReplyCardContent = (props: ContentType) => {
     if (isRereply) return;
     ReviewStore.setSelectedReply(reply);
     ReviewStore.setReplyStatus({ writeMode: true, replyIdx: idx });
+    if (searchParams.get('replyIdx')) return;
+    navigate(`${pathname}${search}&replyIdx=${reply.idx}`);
   };
 
   return (
@@ -83,6 +88,7 @@ const ReplyCardContent = (props: ContentType) => {
 
 const ReplyCard = (props: PropsType) => {
   const { reply, review, shortened, isLast, isReplyPage } = props;
+  const [searchParams] = useSearchParams();
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { ReviewStore } = useStore().MobxStore;
@@ -97,7 +103,8 @@ const ReplyCard = (props: PropsType) => {
 
   const handleShowMoreClick = () => {
     ReviewStore.setSelectedReply(reply);
-    navigate(`${pathname}${search}`);
+    if (searchParams.get('replyIdx')) return;
+    navigate(`${pathname}${search}&replyIdx=${reply.idx}`);
   };
 
   return (
