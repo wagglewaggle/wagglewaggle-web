@@ -12,7 +12,7 @@ export class UserNavigatorStore {
     makeAutoObservable(this);
   }
 
-  setDeepLinkUrl = (url: string) => {
+  setDeepLinkUrl = (url: string | null) => {
     this.deepLinkUrl = url;
   };
 

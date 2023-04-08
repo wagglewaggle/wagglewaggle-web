@@ -32,8 +32,9 @@ const PrivateRoutes = () => {
     const navigateUrl = deepLinkUrl.includes(productModeScheme)
       ? deepLinkUrl.replace(productModeScheme, '')
       : deepLinkUrl.replace(devModeScheme, '');
-    navigate(navigateUrl);
-  }, [isWebView, deepLinkUrl, navigate]);
+    navigate(navigateUrl || '');
+    UserNavigatorStore.setDeepLinkUrl(null);
+  }, [UserNavigatorStore, isWebView, deepLinkUrl, navigate]);
 
   return (
     <Wrap>
