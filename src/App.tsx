@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { isIOS } from 'react-device-detect';
+import { isIOS, isMobile } from 'react-device-detect';
 import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
@@ -152,7 +152,18 @@ const App = observer(() => {
                   element={isWebView ? <Login /> : <Navigate replace to='/landing' />}
                 />
               ))}
-              <Route path='/*' element={isWebView ? <PrivateRoutes /> : <DeepLinkRoutes />} />
+              <Route
+                path='/*'
+                element={
+                  isWebView ? (
+                    <PrivateRoutes />
+                  ) : isMobile ? (
+                    <DeepLinkRoutes />
+                  ) : (
+                    <Navigate replace to='/landing' />
+                  )
+                }
+              />
             </Routes>
             <CustomDrawer />
             <ReviewWriteButton />
