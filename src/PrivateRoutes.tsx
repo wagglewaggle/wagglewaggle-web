@@ -8,7 +8,9 @@ import { useStore } from 'stores';
 const PrivateRoutes = () => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
-  const { AuthStore } = useStore().MobxStore;
+  const { AuthStore, UserNavigatorStore } = useStore().MobxStore;
+  const { deepLinkUrl } = UserNavigatorStore;
+  const isWebView = !!(window as unknown as { ReactNativeWebView: unknown }).ReactNativeWebView;
 
   useEffect(() => {
     if (AuthStore.authorized || sessionStorage.getItem('@wagglewaggle_authorized')) return;
@@ -18,10 +20,21 @@ const PrivateRoutes = () => {
     navigate('/login');
   }, [AuthStore.authorized, navigate, pathname, search]);
 
+  useEffect(() => {
+    if (isWebView) return;
+    if (!deepLinkUrl || ['wagglewaggle://', 'exp://192.168.45.139:19000'].includes(deepLinkUrl))
+      return;
+    const productModeScheme = 'wagglewaggle:/';
+    const devModeScheme = 'exp://192.168.45.139:19000/--';
+    const navigateUrl = deepLinkUrl.includes(productModeScheme)
+      ? deepLinkUrl.replace(productModeScheme, '')
+      : deepLinkUrl.replace(devModeScheme, '');
+    navigate(navigateUrl);
+  }, [isWebView, deepLinkUrl, navigate]);
+
   return (
     <Wrap>
       <Routes>
-        <Route path='/auth/naver/callback' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/map/*' element={<Map />} />
         <Route path='/list/*' element={<List />} />

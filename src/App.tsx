@@ -7,6 +7,7 @@ import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
 import { CustomDialog, CustomDrawer, ReviewWriteButton } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
+import DeepLinkRoutes from 'DeepLinkRoutes';
 import { Login, Profile, BrowserPage } from './components/view';
 import ReplyPage from 'components/view/review/ReplyPage';
 import ReviewDetail from 'components/view/review/ReviewDetail';
@@ -44,26 +45,31 @@ const App = observer(() => {
 
   const reactNativeListener = (e: Event) => {
     const { data } = e as MessageEvent;
-    if (UserNavigatorStore.loaded || typeof data !== 'string') return;
-    try {
-      const { code, latitude, longitude } = JSON.parse(data);
-      if (code !== 'success' || !latitude || !longitude) return;
-      UserNavigatorStore.setUserLocation([latitude, longitude], false);
-      UserNavigatorStore.setLoaded(true);
-    } catch {
-      UserNavigatorStore.setUserLocation([37.625638, 127.038941], false);
-    }
+    if (typeof data !== 'string') return;
+    UserNavigatorStore.setDeepLinkUrl(data);
+
+    // 유저 위치 관련 기능은 해당 기능 활성화될 때 재구현 예정
+    // if (UserNavigatorStore.loaded || typeof data !== 'string') return;
+    // try {
+    //   const { code, latitude, longitude } = JSON.parse(data);
+    //   if (code !== 'success' || !latitude || !longitude) return;
+    //   UserNavigatorStore.setUserLocation([latitude, longitude], false);
+    //   UserNavigatorStore.setLoaded(true);
+    // } catch {
+    //   UserNavigatorStore.setUserLocation([37.625638, 127.038941], false);
+    // }
   };
 
-  const onGeolocationSuccess = ({
-    coords,
-  }: {
-    coords: { latitude: number; longitude: number };
-  }) => {
-    const { latitude, longitude } = coords;
-    UserNavigatorStore.setUserLocation([latitude, longitude], false);
-    UserNavigatorStore.setLoaded(true);
-  };
+  // 유저 위치 관련 기능은 해당 기능 활성화될 때 재구현 예정
+  // const onGeolocationSuccess = ({
+  //   coords,
+  // }: {
+  //   coords: { latitude: number; longitude: number };
+  // }) => {
+  //   const { latitude, longitude } = coords;
+  //   UserNavigatorStore.setUserLocation([latitude, longitude], false);
+  //   UserNavigatorStore.setLoaded(true);
+  // };
 
   useEffect(() => {
     if (!isIOS) return;
@@ -98,8 +104,9 @@ const App = observer(() => {
       window.addEventListener('message', reactNativeListener); // ios
       return;
     }
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(onGeolocationSuccess);
+    // 유저 위치 관련 기능은 해당 기능 활성화될 때 재구현 예정
+    // if (!navigator.geolocation) return;
+    // navigator.geolocation.getCurrentPosition(onGeolocationSuccess);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -138,19 +145,14 @@ const App = observer(() => {
           <BrowserRouter>
             <Routes>
               <Route path='/landing' element={<BrowserPage />} />
-              {/* <Route
-                path='/login'
-                element={isWebView ? <Login /> : <Navigate replace to='/landing' />}
-              />
-              <Route
-                path='/*'
-                element={isWebView ? <PrivateRoutes /> : <Navigate replace to='/landing' />}
-              /> */}
-              <Route
-                path='/login'
-                element={!AuthStore.authorized ? <Login /> : <Navigate replace to='/map' />}
-              />
-              <Route path='/*' element={<PrivateRoutes />} />
+              {['/', '/login'].map((path: string) => (
+                <Route
+                  key={`route-${path}`}
+                  path={path}
+                  element={isWebView ? <Login /> : <Navigate replace to='/landing' />}
+                />
+              ))}
+              <Route path='/*' element={isWebView ? <PrivateRoutes /> : <DeepLinkRoutes />} />
             </Routes>
             <CustomDrawer />
             <ReviewWriteButton />

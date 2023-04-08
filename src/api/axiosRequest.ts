@@ -18,7 +18,9 @@ const axiosRequest = async (
 
   apiAxiosInstance.interceptors.request.use((config) => {
     if (!config.headers) return config;
-    const token = localStorage.getItem(`@wagglewaggle_access_token`);
+    const token =
+      localStorage.getItem(`@wagglewaggle_access_token`) ??
+      sessionStorage.getItem('@wagglewaggle_access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -31,7 +33,11 @@ const axiosRequest = async (
     async (err) => {
       const { errorCode } = err.response.data;
       if (errorCode === 'ERR_0006003') {
-        if (sessionStorage.getItem('@wagglewaggle_reissuing')) return;
+        if (sessionStorage.getItem('@wagglewaggle_reissuing')) {
+          setTimeout(() => {
+            return apiAxiosInstance(err.config);
+          }, 500);
+        }
         sessionStorage.setItem('@wagglewaggle_reissuing', 'true');
         await tokenAxiosInstance.post(`${SERVER_URL}/auth/reissue`, {
           refreshToken:
@@ -56,16 +62,16 @@ const axiosRequest = async (
 
   tokenAxiosInstance.interceptors.response.use(
     async (res) => {
+      const webStorage = sessionStorage.getItem('@wagglewaggle_auto_login_checked')
+        ? localStorage
+        : sessionStorage;
       const { accessToken, refreshToken } = res.data;
       if (accessToken) {
-        localStorage.setItem('@wagglewaggle_access_token', accessToken);
+        webStorage.setItem('@wagglewaggle_access_token', accessToken);
         sessionStorage.setItem('@wagglewaggle_authorized', 'authorized');
         AuthStore.setAuthorized(true);
       }
       if (refreshToken) {
-        const webStorage = sessionStorage.getItem('@wagglewaggle_auto_login_checked')
-          ? localStorage
-          : sessionStorage;
         webStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
       }
       if (!localStorage.getItem('@wagglewaggle_user_nickname')) {
