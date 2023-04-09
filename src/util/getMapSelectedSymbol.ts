@@ -14,11 +14,11 @@ const getMapSelectedSymbol = (symbol: string, status?: StatusType) => {
   };
 
   if (!status || !symbolObj[symbol]) {
-    return require(`assets/symbols/mapSelectedSymbols/NO_STATUS/palace.svg`);
+    return require(`assets/symbols/mapSelectedSymbols/NO_STATUS/palace.png`);
   }
   return require(`assets/symbols/mapSelectedSymbols/${status ?? 'NO_STATUS'}/${
     symbolObj[symbol]
-  }.svg`);
+  }.png`);
 };
 
 export default getMapSelectedSymbol;

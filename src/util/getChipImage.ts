@@ -16,7 +16,7 @@ const iconNames = {
 };
 
 const getChipImage = (chip: ChipType) => {
-  return require(`assets/icons/chips/${iconNames[chip]}.svg`);
+  return require(`assets/icons/chips/${iconNames[chip]}.png`);
 };
 
 export default getChipImage;
