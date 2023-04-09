@@ -10,7 +10,8 @@ const ReviewWriteButton = () => {
   const { pathname, search } = useLocation();
   const { ReviewStore, ScreenSizeStore } = useStore().MobxStore;
   const { writeReviewButtonVisible, openReviewWritePage, reviewDetail } = ReviewStore;
-  const isButtonHidden = !writeReviewButtonVisible || openReviewWritePage || !!reviewDetail;
+  const isButtonHidden =
+    !writeReviewButtonVisible || openReviewWritePage || !!reviewDetail || !search;
 
   const handleClick = () => {
     ReviewStore.setEditOptions({

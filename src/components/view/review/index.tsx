@@ -101,7 +101,11 @@ const Review = () => {
   }, [reviewDetail]);
 
   return (
-    <ReviewDrawer open anchor='right' transitionDuration={0}>
+    <ReviewDrawer
+      open={pathname.split('/').includes('review')}
+      anchor='right'
+      transitionDuration={0}
+    >
       <Wrap isDarkTheme={isDarkTheme}>
         <SubHeader>
           <CustomIconButton onClick={handleReviewClose}>

@@ -46,7 +46,10 @@ const App = observer(() => {
   const reactNativeListener = (e: Event) => {
     const { data } = e as MessageEvent;
     if (typeof data !== 'string') return;
+    if (!data.startsWith('wagglewaggle') && !data.startsWith('exp')) return;
     UserNavigatorStore.setDeepLinkUrl(data);
+    document.removeEventListener('message', reactNativeListener, true); // android
+    window.removeEventListener('message', reactNativeListener, true); // ios
 
     // 유저 위치 관련 기능은 해당 기능 활성화될 때 재구현 예정
     // if (UserNavigatorStore.loaded || typeof data !== 'string') return;
@@ -100,9 +103,8 @@ const App = observer(() => {
 
   useEffect(() => {
     if (isWebView) {
-      document.addEventListener('message', reactNativeListener); // android
-      window.addEventListener('message', reactNativeListener); // ios
-      return;
+      document.addEventListener('message', reactNativeListener, true); // android
+      window.addEventListener('message', reactNativeListener, true); // ios
     }
     // 유저 위치 관련 기능은 해당 기능 활성화될 때 재구현 예정
     // if (!navigator.geolocation) return;

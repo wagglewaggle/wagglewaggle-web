@@ -24,9 +24,8 @@ const PrivateRoutes = () => {
   }, [AuthStore.authorized, navigate, pathname, search]);
 
   useEffect(() => {
-    if (!isWebView) return;
-    if (!deepLinkUrl || ['wagglewaggle://', 'exp://192.168.45.139:19000'].includes(deepLinkUrl))
-      return;
+    if (!isWebView || !deepLinkUrl) return;
+    if (['wagglewaggle://', 'exp://192.168.45.139:19000'].includes(deepLinkUrl)) return;
     const productModeScheme = 'wagglewaggle:/';
     const devModeScheme = 'exp://192.168.45.139:19000/--';
     const navigateUrl = deepLinkUrl.includes(productModeScheme)
