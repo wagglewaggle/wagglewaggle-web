@@ -3,7 +3,8 @@ import { Route } from 'react-router-dom';
 
 export default (
   <Route>
-    <Route path='/' />
-    <Route path='/main' />
+    <Route path='/landing' />
+    <Route path='/map' />
+    <Route path='/list' />
   </Route>
 );

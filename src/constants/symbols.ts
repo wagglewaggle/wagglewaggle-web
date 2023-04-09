@@ -6,6 +6,7 @@ import subway from 'assets/symbols/subway.svg';
 import themePark from 'assets/symbols/theme-park.svg';
 import village from 'assets/symbols/village.svg';
 import hanRiver from 'assets/symbols/han-river.svg';
+import beach from 'assets/symbols/beach.svg';
 
 export const symbols: { [key: string]: string } = {
   궁궐: palace,
@@ -15,5 +16,6 @@ export const symbols: { [key: string]: string } = {
   지하철: subway,
   테마파크: themePark,
   마을: village,
-  한강: hanRiver,
+  강변: hanRiver,
+  해변: beach,
 };

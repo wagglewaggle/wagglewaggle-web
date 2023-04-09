@@ -1,15 +1,125 @@
 import axios, { AxiosError } from 'axios';
 import { MobxStore } from 'App';
 
-const axiosRequest = async (path: string, params: object = {}) => {
-  const { ErrorStore } = MobxStore;
+const axiosRequest = async (
+  method: 'get' | 'post' | 'put' | 'delete',
+  path: string,
+  params: object = {}
+) => {
+  const { AxiosStore, AuthStore, ProfileStore } = MobxStore;
   const SERVER_URL: string | undefined = process.env.REACT_APP_SERVER_URL;
   if (!SERVER_URL) return;
 
+  const tokenAxiosInstance = axios.create();
+  const apiAxiosInstance = axios.create();
+  const isTokenIssuePath =
+    ['reissue', 'naver', 'kakao', 'google'].filter((pathname: string) => path.includes(pathname))
+      .length > 0;
+
+  apiAxiosInstance.interceptors.request.use((config) => {
+    if (path.split('/').includes('review-post')) {
+      AxiosStore.setRequestInProgress(true);
+    }
+    if (!config.headers) return config;
+    const token =
+      localStorage.getItem(`@wagglewaggle_access_token`) ??
+      sessionStorage.getItem('@wagglewaggle_access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    config.headers['ngrok-skip-browser-warning'] = 'any';
+    return config;
+  });
+
+  apiAxiosInstance.interceptors.response.use(
+    (res) => {
+      if (path.split('/').includes('review-post')) {
+        AxiosStore.setRequestInProgress(false);
+      }
+      return Promise.resolve(res);
+    },
+    async (err) => {
+      const { errorCode } = err.response.data;
+      if (errorCode === 'ERR_0006003') {
+        if (sessionStorage.getItem('@wagglewaggle_reissuing')) {
+          setTimeout(() => {
+            if (path.split('/').includes('review-post')) {
+              AxiosStore.setRequestInProgress(false);
+            }
+            return apiAxiosInstance(err.config);
+          }, 500);
+        }
+        sessionStorage.setItem('@wagglewaggle_reissuing', 'true');
+        await tokenAxiosInstance.post(`${SERVER_URL}/auth/reissue`, {
+          refreshToken:
+            localStorage.getItem('@wagglewaggle_refresh_token') ??
+            sessionStorage.getItem('@wagglewaggle_refresh_token'),
+        });
+        sessionStorage.removeItem('@wagglewaggle_reissuing');
+        if (path.split('/').includes('review-post')) {
+          AxiosStore.setRequestInProgress(false);
+        }
+        return apiAxiosInstance(err.config);
+      }
+
+      if (path.split('/').includes('review-post')) {
+        AxiosStore.setRequestInProgress(false);
+      }
+      if (['ERR_0006007', 'ERR_0006010'].includes(errorCode)) {
+        return err.response;
+      }
+      return err;
+    }
+  );
+
+  tokenAxiosInstance.interceptors.request.use((config) => {
+    if (!config.headers) return config;
+    config.headers['ngrok-skip-browser-warning'] = 'any';
+    return config;
+  });
+
+  tokenAxiosInstance.interceptors.response.use(
+    async (res) => {
+      const webStorage = sessionStorage.getItem('@wagglewaggle_auto_login_checked')
+        ? localStorage
+        : sessionStorage;
+      const { accessToken, refreshToken } = res.data;
+      if (accessToken) {
+        webStorage.setItem('@wagglewaggle_access_token', accessToken);
+        sessionStorage.setItem('@wagglewaggle_authorized', 'authorized');
+        AuthStore.setAuthorized(true);
+      }
+      if (refreshToken) {
+        webStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
+      }
+      if (!localStorage.getItem('@wagglewaggle_user_nickname')) {
+        const response = await axiosRequest('get', 'user/setting');
+        if (response?.data) {
+          localStorage.setItem('@wagglewaggle_user_nickname', response.data.nickname);
+          ProfileStore.setUserNickname(response.data.nickname);
+        }
+      }
+      return res;
+    },
+    () => {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = window.location.origin + '/login';
+    }
+  );
+
   try {
-    return await axios.get(`${SERVER_URL}/${path}`, { params: params });
+    const selectedAxiosInstance = isTokenIssuePath ? tokenAxiosInstance : apiAxiosInstance;
+    return method === 'get'
+      ? await selectedAxiosInstance.get(`${SERVER_URL}/${path}`, { params })
+      : method === 'post'
+      ? await selectedAxiosInstance.post(`${SERVER_URL}/${path}`, { ...params })
+      : method === 'put'
+      ? await selectedAxiosInstance.put(`${SERVER_URL}/${path}`, { ...params })
+      : await selectedAxiosInstance.delete(`${SERVER_URL}/${path}`, { data: { ...params } });
   } catch (e) {
-    ErrorStore.setStatusCode((e as AxiosError)?.response?.status || null);
+    AxiosStore.setStatusCode((e as AxiosError).response?.status || null);
+    console.log(e);
   }
 };
 

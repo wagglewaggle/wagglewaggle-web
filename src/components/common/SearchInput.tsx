@@ -1,40 +1,76 @@
-import { ChangeEvent, KeyboardEvent } from 'react';
+import { ChangeEvent, KeyboardEvent, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { TextField, IconButton, styled } from '@mui/material';
 import CustomCloseIcon from './CustomCloseIcon';
+import { SearchData, SuggestData, ResultData } from 'components/common';
 import { palette } from 'constants/';
 import { useStore } from 'stores';
 import { ReactComponent as LeftArrowIcon } from 'assets/icons/left-icon.svg';
 
-interface propsType {
-  searchValue: string;
-  handleSearchEnter: (searchWord: string) => void;
-  handleDrawerClose: () => void;
-  handleSearchValueChange: (newValue: string) => void;
-}
-
-const SearchInput = observer((props: propsType) => {
-  const { searchValue, handleSearchEnter, handleDrawerClose, handleSearchValueChange } = props;
-  const { ThemeStore } = useStore().MobxStore;
+const SearchInput = () => {
+  const navigate = useNavigate();
+  const { ThemeStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleArrowLeftClick = () => {
-    handleDrawerClose();
+    navigate(`/${CustomDrawerStore.variant}`);
+    CustomDrawerStore.closeDrawer();
+  };
+
+  const handleLatestListChange = (newList: string[]) => {
+    localStorage.setItem('@wagglewaggle_recently_searched', JSON.stringify(newList));
   };
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-    handleSearchValueChange(e.target.value);
+    const newValue = e.target.value;
+    CustomDrawerStore.setSearchValue(newValue);
+    CustomDrawerStore.openDrawer(
+      CustomDrawerStore.variant,
+      newValue.length === 0 ? (
+        <SearchData
+          initialBlockList={JSON.parse(
+            localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
+          )}
+          handleWordClick={handleWordClick}
+          handleLatestListChange={handleLatestListChange}
+        />
+      ) : (
+        <SuggestData
+          placeData={LocationStore.placesData}
+          searchValue={newValue}
+          initialBlockList={JSON.parse(
+            localStorage.getItem('@wagglewaggle_recently_searched') ?? '[]'
+          )}
+          handleWordClick={handleWordClick}
+          handleLatestListChange={handleLatestListChange}
+        />
+      )
+    );
+  };
+
+  const handleWordClick = (searchWord: string) => {
+    CustomDrawerStore.setSearchValue(searchWord);
+    CustomDrawerStore.openDrawer(
+      'list',
+      <ResultData placeData={LocationStore.placesData} searchWord={searchWord} />
+    );
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (searchValue !== '' && e.key === 'Enter') {
-      handleSearchEnter(searchValue);
+    if (CustomDrawerStore.searchValue && e.key === 'Enter') {
+      handleWordClick(CustomDrawerStore.searchValue);
+      (e.target as HTMLInputElement).blur();
     }
   };
 
-  const handleIconClick = () => {
-    handleSearchValueChange('');
-  };
+  const handleIconClick = useCallback(() => {
+    CustomDrawerStore.setSearchValue('');
+  }, [CustomDrawerStore]);
+
+  useEffect(() => {
+    handleIconClick();
+  }, [handleIconClick]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
@@ -42,26 +78,26 @@ const SearchInput = observer((props: propsType) => {
         <CustomLeftArrowIcon />
       </CustomIconButton>
       <CustomTextField
+        isDarkTheme={isDarkTheme}
         type='text'
         autoFocus
-        value={searchValue}
+        value={CustomDrawerStore.searchValue}
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}
         placeholder="'강남역'를 입력해보세요"
-        sx={{
-          '& ::placeholder': {
-            color: palette.grey[isDarkTheme ? 400 : 500],
-          },
-        }}
       />
-      {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
+      {CustomDrawerStore.searchValue.length > 0 && (
+        <CustomCloseIcon handleIconClick={handleIconClick} />
+      )}
     </Wrap>
   );
-});
+};
 
-export default SearchInput;
+export default observer(SearchInput);
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -71,7 +107,9 @@ const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   height: 32,
 }));
 
-const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomIconButton = styled(IconButton, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   padding: 0,
   '& path': {
     fill: isDarkTheme ? palette.white : palette.black,
@@ -85,7 +123,9 @@ const CustomLeftArrowIcon = styled(LeftArrowIcon)({
   },
 });
 
-const CustomTextField = styled(TextField)({
+const CustomTextField = styled(TextField, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'center',
   borderRadius: 25,
@@ -105,4 +145,7 @@ const CustomTextField = styled(TextField)({
   '& fieldset': {
     display: 'none',
   },
-});
+  '& ::placeholder': {
+    color: palette.grey[isDarkTheme ? 400 : 500],
+  },
+}));

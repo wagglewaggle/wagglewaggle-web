@@ -19,4 +19,5 @@
 - 배포 플랫폼: [Netlify](netlify.com)
 - npm install -> npm start
 - 혼잡도 데이터 요청 서버 url: "https<span>://</span>api.wagglewaggle-api.site/api"
+- WebView 설정으로 인해 스크롤이 필요한 페이지는 모두 Drawer 형태로 구현
 - 카카오 지도 데이터 appKey는 따로 발급 받으시거나 필요하신 경우 문의 부탁드립니다!

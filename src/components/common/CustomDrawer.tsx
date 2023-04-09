@@ -1,53 +1,57 @@
-import { Fragment, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
-import { Drawer } from '@mui/material';
+import { styled } from '@mui/material';
+import SearchInput from './SearchInput';
+import BottomSheet from './DrawerContents/BottomSheetContents';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 
-interface propsType {
-  open: boolean;
-  searchInput?: JSX.Element;
-  component: JSX.Element;
-  onClose: () => void;
-}
-
-const CustomDrawer = observer((props: propsType) => {
-  const { open, searchInput = <Fragment />, component, onClose } = props;
-  const drawerRef = useRef<HTMLDivElement>(null);
-  const { ThemeStore } = useStore().MobxStore;
-  const location = useLocation();
+const CustomDrawer = () => {
+  const { ThemeStore, CustomDialogStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const { locationData } = LocationStore;
+  const { includesInputBox } = CustomDrawerStore;
+
+  const setAccidentLists = useCallback(() => {
+    if (locationData && locationData?.accidents?.length > 0) {
+      CustomDialogStore.openAccidentDialog(locationData.accidents);
+    }
+  }, [CustomDialogStore, locationData]);
 
   useEffect(() => {
-    if (!drawerRef?.current?.childNodes) return;
-    (drawerRef.current.childNodes[2] as HTMLDivElement).scrollTo(0, 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drawerRef?.current, location.search]);
+    setAccidentLists();
+  }, [locationData, setAccidentLists]);
 
   return (
-    <Drawer
-      sx={{
-        '& .MuiPaper-root': {
-          color: isDarkTheme ? palette.white : palette.black,
-          backgroundColor: isDarkTheme
-            ? palette.grey[800]
-            : location.search === ''
-            ? palette.white
-            : palette.grey[200],
-          overflowX: 'hidden',
-        },
-      }}
-      ref={drawerRef}
-      open={open}
-      anchor='right'
-      onClose={onClose}
-      transitionDuration={0}
-    >
-      {searchInput}
-      {component}
-    </Drawer>
+    <>
+      {CustomDrawerStore.open && (
+        <>
+          {includesInputBox ? (
+            <SearchWrap isDarkTheme={isDarkTheme}>
+              <SearchInput />
+              {CustomDrawerStore.drawerComponent}
+            </SearchWrap>
+          ) : (
+            <BottomSheet />
+          )}
+        </>
+      )}
+    </>
   );
-});
+};
 
-export default CustomDrawer;
+export default observer(CustomDrawer);
+
+const SearchWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  position: 'fixed',
+  top: 0,
+  right: 0,
+  width: '100%',
+  maxWidth: 430,
+  height: '100vh',
+  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
+  boxShadow: '0 10px 20px rgba(0, 0, 0, 0.25)',
+  zIndex: 1250,
+}));

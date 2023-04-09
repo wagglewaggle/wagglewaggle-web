@@ -3,71 +3,94 @@ import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
-import { symbols, locationNames } from 'constants/';
-import { CategoryType, PlaceDataType } from 'types/typeBundle';
+import { symbolsComponents, locationNames } from 'constants/';
+import { CategoryType, FavoritePlaceType, PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
+import { getImageSymbol } from 'util/';
+import { ReactComponent as HeartIcon } from 'assets/icons/drawer/heart.svg';
+import { ReactComponent as ChatIcon } from 'assets/icons/drawer/chat.svg';
+import { ReactComponent as CctvIcon } from 'assets/icons/drawer/cctv.svg';
 
 interface propsType {
   place: PlaceDataType;
+  fromBottomSheet?: boolean;
 }
 
-const PlaceCard = observer((props: propsType) => {
-  const { place } = props;
+const PlaceCard = (props: propsType) => {
+  const { place, fromBottomSheet } = props;
   const [categories, setCategories] = useState<string>('');
   const [symbol, setSymbol] = useState<string>('');
-  const { LocationStore, ThemeStore } = useStore().MobxStore;
+  const { LocationStore, ThemeStore, CustomDrawerStore, AuthStore, ProfileStore } =
+    useStore().MobxStore;
   const navigate = useNavigate();
-  const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
+  const primaryCategories: string[] = useMemo(() => ['강변', '공원', '궁궐'], []);
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const isPinned = place.type
+    ? AuthStore.favorites.places
+        .map((favorite: FavoritePlaceType) => favorite.place.name)
+        .includes(place.name)
+    : false;
 
   const handlePlaceCardClick = () => {
+    ProfileStore.setProfilePageOpen(false);
+    ProfileStore.setFavoritesPageOpen(false);
+    CustomDrawerStore.setIncludesInput(false);
+    CustomDrawerStore.setPlaceDataLoading(true);
+    if (!fromBottomSheet) {
+      CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
+    }
     LocationStore.setPlaceName(place.name);
-    navigate(`/main/detail/${place.idx}?name=${place.name}`);
+    navigate(`/map/detail/${place.idx}?name=${place.name}`);
   };
 
   useEffect(() => {
     if (!place.categories) return;
     const categoryList: string[] = place.categories.map((category: CategoryType) => category.type);
-    setCategories(categoryList.join(', '));
-    const addedSymbol: string[] = [];
-    primaryCategories.forEach((category: string) => {
-      if (addedSymbol.length > 0) return;
-      if (categoryList.includes(category)) {
-        addedSymbol.push(category);
-        setSymbol(category);
-      }
-    });
-    categoryList.forEach((category: string) => {
-      if (addedSymbol.length > 0) return;
-      addedSymbol.push(category);
-      setSymbol(category);
-    });
+    setCategories(categoryList.sort().join(', '));
+    setSymbol(getImageSymbol(categoryList));
   }, [primaryCategories, place.categories]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme} onClick={handlePlaceCardClick}>
-      <PlaceLeft>
-        <PlaceImage>
-          <img src={symbols[symbol]} alt='category-symbol' />
-        </PlaceImage>
-        <PlaceTitle>
-          <PlaceName>{locationNames[place?.name || ''] || place?.name}</PlaceName>
-          <PlaceCategory>{categories}</PlaceCategory>
-        </PlaceTitle>
-      </PlaceLeft>
-      <StatusWrap>
-        <PlaceStatus status={place.populations[0].level} />
-      </StatusWrap>
+      <PlaceWrap>
+        <PlaceLeft>
+          <PlaceImage>{symbolsComponents[symbol] ?? ''}</PlaceImage>
+          <PlaceTitle>
+            <PlaceName>{locationNames[place?.name || ''] || place?.name}</PlaceName>
+            <PlaceCategory>{categories}</PlaceCategory>
+          </PlaceTitle>
+        </PlaceLeft>
+        <StatusWrap>
+          <PlaceStatus status={place.population?.level} />
+        </StatusWrap>
+      </PlaceWrap>
+      <IconsInfoWrap>
+        <IconsWrap isPinned={isPinned}>
+          <HeartIcon /> {String(place.pinPlaceCount).padStart(2, '0')}
+        </IconsWrap>
+        <IconsWrap>
+          <ChatIcon /> {String(place.reviewPostCount).padStart(2, '0')}
+        </IconsWrap>
+        {place.cctvCount ? (
+          <IconsWrap>
+            <CctvIcon /> {String(place.cctvCount).padStart(2, '0')}
+          </IconsWrap>
+        ) : (
+          <></>
+        )}
+      </IconsInfoWrap>
     </Wrap>
   );
-});
+};
 
-export default PlaceCard;
+export default observer(PlaceCard);
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
-  justifyContent: 'space-between',
+  flexDirection: 'column',
   borderRadius: 4,
   padding: '14px 16px',
   marginBottom: 8,
@@ -75,7 +98,13 @@ const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   height: 'fit-content',
   backgroundColor: palette.grey[isDarkTheme ? 600 : 100],
   cursor: 'pointer',
+  gap: 12,
 }));
+
+const PlaceWrap = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+});
 
 const PlaceLeft = styled('div')({
   display: 'flex',
@@ -106,8 +135,9 @@ const PlaceName = styled('span')({
 });
 
 const PlaceCategory = styled('span')({
-  fontSize: 14,
-  fontWeight: 400,
+  color: palette.grey[500],
+  fontSize: 12,
+  fontWeight: 500,
 });
 
 const StatusWrap = styled('div')({
@@ -116,3 +146,22 @@ const StatusWrap = styled('div')({
   fontSize: 14,
   fontWeight: 600,
 });
+
+const IconsInfoWrap = styled('div')({
+  display: 'flex',
+  gap: 12,
+});
+
+const IconsWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isPinned',
+})<{ isPinned?: boolean }>(({ isPinned }) => ({
+  display: 'flex',
+  color: palette.grey[400],
+  fontSize: 12,
+  fontWeight: 500,
+  lineHeight: '16px',
+  gap: 2,
+  '& path': {
+    fill: isPinned ? palette.violet : palette.grey[400],
+  },
+}));

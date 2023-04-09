@@ -19,4 +19,7 @@ export const palette = {
     800: '#111',
   },
   transparent: 'transparent',
+  kakao: '#fee344',
+  naver: '#03c75a',
+  google: '#fff',
 };
