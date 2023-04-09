@@ -1,14 +1,17 @@
 import { Dispatch, SetStateAction } from 'react';
 import { MobxStore } from 'App';
 
-const handleShareLinkClick = (
+const handleShareLinkClick = async (
   current: HTMLInputElement | null,
   setLinkCopied?: Dispatch<SetStateAction<boolean>>
 ) => {
   if (!current) return;
   current.focus();
   current.select();
-  navigator.clipboard.writeText(current.value.replace('map', 'review').replace('list', 'review'));
+  current.setSelectionRange(0, 99999);
+  await navigator.clipboard.writeText(
+    current.value.replace('map', 'review').replace('list', 'review')
+  );
   const { UserNavigatorStore } = MobxStore;
   UserNavigatorStore.setShouldLinkPopupAppear(true);
   setTimeout(() => {
