@@ -42,7 +42,7 @@ const CongestionSummary = () => {
       )}
       <Header>
         <LocationWrap>
-          <Title>{searchName}</Title>
+          <Title isAppeared={isAppeared}>{searchName}</Title>
           <Type>
             {(categories?.[placeName ?? ''] ?? [])
               .map((category: CategoryType) => category.type)
@@ -50,22 +50,24 @@ const CongestionSummary = () => {
               .join(', ')}
           </Type>
         </LocationWrap>
-        <StatusWrap>
-          <PlaceStatus status={locationData?.population?.level} />
-        </StatusWrap>
+        {isAppeared && (
+          <StatusWrap>
+            <PlaceStatus status={locationData?.population?.level} />
+          </StatusWrap>
+        )}
       </Header>
       <IconsWrap>
-        <IconWrap isPinned={LocationStore.currentLocationPinned}>
+        <IconWrap isPinned={LocationStore.currentLocationPinned} isAppeared={isAppeared}>
           <HeartIcon /> {String(locationData?.pinPlaceCount ?? 0).padStart(2, '0')}
         </IconWrap>
-        <IconWrap>
+        <IconWrap isAppeared={isAppeared}>
           <ChatIcon /> {String(locationData?.reviewPostCount ?? 0).padStart(2, '0')}
         </IconWrap>
-        <IconWrap>
+        <IconWrap isAppeared={isAppeared}>
           <CctvIcon /> {String(locationData?.cctvs?.length ?? 0).padStart(2, '0')}
         </IconWrap>
       </IconsWrap>
-      <Address>{locationData?.address ?? ''}</Address>
+      <Address isAppeared={isAppeared}>{locationData?.address ?? ''}</Address>
       <ButtonsWrap>
         <CustomButton variant='share' onClick={() => handleShareLinkClick(copyLinkRef.current)}>
           <ShareIcon />
@@ -91,7 +93,7 @@ const Wrap = styled('div', {
     flexDirection: 'column',
     padding: '12px 24px 24px',
     width: 'calc(100% - 48px)',
-    height: (isAppeared ? 204 : 172) + (isFull ? 8 : 0),
+    height: (isAppeared ? 204 : 180) + (isFull ? 8 : 0),
     backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
     gap: 8,
   })
@@ -121,12 +123,14 @@ const LocationWrap = styled('div')({
   gap: 4,
 });
 
-const Title = styled('span')({
+const Title = styled('span', {
+  shouldForwardProp: (prop: string) => prop !== 'isAppeared',
+})<{ isAppeared: boolean }>(({ isAppeared }) => ({
   color: palette.black,
-  fontSize: 18,
+  fontSize: isAppeared ? 18 : 24,
   fontWeight: 600,
   lineHeight: '24px',
-});
+}));
 
 const Type = styled('span')({
   color: palette.grey[500],
@@ -150,25 +154,29 @@ const IconsWrap = styled('div')({
 });
 
 const IconWrap = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'isPinned',
-})<{ isPinned?: boolean }>(({ isPinned }) => ({
+  shouldForwardProp: (prop: string) => !['isPinned', 'isAppeared'].includes(prop),
+})<{ isPinned?: boolean; isAppeared: boolean }>(({ isPinned, isAppeared }) => ({
   display: 'flex',
+  alignItems: 'center',
   color: palette.grey[400],
-  fontSize: 12,
-  fontWeight: 500,
-  lineHeight: '16px',
+  fontSize: isAppeared ? 12 : 14,
+  fontWeight: isAppeared ? 500 : 600,
+  lineHeight: isAppeared ? '16px' : '20px',
   gap: 2,
   '& path': {
     fill: isPinned ? palette.violet : palette.grey[400],
   },
 }));
 
-const Address = styled('div')({
+const Address = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isAppeared',
+})<{ isAppeared: boolean }>(({ isAppeared }) => ({
+  marginBottom: isAppeared ? 0 : 8,
   color: palette.grey[500],
   fontSize: 14,
   fontWeight: 400,
   lineHeight: '20px',
-});
+}));
 
 const ButtonsWrap = styled('div')({
   display: 'flex',

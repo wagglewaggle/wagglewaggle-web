@@ -40,7 +40,7 @@ const DetailedCongestion = observer(() => {
     <Wrap isDarkTheme={isDarkTheme}>
       <Header>
         <span>실시간 인구 현황</span>
-        <ButtonArea>{timePassed}</ButtonArea>
+        <TimePassed>{timePassed}</TimePassed>
       </Header>
       <StatusCard variant='person'>
         <StatusLeft>
@@ -92,7 +92,7 @@ const Wrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '20px 24px 16px',
+  padding: '40px 24px 32px',
   width: 'calc(100% - 48px)',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   '& path': {
@@ -114,12 +114,12 @@ const Header = styled('div')({
   },
 });
 
-const ButtonArea = styled('div')({
+const TimePassed = styled('div')({
   display: 'flex',
   alignItems: 'center',
   fontSize: 14,
   fontWeight: 600,
-  gap: 4,
+  lineHeight: '20px',
 });
 
 const StatusCard = styled('div', {
@@ -163,6 +163,7 @@ const CommentsWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
 })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: palette.grey[isDarkTheme ? 400 : 500],
+  fontSize: 12,
   fontWeight: 500,
 }));
 
