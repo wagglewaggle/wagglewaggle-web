@@ -1,7 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 
-export class ErrorStore {
+export class AxiosStore {
   statusCode: number | null = null;
+  requestInProgress: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -9,5 +10,9 @@ export class ErrorStore {
 
   setStatusCode = (newStatusCode: number | null) => {
     this.statusCode = newStatusCode;
+  };
+
+  setRequestInProgress = (newStatus: boolean) => {
+    this.requestInProgress = newStatus;
   };
 }

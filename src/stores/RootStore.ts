@@ -4,7 +4,7 @@ import {
   CategoryStore,
   CustomDialogStore,
   CustomDrawerStore,
-  ErrorStore,
+  AxiosStore,
   LocationStore,
   ReviewStore,
   ThemeStore,
@@ -18,7 +18,7 @@ export default class RootStore {
   CategoryStore: CategoryStore = new CategoryStore();
   CustomDialogStore: CustomDialogStore = new CustomDialogStore();
   CustomDrawerStore: CustomDrawerStore = new CustomDrawerStore();
-  ErrorStore: ErrorStore = new ErrorStore();
+  AxiosStore: AxiosStore = new AxiosStore();
   LocationStore: LocationStore = new LocationStore();
   ReviewStore: ReviewStore = new ReviewStore();
   ThemeStore: ThemeStore = new ThemeStore();

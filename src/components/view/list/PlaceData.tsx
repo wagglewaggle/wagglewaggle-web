@@ -47,8 +47,8 @@ const PlaceData = observer((props: propsType) => {
 
   const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
     const selectedOrder = e.target.value;
-    LocationStore.setCurrentPlaceOrder(selectedOrder as '혼잡도 높은 순' | '혼잡도 낮은 순');
-    initPlaceData(selectedOrder === '혼잡도 높은 순');
+    LocationStore.setCurrentPlaceOrder(selectedOrder as '복잡한 순' | '여유로운 순');
+    initPlaceData(selectedOrder === '복잡한 순');
   };
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const PlaceData = observer((props: propsType) => {
             },
           }}
         >
-          {['혼잡도 높은 순', '혼잡도 낮은 순'].map((menu: string, idx: number) => (
+          {['복잡한 순', '여유로운 순'].map((menu: string, idx: number) => (
             <CustomMenuItem key={`menu-${idx}`} value={menu} dense>
               {menu}
             </CustomMenuItem>

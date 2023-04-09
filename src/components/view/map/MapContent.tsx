@@ -50,8 +50,9 @@ const MapContent = () => {
       markerImage: string | null,
       mainMarker?: boolean
     ) => {
-      const markerSize = variant === 'selected' ? 64 : 30;
-      const kakaoMarkerSize = new kakao.maps.Size(markerSize, markerSize);
+      const markerWidth = variant === 'selected' ? 56 : 30;
+      const markerHeight = variant === 'selected' ? 64 : 30;
+      const kakaoMarkerSize = new kakao.maps.Size(markerWidth, markerHeight);
       const marker = new kakao.maps.Marker({
         image: markerImage && new kakao.maps.MarkerImage(markerImage, kakaoMarkerSize),
         position: new kakao.maps.LatLng(lat + 0.0003, lng),

@@ -103,8 +103,8 @@ const BlankArea = styled('div', {
   shouldForwardProp: (prop: string) => !['isFull', 'isDarkTheme'].includes(prop),
 })<{ isFull: boolean; isDarkTheme: boolean }>(({ isFull, isDarkTheme }) => ({
   width: '100%',
-  height: isFull ? 40 : 32,
-  minHeight: isFull ? 40 : 32,
+  height: isFull ? 40 : 20,
+  minHeight: isFull ? 40 : 20,
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));
 
@@ -120,7 +120,7 @@ const LocationWrap = styled('div')({
   alignItems: 'baseline',
   width: '100%',
   height: '100%',
-  gap: 4,
+  gap: 8,
 });
 
 const Title = styled('span', {

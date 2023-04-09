@@ -67,7 +67,7 @@ const Wrap = styled('div', {
   flexGrow: 1,
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '40px 0 32px',
+  padding: '32px 0 16px',
   width: '100%',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));

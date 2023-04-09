@@ -42,7 +42,7 @@ const Wrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '40px 24px 32px',
+  padding: '32px 24px 32px',
   width: 'calc(100% - 48px)',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   '& .related-locations-wrap:last-of-type': {

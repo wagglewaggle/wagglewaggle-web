@@ -6,7 +6,7 @@ const axiosRequest = async (
   path: string,
   params: object = {}
 ) => {
-  const { ErrorStore, AuthStore, ProfileStore } = MobxStore;
+  const { AxiosStore, AuthStore, ProfileStore } = MobxStore;
   const SERVER_URL: string | undefined = process.env.REACT_APP_SERVER_URL;
   if (!SERVER_URL) return;
 
@@ -17,6 +17,9 @@ const axiosRequest = async (
       .length > 0;
 
   apiAxiosInstance.interceptors.request.use((config) => {
+    if (path.split('/').includes('review-post')) {
+      AxiosStore.setRequestInProgress(true);
+    }
     if (!config.headers) return config;
     const token =
       localStorage.getItem(`@wagglewaggle_access_token`) ??
@@ -29,12 +32,20 @@ const axiosRequest = async (
   });
 
   apiAxiosInstance.interceptors.response.use(
-    (res) => Promise.resolve(res),
+    (res) => {
+      if (path.split('/').includes('review-post')) {
+        AxiosStore.setRequestInProgress(false);
+      }
+      return Promise.resolve(res);
+    },
     async (err) => {
       const { errorCode } = err.response.data;
       if (errorCode === 'ERR_0006003') {
         if (sessionStorage.getItem('@wagglewaggle_reissuing')) {
           setTimeout(() => {
+            if (path.split('/').includes('review-post')) {
+              AxiosStore.setRequestInProgress(false);
+            }
             return apiAxiosInstance(err.config);
           }, 500);
         }
@@ -45,7 +56,14 @@ const axiosRequest = async (
             sessionStorage.getItem('@wagglewaggle_refresh_token'),
         });
         sessionStorage.removeItem('@wagglewaggle_reissuing');
+        if (path.split('/').includes('review-post')) {
+          AxiosStore.setRequestInProgress(false);
+        }
         return apiAxiosInstance(err.config);
+      }
+
+      if (path.split('/').includes('review-post')) {
+        AxiosStore.setRequestInProgress(false);
       }
       if (['ERR_0006007', 'ERR_0006010'].includes(errorCode)) {
         return err.response;
@@ -100,7 +118,7 @@ const axiosRequest = async (
       ? await selectedAxiosInstance.put(`${SERVER_URL}/${path}`, { ...params })
       : await selectedAxiosInstance.delete(`${SERVER_URL}/${path}`, { data: { ...params } });
   } catch (e) {
-    ErrorStore.setStatusCode((e as AxiosError).response?.status || null);
+    AxiosStore.setStatusCode((e as AxiosError).response?.status || null);
     console.log(e);
   }
 };

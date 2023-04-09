@@ -14,17 +14,17 @@ import rightIcon from 'assets/icons/right-icon.svg';
 const Error = observer(() => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const lottieContainer = useRef<HTMLDivElement>(null);
-  const { ErrorStore, ThemeStore } = useStore().MobxStore;
+  const { AxiosStore, ThemeStore } = useStore().MobxStore;
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleRefresh = () => {
-    ErrorStore.setStatusCode(null);
+    AxiosStore.setStatusCode(null);
     navigate(-1);
   };
 
   const handleMoveHome = () => {
-    ErrorStore.setStatusCode(null);
+    AxiosStore.setStatusCode(null);
     navigate('/map');
   };
 
@@ -41,15 +41,15 @@ const Error = observer(() => {
 
   useEffect(() => {
     setErrorMessage(
-      ErrorStore.statusCode === 404 ? '페이지를 찾을 수 없어요.' : '잠시 뒤에 새로 고침해주세요.'
+      AxiosStore.statusCode === 404 ? '페이지를 찾을 수 없어요.' : '잠시 뒤에 새로 고침해주세요.'
     );
-  }, [ErrorStore.statusCode]);
+  }, [AxiosStore.statusCode]);
 
   useEffect(() => {
     const pathname: string = location.pathname;
     if (pathname === '/error') return;
-    ErrorStore.setStatusCode(pathname === '/not-found' ? 404 : null);
-  }, [ErrorStore, location.pathname]);
+    AxiosStore.setStatusCode(pathname === '/not-found' ? 404 : null);
+  }, [AxiosStore, location.pathname]);
 
   return (
     <Wrap>
@@ -61,10 +61,10 @@ const Error = observer(() => {
       <ErrorWrap>
         <Lottie ref={lottieContainer}></Lottie>
         <Title>{errorMessage}</Title>
-        <ErrorCode>{`에러 코드:${ErrorStore.statusCode}`}</ErrorCode>
+        <ErrorCode>{`에러 코드:${AxiosStore.statusCode}`}</ErrorCode>
       </ErrorWrap>
       <Buttons>
-        {ErrorStore.statusCode !== 404 && (
+        {AxiosStore.statusCode !== 404 && (
           <div onClick={handleRefresh}>
             새로 고침
             <IconButton>

@@ -92,7 +92,7 @@ const Wrap = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '40px 24px 32px',
+  padding: '32px 24px 16px',
   width: 'calc(100% - 48px)',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   '& path': {
@@ -128,7 +128,7 @@ const StatusCard = styled('div', {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  padding: 20,
+  padding: '12px 20px',
   margin: variant === 'person' ? '24px 0 0 0' : 0,
   width: '100%',
   fontSize: 14,

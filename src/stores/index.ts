@@ -7,7 +7,7 @@ export { ScreenSizeStore } from './ScreenSizeStore';
 export { CategoryStore } from './CategoryStore';
 export { CustomDialogStore } from './CustomDialogStore';
 export { CustomDrawerStore } from './CustomDrawerStore';
-export { ErrorStore } from './ErrorStore';
+export { AxiosStore } from './AxiosStore';
 export { LocationStore } from './LocationStore';
 export { ReviewStore } from './ReviewStore';
 export { ThemeStore } from './ThemeStore';

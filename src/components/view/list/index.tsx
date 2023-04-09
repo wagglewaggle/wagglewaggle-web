@@ -8,7 +8,7 @@ import { initPlaceData } from 'util/';
 import { useStore } from 'stores';
 
 const List = () => {
-  const { CustomDialogStore, CustomDrawerStore, LocationStore, ErrorStore, AuthStore } =
+  const { CustomDialogStore, CustomDrawerStore, LocationStore, AxiosStore, AuthStore } =
     useStore().MobxStore;
   const { open, includesInputBox } = CustomDrawerStore;
   const navigate = useNavigate();
@@ -82,9 +82,9 @@ const List = () => {
   }, [CustomDrawerStore, search, pathname]);
 
   useEffect(() => {
-    if (!ErrorStore.statusCode) return;
-    navigate(ErrorStore.statusCode === 404 ? '/not-found' : '/error');
-  }, [ErrorStore.statusCode, navigate]);
+    if (!AxiosStore.statusCode) return;
+    navigate(AxiosStore.statusCode === 404 ? '/not-found' : '/error');
+  }, [AxiosStore.statusCode, navigate]);
 
   useEffect(() => {
     const newDrawerState = search.length !== 0;
