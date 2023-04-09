@@ -89,6 +89,11 @@ const Login = () => {
   }, [AuthStore]);
 
   useEffect(() => {
+    if (!AuthStore.authorized) return;
+    handleLoggedIn(true);
+  }, [AuthStore.authorized, handleLoggedIn]);
+
+  useEffect(() => {
     if (!lottieContainer.current) return;
     lottie.loadAnimation({
       container: lottieContainer.current,

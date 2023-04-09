@@ -107,6 +107,7 @@ const Profile = () => {
   const onDeactivate = async () => {
     const response = await axiosRequest('put', 'user/deactivate');
     if (!response?.data) return;
+    AuthStore.logout();
     CustomDrawerStore.closeDrawer();
     handleProfilePageClose(true);
     handleCloseDialog();
