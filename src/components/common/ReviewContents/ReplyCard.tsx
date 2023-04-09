@@ -47,7 +47,7 @@ const ReplyCardContent = (props: ContentType) => {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { ReviewStore } = useStore().MobxStore;
-  const { deleted, reportDeleted } = reviewStrConstants;
+  const { deleted, deactivated, locked, reportDeleted, maskedUserNickname } = reviewStrConstants;
   const isDeleted = isRereply
     ? reply.levelReplies.find((rereply: RereplyType) => rereply.idx === idx)?.status === deleted
     : reply.status === deleted;
@@ -55,6 +55,7 @@ const ReplyCardContent = (props: ContentType) => {
     ? reply.levelReplies.find((rereply: RereplyType) => rereply.idx === idx)?.status ===
       reportDeleted
     : reply.status === reportDeleted;
+  const isUserMasked = [deactivated, locked].includes(reply.user.status);
 
   const handleWriteRereplyClick = () => {
     if (isRereply) return;
@@ -70,7 +71,7 @@ const ReplyCardContent = (props: ContentType) => {
         replyContent={filterBadWords(content)}
         requestUrl={requestUrl}
         profilePhoto={defaultPhoto}
-        userNickname={userNickname}
+        userNickname={isUserMasked ? maskedUserNickname : userNickname}
         createdDate={createdDate}
         removeOptions={isDeleted || isReported}
       />

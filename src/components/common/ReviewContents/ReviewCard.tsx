@@ -41,10 +41,18 @@ const ReviewCard = (props: PropsType) => {
     isPin,
     idx,
   } = review;
-  const { deleted, reportDeleted, maskedUserNickname, deleteMaskedReview, reportMaskedReview } =
-    reviewStrConstants;
+  const {
+    deleted,
+    deactivated,
+    locked,
+    reportDeleted,
+    maskedUserNickname,
+    deleteMaskedReview,
+    reportMaskedReview,
+  } = reviewStrConstants;
   const isDeleted = status === deleted;
   const isReported = status === reportDeleted;
+  const isUserMasked = [deactivated, locked].includes(writer.status);
 
   const getReviewDetail = async (type: string, placeIdx: number | string, postIdx: number) => {
     ReviewStore.initReviewDetail(type as RequestType, placeIdx, postIdx);
@@ -54,7 +62,7 @@ const ReviewCard = (props: PropsType) => {
     if (!shouldIncludeOnClick) return;
     const pathnameArr = pathname.split('/');
     getReviewDetail(place.type, fromProfile ? place.idx : pathnameArr[pathnameArr.length - 1], idx);
-    navigate(`${pathname}${search}`);
+    navigate(`${pathname.replace('map/detail', 'review')}${search}`);
   };
 
   const handlePinReviewClick = async (e: MouseEvent) => {
@@ -85,7 +93,9 @@ const ReviewCard = (props: PropsType) => {
         <ReviewCardHeader
           replyContent={filterBadWords(content)}
           profilePhoto={defaultPhoto}
-          userNickname={isDeleted || isReported ? maskedUserNickname : writer.nickname}
+          userNickname={
+            isDeleted || isReported || isUserMasked ? maskedUserNickname : writer.nickname
+          }
           createdDate={createdDate}
           requestUrl={`${place.type}/${place.idx}/review-post/${idx}`}
           removeOptions

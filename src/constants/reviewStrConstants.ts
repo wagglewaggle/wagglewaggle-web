@@ -1,6 +1,8 @@
 export const reviewStrConstants = {
   deleted: 'DELETED',
   reportDeleted: 'REPORT_DELETED',
+  deactivated: 'DEACTIVATED',
+  locked: 'LOCKED',
   maskedUserNickname: '(알수없음)',
   deleteMaskedReview: '(삭제된 게시물입니다.)',
   deleteMaskedReply: '(삭제된 댓글입니다.)',

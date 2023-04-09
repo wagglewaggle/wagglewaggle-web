@@ -42,7 +42,7 @@ const ReviewList = (props: PropsType) => {
               {review && (
                 <ReviewCard
                   review={review}
-                  shouldIncludeOnClick={shouldIncludeOnClick}
+                  shouldIncludeOnClick
                   disableBottom={fromBottomSheet && idx === reviews.length - 1}
                 />
               )}

@@ -78,6 +78,7 @@ const ReviewDetail = () => {
         <ReviewCard
           review={reviewDetail as ReviewDetailType}
           isDetail
+          shouldIncludeOnClick
           tagData={{ symbol, placeName: selectedPlaceName }}
         />
       )}
