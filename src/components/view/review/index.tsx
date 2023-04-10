@@ -33,7 +33,9 @@ const Review = () => {
 
   const handleReviewClose = useCallback(() => {
     navigate(`/map/detail/${locationData?.idx}?name=${locationData?.name}`);
-  }, [navigate, locationData]);
+    ReviewStore.setReviewDetail(null);
+    ReviewStore.setSelectedReply(null);
+  }, [navigate, locationData, ReviewStore]);
 
   const initLocationData = useCallback(async () => {
     if (!requestType) return;

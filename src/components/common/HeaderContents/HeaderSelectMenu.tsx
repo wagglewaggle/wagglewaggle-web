@@ -1,9 +1,9 @@
 import { MouseEvent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, MenuItem, styled } from '@mui/material';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
-import { ReplyType, RequestType } from 'types/typeBundle';
+import { RequestType } from 'types/typeBundle';
 import { palette } from 'constants/';
 
 type PropsType = {
@@ -17,9 +17,10 @@ type PropsType = {
 const HeaderSelectMenu = (props: PropsType) => {
   const { replyContent, requestUrl, anchorEl, isMyReview, handleMenuClose } = props;
   const { ReviewStore, CustomDialogStore } = useStore().MobxStore;
+  const [searchParams, setSearchParams] = useSearchParams();
   const { search, pathname } = useLocation();
   const navigate = useNavigate();
-  const { reviewDetail, selectedReply } = ReviewStore;
+  const { reviewDetail } = ReviewStore;
   const open = Boolean(anchorEl);
   const selectItems = isMyReview ? ['수정하기', '삭제하기'] : ['신고하기'];
   const reviewRequestUrl = `${reviewDetail?.place.type}/${reviewDetail?.place.idx}/review-post/${reviewDetail?.idx}`;
@@ -81,15 +82,24 @@ const HeaderSelectMenu = (props: PropsType) => {
     if (!response?.data || !reviewDetail) return;
     handleCloseDialog();
     ReviewStore.initReviews(reviewDetail.place.type as RequestType, reviewDetail.place.idx);
-    await ReviewStore.initReviewDetail(
-      reviewDetail.place.type as RequestType,
-      reviewDetail.place.idx,
-      reviewDetail.idx
-    );
-    const newSelectedReply = ReviewStore.reviewDetail?.replies.find(
-      (reply: ReplyType) => reply.idx === selectedReply?.idx
-    );
-    newSelectedReply && ReviewStore.setSelectedReply(newSelectedReply);
+    if (requestUrl) {
+      ReviewStore.setSelectedReply(null);
+      await ReviewStore.initReviewDetail(
+        reviewDetail.place.type as RequestType,
+        reviewDetail.place.idx,
+        reviewDetail.idx
+      );
+      if (searchParams.get('replyIdx')) {
+        searchParams.delete('replyIdx');
+        setSearchParams(searchParams);
+      }
+      return;
+    }
+    ReviewStore.setReviewDetail(null);
+    if (searchParams.get('reviewIdx')) {
+      searchParams.delete('reviewIdx');
+      setSearchParams(searchParams);
+    }
   };
 
   const handleCloseDialog = () => {

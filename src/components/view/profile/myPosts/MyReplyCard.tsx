@@ -2,7 +2,7 @@ import { styled } from '@mui/material';
 import { MyReplyType, CategoryType, RequestType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import { getImageSymbol, getTimeDiff, filterBadWords } from 'util/';
-import { palette, symbolsComponents, locationNames } from 'constants/';
+import { palette, symbolsComponents, locationNames, reviewStrConstants } from 'constants/';
 
 type PropsType = {
   reply: MyReplyType;
@@ -10,9 +10,10 @@ type PropsType = {
 
 const MyReplyCard = (props: PropsType) => {
   const { reply } = props;
-  const { reviewPost, content } = reply;
+  const { reviewPost, content, status } = reply;
   const { place, updatedDate } = reviewPost;
   const { LocationStore, ReviewStore } = useStore().MobxStore;
+  const { deleted, reportDeleted, deleteMaskedReply, reportMaskedReply } = reviewStrConstants;
 
   const handleReplyClick = async () => {
     ReviewStore.initReviewDetail(
@@ -35,7 +36,13 @@ const MyReplyCard = (props: PropsType) => {
         {locationNames?.[place?.name ?? ''] ?? place?.name ?? ''}
       </PlaceTag>
       <UpdatedTime>{getTimeDiff(updatedDate ?? '')}</UpdatedTime>
-      <Content>{filterBadWords(content)}</Content>
+      <Content>
+        {status === deleted
+          ? deleteMaskedReply
+          : status === reportDeleted
+          ? reportMaskedReply
+          : filterBadWords(content)}
+      </Content>
     </Wrap>
   );
 };
