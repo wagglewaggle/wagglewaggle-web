@@ -5,7 +5,7 @@ import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
-import { CustomDialog, CustomDrawer, ReviewWriteButton } from 'components/common';
+import { CustomDialog, CustomDrawer, CustomSpinner, ReviewWriteButton } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
 import DeepLinkRoutes from 'DeepLinkRoutes';
 import { Login, Profile, BrowserPage } from './components/view';
@@ -176,6 +176,7 @@ const App = observer(() => {
           </BrowserRouter>
         </ServiceWrap>
         <CustomDialog />
+        <CustomSpinner />
       </CreateStore.Provider>
     </Wrap>
   );
