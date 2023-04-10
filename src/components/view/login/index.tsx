@@ -1,10 +1,10 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import lottie from 'lottie-web';
 // 구글 로그인은 딥링크 구현되면 다시 구현할 예정
 // import googleIcon from 'assets/icons/login/google.png';
+import LoginMainImage from 'assets/icons/login/login-main.png';
 import kakaoIcon from 'assets/icons/login/kakao.png';
 import naverIcon from 'assets/icons/login/naver.png';
 import { ReactComponent as WaggleWaggleLogo } from 'assets/icons/logo-icon.svg';
@@ -14,11 +14,10 @@ import axiosRequest from 'api/axiosRequest';
 import { useStore } from 'stores';
 
 const Login = () => {
-  const lottieContainer = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { AuthStore, ThemeStore } = useStore().MobxStore;
+  const { AuthStore } = useStore().MobxStore;
   const { autoLoginChecked, isLoggingIn, authorized } = AuthStore;
 
   const handleAutoLoginClick = () => {
@@ -68,6 +67,7 @@ const Login = () => {
       const response = await axiosRequest('get', `auth/${platform}?code=${authCode}`);
       AuthStore.setIsLoggingIn(false);
       const { accessToken, refreshToken, existUser } = response?.data;
+      console.log(response?.data);
       if (!accessToken || !refreshToken) return;
 
       AuthStore.setAuthorized(true);
@@ -93,22 +93,10 @@ const Login = () => {
     handleLoggedIn(true);
   }, [AuthStore.authorized, handleLoggedIn]);
 
-  useEffect(() => {
-    if (!lottieContainer.current) return;
-    lottie.loadAnimation({
-      container: lottieContainer.current,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      animationData: require(`assets/lottie/${ThemeStore.theme}/Character.json`),
-    });
-    return () => lottie.destroy();
-  }, [ThemeStore.theme]);
-
   return (
     <Wrap>
       <CustomWaggleWaggleLogo />
-      <Lottie ref={lottieContainer}></Lottie>
+      <MainImage src={LoginMainImage} alt='login-main'></MainImage>
       <ButtonWrap variant='kakao' onClick={handleKakaoClick}>
         <CustomImgButton src={kakaoIcon} alt='kakao' />
         카카오로 로그인
@@ -144,10 +132,10 @@ const Wrap = styled('div')({
   gap: 8,
 });
 
-const Lottie = styled('div')({
-  margin: '16px 0 35px',
-  width: 245,
-  height: 225,
+const MainImage = styled('img')({
+  margin: '77px 0 74px',
+  width: 327,
+  height: 193,
 });
 
 const CustomWaggleWaggleLogo = styled(WaggleWaggleLogo)({
