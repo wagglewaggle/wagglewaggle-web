@@ -6,11 +6,13 @@ import { ReviewCard } from 'components/common';
 import { useStore } from 'stores';
 import { ReviewType, CategoryType } from 'types/typeBundle';
 import { getImageSymbol } from 'util/';
+import { reviewStrConstants } from 'constants/';
 import axiosRequest from 'api/axiosRequest';
 
 const MyPostsPlaces = () => {
   const { ProfileStore, LocationStore } = useStore().MobxStore;
   const { profilePageOpen, myPostsPageOpen, myPlaces } = ProfileStore;
+  const { deleted, reportDeleted } = reviewStrConstants;
 
   const getMyPlaces = useCallback(async () => {
     const response = await axiosRequest('get', 'user/review-post');
@@ -39,7 +41,7 @@ const MyPostsPlaces = () => {
                   nickname: localStorage.getItem('@wagglewaggle_user_nickname') ?? '(알수없음)',
                 },
               }}
-              shouldIncludeOnClick
+              shouldIncludeOnClick={![deleted, reportDeleted].includes(post.status)}
               fromProfile
               tagData={{
                 symbol: getImageSymbol(

@@ -103,6 +103,7 @@ const ReplyCard = (props: PropsType) => {
   const isReported = status === reportDeleted;
 
   const handleShowMoreClick = () => {
+    if (isDeleted || isReported) return;
     ReviewStore.setSelectedReply(reply);
     if (searchParams.get('replyIdx')) return;
     navigate(`${pathname}${search}&replyIdx=${reply.idx}`);
@@ -121,33 +122,35 @@ const ReplyCard = (props: PropsType) => {
         createdDate={createdDate}
         content={isDeleted ? deleteMaskedReply : isReported ? reportMaskedReply : content}
       />
-      {rereplies.map((rereply: RereplyType, idx: number) => (
-        <Fragment key={`rereply-${rereply.idx}`}>
-          <ReplyCardContent
-            reply={reply}
-            requestUrl={`${place.type}/${place.idx}/review-post/${reviewIdx}/reply/${rereply.idx}`}
-            isLast={isLast && idx === levelReplies.length - 1}
-            idx={rereply.idx}
-            isRereply
-            isReplyPage={isReplyPage}
-            handleShowMoreClick={handleShowMoreClick}
-            userNickname={
-              ![deleted, reportDeleted].includes(rereply.status)
-                ? rereply.user.nickname
-                : maskedUserNickname
-            }
-            createdDate={rereply.createdDate}
-            content={
-              rereply.status === deleted
-                ? deleteMaskedReply
-                : rereply.status === reportDeleted
-                ? reportMaskedReply
-                : rereply.content
-            }
-          />
-        </Fragment>
-      ))}
-      {shortened && levelReplies.length > 3 && (
+      {!isDeleted &&
+        !isReported &&
+        rereplies.map((rereply: RereplyType, idx: number) => (
+          <Fragment key={`rereply-${rereply.idx}`}>
+            <ReplyCardContent
+              reply={reply}
+              requestUrl={`${place.type}/${place.idx}/review-post/${reviewIdx}/reply/${rereply.idx}`}
+              isLast={isLast && idx === levelReplies.length - 1}
+              idx={rereply.idx}
+              isRereply
+              isReplyPage={isReplyPage}
+              handleShowMoreClick={handleShowMoreClick}
+              userNickname={
+                ![deleted, reportDeleted].includes(rereply.status)
+                  ? rereply.user.nickname
+                  : maskedUserNickname
+              }
+              createdDate={rereply.createdDate}
+              content={
+                rereply.status === deleted
+                  ? deleteMaskedReply
+                  : rereply.status === reportDeleted
+                  ? reportMaskedReply
+                  : rereply.content
+              }
+            />
+          </Fragment>
+        ))}
+      {!isDeleted && !isReported && shortened && levelReplies.length > 3 && (
         <ShowMoreButton onClick={handleShowMoreClick}>
           더보기
           <DownIcon />

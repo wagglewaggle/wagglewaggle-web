@@ -6,7 +6,7 @@ const axiosRequest = async (
   path: string,
   params: object = {}
 ) => {
-  const { AxiosStore, AuthStore, ProfileStore } = MobxStore;
+  const { AxiosStore, AuthStore, ProfileStore, CustomDialogStore } = MobxStore;
   const SERVER_URL: string | undefined = process.env.REACT_APP_SERVER_URL;
   if (!SERVER_URL) return;
 
@@ -15,6 +15,15 @@ const axiosRequest = async (
   const isTokenIssuePath =
     ['reissue', 'naver', 'kakao', 'google'].filter((pathname: string) => path.includes(pathname))
       .length > 0;
+
+  const handleCloseDialog = () => {
+    CustomDialogStore.setOpen(false);
+  };
+
+  const clearStorages = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+  };
 
   apiAxiosInstance.interceptors.request.use((config) => {
     if (path.split('/').includes('review-post')) {
@@ -65,6 +74,14 @@ const axiosRequest = async (
       if (path.split('/').includes('review-post')) {
         AxiosStore.setRequestInProgress(false);
       }
+      CustomDialogStore.openNotificationDialog({
+        title: '오류 발생',
+        content: '오류가 발생했습니다.\n나중에 다시 시도해 주세요.',
+        rightButton: {
+          title: '확인',
+          handleClick: handleCloseDialog,
+        },
+      });
       if (['ERR_0006007', 'ERR_0006010'].includes(errorCode)) {
         return err.response;
       }
@@ -101,10 +118,33 @@ const axiosRequest = async (
       }
       return res;
     },
-    () => {
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.href = window.location.origin + '/login';
+    (err) => {
+      clearStorages();
+      const { errorCode } = err.response.data;
+      if (['ERR_0006002', 'ERR_0006011'].includes(errorCode)) {
+        const isLocked = errorCode === 'ERR_0006011';
+        CustomDialogStore.openNotificationDialog({
+          title: isLocked ? '계정정지 안내' : '계정 탈퇴안내',
+          content: isLocked
+            ? '죄송합니다. 본 계정은 현재 활동이 불가합니다.\n자세한 사유 및 이의 신청은 하단 이메일로 접수\n부탁드립니다.'
+            : '죄송합니다. 해당 계정은 현재 탈퇴 계정으로\n로그인이 불가합니다.\n탈퇴 후 7일 이후에 재가입 가능합니다.',
+          subContent: isLocked ? '접수 이메일 : wagglewaggle2@gmail.com' : '',
+          rightButton: {
+            title: '확인',
+            handleClick: handleCloseDialog,
+          },
+        });
+      } else {
+        CustomDialogStore.openNotificationDialog({
+          title: '로그인 오류',
+          content: '로그인하는데에 오류가 발생했습니다. 다시 로그인 해주세요.',
+          rightButton: {
+            title: '확인',
+            handleClick: handleCloseDialog,
+          },
+        });
+        window.location.href = window.location.origin + '/login';
+      }
     }
   );
 

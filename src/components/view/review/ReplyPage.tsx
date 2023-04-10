@@ -39,7 +39,7 @@ const ReplyPage = () => {
     >
       <Wrap>
         <SubHeader>
-          <CustomIconButton onClick={() => handleCloseDrawer(true)}>
+          <CustomIconButton onClick={() => handleCloseDrawer()}>
             <LeftIcon />
           </CustomIconButton>
         </SubHeader>

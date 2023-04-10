@@ -1,5 +1,5 @@
 import { MouseEvent } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import ReviewCardHeader from './ReviewCardHeader';
@@ -27,9 +27,10 @@ interface PropsType {
 
 const ReviewCard = (props: PropsType) => {
   const { review, shouldIncludeOnClick, isDetail, disableBottom, fromProfile, tagData } = props;
+  const [searchParams] = useSearchParams();
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
-  const { ReviewStore, AuthStore } = useStore().MobxStore;
+  const { ReviewStore, AuthStore, CustomDialogStore } = useStore().MobxStore;
   const {
     writer,
     status,
@@ -55,14 +56,51 @@ const ReviewCard = (props: PropsType) => {
   const isUserMasked = [deactivated, locked].includes(writer.status);
 
   const getReviewDetail = async (type: string, placeIdx: number | string, postIdx: number) => {
-    ReviewStore.initReviewDetail(type as RequestType, placeIdx, postIdx);
+    await ReviewStore.initReviewDetail(type as RequestType, placeIdx, postIdx);
   };
 
-  const handleClick = () => {
+  const removeReviewDetail = () => {
+    ReviewStore.setReviewDetail(null);
+    CustomDialogStore.setOpen(false);
+  };
+
+  const checkReviewDetailStatus = () => {
+    if ([deleted, reportDeleted].includes(ReviewStore.reviewDetail?.status as string)) {
+      const isDeleted = ReviewStore.reviewDetail?.status === deleted;
+      CustomDialogStore.openNotificationDialog({
+        title: isDeleted ? '삭제 게시물' : '신고차단 게시물',
+        content: isDeleted
+          ? '해당 게시물은 삭제된 게시물입니다.'
+          : '신고를 받아 차단된 게시물입니다.',
+        rightButton: {
+          title: '확인',
+          handleClick: removeReviewDetail,
+        },
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleClick = async () => {
     if (!shouldIncludeOnClick) return;
     const pathnameArr = pathname.split('/');
-    getReviewDetail(place.type, fromProfile ? place.idx : pathnameArr[pathnameArr.length - 1], idx);
-    navigate(`${pathname.replace('map/detail', 'review')}${search}`);
+    await getReviewDetail(
+      place.type,
+      fromProfile ? place.idx : pathnameArr[pathnameArr.length - 1],
+      idx
+    );
+    if (!checkReviewDetailStatus()) return;
+    if (!pathname.includes('review')) {
+      navigate(`${pathname.replace('map/detail', 'review')}${search}`);
+    }
+    if (!searchParams.get('reviewIdx')) {
+      navigate(
+        `${pathname.replace('map/detail', 'review')}${search}${search ? '&' : '?'}reviewIdx=${
+          ReviewStore.reviewDetail?.idx ?? ''
+        }`
+      );
+    }
   };
 
   const handlePinReviewClick = async (e: MouseEvent) => {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Drawer, Divider, styled } from '@mui/material';
 import { useStore } from 'stores';
@@ -12,9 +12,8 @@ import { getImageSymbol } from 'util/';
 
 const ReviewDetail = () => {
   const [symbol, setSymbol] = useState<string>('');
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { pathname, search } = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { pathname } = useLocation();
   const { ReviewStore, LocationStore } = useStore().MobxStore;
   const { reviewDetail } = ReviewStore;
   const { placesData } = LocationStore;
@@ -23,16 +22,15 @@ const ReviewDetail = () => {
   const fromProfile = !pathname.split('/').includes('review');
   const selectedPlaceName = fromProfile && reviewDetail ? reviewDetail.place.name : placeName;
 
-  const handleCloseDrawer = useCallback(
-    (isPopState?: boolean) => {
-      ReviewStore.setReviewDetail(null);
-      ReviewStore.setReplyStatus({ writeMode: false });
-      ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
-      if (isPopState) return;
-      navigate(-1);
-    },
-    [ReviewStore, navigate]
-  );
+  const handleCloseDrawer = useCallback(() => {
+    ReviewStore.setReviewDetail(null);
+    ReviewStore.setReplyStatus({ writeMode: false });
+    ReviewStore.setEditOptions({ editMode: false, content: '', requestUrl: '', type: 'review' });
+    if (searchParams.get('reviewIdx')) {
+      searchParams.delete('reviewIdx');
+      setSearchParams(searchParams);
+    }
+  }, [ReviewStore, searchParams, setSearchParams]);
 
   useEffect(() => {
     ReviewStore.setHeaderTitleStatus({ visible: false });
@@ -47,16 +45,10 @@ const ReviewDetail = () => {
   }, [reviewDetail, placesData, selectedPlaceName, primaryCategories]);
 
   useEffect(() => {
-    if (!reviewDetail || searchParams.get('reviewIdx')) return;
-    navigate(`${pathname}${search}${search ? '&' : '?'}reviewIdx=${reviewDetail.idx}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reviewDetail, searchParams, navigate]);
-
-  useEffect(() => {
     if (!ReviewStore.reviewDetail) return;
     if (!!ReviewStore.selectedReply) return;
     if (searchParams.get('reviewIdx')) return;
-    window.onpopstate = () => handleCloseDrawer(true);
+    window.onpopstate = () => handleCloseDrawer();
   }, [handleCloseDrawer, ReviewStore.reviewDetail, ReviewStore.selectedReply, searchParams]);
 
   return (
@@ -70,7 +62,7 @@ const ReviewDetail = () => {
         isMyReview={
           localStorage.getItem('@wagglewaggle_user_nickname') === reviewDetail?.writer.nickname
         }
-        handleCloseDrawer={() => handleCloseDrawer(true)}
+        handleCloseDrawer={() => handleCloseDrawer()}
         replyContent={reviewDetail?.content}
       />
       <BlankArea />
@@ -78,7 +70,6 @@ const ReviewDetail = () => {
         <ReviewCard
           review={reviewDetail as ReviewDetailType}
           isDetail
-          shouldIncludeOnClick
           tagData={{ symbol, placeName: selectedPlaceName }}
         />
       )}
