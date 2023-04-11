@@ -194,7 +194,7 @@ export interface NotiDialogOptions {
   rightButton: { title: string; handleClick: () => void };
 }
 
-export type DialogVariantType = 'intro' | 'accident' | 'cctv' | 'noti';
+export type DialogVariantType = 'accident' | 'cctv' | 'noti';
 
 export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
 

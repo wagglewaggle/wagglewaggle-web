@@ -135,14 +135,7 @@ const axiosRequest = async (
           },
         });
       } else {
-        CustomDialogStore.openNotificationDialog({
-          title: '로그인 오류',
-          content: '로그인하는데에 오류가 발생했습니다. 다시 로그인 해주세요.',
-          rightButton: {
-            title: '확인',
-            handleClick: handleCloseDialog,
-          },
-        });
+        sessionStorage.setItem('@wagglewaggle_login_failed', 'true');
         window.location.href = window.location.origin + '/login';
       }
     }

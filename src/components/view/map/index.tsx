@@ -64,10 +64,6 @@ const Map = () => {
   }, [placesData.length, AuthStore.authorized]);
 
   useEffect(() => {
-    sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
-  }, []);
-
-  useEffect(() => {
     if (!CustomDrawerStore.searchValue || !search) {
       CustomDrawerStore.setTitle('와글와글');
     }
