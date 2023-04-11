@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Dialog, DialogTitle, DialogContent, IconButton, styled } from '@mui/material';
-import { IntroContent, AccidentContent, CctvContent, NotificationContent } from './DialogContents';
+import { AccidentContent, CctvContent, NotificationContent } from './DialogContents';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
-import Lottie from 'react-lottie-player';
 import { ScreenType, DialogVariantType } from 'types/typeBundle';
-import logo from 'assets/icons/logo-filled-icon.svg';
 import closeIcon from 'assets/icons/close-icon.svg';
 import accidentIcon from 'assets/icons/accident-icon.svg';
 
@@ -15,24 +13,12 @@ const CustomDialog = observer(() => {
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const [dialogWidth, setDialogWidth] = useState<number>(408);
   const [dialogHeight, setDialogHeight] = useState<number>(408);
-  const [animationData, setAnimationData] = useState<object | null>(null);
   const { screenType } = ScreenSizeStore;
   const { variant, open } = CustomDialogStore;
 
   const closeDialog = () => {
-    if (variant === 'intro') {
-      sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
-    }
     CustomDialogStore.setOpen(false);
   };
-
-  useEffect(() => {
-    setAnimationData(
-      require(`assets/lottie/${ThemeStore.theme}/Notice${
-        screenType === 'mobile' ? '-mobile' : ''
-      }.json`)
-    );
-  }, [screenType, ThemeStore.theme]);
 
   useEffect(() => {
     if (screenType === 'mobile' && variant === 'cctv') {
@@ -43,7 +29,7 @@ const CustomDialog = observer(() => {
   }, [screenType, variant]);
 
   useEffect(() => {
-    setDialogHeight(variant === 'intro' ? 492 : variant === 'accident' ? 408 : 360);
+    setDialogHeight(variant === 'accident' ? 408 : 360);
   }, [variant]);
 
   return (
@@ -64,18 +50,15 @@ const CustomDialog = observer(() => {
       <DialogPart
         isDarkTheme={isDarkTheme}
         variant={variant}
-        width={variant === 'noti' ? 311 : dialogWidth - (variant === 'intro' ? 16 : 0)}
+        width={variant === 'noti' ? 311 : dialogWidth}
       >
         {variant !== 'noti' && (
           <DialogTitle>
-            {variant === 'intro' && <CustomIcon src={logo} alt='logo' />}
             {variant === 'accident' && <CustomIcon src={accidentIcon} alt='accident' />}
           </DialogTitle>
         )}
         <CustomContent width={dialogWidth} variant={variant}>
-          {variant === 'intro' ? (
-            <IntroContent />
-          ) : variant === 'accident' ? (
+          {variant === 'accident' ? (
             <AccidentContent />
           ) : variant === 'cctv' ? (
             <CctvContent />
@@ -84,9 +67,6 @@ const CustomDialog = observer(() => {
           )}
         </CustomContent>
         {variant === 'accident' && <AccidentEmpty isDarkTheme={isDarkTheme} />}
-        {variant === 'intro' && animationData && (
-          <CustomLottie loop play animationData={animationData} />
-        )}
       </DialogPart>
     </CustomDialogWrap>
   );
@@ -109,17 +89,11 @@ const CustomDialogWrap = styled(Dialog, {
     backgroundColor: 'transparent',
     boxShadow: 'none',
     overflow: 'hidden',
-    maxHeight:
-      variant === 'noti'
-        ? 'auto'
-        : `${height - (screenType === 'mobile' && variant === 'intro' ? 12 : 0)}px`,
+    maxHeight: variant === 'noti' ? 'auto' : `${height - (screenType === 'mobile' ? 12 : 0)}px`,
   },
   '& .MuiDialogContent-root': {
     padding: variant === 'noti' ? 0 : 'auto',
-    width:
-      variant === 'noti'
-        ? 311
-        : `${width - (variant === 'cctv' ? 48 : variant === 'intro' ? 56 : 40)}px`,
+    width: variant === 'noti' ? 311 : `${width - (variant === 'cctv' ? 48 : 40)}px`,
     height: ['cctv', 'noti'].includes(variant) ? 'fit-content' : 'skip',
     overflow: 'auto',
     '& img': {
@@ -145,7 +119,7 @@ const CloseButtonWrap = styled('div', {
   shouldForwardProp: (prop: string) => !['width', 'variant'].includes(prop),
 })<{ width: number; variant: DialogVariantType }>(({ width, variant }) => ({
   padding: 0,
-  width: `${width - (variant === 'intro' ? 8 : 0)}px`,
+  width,
   textAlign: 'end',
   backgroundColor: 'transparent',
   '& button': {
@@ -190,13 +164,13 @@ const CustomContent = styled(DialogContent, {
   variant: DialogVariantType;
 }>(({ width, variant }) => ({
   position: 'relative',
-  width: `${width - 48 - (variant === 'intro' ? 16 : 0)}px`,
-  height: variant === 'intro' ? 'auto' : '200px',
+  width: `${width - 48}px`,
+  height: 200,
   fontSize: 14,
   fontWeight: 400,
   zIndex: 2,
   '& div:last-of-type': {
-    marginBottom: `${variant === 'intro' ? 16 : 0}px`,
+    marginBottom: 0,
   },
 }));
 
@@ -207,16 +181,6 @@ const AccidentEmpty = styled('div', {
   width: '100%',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));
-
-const CustomLottie = styled(Lottie)({
-  position: 'absolute',
-  bottom: 0,
-  borderRadius: 8,
-  width: '100%',
-  height: 'calc(100% - 48px)',
-  zIndex: 1,
-  overflow: 'hidden',
-});
 
 const CustomIcon = styled('img')({
   width: 48,

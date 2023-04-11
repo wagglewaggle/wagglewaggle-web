@@ -8,8 +8,7 @@ import { initPlaceData } from 'util/';
 import { useStore } from 'stores';
 
 const List = () => {
-  const { CustomDialogStore, CustomDrawerStore, LocationStore, AxiosStore, AuthStore } =
-    useStore().MobxStore;
+  const { CustomDrawerStore, LocationStore, AxiosStore, AuthStore } = useStore().MobxStore;
   const { open, includesInputBox } = CustomDrawerStore;
   const navigate = useNavigate();
   const { search, pathname } = useLocation();
@@ -60,11 +59,6 @@ const List = () => {
     if (!AuthStore.authorized) return;
     initPlaceData();
   }, [AuthStore.authorized]);
-
-  useEffect(() => {
-    if (!AuthStore.authorized) return;
-    CustomDialogStore.setOpen(sessionStorage.getItem('@wagglewaggle_intro_popup_open') !== 'false');
-  }, [AuthStore.authorized, CustomDialogStore]);
 
   useEffect(() => {
     const newDrawerState = pathname === '/list';

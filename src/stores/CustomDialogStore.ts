@@ -4,7 +4,7 @@ import { AccidentType, CctvType, DialogVariantType, NotiDialogOptions } from 'ty
 export class CustomDialogStore {
   open: boolean = false;
   openTimeout?: NodeJS.Timeout;
-  variant: DialogVariantType = 'intro';
+  variant: DialogVariantType = 'noti';
   accidentList: AccidentType[] = [];
   cctvList: CctvType[] = [];
   notiOptions: NotiDialogOptions = {

@@ -67,10 +67,6 @@ const Review = () => {
   }, [pathname]);
 
   useEffect(() => {
-    sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
-  }, []);
-
-  useEffect(() => {
     ReviewStore.setWriteReviewButtonVisible(true);
   }, [ReviewStore]);
 
