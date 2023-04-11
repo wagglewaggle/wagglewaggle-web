@@ -17,7 +17,7 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { AuthStore } = useStore().MobxStore;
+  const { AuthStore, CustomDialogStore } = useStore().MobxStore;
   const { autoLoginChecked, isLoggingIn, authorized } = AuthStore;
 
   const handleAutoLoginClick = () => {
@@ -67,7 +67,6 @@ const Login = () => {
       const response = await axiosRequest('get', `auth/${platform}?code=${authCode}`);
       AuthStore.setIsLoggingIn(false);
       const { accessToken, refreshToken, existUser } = response?.data;
-      console.log(response?.data);
       if (!accessToken || !refreshToken) return;
 
       AuthStore.setAuthorized(true);
@@ -75,6 +74,23 @@ const Login = () => {
     },
     [AuthStore, handleLoggedIn]
   );
+
+  const handleCloseDialog = useCallback(() => {
+    CustomDialogStore.setOpen(false);
+  }, [CustomDialogStore]);
+
+  useEffect(() => {
+    if (!sessionStorage.getItem('@wagglewaggle_login_failed')) return;
+    CustomDialogStore.openNotificationDialog({
+      title: '로그인 오류',
+      content: '로그인하는 데에 오류가 발생했습니다.\n다시 로그인해 주세요.',
+      rightButton: {
+        title: '확인',
+        handleClick: handleCloseDialog,
+      },
+    });
+    sessionStorage.removeItem('@wagglewaggle_login_failed');
+  }, [CustomDialogStore, handleCloseDialog]);
 
   useEffect(() => {
     const authCode = searchParams.get('code');
