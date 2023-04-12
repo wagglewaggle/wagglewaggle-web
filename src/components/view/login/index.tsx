@@ -27,7 +27,7 @@ const Login = () => {
   const handleLoggedIn = useCallback(
     (userExists: boolean) => {
       const privateRoutePath = sessionStorage.getItem('@wagglewaggle_navigate') ?? '/map';
-      navigate(userExists ? privateRoutePath : '/register');
+      navigate(userExists ? privateRoutePath : '/register', { replace: true });
       sessionStorage.removeItem('@wagglewaggle_navigate');
     },
     [navigate]
@@ -98,7 +98,7 @@ const Login = () => {
     if (!authCode || !platform) return;
     if (isLoggingIn || authorized) return;
     requestJwt(authCode, platform);
-  }, [isLoggingIn, authorized, searchParams, pathname, navigate, requestJwt]);
+  }, [isLoggingIn, authorized, searchParams, pathname, requestJwt]);
 
   useEffect(() => {
     AuthStore.initAutoLoginChecked();

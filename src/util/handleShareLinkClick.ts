@@ -9,19 +9,28 @@ const handleShareLinkClick = async (
   current.focus();
   current.select();
   current.setSelectionRange(0, 99999);
-  await navigator.clipboard.writeText(
-    current.value.replace('map', 'review').replace('list', 'review')
-  );
-  const { UserNavigatorStore } = MobxStore;
-  UserNavigatorStore.setShouldLinkPopupAppear(true);
-  setTimeout(() => {
-    UserNavigatorStore.setShouldLinkPopupAppear(false);
-  }, 3000);
-  if (setLinkCopied) {
-    setLinkCopied(true);
+  const copyValue = current.value.replace('map', 'review').replace('list', 'review');
+  try {
+    await navigator.clipboard.writeText(copyValue);
+  } catch {
+    const textArea = document.createElement('textarea');
+    document.body.appendChild(textArea);
+    textArea.value = copyValue;
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+  } finally {
+    const { UserNavigatorStore } = MobxStore;
+    UserNavigatorStore.setShouldLinkPopupAppear(true);
     setTimeout(() => {
-      setLinkCopied(false);
+      UserNavigatorStore.setShouldLinkPopupAppear(false);
     }, 3000);
+    if (setLinkCopied) {
+      setLinkCopied(true);
+      setTimeout(() => {
+        setLinkCopied(false);
+      }, 3000);
+    }
   }
 };
 

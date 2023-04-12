@@ -74,14 +74,16 @@ const axiosRequest = async (
       if (path.split('/').includes('review-post')) {
         AxiosStore.setRequestInProgress(false);
       }
-      CustomDialogStore.openNotificationDialog({
-        title: '오류 발생',
-        content: '오류가 발생했습니다.\n나중에 다시 시도해 주세요.',
-        rightButton: {
-          title: '확인',
-          handleClick: handleCloseDialog,
-        },
-      });
+      if (!path.includes('validate')) {
+        CustomDialogStore.openNotificationDialog({
+          title: '오류 발생',
+          content: '오류가 발생했습니다.\n나중에 다시 시도해 주세요.',
+          rightButton: {
+            title: '확인',
+            handleClick: handleCloseDialog,
+          },
+        });
+      }
       if (['ERR_0006007', 'ERR_0006010'].includes(errorCode)) {
         return err.response;
       }

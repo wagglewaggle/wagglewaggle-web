@@ -58,11 +58,11 @@ const TermsPage = () => {
       />
       <BlankArea />
       <ContentWrap>
-        <Title>와글와글 개인정보처리 방침</Title>
+        <Title>와글와글 개인정보 처리 방침</Title>
         <Content>
           Team EXIT('https://wagglewaggle.co.kr'이하 '와글와글')은 「개인정보 보호법」 제30조에 따라
           정보주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기
-          위하여 다음과 같이 개인정보 처리방침을 수립·공개합니다. 이 개인정보처리방침은2023년 2월
+          위하여 다음과 같이 개인정보 처리방침을 수립·공개합니다. 이 개인정보 처리 방침은 2023년 2월
           20일부터 적용됩니다.
         </Content>
         <SubTitle>제1조(개인정보의 처리 목적)</SubTitle>
@@ -97,7 +97,7 @@ const TermsPage = () => {
         <Title />
         <TermsWithLists
           title='1. 홈페이지 회원가입 및 관리'
-          lists={['필수항목 : 이메일, 비밀번호, 로그인ID, 이름']}
+          lists={['필수항목 : 로그인ID, 비밀번호']}
         />
         <SubTitle>제4조(개인정보의 파기절차 및 파기방법)</SubTitle>
         <Content>
@@ -111,7 +111,7 @@ const TermsPage = () => {
           데이터베이스(DB)로 옮기거나 보관장소를 달리하여 보존합니다.
         </Content>
         <Title />
-        <Content>1. 보존하는 개인정보 항목 : 이메일, 비밀번호, 로그인ID, 이름</Content>
+        <Content>1. 보존하는 개인정보 항목 : 로그인ID, 비밀번호</Content>
         <Title />
         <Content>③ 개인정보 파기의 절차 및 방법은 다음과 같습니다.</Content>
         <Title />
@@ -281,7 +281,7 @@ const TermsPage = () => {
           바랍니다.
         </Content>
         <SubTitle>제13조(개인정보 처리방침 변경)</SubTitle>
-        <Content>이 개인정보처리방침은 2023년 2월 20부터 적용됩니다.</Content>
+        <Content>이 개인정보 처리 방침은 2023년 2월 20부터 적용됩니다.</Content>
       </ContentWrap>
     </TermsDrawer>
   );
