@@ -13,7 +13,6 @@ export const LinkCopyPopup = styled('div', {
   padding: '12px 0',
   margin: '8px 0 0',
   width: 'calc(100% - 48px)',
-  maxWidth: 382,
   lineHeight: '20px',
   fontSize: 14,
   fontWeight: 600,

@@ -49,7 +49,6 @@ const Wrap = styled('div')({
   flexDirection: 'column',
   padding: '5px 24px 35px',
   width: 'calc(100% - 48px)',
-  maxWidth: 430,
   minHeight: 'calc(100vh - 97px)',
   maxHeight: 'calc(100vh - 97px)',
   overflow: 'hidden auto',

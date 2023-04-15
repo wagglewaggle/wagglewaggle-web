@@ -36,7 +36,6 @@ const CustomHeader = styled('div', {
   borderBottom: includesBorderBottom ? `1px solid ${palette.grey[300]}` : 'none',
   padding: '12px 24px',
   width: 'calc(100% - 48px)',
-  maxWidth: 382,
   height: 28,
   backgroundColor: palette.white,
   zIndex: 10,

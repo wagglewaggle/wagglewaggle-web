@@ -49,7 +49,6 @@ const SearchWrap = styled('div', {
   top: 0,
   right: 0,
   width: '100%',
-  maxWidth: 430,
   height: '100vh',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   boxShadow: '0 10px 20px rgba(0, 0, 0, 0.25)',

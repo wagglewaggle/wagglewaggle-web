@@ -165,7 +165,6 @@ const CustomHeader = styled('div')({
   alignItems: 'center',
   padding: '12px 0',
   width: '100%',
-  maxWidth: 430,
   height: 28,
   backgroundColor: palette.white,
   zIndex: 10,

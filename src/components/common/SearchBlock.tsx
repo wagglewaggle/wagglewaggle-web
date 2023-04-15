@@ -84,14 +84,15 @@ const ListWrap = styled('div')({
 });
 
 const List = styled('div')({
-  display: 'flex',
+  display: 'block',
   alignItems: 'center',
   flexGrow: 1,
   padding: '5px 0',
-  maxWidth: 380,
+  maxWidth: '95%',
   height: 26,
   fontSize: 14,
   fontWeight: 400,
+  lineHeight: '30px',
   cursor: 'pointer',
   overflow: 'hidden',
   textOverflow: 'ellipsis',

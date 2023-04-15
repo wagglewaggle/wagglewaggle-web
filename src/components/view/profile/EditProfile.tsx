@@ -48,6 +48,5 @@ const EditProfileDrawer = styled(Drawer)({
     display: 'flex',
     alignItems: 'center',
     width: '100%',
-    maxWidth: 430,
   },
 });

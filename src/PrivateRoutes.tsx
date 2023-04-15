@@ -67,7 +67,6 @@ const Wrap = styled('div')({
   flexDirection: 'column',
   alignItems: 'center',
   width: '100%',
-  maxWidth: 430,
   height: 'fit-content',
   minHeight: '100vh',
 });

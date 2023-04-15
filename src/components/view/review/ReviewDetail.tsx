@@ -93,7 +93,6 @@ export default observer(ReviewDetail);
 const ReviewDetailDrawer = styled(Drawer)({
   '& .MuiPaper-root': {
     width: '100%',
-    maxWidth: 430,
   },
 });
 

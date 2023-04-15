@@ -301,8 +301,8 @@ const Wrap = styled('div', {
 })<{ top: number }>(({ top }) => ({
   position: 'fixed',
   top,
+  left: 0,
   width: '100%',
-  maxWidth: 430,
   height: 'calc(100vh - 104px)',
 }));
 
