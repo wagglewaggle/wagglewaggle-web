@@ -46,6 +46,7 @@ const PrivateRoutes = () => {
         <Route path='/error' element={<Error />} />
         <Route path='/api/auth/naver/redirect/*' element={<Login />} />
         <Route path='/api/auth/kakao/redirect/*' element={<Login />} />
+        <Route path='/api/auth/apple/redirect/*' element={<Login />} />
         <Route path='/api/auth/google/redirect/*' element={<Login />} />
         <Route path='/' element={<Navigate to='/login' />} />
         <Route path='/*' element={<Navigate to='/not-found' />} />
