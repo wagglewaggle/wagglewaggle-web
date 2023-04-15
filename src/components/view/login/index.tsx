@@ -65,7 +65,7 @@ const Login = () => {
     const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
     window.open(
-      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=https://wagglewaggle.co.kr/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
+      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=https://deploy-preview-40--super-dodol-2a5183.netlify.app/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
       '_blank'
     );
   };
