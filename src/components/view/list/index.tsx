@@ -105,7 +105,6 @@ const ListDrawer = styled(Drawer, {
   '& .MuiPaper-root': {
     display: searchOpen ? 'none' : 'auto',
     width: '100%',
-    maxWidth: 430,
   },
 }));
 

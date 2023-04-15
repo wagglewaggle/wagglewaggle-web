@@ -84,7 +84,6 @@ const Wrap = styled('div', {
     flexDirection: 'column',
     borderBottom: `1px solid ${palette.grey[300]}`,
     width: screenWidth,
-    maxWidth: 430,
     height,
     backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
     zIndex: 20,

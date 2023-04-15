@@ -75,7 +75,6 @@ const MyPostsDrawer = styled(Drawer)({
     display: 'flex',
     alignItems: 'center',
     width: '100%',
-    maxWidth: 430,
   },
 });
 
@@ -84,7 +83,6 @@ const CustomTabs = styled(Tabs)({
   top: 52,
   display: 'flex',
   width: '100%',
-  maxWidth: 430,
   backgroundColor: palette.white,
   zIndex: 10,
   '& .MuiTab-root': {
@@ -106,6 +104,8 @@ const CustomTabs = styled(Tabs)({
 
 const CustomTab = styled(Tab)({
   flex: 1,
+  padding: '12px 16px 8px',
+  maxWidth: 'none',
 });
 
 const BlankArea = styled('div')({

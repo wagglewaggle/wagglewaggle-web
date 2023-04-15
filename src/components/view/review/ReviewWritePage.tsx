@@ -133,7 +133,6 @@ export default observer(ReviewWritePage);
 const ReviewWriteDrawer = styled(Drawer)({
   '& .MuiPaper-root': {
     width: '100%',
-    maxWidth: 430,
   },
 });
 
@@ -148,7 +147,6 @@ const HeaderWrap = styled('div', {
   borderBottom: `1px solid ${palette.grey[300]}`,
   padding: '8px 24px',
   width,
-  maxWidth: 382,
   height: 32,
   color: palette.black,
   '& span': {

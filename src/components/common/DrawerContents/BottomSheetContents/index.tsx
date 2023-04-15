@@ -221,7 +221,6 @@ const BottomSheetWrap = styled(a.div, {
   display: 'block',
   borderRadius: expanded === 'appeared' ? '12px 12px 0px' : 'none',
   width: '100%',
-  maxWidth: 430,
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   touchAction: 'none',
   boxShadow: '0px -10px 40px rgb(0 0 0 / 30%)',

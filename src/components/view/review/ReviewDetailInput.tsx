@@ -81,7 +81,6 @@ const Wrap = styled('div', {
   borderTop: `1px solid ${palette.grey[300]}`,
   padding: '16px 24px',
   width: 'calc(100% - 48px)',
-  maxWidth: 382,
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
   gap: 16,
 }));

@@ -80,7 +80,6 @@ const SubHeader = styled('div')({
   borderBottom: `1px solid ${palette.grey[300]}`,
   padding: '0 24px',
   width: 'calc(100% - 48px)',
-  maxWidth: 382,
   height: 48,
   minHeight: 48,
   fontSize: 18,
