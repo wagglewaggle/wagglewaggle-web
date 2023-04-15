@@ -18,8 +18,10 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { AuthStore, CustomDialogStore } = useStore().MobxStore;
+  const { AuthStore, CustomDialogStore, UserNavigatorStore } = useStore().MobxStore;
   const { autoLoginChecked, isLoggingIn, authorized } = AuthStore;
+  const { deepLinkUrl } = UserNavigatorStore;
+  const isWebView = !!(window as unknown as { ReactNativeWebView: unknown }).ReactNativeWebView;
 
   const handleAutoLoginClick = () => {
     AuthStore.setAutoLoginChecked();
@@ -56,12 +58,13 @@ const Login = () => {
     const clientId = process.env.REACT_APP_APPLE_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_APPLE_REDIRECT_URI;
     window.open(
-      `https://appleid.apple.com/auth/authorize?client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&response_type=code%20id_token&scope=name%20email&response_mode=form_post`,
+      `https://appleid.apple.com/auth/authorize?client_id=${clientId}&redirect_uri=https://wagglewaggle.co.kr/${redirectUri}&response_type=code%20id_token&scope=name%20email&response_mode=form_post`,
       '_self'
     );
   };
 
   const handleGoogleClick = () => {
+    sessionStorage.removeItem('@wagglewaggle_google_oauth_tried');
     const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
     window.open(
@@ -117,6 +120,20 @@ const Login = () => {
     if (!AuthStore.authorized) return;
     handleLoggedIn(true);
   }, [AuthStore.authorized, handleLoggedIn]);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('@wagglewaggle_google_oauth_tried')) return;
+    if (!isWebView || !deepLinkUrl) return;
+    if (['wagglewaggle://', 'exp://192.168.45.139:19000'].includes(deepLinkUrl)) return;
+    const productModeScheme = 'wagglewaggle:/';
+    const devModeScheme = 'exp://192.168.45.139:19000/--';
+    const navigateUrl = deepLinkUrl.includes(productModeScheme)
+      ? deepLinkUrl.replace(productModeScheme, '')
+      : deepLinkUrl.replace(devModeScheme, '');
+    sessionStorage.setItem('@wagglewaggle_google_oauth_tried', 'true');
+    navigate(navigateUrl || '');
+    UserNavigatorStore.setDeepLinkUrl(null);
+  }, [UserNavigatorStore, isWebView, deepLinkUrl, navigate]);
 
   return (
     <Wrap>
