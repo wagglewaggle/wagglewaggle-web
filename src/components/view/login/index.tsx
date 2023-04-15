@@ -64,7 +64,7 @@ const Login = () => {
   };
 
   const handleGoogleClick = () => {
-    sessionStorage.removeItem('@wagglewaggle_google_oauth_tried');
+    localStorage.removeItem('@wagglewaggle_google_oauth_tried');
     const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
     window.open(
@@ -122,7 +122,7 @@ const Login = () => {
   }, [AuthStore.authorized, handleLoggedIn]);
 
   useEffect(() => {
-    if (sessionStorage.getItem('@wagglewaggle_google_oauth_tried')) return;
+    if (localStorage.getItem('@wagglewaggle_google_oauth_tried')) return;
     if (!isWebView || !deepLinkUrl) return;
     if (['wagglewaggle://', 'exp://192.168.45.139:19000'].includes(deepLinkUrl)) return;
     const productModeScheme = 'wagglewaggle:/';
@@ -130,8 +130,11 @@ const Login = () => {
     const requestUrl = deepLinkUrl.includes(productModeScheme)
       ? deepLinkUrl.replace(productModeScheme, '')
       : deepLinkUrl.replace(devModeScheme, '');
-    sessionStorage.setItem('@wagglewaggle_google_oauth_tried', 'true');
-    requestJwt(requestUrl.replace(`/${process.env.REACT_APP_GOOGLE_REDIRECT_URI}?`, ''), 'google');
+    localStorage.setItem('@wagglewaggle_google_oauth_tried', 'true');
+    requestJwt(
+      requestUrl.replace(`/${process.env.REACT_APP_GOOGLE_REDIRECT_URI}?code=`, ''),
+      'google'
+    );
     UserNavigatorStore.setDeepLinkUrl(null);
   }, [UserNavigatorStore, isWebView, deepLinkUrl, requestJwt]);
 
