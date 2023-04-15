@@ -22,4 +22,5 @@ export const palette = {
   kakao: '#fee344',
   naver: '#03c75a',
   google: '#fff',
+  apple: '#000',
 };

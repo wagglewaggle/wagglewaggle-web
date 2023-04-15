@@ -1,12 +1,13 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { isIOS, isAndroid } from 'react-device-detect';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-// 구글 로그인은 딥링크 구현되면 다시 구현할 예정
-// import googleIcon from 'assets/icons/login/google.png';
 import LoginMainImage from 'assets/icons/login/login-main.png';
 import kakaoIcon from 'assets/icons/login/kakao.png';
 import naverIcon from 'assets/icons/login/naver.png';
+import googleIcon from 'assets/icons/login/google.png';
+import appleIcon from 'assets/icons/login/apple.png';
 import { ReactComponent as WaggleWaggleLogo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as CheckIcon } from 'assets/icons/login/check.svg';
 import { palette } from 'constants/';
@@ -51,15 +52,23 @@ const Login = () => {
     );
   };
 
-  // 구글 로그인은 딥링크 구현되면 다시 구현할 예정
-  // const handleGoogleClick = () => {
-  //   const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-  //   const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
-  //   window.open(
-  //     `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
-  //     '_self'
-  //   );
-  // };
+  const handleAppleClick = () => {
+    const clientId = process.env.REACT_APP_APPLE_CLIENT_ID;
+    const redirectUri = process.env.REACT_APP_APPLE_REDIRECT_URI;
+    window.open(
+      `https://appleid.apple.com/auth/authorize?client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&response_type=code%20id_token&scope=name%20email&response_mode=form_post`,
+      '_self'
+    );
+  };
+
+  const handleGoogleClick = () => {
+    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+    const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
+    window.open(
+      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
+      '_blank'
+    );
+  };
 
   const requestJwt = useCallback(
     async (authCode: string, platform: string) => {
@@ -121,11 +130,18 @@ const Login = () => {
         <CustomImgButton src={naverIcon} alt='naver' />
         네이버로 로그인
       </ButtonWrap>
-      {/* 구글 로그인은 딥링크 구현되면 다시 구현할 예정 */}
-      {/* <ButtonWrap variant='google' onClick={handleGoogleClick}>
-        <CustomImgButton src={googleIcon} alt='google' />
-        Google로 로그인
-      </ButtonWrap> */}
+      {isIOS && (
+        <ButtonWrap variant='apple' onClick={handleAppleClick}>
+          <CustomImgButton src={appleIcon} alt='apple' />
+          Apple로 로그인
+        </ButtonWrap>
+      )}
+      {isAndroid && (
+        <ButtonWrap variant='google' onClick={handleGoogleClick}>
+          <CustomImgButton src={googleIcon} alt='google' />
+          Google로 로그인
+        </ButtonWrap>
+      )}
       <OptionWrap onClick={handleAutoLoginClick}>
         <CustomCheckIcon autoLoginChecked={autoLoginChecked} />
         자동 로그인
@@ -149,7 +165,7 @@ const Wrap = styled('div')({
 });
 
 const MainImage = styled('img')({
-  margin: '77px 0 74px',
+  margin: '77px 0 20px',
   width: 327,
   height: 193,
 });
@@ -161,15 +177,15 @@ const CustomWaggleWaggleLogo = styled(WaggleWaggleLogo)({
 
 const ButtonWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'variant',
-})<{ variant: 'kakao' | 'naver' | 'google' }>(({ variant }) => ({
+})<{ variant: 'kakao' | 'naver' | 'apple' | 'google' }>(({ variant }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   border: `1px solid ${variant === 'google' ? palette.grey[400] : palette[variant]}`,
   borderRadius: 4,
   width: '100%',
-  height: 60,
-  color: variant === 'naver' ? palette.white : palette.black,
+  height: 52,
+  color: ['naver', 'apple'].includes(variant) ? palette.white : palette.black,
   fontSize: 14,
   fontWeight: 600,
   lineHeight: '20px',
