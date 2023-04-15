@@ -127,13 +127,13 @@ const Login = () => {
     if (['wagglewaggle://', 'exp://192.168.45.139:19000'].includes(deepLinkUrl)) return;
     const productModeScheme = 'wagglewaggle:/';
     const devModeScheme = 'exp://192.168.45.139:19000/--';
-    const navigateUrl = deepLinkUrl.includes(productModeScheme)
+    const requestUrl = deepLinkUrl.includes(productModeScheme)
       ? deepLinkUrl.replace(productModeScheme, '')
       : deepLinkUrl.replace(devModeScheme, '');
     sessionStorage.setItem('@wagglewaggle_google_oauth_tried', 'true');
-    navigate(navigateUrl || '');
+    requestJwt(requestUrl.replace(`/${process.env.REACT_APP_GOOGLE_REDIRECT_URI}?`, ''), 'google');
     UserNavigatorStore.setDeepLinkUrl(null);
-  }, [UserNavigatorStore, isWebView, deepLinkUrl, navigate]);
+  }, [UserNavigatorStore, isWebView, deepLinkUrl, requestJwt]);
 
   return (
     <Wrap>
