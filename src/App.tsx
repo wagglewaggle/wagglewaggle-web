@@ -81,7 +81,7 @@ const App = observer(() => {
 
   useEffect(() => {
     const accessTokenKey = '@wagglewaggle_access_token';
-    if (localStorage.getItem(accessTokenKey) ?? sessionStorage.getItem(accessTokenKey)) {
+    if (sessionStorage.getItem(accessTokenKey)) {
       AuthStore.setAuthorized(true);
     }
   }, [AuthStore]);
@@ -147,7 +147,7 @@ const App = observer(() => {
           <BrowserRouter>
             <Routes>
               <Route path='/landing' element={<BrowserPage />} />
-              {['/', '/login'].map((path: string) => (
+              {['/', '/login/*'].map((path: string) => (
                 <Route
                   key={`route-${path}`}
                   path={path}

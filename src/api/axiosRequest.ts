@@ -30,9 +30,7 @@ const axiosRequest = async (
       AxiosStore.setRequestInProgress(true);
     }
     if (!config.headers) return config;
-    const token =
-      localStorage.getItem(`@wagglewaggle_access_token`) ??
-      sessionStorage.getItem('@wagglewaggle_access_token');
+    const token = sessionStorage.getItem('@wagglewaggle_access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -103,18 +101,19 @@ const axiosRequest = async (
         ? localStorage
         : sessionStorage;
       const { accessToken, refreshToken } = res.data;
+      alert(`access: ${accessToken}, refresh: ${refreshToken}`);
       if (accessToken) {
-        webStorage.setItem('@wagglewaggle_access_token', accessToken);
+        sessionStorage.setItem('@wagglewaggle_access_token', accessToken);
         sessionStorage.setItem('@wagglewaggle_authorized', 'authorized');
         AuthStore.setAuthorized(true);
       }
       if (refreshToken) {
         webStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
       }
-      if (!localStorage.getItem('@wagglewaggle_user_nickname')) {
+      if (!sessionStorage.getItem('@wagglewaggle_user_nickname')) {
         const response = await axiosRequest('get', 'user/setting');
         if (response?.data) {
-          localStorage.setItem('@wagglewaggle_user_nickname', response.data.nickname);
+          sessionStorage.setItem('@wagglewaggle_user_nickname', response.data.nickname);
           ProfileStore.setUserNickname(response.data.nickname);
         }
       }

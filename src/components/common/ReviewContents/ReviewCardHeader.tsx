@@ -46,7 +46,7 @@ const ReviewCardHeader = (props: PropsType) => {
         replyContent={replyContent}
         requestUrl={requestUrl}
         anchorEl={anchorEl}
-        isMyReview={localStorage.getItem('@wagglewaggle_user_nickname') === userNickname}
+        isMyReview={sessionStorage.getItem('@wagglewaggle_user_nickname') === userNickname}
         handleMenuClose={handleMenuClose}
       />
     </Header>
