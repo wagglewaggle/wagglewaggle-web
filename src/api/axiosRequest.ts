@@ -13,8 +13,9 @@ const axiosRequest = async (
   const tokenAxiosInstance = axios.create();
   const apiAxiosInstance = axios.create();
   const isTokenIssuePath =
-    ['reissue', 'naver', 'kakao', 'google'].filter((pathname: string) => path.includes(pathname))
-      .length > 0;
+    ['reissue', 'naver', 'kakao', 'apple', 'google'].filter((pathname: string) =>
+      path.includes(pathname)
+    ).length > 0;
 
   const handleCloseDialog = () => {
     CustomDialogStore.setOpen(false);

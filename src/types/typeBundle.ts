@@ -152,7 +152,7 @@ export interface UserType {
   name: string;
   nickname: string;
   snsId: string;
-  snsType: 'KAKAO' | 'NAVER' | 'GOOGLE';
+  snsType: 'KAKAO' | 'NAVER' | 'APPLE' | 'GOOGLE';
   status: string;
   updatedDate: string;
 }
@@ -182,7 +182,7 @@ interface WriterType {
   name: string;
   nickname: string;
   snsId: string;
-  snsType: 'KAKAO' | 'NAVER' | 'GOOGLE';
+  snsType: 'KAKAO' | 'NAVER' | 'APPLE' | 'GOOGLE';
   status: string;
 }
 
