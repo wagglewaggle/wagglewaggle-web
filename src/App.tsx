@@ -147,13 +147,10 @@ const App = observer(() => {
           <BrowserRouter>
             <Routes>
               <Route path='/landing' element={<BrowserPage />} />
-              {['/', '/login/*'].map((path: string) => (
-                <Route
-                  key={`route-${path}`}
-                  path={path}
-                  element={isWebView ? <Login /> : <Navigate replace to='/landing' />}
-                />
-              ))}
+              <Route
+                path='/login/*'
+                element={isWebView ? <Login /> : <Navigate replace to='/landing' />}
+              />
               <Route
                 path='/*'
                 element={
