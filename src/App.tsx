@@ -83,7 +83,7 @@ const App = observer(() => {
 
   useEffect(() => {
     const accessTokenKey = '@wagglewaggle_access_token';
-    if (localStorage.getItem(accessTokenKey) ?? sessionStorage.getItem(accessTokenKey)) {
+    if (sessionStorage.getItem(accessTokenKey)) {
       AuthStore.setAuthorized(true);
     }
   }, [AuthStore]);

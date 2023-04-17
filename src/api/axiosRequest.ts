@@ -30,9 +30,7 @@ const axiosRequest = async (
       AxiosStore.setRequestInProgress(true);
     }
     if (!config.headers) return config;
-    const token =
-      localStorage.getItem(`@wagglewaggle_access_token`) ??
-      sessionStorage.getItem('@wagglewaggle_access_token');
+    const token = sessionStorage.getItem('@wagglewaggle_access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -104,7 +102,7 @@ const axiosRequest = async (
         : sessionStorage;
       const { accessToken, refreshToken } = res.data;
       if (accessToken) {
-        webStorage.setItem('@wagglewaggle_access_token', accessToken);
+        sessionStorage.setItem('@wagglewaggle_access_token', accessToken);
         sessionStorage.setItem('@wagglewaggle_authorized', 'authorized');
         AuthStore.setAuthorized(true);
       }
