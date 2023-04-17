@@ -1,13 +1,15 @@
 import { useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { isIOS, isMobile } from 'react-device-detect';
+// import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+// import { isIOS, isMobile } from 'react-device-detect';
+import { isIOS } from 'react-device-detect';
 import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
 import { CustomDialog, CustomDrawer, CustomSpinner, ReviewWriteButton } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
-import DeepLinkRoutes from 'DeepLinkRoutes';
+// import DeepLinkRoutes from 'DeepLinkRoutes';
 import { Login, Profile, BrowserPage } from './components/view';
 import ReplyPage from 'components/view/review/ReplyPage';
 import ReviewDetail from 'components/view/review/ReviewDetail';
@@ -147,24 +149,26 @@ const App = observer(() => {
           <BrowserRouter>
             <Routes>
               <Route path='/landing' element={<BrowserPage />} />
-              {['/', '/login'].map((path: string) => (
+              {['/', '/login/*'].map((path: string) => (
                 <Route
                   key={`route-${path}`}
                   path={path}
-                  element={isWebView ? <Login /> : <Navigate replace to='/landing' />}
+                  element={<Login />}
+                  // element={isWebView ? <Login /> : <Navigate replace to='/landing' />}
                 />
               ))}
               <Route
                 path='/*'
-                element={
-                  isWebView ? (
-                    <PrivateRoutes />
-                  ) : isMobile ? (
-                    <DeepLinkRoutes />
-                  ) : (
-                    <Navigate replace to='/landing' />
-                  )
-                }
+                element={<PrivateRoutes />}
+                // element={
+                //   isWebView ? (
+                //     <PrivateRoutes />
+                //   ) : isMobile ? (
+                //     <DeepLinkRoutes />
+                //   ) : (
+                //     <Navigate replace to='/landing' />
+                //   )
+                // }
               />
             </Routes>
             <CustomDrawer />
