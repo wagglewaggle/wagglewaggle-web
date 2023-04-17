@@ -36,7 +36,7 @@ const EditProfile = () => {
         title='프로필 수정'
         includesBorderBottom
       />
-      <Register isEdit currentNickname={localStorage.getItem('@wagglewaggle_user_nickname')} />
+      <Register isEdit currentNickname={sessionStorage.getItem('@wagglewaggle_user_nickname')} />
     </EditProfileDrawer>
   );
 };

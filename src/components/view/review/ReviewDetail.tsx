@@ -60,7 +60,7 @@ const ReviewDetail = () => {
     >
       <ReviewHeader
         isMyReview={
-          localStorage.getItem('@wagglewaggle_user_nickname') === reviewDetail?.writer.nickname
+          sessionStorage.getItem('@wagglewaggle_user_nickname') === reviewDetail?.writer.nickname
         }
         handleCloseDrawer={() => handleCloseDrawer()}
         replyContent={reviewDetail?.content}

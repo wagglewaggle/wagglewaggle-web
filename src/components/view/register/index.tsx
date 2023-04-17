@@ -72,7 +72,7 @@ const Register = (props: PropsType) => {
   const handleStartClick = async () => {
     if (nicknameStatus !== 'ok') return;
     await axiosRequest('put', 'user/setting', { nickname });
-    localStorage.setItem('@wagglewaggle_user_nickname', nickname);
+    sessionStorage.setItem('@wagglewaggle_user_nickname', nickname);
     if (isEdit) {
       ProfileStore.setUserNickname(nickname);
       ProfileStore.setEditPageOpen(false);

@@ -111,10 +111,10 @@ const axiosRequest = async (
       if (refreshToken) {
         webStorage.setItem('@wagglewaggle_refresh_token', refreshToken);
       }
-      if (!localStorage.getItem('@wagglewaggle_user_nickname')) {
+      if (!sessionStorage.getItem('@wagglewaggle_user_nickname')) {
         const response = await axiosRequest('get', 'user/setting');
         if (response?.data) {
-          localStorage.setItem('@wagglewaggle_user_nickname', response.data.nickname);
+          sessionStorage.setItem('@wagglewaggle_user_nickname', response.data.nickname);
           ProfileStore.setUserNickname(response.data.nickname);
         }
       }

@@ -38,7 +38,7 @@ const MyPostsPlaces = () => {
                 ...post,
                 writer: {
                   ...post.writer,
-                  nickname: localStorage.getItem('@wagglewaggle_user_nickname') ?? '(알수없음)',
+                  nickname: sessionStorage.getItem('@wagglewaggle_user_nickname') ?? '(알수없음)',
                 },
               }}
               shouldIncludeOnClick={![deleted, reportDeleted].includes(post.status)}
