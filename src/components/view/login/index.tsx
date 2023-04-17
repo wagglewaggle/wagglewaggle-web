@@ -1,12 +1,12 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { isIOS, isAndroid } from 'react-device-detect';
+import { isIOS } from 'react-device-detect';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import LoginMainImage from 'assets/icons/login/login-main.png';
 import kakaoIcon from 'assets/icons/login/kakao.png';
 import naverIcon from 'assets/icons/login/naver.png';
-import googleIcon from 'assets/icons/login/google.png';
+// import googleIcon from 'assets/icons/login/google.png';
 import appleIcon from 'assets/icons/login/apple.png';
 import { ReactComponent as WaggleWaggleLogo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as CheckIcon } from 'assets/icons/login/check.svg';
@@ -18,10 +18,8 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { AuthStore, CustomDialogStore, UserNavigatorStore } = useStore().MobxStore;
+  const { AuthStore, CustomDialogStore } = useStore().MobxStore;
   const { autoLoginChecked, isLoggingIn, authorized } = AuthStore;
-  const { deepLinkUrl } = UserNavigatorStore;
-  const isWebView = !!(window as unknown as { ReactNativeWebView: unknown }).ReactNativeWebView;
 
   const handleAutoLoginClick = () => {
     AuthStore.setAutoLoginChecked();
@@ -58,20 +56,21 @@ const Login = () => {
     const clientId = process.env.REACT_APP_APPLE_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_APPLE_REDIRECT_URI;
     window.open(
-      `https://appleid.apple.com/auth/authorize?client_id=${clientId}&redirect_uri=https://wagglewaggle.co.kr/${redirectUri}&response_type=code%20id_token&scope=name%20email&response_mode=form_post`,
+      `https://appleid.apple.com/auth/authorize?client_id=${clientId}&redirect_uri=https://wagglewaggle.co.kr/${redirectUri}&response_type=code&response_mode=query`,
       '_self'
     );
   };
 
-  const handleGoogleClick = () => {
-    localStorage.removeItem('@wagglewaggle_google_oauth_tried');
-    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-    const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
-    window.open(
-      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=https://wagglewaggle.co.kr/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
-      '_blank'
-    );
-  };
+  // 구글 로그인은 다음 버전에 추가 예정
+  // const handleGoogleClick = () => {
+  //   localStorage.removeItem('@wagglewaggle_google_oauth_tried');
+  //   const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  //   const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
+  //   window.open(
+  //     `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=https://wagglewaggle.co.kr/${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`,
+  //     '_blank'
+  //   );
+  // };
 
   const requestJwt = useCallback(
     async (authCode: string, platform: string) => {
@@ -121,27 +120,10 @@ const Login = () => {
     handleLoggedIn(true);
   }, [AuthStore.authorized, handleLoggedIn]);
 
-  useEffect(() => {
-    if (localStorage.getItem('@wagglewaggle_google_oauth_tried')) return;
-    if (!isWebView || !deepLinkUrl) return;
-    if (['wagglewaggle://', 'exp://192.168.45.139:19000'].includes(deepLinkUrl)) return;
-    const productModeScheme = 'wagglewaggle:/';
-    const devModeScheme = 'exp://192.168.45.139:19000/--';
-    const requestUrl = deepLinkUrl.includes(productModeScheme)
-      ? deepLinkUrl.replace(productModeScheme, '')
-      : deepLinkUrl.replace(devModeScheme, '');
-    localStorage.setItem('@wagglewaggle_google_oauth_tried', 'true');
-    requestJwt(
-      requestUrl.replace(`/${process.env.REACT_APP_GOOGLE_REDIRECT_URI}?code=`, ''),
-      'google'
-    );
-    UserNavigatorStore.setDeepLinkUrl(null);
-  }, [UserNavigatorStore, isWebView, deepLinkUrl, requestJwt]);
-
   return (
     <Wrap>
       <CustomWaggleWaggleLogo />
-      <MainImage src={LoginMainImage} alt='login-main'></MainImage>
+      <MainImage src={LoginMainImage} alt='login-main' isIOS={isIOS}></MainImage>
       <ButtonWrap variant='kakao' onClick={handleKakaoClick}>
         <CustomImgButton src={kakaoIcon} alt='kakao' />
         카카오로 로그인
@@ -156,12 +138,13 @@ const Login = () => {
           Apple로 로그인
         </ButtonWrap>
       )}
-      {isAndroid && (
+      {/* 구글 로그인은 다음 버전에 추가 예정 */}
+      {/* {isAndroid && (
         <ButtonWrap variant='google' onClick={handleGoogleClick}>
           <CustomImgButton src={googleIcon} alt='google' />
           Google로 로그인
         </ButtonWrap>
-      )}
+      )} */}
       <OptionWrap onClick={handleAutoLoginClick}>
         <CustomCheckIcon autoLoginChecked={autoLoginChecked} />
         자동 로그인
@@ -184,11 +167,13 @@ const Wrap = styled('div')({
   gap: 8,
 });
 
-const MainImage = styled('img')({
-  margin: '77px 0 20px',
+const MainImage = styled('img', {
+  shouldForwardProp: (prop: string) => prop !== 'isIOS',
+})<{ isIOS: boolean }>(({ isIOS }) => ({
+  margin: `77px 0 ${isIOS ? 20 : 74}px`,
   width: 327,
   height: 193,
-});
+}));
 
 const CustomWaggleWaggleLogo = styled(WaggleWaggleLogo)({
   width: 206,
