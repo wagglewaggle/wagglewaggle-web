@@ -56,7 +56,7 @@ const Login = () => {
     const clientId = process.env.REACT_APP_APPLE_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_APPLE_REDIRECT_URI;
     window.open(
-      `https://appleid.apple.com/auth/authorize?client_id=${clientId}&redirect_uri=https://wagglewaggle.co.kr/${redirectUri}&response_type=code&response_mode=query`,
+      `https://appleid.apple.com/auth/authorize?client_id=${clientId}&redirect_uri=${window.location.origin}/${redirectUri}&response_type=code&response_mode=query`,
       '_self'
     );
   };
