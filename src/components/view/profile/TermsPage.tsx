@@ -239,7 +239,7 @@ const TermsPage = () => {
         </Content>
         <TermsWithLists
           title='▶ 개인정보 보호책임자'
-          lists={['성명 : 김경식', '직책 : 개발자', '연락처 : 01020390759, kskim625@gmail.com']}
+          lists={['성명 : 김경식', '직책 : 개발자', '연락처 : kskim625@gmail.com']}
         />
         <Title />
         <Content>
@@ -254,7 +254,7 @@ const TermsPage = () => {
         </Content>
         <TermsWithLists
           title='▶ 개인정보 열람청구 접수·처리 부서'
-          lists={['담당자 : 김경식', '연락처 : 01020390759, kskim625@gmail.com']}
+          lists={['담당자 : 김경식', '연락처 : kskim625@gmail.com']}
         />
         <SubTitle>제12조(정보주체의 권익침해에 대한 구제방법)</SubTitle>
         <Content>
