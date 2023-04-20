@@ -14,18 +14,19 @@ import { CategoryType } from 'types/typeBundle';
 
 const CongestionSummary = () => {
   const copyLinkRef = useRef<HTMLInputElement>(null);
-  const { ThemeStore, LocationStore, CustomDrawerStore } = useStore().MobxStore;
+  const { ThemeStore, LocationStore, CustomDrawerStore, UserNavigatorStore } = useStore().MobxStore;
   const { placeName, categories, locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const isAppeared = CustomDrawerStore.drawerStatus.expanded === 'appeared';
   const searchName = locationNames[placeName ?? ''] ?? placeName ?? '';
 
   const handleNaviClick = () => {
-    if (!locationData?.x || !locationData?.y) return;
-    window.open(
-      `https://map.kakao.com/link/to/${searchName},${locationData.x},${locationData.y}`,
-      '_blank'
-    );
+    CustomDrawerStore.setMapNavigationOpen(true);
+  };
+
+  const handleShareClick = () => {
+    UserNavigatorStore.setLinkPopupTarget('링크');
+    handleShareLinkClick(copyLinkRef.current);
   };
 
   return (
@@ -69,7 +70,7 @@ const CongestionSummary = () => {
       </IconsWrap>
       <Address isAppeared={isAppeared}>{locationData?.address ?? ''}</Address>
       <ButtonsWrap>
-        <CustomButton variant='share' onClick={() => handleShareLinkClick(copyLinkRef.current)}>
+        <CustomButton variant='share' onClick={handleShareClick}>
           <ShareIcon />
           공유하기
         </CustomButton>

@@ -54,7 +54,7 @@ const PrivateRoutes = () => {
       {UserNavigatorStore.shouldLinkPopupAppear && (
         <LinkCopyPopup isDarkTheme={isDarkTheme}>
           <img src={linkCheckIcon} alt='link-copy-check' />
-          링크가 복사되었습니다.
+          {UserNavigatorStore.linkPopupTarget}가 복사되었습니다.
         </LinkCopyPopup>
       )}
     </Wrap>

@@ -7,6 +7,7 @@ export class UserNavigatorStore {
   loaded: boolean = false;
   isUserLocation: boolean = false;
   shouldLinkPopupAppear: boolean = false;
+  linkPopupTarget: '주소' | '링크' = '링크';
 
   constructor() {
     makeAutoObservable(this);
@@ -35,5 +36,9 @@ export class UserNavigatorStore {
 
   setShouldLinkPopupAppear = (newStatus: boolean) => {
     this.shouldLinkPopupAppear = newStatus;
+  };
+
+  setLinkPopupTarget = (newTarget: '주소' | '링크') => {
+    this.linkPopupTarget = newTarget;
   };
 }

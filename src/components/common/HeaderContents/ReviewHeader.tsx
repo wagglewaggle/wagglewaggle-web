@@ -2,6 +2,7 @@ import { useState, useRef, MouseEvent } from 'react';
 import { styled } from '@mui/material';
 import { HeaderSelectMenu } from 'components/common/HeaderContents';
 import { CustomIconButton } from './common';
+import { useStore } from 'stores';
 import { palette } from 'constants/';
 import { handleShareLinkClick } from 'util/';
 import { ReactComponent as ShareIcon } from 'assets/icons/drawer/share.svg';
@@ -18,8 +19,10 @@ const ReviewHeader = (props: PropsType) => {
   const { isMyReview, replyContent = '', handleCloseDrawer } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const copyLinkRef = useRef<HTMLInputElement>(null);
+  const { UserNavigatorStore } = useStore().MobxStore;
 
   const handleShareClick = () => {
+    UserNavigatorStore.setLinkPopupTarget('링크');
     handleShareLinkClick(copyLinkRef.current);
   };
 

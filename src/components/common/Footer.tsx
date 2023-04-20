@@ -7,18 +7,23 @@ import { useStore } from 'stores';
 
 const Footer = observer(() => {
   const copyLinkRef = useRef<HTMLInputElement>(null);
-  const { ThemeStore } = useStore().MobxStore;
+  const { ThemeStore, UserNavigatorStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handleContactUsClick = () => {
     window.open('https://forms.gle/AcsYE7WzCkQQwisP7', '_blank');
   };
 
+  const handleShareClick = () => {
+    UserNavigatorStore.setLinkPopupTarget('링크');
+    handleShareLinkClick(copyLinkRef?.current);
+  };
+
   return (
     <Wrap>
       <Buttons isDarkTheme={isDarkTheme}>
         <button onClick={handleContactUsClick}>Contact Us</button>|
-        <button onClick={() => handleShareLinkClick(copyLinkRef?.current)}>Share Link</button>
+        <button onClick={handleShareClick}>Share Link</button>
       </Buttons>
       <TeamName>© 2023 Team EXIT</TeamName>
       <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />

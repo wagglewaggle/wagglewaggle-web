@@ -10,6 +10,7 @@ export class CustomDrawerStore {
   includesInputBox: boolean = false;
   drawerStatus: DrawerStatusType = { expanded: 'removed' };
   placeDataLoading: boolean = false;
+  mapNavigationOpen: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -50,5 +51,9 @@ export class CustomDrawerStore {
 
   setPlaceDataLoading = (newStatus: boolean) => {
     this.placeDataLoading = newStatus;
+  };
+
+  setMapNavigationOpen = (newStatus: boolean) => {
+    this.mapNavigationOpen = newStatus;
   };
 }
