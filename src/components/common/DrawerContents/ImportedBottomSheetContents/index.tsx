@@ -1,4 +1,5 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isIOS, isAndroid } from 'react-device-detect';
 import { observer } from 'mobx-react';
 import { Drawer, styled } from '@mui/material';
@@ -6,8 +7,9 @@ import { useStore } from 'stores';
 import { handleShareLinkClick } from 'util/';
 import { palette, locationNames } from 'constants/';
 import kakaoMapLogo from 'assets/icons/drawer/kakao-map-logo.png';
-import naverMapLogo from 'assets/icons/drawer/naver-map-logo.png';
-import tMapLogo from 'assets/icons/drawer/t-map-logo.png';
+// 네이버지도와 티맵은 다음 버전에 추가
+// import naverMapLogo from 'assets/icons/drawer/naver-map-logo.png';
+// import tMapLogo from 'assets/icons/drawer/t-map-logo.png';
 import builtInMapLogo from 'assets/icons/drawer/built-in-map-logo.png';
 import copyLogo from 'assets/icons/drawer/copy-logo.png';
 
@@ -19,6 +21,7 @@ type ListType = {
 
 const ImportedBottomSheet = () => {
   const copyAddrRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const { CustomDrawerStore, LocationStore, UserNavigatorStore } = useStore().MobxStore;
   const { placeName, locationData } = LocationStore;
   const searchName = locationNames[placeName ?? ''] ?? placeName ?? '';
@@ -32,24 +35,25 @@ const ImportedBottomSheet = () => {
     handleClose();
   };
 
-  const handleNaverMapClick = () => {
-    if (!locationData?.x || !locationData?.y) return;
-    window.open(
-      `nmap://route/public?dname=${searchName}&dlat=${locationData.x}&dlng=${locationData.y}&appname=com.exit.wagglewaggle`,
-      '_blank'
-    );
-    handleClose();
-  };
+  // 네이버지도와 티맵은 다음 버전에 추가
+  // const handleNaverMapClick = () => {
+  //   if (!locationData?.x || !locationData?.y) return;
+  //   window.open(
+  //     `nmap://route/public?dname=${searchName}&dlat=${locationData.x}&dlng=${locationData.y}&appname=com.exit.wagglewaggle`,
+  //     '_blank'
+  //   );
+  //   handleClose();
+  // };
 
-  const handleTMapClick = () => {
-    if (!locationData?.x || !locationData?.y) return;
-    window.open(
-      // `tmap://?rGoName=${searchName}&rGoX=${locationData.x}&rGoY=${locationData.y}`,
-      `tmap://search?name=${searchName}`,
-      '_blank'
-    );
-    handleClose();
-  };
+  // const handleTMapClick = () => {
+  //   if (!locationData?.x || !locationData?.y) return;
+  //   window.open(
+  //     // `tmap://?rGoName=${searchName}&rGoX=${locationData.x}&rGoY=${locationData.y}`,
+  //     `tmap://search?name=${searchName}`,
+  //     '_blank'
+  //   );
+  //   handleClose();
+  // };
 
   const handleBuiltInMapClick = () => {
     if (isIOS && !locationData?.address) return;
@@ -68,23 +72,34 @@ const ImportedBottomSheet = () => {
     handleClose();
   };
 
-  const handleClose = () => {
-    CustomDrawerStore.setMapNavigationOpen(false);
-  };
+  const handleClose = useCallback(
+    (isPopState?: boolean) => {
+      CustomDrawerStore.setMapNavigationOpen(false);
+      if (isPopState) return;
+      navigate(-1);
+    },
+    [CustomDrawerStore, navigate]
+  );
 
   const NAVI_LIST: ListType[] = [
     { title: '카카오맵', logo: kakaoMapLogo, action: handleKakaoMapClick },
-    { title: '네이버 지도', logo: naverMapLogo, action: handleNaverMapClick },
-    { title: '티맵', logo: tMapLogo, action: handleTMapClick },
+    // 네이버지도와 티맵은 다음 버전에 추가
+    // { title: '네이버 지도', logo: naverMapLogo, action: handleNaverMapClick },
+    // { title: '티맵', logo: tMapLogo, action: handleTMapClick },
     { title: '지도', logo: builtInMapLogo, action: handleBuiltInMapClick },
     { title: '주소복사', logo: copyLogo, action: handleCopyAddrClick },
   ];
+
+  useEffect(() => {
+    if (!CustomDrawerStore.mapNavigationOpen) return;
+    window.onpopstate = () => handleClose(true);
+  }, [CustomDrawerStore.mapNavigationOpen, handleClose]);
 
   return (
     <CustomBottomSheet
       open={CustomDrawerStore.mapNavigationOpen}
       anchor='bottom'
-      onClose={handleClose}
+      onClose={() => handleClose()}
     >
       <Puller>
         <PullerChip />
@@ -114,7 +129,7 @@ const CustomBottomSheet = styled(Drawer)({
   '& .MuiPaper-root': {
     display: 'flex',
     borderRadius: '12px 12px 0px 0px',
-    height: 408,
+    height: 288,
     color: palette.black,
     fontSize: 18,
     fontWeight: 600,
@@ -144,7 +159,7 @@ const ListWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'idx',
 })<{ idx: number }>(({ idx }) => ({
   display: 'flex',
-  borderBottom: idx === 4 ? 'none' : `1px solid ${palette.grey[300]}`,
+  borderBottom: idx === 2 ? 'none' : `1px solid ${palette.grey[300]}`,
   padding: '20px 24px',
   marginTop: idx === 0 ? 16 : 0,
   fontSize: 14,
