@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import SearchInput from './SearchInput';
 import BottomSheet from './DrawerContents/BottomSheetContents';
+import ImportedBottomSheet from './DrawerContents/ImportedBottomSheetContents';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 
@@ -32,7 +33,10 @@ const CustomDrawer = () => {
               {CustomDrawerStore.drawerComponent}
             </SearchWrap>
           ) : (
-            <BottomSheet />
+            <>
+              <BottomSheet />
+              <ImportedBottomSheet />
+            </>
           )}
         </>
       )}

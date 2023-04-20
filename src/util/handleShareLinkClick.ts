@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { MobxStore } from 'App';
+import copy from 'copy-to-clipboard';
 
 const handleShareLinkClick = async (
   current: HTMLInputElement | null,
@@ -13,12 +14,7 @@ const handleShareLinkClick = async (
   try {
     await navigator.clipboard.writeText(copyValue);
   } catch {
-    const textArea = document.createElement('textarea');
-    document.body.appendChild(textArea);
-    textArea.value = copyValue;
-    textArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textArea);
+    copy(copyValue);
   } finally {
     const { UserNavigatorStore } = MobxStore;
     UserNavigatorStore.setShouldLinkPopupAppear(true);
