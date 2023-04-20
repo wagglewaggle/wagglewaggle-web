@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
@@ -14,6 +15,8 @@ import { CategoryType } from 'types/typeBundle';
 
 const CongestionSummary = () => {
   const copyLinkRef = useRef<HTMLInputElement>(null);
+  const { pathname, search } = useLocation();
+  const navigate = useNavigate();
   const { ThemeStore, LocationStore, CustomDrawerStore, UserNavigatorStore } = useStore().MobxStore;
   const { placeName, categories, locationData } = LocationStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
@@ -21,6 +24,7 @@ const CongestionSummary = () => {
   const searchName = locationNames[placeName ?? ''] ?? placeName ?? '';
 
   const handleNaviClick = () => {
+    navigate(`${pathname}${search}`);
     CustomDrawerStore.setMapNavigationOpen(true);
   };
 
