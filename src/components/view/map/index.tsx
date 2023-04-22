@@ -1,10 +1,12 @@
 import { useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { SearchData, ResultData, CustomHeader, NavigationIcons } from 'components/common';
 import MapContent from './MapContent';
 import { useStore } from 'stores';
 import { initPlaceData } from 'util/';
+import { locationNames } from 'constants/';
 
 declare global {
   interface Window {
@@ -15,9 +17,11 @@ declare global {
 const Map = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { pathname, search } = useLocation();
-  const { CustomDrawerStore, LocationStore, AuthStore } = useStore().MobxStore;
+  const { pathname } = useLocation();
+  const { CustomDrawerStore, ProfileStore, LocationStore, AuthStore } = useStore().MobxStore;
   const { placesData } = LocationStore;
+  const { drawerStatus } = CustomDrawerStore;
+  const { profilePageOpen } = ProfileStore;
 
   const handleWordClick = useCallback(
     (searchWord: string) => {
@@ -64,10 +68,20 @@ const Map = () => {
   }, [placesData.length, AuthStore.authorized]);
 
   useEffect(() => {
-    if (!CustomDrawerStore.searchValue || !search) {
-      CustomDrawerStore.setTitle('와글와글');
-    }
-  }, [CustomDrawerStore, search, pathname]);
+    if (profilePageOpen || pathname === '/map/search') return;
+    const placeName = searchParams.get('name') ?? '';
+    const locationName = locationNames[placeName] ?? placeName;
+    CustomDrawerStore.setTitle(
+      drawerStatus.expanded !== 'removed'
+        ? `${locationName}${drawerStatus.expanded !== 'appeared' ? '' : ' 기본 정보'}`
+        : '메인 지도'
+    );
+  }, [pathname, CustomDrawerStore, searchParams, drawerStatus.expanded, profilePageOpen]);
+
+  useEffect(() => {
+    if (pathname !== '/map') return;
+    CustomDrawerStore.closeDrawer();
+  }, [pathname, CustomDrawerStore]);
 
   useEffect(() => {
     if (pathname === '/map' && !searchParams.get('name')) return;
@@ -86,7 +100,7 @@ const Map = () => {
   );
 };
 
-export default Map;
+export default observer(Map);
 
 const Wrap = styled('div')({
   display: 'flex',

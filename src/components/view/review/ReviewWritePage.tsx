@@ -12,7 +12,8 @@ const ReviewWritePage = () => {
   const [submittable, setSubmittable] = useState<boolean>(false);
   const [reviewInput, setReviewInput] = useState<string>('');
   const [searchParams] = useSearchParams();
-  const { ReviewStore, ScreenSizeStore, CustomDialogStore, LocationStore } = useStore().MobxStore;
+  const { ReviewStore, ScreenSizeStore, CustomDialogStore, CustomDrawerStore, LocationStore } =
+    useStore().MobxStore;
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const pathnameArr = pathname.split('/');
@@ -89,6 +90,13 @@ const ReviewWritePage = () => {
     },
     [ReviewStore, navigate]
   );
+
+  useEffect(() => {
+    if (!ReviewStore.openReviewWritePage) return;
+    const placeName = searchParams.get('name') ?? '';
+    const locationName = locationNames[placeName] ?? placeName;
+    CustomDrawerStore.setTitle(`${locationName} 리뷰 작성`);
+  }, [CustomDrawerStore, searchParams, ReviewStore.openReviewWritePage]);
 
   useEffect(() => {
     setSubmittable(reviewInput?.length > 0);

@@ -27,7 +27,7 @@ const Login = () => {
 
   const handleLoggedIn = useCallback(
     (userExists: boolean) => {
-      const privateRoutePath = sessionStorage.getItem('@wagglewaggle_navigate') ?? '/map';
+      const privateRoutePath = sessionStorage.getItem('@wagglewaggle_navigate') ?? '/list';
       navigate(userExists ? privateRoutePath : '/register', { replace: true });
       sessionStorage.removeItem('@wagglewaggle_navigate');
     },
@@ -89,6 +89,12 @@ const Login = () => {
   const handleCloseDialog = useCallback(() => {
     CustomDialogStore.setOpen(false);
   }, [CustomDialogStore]);
+
+  useEffect(() => {
+    const htmlTitle = document.querySelector('title');
+    if (!htmlTitle) return;
+    htmlTitle.innerHTML = '로그인';
+  }, []);
 
   useEffect(() => {
     if (!sessionStorage.getItem('@wagglewaggle_login_failed')) return;

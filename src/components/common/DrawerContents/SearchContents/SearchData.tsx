@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { styled } from '@mui/material';
 import { SearchBlock } from 'components/common';
+import { useStore } from 'stores';
 
 interface propsType {
   initialBlockList: string[];
@@ -11,6 +12,7 @@ interface propsType {
 const SearchData = (props: propsType) => {
   const { initialBlockList, handleWordClick, handleLatestListChange } = props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>(initialBlockList);
+  const { CustomDrawerStore } = useStore().MobxStore;
 
   const handleRemoveLatestList = (list: string) => {
     const newList: string[] = JSON.parse(JSON.stringify(searchBlockList));
@@ -28,6 +30,10 @@ const SearchData = (props: propsType) => {
     setSearchBlockList([]);
     handleLatestListChange([]);
   };
+
+  useEffect(() => {
+    CustomDrawerStore.setTitle('검색');
+  }, [CustomDrawerStore]);
 
   return (
     <Wrap>
