@@ -84,7 +84,7 @@ const Map = () => {
   }, [pathname, CustomDrawerStore]);
 
   useEffect(() => {
-    if (pathname === '/map' && !searchParams.get('name')) return;
+    if (['/map', '/map/search'].includes(pathname) && !searchParams.get('name')) return;
     CustomDrawerStore.setDrawerStatus({ expanded: 'appeared' });
     CustomDrawerStore.openDrawer('map', <></>);
   }, [CustomDrawerStore, pathname, searchParams, handleWordClick]);
