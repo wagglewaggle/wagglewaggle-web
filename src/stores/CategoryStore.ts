@@ -24,13 +24,14 @@ export class CategoryStore {
   setSelectedCategory = (clickedCategory: '전체' | string) => {
     const isPrevValueAll = this.selectedCategories === '전체';
     if (clickedCategory === '전체') {
-      this.selectedCategories = isPrevValueAll ? [] : '전체';
+      this.selectedCategories = '전체';
       return;
     }
     const newCategories = _.cloneDeep(isPrevValueAll ? [] : this.selectedCategories) as string[];
     const categoryIdx = newCategories.indexOf(clickedCategory);
     categoryIdx !== -1 ? newCategories.splice(categoryIdx, 1) : newCategories.push(clickedCategory);
+    const { length } = newCategories;
     this.selectedCategories =
-      newCategories.length === this.categoryList.length ? '전체' : newCategories;
+      length === this.categoryList.length || length === 0 ? '전체' : newCategories;
   };
 }

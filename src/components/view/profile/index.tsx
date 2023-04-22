@@ -21,7 +21,9 @@ const Profile = () => {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { AuthStore, ProfileStore, CustomDialogStore, CustomDrawerStore } = useStore().MobxStore;
-  const { profilePageOpen, termsPageOpen, editPageOpen, favoritesPageOpen } = ProfileStore;
+  const { open, variant, notiOptions } = CustomDialogStore;
+  const { profilePageOpen, termsPageOpen, editPageOpen, favoritesPageOpen, myPostsPageOpen } =
+    ProfileStore;
 
   const handleProfilePageClose = useCallback(
     (isPopState?: boolean) => {
@@ -135,6 +137,34 @@ const Profile = () => {
       },
     });
   };
+
+  useEffect(() => {
+    if (!profilePageOpen) return;
+    if (open && variant === 'noti') {
+      CustomDrawerStore.setTitle(notiOptions.title);
+      return;
+    }
+    const title = favoritesPageOpen
+      ? '관심 목록'
+      : myPostsPageOpen
+      ? '내 글 목록'
+      : editPageOpen
+      ? '프로필변경'
+      : termsPageOpen
+      ? '개인정보 처리 방침'
+      : '마이페이지';
+    CustomDrawerStore.setTitle(title);
+  }, [
+    CustomDrawerStore,
+    open,
+    variant,
+    notiOptions,
+    profilePageOpen,
+    termsPageOpen,
+    editPageOpen,
+    favoritesPageOpen,
+    myPostsPageOpen,
+  ]);
 
   useEffect(() => {
     if (!profilePageOpen) return;

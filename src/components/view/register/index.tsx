@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, styled } from '@mui/material';
 import { useStore } from 'stores';
@@ -23,7 +23,7 @@ const Register = (props: PropsType) => {
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatusType>('empty');
   const [serverErrorMessage, setServerErrorMessage] = useState<string>('');
   const navigate = useNavigate();
-  const { ProfileStore } = useStore().MobxStore;
+  const { ProfileStore, CustomDrawerStore } = useStore().MobxStore;
 
   const checkNicknameStatus = async (nickname: string) => {
     if (nickname.length > 8) {
@@ -80,6 +80,11 @@ const Register = (props: PropsType) => {
     }
     navigate('/map');
   };
+
+  useEffect(() => {
+    if (isEdit) return;
+    CustomDrawerStore.setTitle('프로필세팅');
+  }, [isEdit, CustomDrawerStore]);
 
   return (
     <Wrap>

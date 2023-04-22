@@ -47,8 +47,7 @@ const MapContent = () => {
       lat: number,
       lng: number,
       name: string,
-      markerImage: string | null,
-      mainMarker?: boolean
+      markerImage: string | null
     ) => {
       const markerWidth = variant === 'selected' ? 56 : 30;
       const markerHeight = variant === 'selected' ? 64 : 30;
@@ -57,7 +56,6 @@ const MapContent = () => {
         image: markerImage && new kakao.maps.MarkerImage(markerImage, kakaoMarkerSize),
         position: new kakao.maps.LatLng(lat + 0.0003, lng),
         title: name,
-        clickable: !mainMarker,
       });
       kakao.maps.event.addListener(marker, 'click', () => {
         const clickedPlaceData = placesData.find(
@@ -65,7 +63,9 @@ const MapContent = () => {
         );
         if (!clickedPlaceData) return;
         CustomDrawerStore.setIncludesInput(false);
-        navigate(`/map/detail/${clickedPlaceData.idx}?name=${marker.Gb}`);
+        navigate(
+          variant === 'selected' ? '/map' : `/map/detail/${clickedPlaceData.idx}?name=${marker.Gb}`
+        );
       });
       return marker;
     },
@@ -78,7 +78,7 @@ const MapContent = () => {
       (drawerStatus.expanded === 'expanded' ? 0.00001 : 0.0000035) * ScreenSizeStore.screenHeight;
     const map = new kakao.maps.Map(mapRef.current, {
       center: new kakao.maps.LatLng(latitude - latOffset, longitude),
-      level: 5,
+      level: 7,
       tileAnimation: false,
       speed: 3,
     });

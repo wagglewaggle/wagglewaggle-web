@@ -19,6 +19,7 @@ const ResultData = (props: propsType) => {
   const [relatedData, setRelatedData] = useState<string[]>([]);
   const lottieContainer = useRef<HTMLDivElement>(null);
   const { ThemeStore, CustomDrawerStore, LocationStore } = useStore().MobxStore;
+  const { searchValue } = CustomDrawerStore;
   const { placesData } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const relatedPlaces = placesData.filter((place: PlaceDataType) =>
@@ -60,6 +61,10 @@ const ResultData = (props: propsType) => {
       }
     });
   }, [resultData]);
+
+  useEffect(() => {
+    CustomDrawerStore.setTitle(`${searchValue} 검색 결과`);
+  }, [CustomDrawerStore, searchValue]);
 
   useEffect(() => {
     if (!lottieContainer.current) return;

@@ -71,7 +71,7 @@ const List = () => {
 
   useEffect(() => {
     if (!CustomDrawerStore.searchValue || !search) {
-      CustomDrawerStore.setTitle('와글와글');
+      CustomDrawerStore.setTitle('메인 리스트');
     }
   }, [CustomDrawerStore, search, pathname]);
 

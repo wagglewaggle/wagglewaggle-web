@@ -52,7 +52,7 @@ const SearchInput = () => {
   const handleWordClick = (searchWord: string) => {
     CustomDrawerStore.setSearchValue(searchWord);
     CustomDrawerStore.openDrawer(
-      'list',
+      CustomDrawerStore.variant,
       <ResultData placeData={LocationStore.placesData} searchWord={searchWord} />
     );
   };

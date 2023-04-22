@@ -8,14 +8,15 @@ import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
 import { LocationDataType, RequestType, ReplyType } from 'types/typeBundle';
 import { initPlaceData } from 'util/';
-import { palette } from 'constants/';
+import { palette, locationNames } from 'constants/';
 import { ReactComponent as LeftIcon } from 'assets/icons/left-icon.svg';
 
 const Review = () => {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { LocationStore, ReviewStore, ThemeStore, AuthStore } = useStore().MobxStore;
+  const { LocationStore, ReviewStore, ThemeStore, AuthStore, CustomDrawerStore } =
+    useStore().MobxStore;
   const isDarkTheme = ThemeStore.theme === 'dark';
   const { placesData, locationData } = LocationStore;
   const { reviewDetail, selectedReply } = ReviewStore;
@@ -50,6 +51,20 @@ const Review = () => {
     const { data } = response;
     LocationStore.setLocationData(data);
   }, [LocationStore, pathname, placeName, requestType]);
+
+  useEffect(() => {
+    if (selectedReply) {
+      CustomDrawerStore.setTitle(`${selectedReply.content.substring(0, 5)} 댓글 페이지`);
+      return;
+    }
+    if (reviewDetail) {
+      CustomDrawerStore.setTitle(`${reviewDetail.content.substring(0, 5)} 게시물 페이지`);
+      return;
+    }
+    const placeName = searchParams.get('name') ?? '';
+    const locationName = locationNames[placeName] ?? placeName;
+    CustomDrawerStore.setTitle(`${locationName} 게시판`);
+  }, [CustomDrawerStore, searchParams, reviewDetail, selectedReply]);
 
   useEffect(() => {
     const pathnameArr = pathname.split('/');

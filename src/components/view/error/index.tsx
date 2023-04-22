@@ -25,8 +25,14 @@ const Error = observer(() => {
 
   const handleMoveHome = () => {
     AxiosStore.setStatusCode(null);
-    navigate('/map');
+    navigate('/list');
   };
+
+  useEffect(() => {
+    const htmlTitle = document.querySelector('title');
+    if (!htmlTitle) return;
+    htmlTitle.innerHTML = '오류';
+  }, []);
 
   useEffect(() => {
     if (!lottieContainer.current) return;

@@ -31,7 +31,7 @@ const BottomSheet = () => {
   const { variant, drawerStatus } = CustomDrawerStore;
   const { placesData, locationData } = LocationStore;
   const FULL_HEIGHT = -ScreenSizeStore.screenHeight;
-  const EXPANDED_HEIGHT = -Math.round(ScreenSizeStore.screenHeight * 0.6);
+  const EXPANDED_HEIGHT = -Math.round(ScreenSizeStore.screenHeight * 0.7);
   const APPEARED_HEIGHT = -196;
   const CANCEL_HEIGHT = (Math.abs(FULL_HEIGHT) - Math.abs(EXPANDED_HEIGHT)) * 0.95;
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -184,9 +184,10 @@ const BottomSheet = () => {
   }, [api, APPEARED_HEIGHT, drawerStatus.expanded, handleClose, ReviewStore]);
 
   useEffect(() => {
+    if (!searchParams.get('name')) return;
     initLocationData();
     initRelatedLocations();
-  }, [initLocationData, initRelatedLocations]);
+  }, [searchParams, initLocationData, initRelatedLocations]);
 
   return (
     <BottomSheetWrap
