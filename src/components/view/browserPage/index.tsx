@@ -1,3 +1,4 @@
+import { useLayoutEffect } from 'react';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
 import { useStore } from 'stores';
@@ -6,11 +7,10 @@ import Content from './Content';
 import { ReactComponent as Logo } from 'assets/icons/logo-filled-icon.svg';
 import appStore from 'assets/browserPage/app-store.png';
 import googlePlay from 'assets/browserPage/google-play.png';
-import oneStore from 'assets/browserPage/one-store.png';
+import backgroundImage from 'assets/browserPage/header-background.svg';
 import content1 from 'assets/browserPage/content-image-1.png';
 import content2 from 'assets/browserPage/content-image-2.png';
 import content3 from 'assets/browserPage/content-image-3.png';
-import content3_1 from 'assets/browserPage/content-image-3-1.png';
 import locationIcon from 'assets/browserPage/location.svg';
 import personIcon from 'assets/browserPage/person.svg';
 import chatIcon from 'assets/browserPage/chat.svg';
@@ -22,7 +22,6 @@ export type ContentPropsType = {
   title: string;
   content: string;
   contentImage: string;
-  subContentImage?: string;
   shadyBackground: boolean;
 };
 
@@ -30,7 +29,6 @@ const BrowserPage = () => {
   const { ScreenSizeStore } = useStore().MobxStore;
   const { screenWidth } = ScreenSizeStore;
   const device = screenWidth < 768 ? 'mobile' : screenWidth < 1024 ? 'tablet' : 'pc';
-  const bgImage = require(`assets/browserPage/${device}-header-bg.png`);
 
   const handleAppleClick = () => {
     window.open(
@@ -43,25 +41,28 @@ const BrowserPage = () => {
     window.open('https://play.google.com/store/apps/details?id=com.exit.wagglewaggle', '_blank');
   };
 
-  const handleOnestoreClick = () => {
-    window.open(
-      'https://m.onestore.co.kr/mobilepoc/apps/appsDetail.omp?prodId=0000768743',
-      '_blank'
-    );
-  };
+  useLayoutEffect(() => {
+    document.body.setAttribute('style', 'overflow-x:hidden');
+
+    return () => {
+      document.body.removeAttribute('style');
+    };
+  }, []);
 
   return (
     <>
-      <HeaderImage src={bgImage} alt='header-bg' device={device} />
-      <HeaderWrap device={device}>
+      <HeaderImage src={backgroundImage} alt='header-bg' />
+      <HeaderWrap>
         <CustomLogo />
         <HeaderText device={device}>
           {`지금 그곳의${device === 'mobile' ? '\r\n' : ' '}혼잡도가 궁금하면\r\n와글와글에서`}
         </HeaderText>
+        <Description>
+          {'지금 바로 구글 플레이 스토어와 앱 스토어에서\r\n와글와글을 검색해보세요.'}
+        </Description>
         <ButtonsArea>
           <AppImage src={appStore} alt='app-store' onClick={handleAppleClick} />
           <AppImage src={googlePlay} alt='google-play' onClick={handleGoogleClick} />
-          <AppImage src={oneStore} alt='one-store' onClick={handleOnestoreClick} />
         </ButtonsArea>
       </HeaderWrap>
       {contents.map((content: Omit<ContentPropsType, 'idx' | 'shadyBackground'>, idx: number) => (
@@ -80,18 +81,17 @@ const BrowserPage = () => {
 
 export default observer(BrowserPage);
 
-const HeaderWrap = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'device',
-})<{ device: 'mobile' | 'tablet' | 'pc' }>(({ device }) => ({
+const HeaderWrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  width: `calc(100% - ${device === 'mobile' ? 48 : 112}px)`,
-  maxWidth: 656,
-  height: device === 'mobile' ? 780 : 380,
+  width: '100%',
+  maxWidth: '100vw',
+  height: 700,
   zIndex: 2,
-}));
+});
 
 const CustomLogo = styled(Logo)({
+  margin: '4px 12px',
   width: 48,
   height: 48,
   '& path': {
@@ -105,39 +105,47 @@ const CustomLogo = styled(Logo)({
 const HeaderText = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'device',
 })<{ device: 'mobile' | 'tablet' | 'pc' }>(({ device }) => ({
-  margin: `${device === 'mobile' ? 64 : 48}px 0 24px`,
+  margin: `72px 0 32px`,
   width: '100%',
   color: palette.white,
-  fontSize: 32,
+  fontSize: device === 'pc' ? 56 : 40,
   fontWeight: 600,
-  lineHeight: '40px',
+  lineHeight: device === 'mobile' ? '40px' : device === 'tablet' ? '54px' : '74px',
   whiteSpace: 'pre-line',
   textAlign: 'center',
 }));
 
+const Description = styled('div')({
+  marginBottom: 64,
+  color: palette.white,
+  fontSize: 14,
+  fontWeight: 400,
+  lineHeight: '20px',
+  whiteSpace: 'pre-line',
+  textAlign: 'center',
+});
+
 const ButtonsArea = styled('div')({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
+  justifyContent: 'center',
   gap: 12,
 });
 
 const AppImage = styled('img')({
-  width: 327,
-  height: 36,
+  width: 157.5,
+  height: 44,
   cursor: 'pointer',
 });
 
-const HeaderImage = styled('img', {
-  shouldForwardProp: (prop: string) => prop !== 'device',
-})<{ device: 'mobile' | 'tablet' | 'pc' }>(({ device }) => ({
+const HeaderImage = styled('img')({
   position: 'absolute',
   top: 0,
-  width: '100%',
-  minWidth: 376,
-  height: device === 'mobile' ? 780 : 380,
+  width: '100vw',
+  minWidth: 1920,
+  objectFit: 'cover',
+  height: 700,
   zIndex: 1,
-}));
+});
 
 const BlankArea = styled('div')({
   width: '100%',
@@ -166,6 +174,5 @@ const contents = [
     content:
       '장소 별 실시간 리뷰를 공유하여\r\n추가적인 장소 정보나 실시간 인구 현황을\r\n더욱 생생하게 얻을 수 있습니다.',
     contentImage: content3,
-    subContentImage: content3_1,
   },
 ];
