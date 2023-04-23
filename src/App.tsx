@@ -156,7 +156,7 @@ const App = observer(() => {
                 element={
                   isWebView ? (
                     <PrivateRoutes />
-                  ) : isMobile ? (
+                  ) : window.location.pathname !== '/' && isMobile ? (
                     <DeepLinkRoutes />
                   ) : (
                     <Navigate replace to='/landing' />
