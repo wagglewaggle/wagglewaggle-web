@@ -32,8 +32,8 @@ const DetailedCongestion = observer(() => {
   };
 
   useEffect(() => {
-    if (!locationData?.population?.createdDate) return;
-    setTimePassed(getTimeDiff(locationData.population.createdDate));
+    if (!locationData?.population?.updatedDate) return;
+    setTimePassed(getTimeDiff(locationData.population.updatedDate));
   }, [locationData]);
 
   return (
