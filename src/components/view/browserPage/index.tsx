@@ -4,7 +4,7 @@ import { styled } from '@mui/material';
 import { useStore } from 'stores';
 import BrowserPageFooter from './BrowserPageFooter';
 import Content from './Content';
-import { ReactComponent as Logo } from 'assets/icons/logo-filled-icon.svg';
+import logo from 'assets/browserPage/logo.png';
 import appStore from 'assets/browserPage/app-store.png';
 import googlePlay from 'assets/browserPage/google-play.png';
 import backgroundImage from 'assets/browserPage/header-background.svg';
@@ -53,7 +53,7 @@ const BrowserPage = () => {
     <>
       <HeaderImage src={backgroundImage} alt='header-bg' />
       <HeaderWrap>
-        <CustomLogo />
+        <CustomLogo src={logo} alt='wagglewaggle-logo' />
         <HeaderText device={device}>
           {`지금 그곳의${device === 'mobile' ? '\r\n' : ' '}혼잡도가 궁금하면\r\n와글와글에서`}
         </HeaderText>
@@ -90,27 +90,21 @@ const HeaderWrap = styled('div')({
   zIndex: 2,
 });
 
-const CustomLogo = styled(Logo)({
-  margin: '4px 12px',
-  width: 48,
-  height: 48,
-  '& path': {
-    fill: palette.white,
-  },
-  '& rect': {
-    fill: palette.transparent,
-  },
+const CustomLogo = styled('img')({
+  margin: '16px 24px',
+  width: 32,
+  height: 32,
 });
 
 const HeaderText = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'device',
 })<{ device: 'mobile' | 'tablet' | 'pc' }>(({ device }) => ({
-  margin: `72px 0 32px`,
+  margin: '140px 0 32px',
   width: '100%',
   color: palette.white,
   fontSize: device === 'pc' ? 56 : 40,
   fontWeight: 600,
-  lineHeight: device === 'mobile' ? '40px' : device === 'tablet' ? '54px' : '74px',
+  lineHeight: device === 'pc' ? '74px' : '54px',
   whiteSpace: 'pre-line',
   textAlign: 'center',
 }));
@@ -118,9 +112,9 @@ const HeaderText = styled('div', {
 const Description = styled('div')({
   marginBottom: 64,
   color: palette.white,
-  fontSize: 14,
+  fontSize: 18,
   fontWeight: 400,
-  lineHeight: '20px',
+  lineHeight: '26px',
   whiteSpace: 'pre-line',
   textAlign: 'center',
 });
@@ -148,8 +142,8 @@ const HeaderImage = styled('img')({
 
 const BlankArea = styled('div')({
   width: '100%',
-  height: 24,
-  minHeight: 24,
+  height: 48,
+  minHeight: 48,
 });
 
 const contents = [
@@ -164,14 +158,14 @@ const contents = [
     headerLogo: personIcon,
     title: 'KT / SKT 위치 정보를 기반으로\r\n정확한 인구 혼잡도 파악',
     content:
-      'KT / SKT에서 제공하는 위치 정보를 기반으로\r\n인구 혼잡도와 교통 현황, CCTV 정보를 제공합니다.',
+      'KT / SKT에서 제공하는 위치 정보를 기반으로\r\n인구 혼잡도와 교통 현황, CCTV 정보를\r\n제공합니다.',
     contentImage: content2,
   },
   {
     headerLogo: chatIcon,
     title: '실시간 리뷰를 통한\r\n장소 현황 및 정보 공유',
     content:
-      '장소 별 실시간 리뷰를 공유하여\r\n추가적인 장소 정보나 실시간 인구 현황을\r\n더욱 생생하게 얻을 수 있습니다.',
+      '장소 별 실시간 리뷰를 공유하여\r\n추가적인 장소 정보나 실시간 인구 현황을 더욱\r\n생생하게 얻을 수 있습니다.',
     contentImage: content3,
   },
 ];
