@@ -141,7 +141,6 @@ const HeaderImage = styled('img')({
   position: 'absolute',
   top: 0,
   width: '100vw',
-  minWidth: 1920,
   objectFit: 'cover',
   height: 700,
   zIndex: 1,
