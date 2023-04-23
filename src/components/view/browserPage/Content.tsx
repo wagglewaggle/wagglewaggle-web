@@ -18,7 +18,7 @@ const Content = (props: ContentPropsType) => {
         <ContentImage
           src={contentImage}
           alt='content'
-          height={idx === 0 ? 427 : idx === 1 ? 437 : 478}
+          height={idx === 0 ? 427 : idx === 1 ? 431 : 478}
         />
       </SubWrap>
     </Wrap>
@@ -32,15 +32,15 @@ const Wrap = styled('div', {
 })<{ shady: boolean }>(({ shady }) => ({
   display: 'flex',
   justifyContent: 'center',
-  padding: '56px 0px 44px',
+  padding: '80px 0px',
   width: '100%',
   backgroundColor: shady ? palette.grey[100] : palette.white,
   zIndex: 0,
 }));
 
 const HeaderLogo = styled('img')({
-  width: 48,
-  height: 48,
+  width: 64,
+  height: 64,
 });
 
 const SubWrap = styled('div')({
@@ -58,11 +58,11 @@ const ContentWrap = styled('div')({
 });
 
 const TextTitle = styled('div')({
-  margin: '16px 0',
+  margin: '24px 0',
   color: palette.black,
-  fontSize: 18,
+  fontSize: 24,
   fontWeight: 600,
-  lineHeight: '24px',
+  lineHeight: '32px',
   whiteSpace: 'pre-line',
   textAlign: 'center',
 });
@@ -71,7 +71,7 @@ const TextContent = styled('div')({
   color: palette.grey[500],
   fontSize: 14,
   fontWeight: 400,
-  lineHeight: '20px',
+  lineHeight: '24px',
   whiteSpace: 'pre-line',
   textAlign: 'center',
 });
@@ -79,7 +79,7 @@ const TextContent = styled('div')({
 const ContentImage = styled('img', {
   shouldForwardProp: (prop: string) => prop !== 'height',
 })<{ height: number }>(({ height }) => ({
-  marginTop: 32,
+  marginTop: 48,
   width: 327,
   height,
   transform: 'translateZ(0)',
