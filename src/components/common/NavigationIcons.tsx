@@ -39,11 +39,11 @@ const NavigationIcons = () => {
 
   return (
     <Wrap>
-      <CustomButton variant='map' focused={focusedItem === 'map'} onClick={handleMapButtonClick}>
-        <MapIcon />
-      </CustomButton>
       <CustomButton variant='list' focused={focusedItem === 'list'} onClick={handleListButtonClick}>
         <ListIcon />
+      </CustomButton>
+      <CustomButton variant='map' focused={focusedItem === 'map'} onClick={handleMapButtonClick}>
+        <MapIcon />
       </CustomButton>
     </Wrap>
   );
