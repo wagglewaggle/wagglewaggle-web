@@ -4,7 +4,7 @@ import { isIOS, isMobile } from 'react-device-detect';
 import { createBrowserHistory } from 'history';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
-import { styled } from '@mui/material';
+import { Box, Link, styled } from '@mui/material';
 import { CustomDialog, CustomDrawer, CustomSpinner, ReviewWriteButton } from 'components/common';
 import PrivateRoutes from './PrivateRoutes';
 import DeepLinkRoutes from 'DeepLinkRoutes';
@@ -131,6 +131,10 @@ const App = observer(() => {
     [AuthStore, CustomDialogStore, CustomDrawerStore]
   );
 
+  const closeCustomDialog = useCallback(() => {
+    CustomDialogStore.setOpen(false);
+  }, [CustomDialogStore]);
+
   useEffect(() => {
     if (AuthStore.authorized || AuthStore.isLoggingIn) return;
     const refreshToken = localStorage.getItem('@wagglewaggle_refresh_token');
@@ -139,6 +143,31 @@ const App = observer(() => {
       return;
     }
   }, [AuthStore, AuthStore.authorized, reissueToken]);
+
+  useEffect(() => {
+    const handleLinkClick = () => {
+      window.open('https://wagglewaggle.co.kr', '_blank');
+    };
+
+    CustomDialogStore.openNotificationDialog({
+      title: '앱 서비스 운영 정지 안내',
+      content: (
+        <>
+          {'안녕하세요, 와글와글입니다🐰\n'}
+          <Box sx={{ fontWeight: 700 }}>
+            {'와글와글 앱 서비스를 8월 13일 이후\n다시 웹 서비스로 전환하고자 합니다.\n'}
+          </Box>
+          {'그동안 와글와글 앱을 이용해주셔서 감사합니다.\n웹사이트에서 다시만나요!'}
+        </>
+      ),
+      subContent: (
+        <Box sx={{ marginTop: '20px' }}>
+          웹사이트 링크 : <Link onClick={handleLinkClick}>https://wagglewaggle.co.kr</Link>
+        </Box>
+      ),
+      rightButton: { title: '확인', handleClick: closeCustomDialog },
+    });
+  }, [CustomDialogStore, closeCustomDialog]);
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>

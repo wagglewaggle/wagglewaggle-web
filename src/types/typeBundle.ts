@@ -188,8 +188,8 @@ interface WriterType {
 
 export interface NotiDialogOptions {
   title: string;
-  content: string;
-  subContent?: string;
+  content: string | JSX.Element;
+  subContent?: string | JSX.Element;
   leftButton?: { title: string; handleClick: () => void };
   rightButton: { title: string; handleClick: () => void };
 }

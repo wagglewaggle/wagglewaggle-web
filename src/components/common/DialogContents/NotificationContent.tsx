@@ -60,6 +60,11 @@ const Content = styled('div', {
   fontWeight: 400,
   lineHeight: '20px',
   whiteSpace: 'pre-wrap',
+  '& a': {
+    color: palette.grey[500],
+    textDecoration: 'none',
+    cursor: 'pointer',
+  },
 }));
 
 const ButtonsWrap = styled('div')({
