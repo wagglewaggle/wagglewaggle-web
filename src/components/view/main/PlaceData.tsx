@@ -54,7 +54,7 @@ const PlaceData = observer((props: propsType) => {
     '궁궐',
     '테마파크',
     '마을',
-    '한강',
+    '강변',
   ];
   const SELECTED_CHIP_STYLE: { border: string; color: string; backgroundColor: string } = {
     border: `2px solid ${isDarkTheme ? palette.white : palette.black}`,

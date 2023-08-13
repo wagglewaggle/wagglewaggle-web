@@ -15,5 +15,5 @@ export const symbols: { [key: string]: string } = {
   지하철: subway,
   테마파크: themePark,
   마을: village,
-  한강: hanRiver,
+  강변: hanRiver,
 };
