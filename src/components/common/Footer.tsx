@@ -38,7 +38,7 @@ const Footer = observer(() => {
           링크가 복사되었습니다.
         </LinkCopyPopup>
       ) : (
-        <TeamName>© 2022 Team EXIT</TeamName>
+        <TeamName>© Team EXIT</TeamName>
       )}
       <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />
     </Wrap>
