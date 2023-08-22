@@ -49,7 +49,6 @@ const SearchInput = observer((props: propsType) => {
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}
         placeholder="'강남역'를 입력해보세요"
-        sx={{}}
       />
       {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
     </Wrap>
@@ -95,6 +94,7 @@ const CustomTextField = styled(TextField, {
   width: '100%',
   height: 48,
   '& input': {
+    color: isDarkTheme ? palette.white : palette.black,
     padding: '12.5px 0 12.5px 14px',
     fontSize: 14,
     fontWeight: 400,

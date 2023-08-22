@@ -94,5 +94,5 @@ const MarginArea = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
 })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   height: '64px',
-  backgroundColor: isDarkTheme ? palette.black : palette.white,
+  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));
