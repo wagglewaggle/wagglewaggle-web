@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect, useEffect, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
@@ -16,7 +16,7 @@ const App = observer(() => {
   const { ScreenSizeStore, ThemeStore } = MobxStore;
   const { ref, width } = useResizeObserver();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
-  const PROJECT_STATUS: ProjectStatusType = 'timer';
+  const projectStatusSessionStorageKey = useMemo(() => '@wagglewaggle_project_status', []);
 
   const disableIosInputAutoZoom = () => {
     const metaEl = document.querySelector('meta[name=viewport]');
@@ -27,6 +27,11 @@ const App = observer(() => {
     newContentArr.push(maximumScaleContent);
     metaEl.setAttribute('content', newContentArr.join(', '));
   };
+
+  useLayoutEffect(() => {
+    if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer') return;
+    sessionStorage.setItem(projectStatusSessionStorageKey, 'released');
+  }, [projectStatusSessionStorageKey]);
 
   useEffect(() => {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
@@ -44,23 +49,20 @@ const App = observer(() => {
   return (
     <Wrap isDarkTheme={isDarkTheme}>
       <CreateStore.Provider value={{ MobxStore }}>
-        <ServiceWrap ref={ref} status={PROJECT_STATUS}>
-          {
-            //@ts-ignore 페이지 옮기기 전용 상수
-            PROJECT_STATUS === 'timer' ? (
-              <Landing />
-            ) : (
-              <BrowserRouter>
-                <Routes>
-                  <Route path='/not-found' element={<Error />} />
-                  <Route path='/error' element={<Error />} />
-                  <Route path='/' element={<Main />} />
-                  <Route path='/detail/*' element={<Main />} />
-                  <Route path='/*' element={<Navigate to='/not-found' />} />
-                </Routes>
-              </BrowserRouter>
-            )
-          }
+        <ServiceWrap ref={ref} status={sessionStorage.getItem(projectStatusSessionStorageKey)}>
+          {sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer' ? (
+            <Landing />
+          ) : (
+            <BrowserRouter>
+              <Routes>
+                <Route path='/not-found' element={<Error />} />
+                <Route path='/error' element={<Error />} />
+                <Route path='/' element={<Main />} />
+                <Route path='/detail/*' element={<Main />} />
+                <Route path='/*' element={<Navigate to='/not-found' />} />
+              </Routes>
+            </BrowserRouter>
+          )}
         </ServiceWrap>
         <CustomDialog />
       </CreateStore.Provider>
@@ -82,7 +84,7 @@ const Wrap = styled('div', {
 
 const ServiceWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'status',
-})<{ status: ProjectStatusType }>(({ status }) => ({
+})<{ status?: string | null }>(({ status }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -91,5 +93,3 @@ const ServiceWrap = styled('div', {
   height: 'fit-content',
   minHeight: '100vh',
 }));
-
-type ProjectStatusType = 'timer' | 'released';
