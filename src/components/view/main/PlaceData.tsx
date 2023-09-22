@@ -176,7 +176,7 @@ const ChipsWrap = styled(ScrollContainer)({
 });
 
 const Chip = styled('div', {
-  shouldForwardProp: (prop: string) => !['isDarkTheme', 'selectdStyle'].includes(prop),
+  shouldForwardProp: (prop: string) => !['isDarkTheme', 'selectedStyle'].includes(prop),
 })<{ isDarkTheme: boolean; selectedStyle: object }>(({ isDarkTheme, selectedStyle }) => ({
   display: 'flex',
   alignItems: 'center',
