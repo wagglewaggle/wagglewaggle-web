@@ -30,6 +30,7 @@ const App = observer(() => {
 
   useLayoutEffect(() => {
     if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer') return;
+    if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'released') return;
     sessionStorage.setItem(projectStatusSessionStorageKey, 'released');
   }, [projectStatusSessionStorageKey]);
 
