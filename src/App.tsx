@@ -5,6 +5,7 @@ import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
 import { CustomDialog } from 'components/common';
 import { Main, Error } from './components/view';
+import { Landing } from 'components/landing';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
 import { palette } from 'constants/';
@@ -15,6 +16,7 @@ const App = observer(() => {
   const { ScreenSizeStore, ThemeStore } = MobxStore;
   const { ref, width } = useResizeObserver();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const PROJECT_STATUS: ProjectStatusType = 'timer';
 
   const disableIosInputAutoZoom = () => {
     const metaEl = document.querySelector('meta[name=viewport]');
@@ -42,16 +44,23 @@ const App = observer(() => {
   return (
     <Wrap isDarkTheme={isDarkTheme}>
       <CreateStore.Provider value={{ MobxStore }}>
-        <ServiceWrap ref={ref}>
-          <BrowserRouter>
-            <Routes>
-              <Route path='/main/*' element={<Main />} />
-              <Route path='/not-found' element={<Error />} />
-              <Route path='/error' element={<Error />} />
-              <Route path='/' element={<Navigate to='/main' />} />
-              <Route path='/*' element={<Navigate to='/not-found' />} />
-            </Routes>
-          </BrowserRouter>
+        <ServiceWrap ref={ref} status={PROJECT_STATUS}>
+          {
+            //@ts-ignore 페이지 옮기기 전용 상수
+            PROJECT_STATUS === 'timer' ? (
+              <Landing />
+            ) : (
+              <BrowserRouter>
+                <Routes>
+                  <Route path='/main/*' element={<Main />} />
+                  <Route path='/not-found' element={<Error />} />
+                  <Route path='/error' element={<Error />} />
+                  <Route path='/' element={<Navigate to='/main' />} />
+                  <Route path='/*' element={<Navigate to='/not-found' />} />
+                </Routes>
+              </BrowserRouter>
+            )
+          }
         </ServiceWrap>
         <CustomDialog />
       </CreateStore.Provider>
@@ -71,12 +80,16 @@ const Wrap = styled('div', {
   backgroundColor: isDarkTheme ? palette.grey[800] : palette.white,
 }));
 
-const ServiceWrap = styled('div')({
+const ServiceWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'status',
+})<{ status: ProjectStatusType }>(({ status }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   width: '100%',
-  maxWidth: 1024,
+  maxWidth: status === 'timer' ? 'unset' : 1024,
   height: 'fit-content',
   minHeight: '100vh',
-});
+}));
+
+type ProjectStatusType = 'timer' | 'released';

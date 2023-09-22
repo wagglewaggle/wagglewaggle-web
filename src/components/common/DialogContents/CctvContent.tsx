@@ -33,13 +33,8 @@ const CctvContent = observer(() => {
         title='CCTV Dialog'
         src={`https://data.seoul.go.kr${CustomDialogStore?.cctvList[cctvIdx]?.src || ''}`}
         width={320 - (ScreenSizeStore.screenType === 'mobile' ? 68 : 0)}
-        height={190}
+        height={220}
         frameBorder={0}
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          background: palette.grey[500],
-        }}
       />
       <DescriptionWrap>
         <CustomIconButton cloudy={cctvIdx === 0} disabled={cctvIdx === 0} onClick={moveToPrevCctv}>
