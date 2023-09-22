@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { styled } from '@mui/material';
+import { PC } from './styled';
 import { PlaceStatus } from 'components/common';
 import { symbols, locationNames } from 'constants/';
 import { CategoryType, PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
-import { palette } from 'constants/';
+import { useOptimize } from 'util/';
 
 interface propsType {
   place: PlaceDataType;
@@ -20,6 +20,7 @@ const PlaceCard = observer((props: propsType) => {
   const navigate = useNavigate();
   const primaryCategories: string[] = useMemo(() => ['강변', '공원', '궁궐'], []);
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const AB_TEST_VARIANT = useOptimize();
 
   const handlePlaceCardClick = () => {
     LocationStore.setPlaceName(place.name);
@@ -46,75 +47,22 @@ const PlaceCard = observer((props: propsType) => {
   }, [primaryCategories, place.categories]);
 
   return (
-    <Wrap isDarkTheme={isDarkTheme} onClick={handlePlaceCardClick}>
-      <PlaceLeft>
-        <PlaceImage>
+    <PC.Wrap isDarkTheme={isDarkTheme} onClick={handlePlaceCardClick}>
+      <PC.PlaceLeft>
+        <PC.PlaceImage>
           <img src={symbols[symbol]} alt='category-symbol' />
-        </PlaceImage>
-        <PlaceTitle>
-          <PlaceName>{locationNames[place?.name || ''] || place?.name}</PlaceName>
-          <PlaceCategory>{categories}</PlaceCategory>
-        </PlaceTitle>
-      </PlaceLeft>
-      <StatusWrap>
+        </PC.PlaceImage>
+        <PC.PlaceTitle>
+          <PC.PlaceName>{locationNames[place?.name || ''] || place?.name}</PC.PlaceName>
+          <PC.PlaceCategory>{categories}</PC.PlaceCategory>
+        </PC.PlaceTitle>
+      </PC.PlaceLeft>
+      <PC.StatusWrap>
         <PlaceStatus status={place.populations[0].level} />
-      </StatusWrap>
-    </Wrap>
+        {AB_TEST_VARIANT === 1 && <PC.RightArrow />}
+      </PC.StatusWrap>
+    </PC.Wrap>
   );
 });
 
 export default PlaceCard;
-
-const Wrap = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  borderRadius: 4,
-  padding: '14px 16px',
-  marginBottom: 8,
-  width: 'calc(100% - 32px)',
-  height: 'fit-content',
-  backgroundColor: palette.grey[isDarkTheme ? 600 : 100],
-  cursor: 'pointer',
-}));
-
-const PlaceLeft = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  flexGrow: 1,
-});
-
-const PlaceImage = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  '& img': {
-    width: 40,
-    height: 40,
-  },
-});
-
-const PlaceTitle = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  marginLeft: 8,
-  lineHeight: '20px',
-});
-
-const PlaceName = styled('span')({
-  fontSize: 14,
-  fontWeight: 600,
-});
-
-const PlaceCategory = styled('span')({
-  fontSize: 14,
-  fontWeight: 400,
-});
-
-const StatusWrap = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  fontSize: 14,
-  fontWeight: 600,
-});
