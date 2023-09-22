@@ -8,6 +8,7 @@ import SearchData from './SearchData';
 import SuggestData from './SuggestData';
 import ResultData from './ResultData';
 import { Detail } from 'components/view';
+import Fab from './fab';
 import { PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import axiosRequest from 'api/axiosRequest';
@@ -177,6 +178,7 @@ const Main = observer(() => {
         }
         component={currentPage}
       />
+      <Fab />
     </SearchWrap>
   );
 });

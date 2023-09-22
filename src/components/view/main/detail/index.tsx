@@ -6,6 +6,7 @@ import DetailHeader from './DetailHeader';
 import DetailedCongestion from './DetailedCongestion';
 import LocationInformation from './LocationInformation';
 import RelatedLocations from './RelatedLocations';
+import Fab from '../fab';
 import { useStore } from 'stores';
 import { LocationDataType, ScreenType } from 'types/typeBundle';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
@@ -73,6 +74,7 @@ const Detail = observer(() => {
       <LocationInformation locationData={locationData} />
       <RelatedLocations />
       <MarginArea isDarkTheme={isDarkTheme} />
+      <Fab tooltipOff />
     </Wrap>
   );
 });

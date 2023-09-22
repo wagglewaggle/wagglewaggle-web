@@ -8,6 +8,7 @@ declare global {
   }
 }
 
+// 반환되는 variant가 1인 경우 변경된 페이지를 렌더링합니다.
 export const useOptimize = (): number | undefined => {
   const [variant, setVariant] = useState<number>();
 
