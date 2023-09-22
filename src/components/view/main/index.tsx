@@ -71,7 +71,7 @@ const Main = observer(() => {
   };
 
   const onDrawerClose = () => {
-    navigate('/main');
+    navigate('/');
     setOpenDrawer(false);
     setSearchValue('');
     setCurrentPage(<Fragment />);
