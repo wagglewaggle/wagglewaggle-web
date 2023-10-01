@@ -6,7 +6,6 @@ import { PlaceStatus } from 'components/common';
 import { symbols, locationNames } from 'constants/';
 import { CategoryType, PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
-import { useOptimize } from 'util/';
 
 interface propsType {
   place: PlaceDataType;
@@ -20,7 +19,6 @@ const PlaceCard = observer((props: propsType) => {
   const navigate = useNavigate();
   const primaryCategories: string[] = useMemo(() => ['강변', '공원', '궁궐'], []);
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
-  const AB_TEST_VARIANT = useOptimize();
 
   const handlePlaceCardClick = () => {
     LocationStore.setPlaceName(place.name);
@@ -59,7 +57,7 @@ const PlaceCard = observer((props: propsType) => {
       </PC.PlaceLeft>
       <PC.StatusWrap>
         <PlaceStatus status={place.populations[0].level} />
-        {AB_TEST_VARIANT === 1 && <PC.RightArrow />}
+        <PC.RightArrow />
       </PC.StatusWrap>
     </PC.Wrap>
   );
