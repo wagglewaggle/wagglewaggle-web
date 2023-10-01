@@ -54,6 +54,7 @@ const Wrap = styled('div')({
   justifyContent: 'flex-end',
   alignItems: 'center',
   paddingTop: 48,
+  backgroundColor: palette.grey[800],
 });
 
 const Buttons = styled('div', {
