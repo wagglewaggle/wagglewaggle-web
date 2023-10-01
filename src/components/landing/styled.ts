@@ -24,6 +24,16 @@ export const BackgroundImage = styled('div', {
   zIndex: 1,
 }));
 
+export const Lottie = styled('div')({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100vw',
+  height: '100vh',
+  zIndex: 2,
+  overflow: 'hidden',
+});
+
 export const Logo = styled(Icon)({
   position: 'relative',
   top: '1rem',

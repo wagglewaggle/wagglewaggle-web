@@ -1,4 +1,6 @@
+import { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
+import lottie from 'lottie-web';
 import { useStore } from 'stores';
 import { Footer } from 'components/common';
 import * as S from './styled';
@@ -7,6 +9,7 @@ import mobileBg from 'assets/landing/landing-firework-mobile.png';
 import pcBg from 'assets/landing/landing-firework-pc.png';
 
 export default observer(() => {
+  const lottieContainer = useRef<HTMLDivElement>(null);
   const { ScreenSizeStore } = useStore().MobxStore;
   const { screenType } = ScreenSizeStore;
 
@@ -17,10 +20,25 @@ export default observer(() => {
     );
   };
 
+  useEffect(() => {
+    if (!lottieContainer.current) return;
+    const introAnimation = lottie.loadAnimation({
+      container: lottieContainer.current,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: require(`assets/lottie/landing/background-${
+        screenType === 'pc' ? 'pc' : 'mobile'
+      }.json`),
+    });
+    return () => introAnimation.destroy();
+  }, [screenType]);
+
   return (
     <>
       <S.Wrap>
         <S.BackgroundImage bgImage={screenType === 'pc' ? pcBg : mobileBg} />
+        <S.Lottie ref={lottieContainer} />
         <S.Logo />
         <S.Title screenType={screenType}>
           {`여의도 불꽃 축제\n눈치 싸움에${screenType === 'mobile' ? '\n' : ' '}성공하고 싶다면?`}
