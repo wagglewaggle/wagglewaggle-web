@@ -1,10 +1,10 @@
 import { useLayoutEffect, useEffect, useMemo } from 'react';
-// import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
-import { styled } from '@mui/material';
+import { GlobalStyles, styled } from '@mui/material';
 import { CustomDialog } from 'components/common';
-// import { Main, Error } from './components/view';
+import { Main, Error } from './components/view';
 import { Landing } from 'components/landing';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
@@ -17,6 +17,26 @@ const App = observer(() => {
   const { ref, width } = useResizeObserver();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const projectStatusSessionStorageKey = useMemo(() => '@wagglewaggle_project_status', []);
+
+  const scrollbarDesign = useMemo(
+    () => ({
+      '&::-webkit-scrollbar': {
+        width: '10px',
+        color: palette.grey[isDarkTheme ? 500 : 300],
+        background: isDarkTheme ? palette.grey[700] : palette.white,
+      },
+      '&::-webkit-scrollbar-thumb': {
+        borderLeft: `3px solid ${isDarkTheme ? palette.grey[700] : palette.white}`,
+        borderRight: `3px solid ${isDarkTheme ? palette.grey[700] : palette.white}`,
+        borderRadius: '0.25rem',
+        backgroundColor: palette.grey[isDarkTheme ? 500 : 300],
+      },
+      '&::-webkit-scrollbar-track': {
+        background: isDarkTheme ? palette.grey[700] : palette.white,
+      },
+    }),
+    [isDarkTheme]
+  );
 
   const disableIosInputAutoZoom = () => {
     const metaEl = document.querySelector('meta[name=viewport]');
@@ -31,7 +51,7 @@ const App = observer(() => {
   useLayoutEffect(() => {
     if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer') return;
     if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'released') return;
-    sessionStorage.setItem(projectStatusSessionStorageKey, 'timer');
+    sessionStorage.setItem(projectStatusSessionStorageKey, 'released');
     sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
   }, [projectStatusSessionStorageKey]);
 
@@ -50,11 +70,12 @@ const App = observer(() => {
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
+      <GlobalStyles styles={scrollbarDesign} />
       <CreateStore.Provider value={{ MobxStore }}>
         <ServiceWrap ref={ref} status={sessionStorage.getItem(projectStatusSessionStorageKey)}>
-          {/* {sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer' ? ( */}
-          <Landing />
-          {/* ) : (
+          {sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer' ? (
+            <Landing />
+          ) : (
             <BrowserRouter>
               <Routes>
                 <Route path='/not-found' element={<Error />} />
@@ -64,7 +85,7 @@ const App = observer(() => {
                 <Route path='/*' element={<Navigate to='/not-found' />} />
               </Routes>
             </BrowserRouter>
-          )} */}
+          )}
         </ServiceWrap>
         <CustomDialog />
       </CreateStore.Provider>
