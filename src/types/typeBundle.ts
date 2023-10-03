@@ -14,10 +14,10 @@ export interface PlaceDataType {
   idx: number;
   name: string;
   categories: CategoryType[];
-  poiId: number;
+  poiId?: number;
   x: number;
   y: number;
-  populations: PopulationType[];
+  population?: PopulationType;
 }
 
 export interface LocationInfoType {
