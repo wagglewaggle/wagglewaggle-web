@@ -1,10 +1,10 @@
 import { useLayoutEffect, useEffect, useMemo } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+// import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
 import { CustomDialog } from 'components/common';
-import { Main, Error } from './components/view';
+// import { Main, Error } from './components/view';
 import { Landing } from 'components/landing';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
@@ -52,9 +52,9 @@ const App = observer(() => {
     <Wrap isDarkTheme={isDarkTheme}>
       <CreateStore.Provider value={{ MobxStore }}>
         <ServiceWrap ref={ref} status={sessionStorage.getItem(projectStatusSessionStorageKey)}>
-          {sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer' ? (
-            <Landing />
-          ) : (
+          {/* {sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer' ? ( */}
+          <Landing />
+          {/* ) : (
             <BrowserRouter>
               <Routes>
                 <Route path='/not-found' element={<Error />} />
@@ -64,7 +64,7 @@ const App = observer(() => {
                 <Route path='/*' element={<Navigate to='/not-found' />} />
               </Routes>
             </BrowserRouter>
-          )}
+          )} */}
         </ServiceWrap>
         <CustomDialog />
       </CreateStore.Provider>
