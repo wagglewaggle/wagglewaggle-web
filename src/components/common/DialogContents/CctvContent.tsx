@@ -4,16 +4,23 @@ import { IconButton, styled } from '@mui/material';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 import { CctvType } from 'types/typeBundle';
-import leftIcon from 'assets/icons/left-icon.svg';
-import rightIcon from 'assets/icons/right-icon.svg';
+import leftIcon from 'assets/icons/previous-icon.svg';
+import rightIcon from 'assets/icons/next-icon.svg';
 
-const CctvContent = observer(() => {
+type PropsType = {
+  isHeaderContent?: boolean;
+};
+
+const CctvContent = observer((props: PropsType) => {
+  const { isHeaderContent } = props;
   const [cctvIdx, setCctvIdx] = useState<number>(0);
-  const { ScreenSizeStore, CustomDialogStore, ThemeStore } = useStore().MobxStore;
+  const { CustomDialogStore, ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const { screenType } = ScreenSizeStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const SELECTED_CIRCLE_STYLE: { backgroundColor: string } = {
     backgroundColor: isDarkTheme ? palette.white : palette.black,
   };
+  const shouldWidthBeShortened = screenType === 'mobile' && !isHeaderContent;
 
   const handleCircleClick = (idx: number) => {
     setCctvIdx(idx);
@@ -32,14 +39,9 @@ const CctvContent = observer(() => {
       <iframe
         title='CCTV Dialog'
         src={`https://data.seoul.go.kr${CustomDialogStore?.cctvList[cctvIdx]?.src || ''}`}
-        width={320 - (ScreenSizeStore.screenType === 'mobile' ? 68 : 0)}
-        height={190}
+        width={320 - (shouldWidthBeShortened ? 68 : 0)}
+        height={220}
         frameBorder={0}
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          background: palette.grey[500],
-        }}
       />
       <DescriptionWrap>
         <CustomIconButton cloudy={cctvIdx === 0} disabled={cctvIdx === 0} onClick={moveToPrevCctv}>

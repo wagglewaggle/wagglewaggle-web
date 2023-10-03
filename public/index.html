@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- anti-flicker snippet (recommended)  -->
+    <style>
+      .async-hide {
+        opacity: 0 !important;
+      }
+    </style>
+    <script>
+      (function (a, s, y, n, c, h, i, d, e) {
+        s.className += ' ' + y;
+        h.start = 1 * new Date();
+        h.end = i = function () {
+          s.className = s.className.replace(RegExp(' ?' + y), '');
+        };
+        (a[n] = a[n] || []).hide = h;
+        setTimeout(function () {
+          i();
+          h.end = null;
+        }, c);
+        h.timeout = c;
+      })(window, document.documentElement, 'async-hide', 'dataLayer', 4000, {
+        'OPT-5VV4WH5': true,
+      });
+    </script>
+    <script async src="https://www.googleoptimize.com/optimize.js?id=OPT-5VV4WH5"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XSXMRLM07D"></script>
     <script>
@@ -11,18 +35,18 @@
       gtag('js', new Date());
       gtag('config', 'G-XSXMRLM07D');
     </script>
-    <script
+    <!-- <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4936670164311173"
       crossorigin="anonymous"
-    ></script>
-    <ins
+    ></script> -->
+    <!-- <ins
       class="kakao_ad_area"
       style="display: none"
       data-ad-unit="DAN-Kgmw8xjEuNlrBabF"
       data-ad-width="320"
       data-ad-height="100"
-    ></ins>
+    ></ins> -->
     <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
@@ -38,7 +62,7 @@
     <meta property="og:url" content="wagglewaggle.co.kr" />
     <meta property="og:title" content="와글와글" />
     <meta property="og:description" content="가고싶은 장소의 인구 현황을 확인해보세요✨" />
-    <meta property="og:image" content="%PUBLIC_URL%/thumbnail.svg" />
+    <meta property="og:image" content="%PUBLIC_URL%/thumbnail.png" />
     <meta name="naver-site-verification" content="646bcafeec4aef4782b661057fce1f0a9fa08847" />
     <meta name="google-site-verification" content="7KUKk8_WqAj1ueLZSF2m_DDhgREqGh_3oTNOomaHLCw" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo.png" />

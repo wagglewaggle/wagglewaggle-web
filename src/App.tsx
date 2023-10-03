@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useLayoutEffect, useEffect, useMemo } from 'react';
+// import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { styled } from '@mui/material';
 import { CustomDialog } from 'components/common';
-import { Main, Error } from './components/view';
+// import { Main, Error } from './components/view';
+import { Landing } from 'components/landing';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
 import { palette } from 'constants/';
@@ -15,6 +16,7 @@ const App = observer(() => {
   const { ScreenSizeStore, ThemeStore } = MobxStore;
   const { ref, width } = useResizeObserver();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const projectStatusSessionStorageKey = useMemo(() => '@wagglewaggle_project_status', []);
 
   const disableIosInputAutoZoom = () => {
     const metaEl = document.querySelector('meta[name=viewport]');
@@ -25,6 +27,13 @@ const App = observer(() => {
     newContentArr.push(maximumScaleContent);
     metaEl.setAttribute('content', newContentArr.join(', '));
   };
+
+  useLayoutEffect(() => {
+    if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer') return;
+    if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'released') return;
+    sessionStorage.setItem(projectStatusSessionStorageKey, 'timer');
+    sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
+  }, [projectStatusSessionStorageKey]);
 
   useEffect(() => {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
@@ -42,16 +51,20 @@ const App = observer(() => {
   return (
     <Wrap isDarkTheme={isDarkTheme}>
       <CreateStore.Provider value={{ MobxStore }}>
-        <ServiceWrap ref={ref}>
-          <BrowserRouter>
-            <Routes>
-              <Route path='/main/*' element={<Main />} />
-              <Route path='/not-found' element={<Error />} />
-              <Route path='/error' element={<Error />} />
-              <Route path='/' element={<Navigate to='/main' />} />
-              <Route path='/*' element={<Navigate to='/not-found' />} />
-            </Routes>
-          </BrowserRouter>
+        <ServiceWrap ref={ref} status={sessionStorage.getItem(projectStatusSessionStorageKey)}>
+          {/* {sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer' ? ( */}
+          <Landing />
+          {/* ) : (
+            <BrowserRouter>
+              <Routes>
+                <Route path='/not-found' element={<Error />} />
+                <Route path='/error' element={<Error />} />
+                <Route path='/' element={<Main />} />
+                <Route path='/detail/*' element={<Main />} />
+                <Route path='/*' element={<Navigate to='/not-found' />} />
+              </Routes>
+            </BrowserRouter>
+          )} */}
         </ServiceWrap>
         <CustomDialog />
       </CreateStore.Provider>
@@ -71,12 +84,14 @@ const Wrap = styled('div', {
   backgroundColor: isDarkTheme ? palette.grey[800] : palette.white,
 }));
 
-const ServiceWrap = styled('div')({
+const ServiceWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'status',
+})<{ status?: string | null }>(({ status }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   width: '100%',
-  maxWidth: 1024,
+  maxWidth: status === 'timer' ? 'unset' : 1024,
   height: 'fit-content',
   minHeight: '100vh',
-});
+}));

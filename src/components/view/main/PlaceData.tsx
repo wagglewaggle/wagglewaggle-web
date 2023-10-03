@@ -1,36 +1,39 @@
+// 불꽃 축제 버전에서는 소팅 기능을 사용하지 않습니다.
 import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Select, MenuItem, SelectChangeEvent, styled } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+// import { Select, MenuItem, SelectChangeEvent, styled } from '@mui/material';
+// import { Select, MenuItem, styled } from '@mui/material';
+import { styled } from '@mui/material';
+// import makeStyles from '@mui/styles/makeStyles';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard, Footer } from 'components/common';
 import { useStore } from 'stores';
 import { CategoryType, PlaceDataType, ScreenType } from 'types/typeBundle';
 import { palette } from 'constants/';
-import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
+// import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
 
-const useStyles = makeStyles(() => ({
-  menu: {
-    marginTop: 8,
-    '& ul': {
-      display: 'flex',
-      flexDirection: 'column',
-      padding: 0,
-      margin: '20px 24px',
-      gap: 4,
-    },
-    '& li': {
-      padding: '0 5px',
-      width: 96,
-    },
-    '& .MuiPaper-root': {
-      display: 'flex',
-      alignItems: 'center',
-      width: 144,
-      height: 'auto',
-    },
-  },
-}));
+// const useStyles = makeStyles(() => ({
+//   menu: {
+//     marginTop: 8,
+//     '& ul': {
+//       display: 'flex',
+//       flexDirection: 'column',
+//       padding: 0,
+//       margin: '20px 24px',
+//       gap: 4,
+//     },
+//     '& li': {
+//       padding: '0 5px',
+//       width: 96,
+//     },
+//     '& .MuiPaper-root': {
+//       display: 'flex',
+//       alignItems: 'center',
+//       width: 144,
+//       height: 'auto',
+//     },
+//   },
+// }));
 
 interface propsType {
   placeData: PlaceDataType[];
@@ -38,11 +41,12 @@ interface propsType {
 }
 
 const PlaceData = observer((props: propsType) => {
-  const { placeData, handlePlaceDataChange } = props;
+  // const { placeData, handlePlaceDataChange } = props;
+  const { placeData } = props;
   const [renderData, setRenderData] = useState<PlaceDataType[]>([]);
-  const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
+  // const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
-  const classes = useStyles();
+  // const classes = useStyles();
   const { ScreenSizeStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const CHIPS: string[] = [
@@ -66,25 +70,25 @@ const PlaceData = observer((props: propsType) => {
     setSelectedCategory(chip);
   };
 
-  const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
-    setPlaceOrder(e.target.value as string);
-    const statusArr: string[] = [
-      'VERY_RELAXATION',
-      'RELAXATION',
-      'NORMAL',
-      'CROWDED',
-      'VERY_CROWDED',
-    ];
-    handlePlaceDataChange(
-      placeData.sort((prev: PlaceDataType, next: PlaceDataType) => {
-        const prevLevel = statusArr.indexOf(prev.populations[0].level);
-        const nextLevel = statusArr.indexOf(next.populations[0].level);
-        if (prevLevel > nextLevel) return e.target.value === '복잡한 순' ? -1 : 1;
-        else if (nextLevel > prevLevel) return e.target.value === '복잡한 순' ? 1 : -1;
-        return 0;
-      })
-    );
-  };
+  // const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
+  //   setPlaceOrder(e.target.value as string);
+  //   const statusArr: string[] = [
+  //     'VERY_RELAXATION',
+  //     'RELAXATION',
+  //     'NORMAL',
+  //     'CROWDED',
+  //     'VERY_CROWDED',
+  //   ];
+  //   handlePlaceDataChange(
+  //     placeData.sort((prev: PlaceDataType, next: PlaceDataType) => {
+  //       const prevLevel = statusArr.indexOf(prev.populations[0].level);
+  //       const nextLevel = statusArr.indexOf(next.populations[0].level);
+  //       if (prevLevel > nextLevel) return e.target.value === '복잡한 순' ? -1 : 1;
+  //       else if (nextLevel > prevLevel) return e.target.value === '복잡한 순' ? 1 : -1;
+  //       return 0;
+  //     })
+  //   );
+  // };
 
   useEffect(() => {
     setRenderData(placeData);
@@ -118,10 +122,10 @@ const PlaceData = observer((props: propsType) => {
       </ChipsWrap>
       <SubHeader>
         <SubHeaderLeft>
-          장소
+          🔥 불꽃 축제 명당
           <SubHeaderLength>{renderData.length}</SubHeaderLength>
         </SubHeaderLeft>
-        <CustomSelect
+        {/* <CustomSelect
           isDarkTheme={isDarkTheme}
           onChange={handleChangeSelect}
           value={placeOrder}
@@ -146,7 +150,7 @@ const PlaceData = observer((props: propsType) => {
               {menu}
             </CustomMenuItem>
           ))}
-        </CustomSelect>
+        </CustomSelect> */}
       </SubHeader>
       <PlacesWrap screenType={ScreenSizeStore.screenType}>
         {renderData.map((place: PlaceDataType, idx: number) => (
@@ -176,7 +180,7 @@ const ChipsWrap = styled(ScrollContainer)({
 });
 
 const Chip = styled('div', {
-  shouldForwardProp: (prop: string) => !['isDarkTheme', 'selectdStyle'].includes(prop),
+  shouldForwardProp: (prop: string) => !['isDarkTheme', 'selectedStyle'].includes(prop),
 })<{ isDarkTheme: boolean; selectedStyle: object }>(({ isDarkTheme, selectedStyle }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -207,36 +211,36 @@ const SubHeaderLength = styled('div')({
   marginLeft: 5,
 });
 
-const CustomSelect = styled(Select, {
-  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
-  color: isDarkTheme ? palette.white : palette.black,
-  '& div': {
-    fontSize: 14,
-    fontWeight: 600,
-  },
-  '& span': {
-    transform: 'translateX(10px)',
-  },
-  '& svg': {
-    right: 0,
-    width: 16,
-    height: 16,
-  },
-  '& fieldset': {
-    display: 'none',
-  },
-  '& .MuiSelect-select': {
-    padding: 0,
-  },
-  '& path': {
-    fill: isDarkTheme ? palette.white : palette.black,
-  },
-}));
+// const CustomSelect = styled(Select, {
+//   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+// })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+//   color: isDarkTheme ? palette.white : palette.black,
+//   '& div': {
+//     fontSize: 14,
+//     fontWeight: 600,
+//   },
+//   '& span': {
+//     transform: 'translateX(10px)',
+//   },
+//   '& svg': {
+//     right: 0,
+//     width: 16,
+//     height: 16,
+//   },
+//   '& fieldset': {
+//     display: 'none',
+//   },
+//   '& .MuiSelect-select': {
+//     padding: 0,
+//   },
+//   '& path': {
+//     fill: isDarkTheme ? palette.white : palette.black,
+//   },
+// }));
 
-const CustomMenuItem = styled(MenuItem)({
-  fontWeight: 600,
-});
+// const CustomMenuItem = styled(MenuItem)({
+//   fontWeight: 600,
+// });
 
 const PlacesWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'screenType',

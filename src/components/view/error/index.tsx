@@ -25,7 +25,7 @@ const Error = observer(() => {
 
   const handleMoveHome = () => {
     ErrorStore.setStatusCode(null);
-    navigate('/main');
+    navigate('/');
   };
 
   useEffect(() => {

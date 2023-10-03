@@ -30,4 +30,8 @@ export class CustomDialogStore {
     this.cctvList = newCctvLists;
     this.open = true;
   };
+
+  setCctvLists = (newCctvLists: CctvType[]) => {
+    this.cctvList = newCctvLists;
+  };
 }
