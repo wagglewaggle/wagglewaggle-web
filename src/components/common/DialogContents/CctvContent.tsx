@@ -38,7 +38,7 @@ const CctvContent = observer((props: PropsType) => {
     <Wrap>
       <iframe
         title='CCTV Dialog'
-        src={`https://data.seoul.go.kr${CustomDialogStore?.cctvList[cctvIdx]?.src || ''}`}
+        src={CustomDialogStore?.cctvList[cctvIdx]?.src || ''}
         width={320 - (shouldWidthBeShortened ? 68 : 0)}
         height={220}
         frameBorder={0}
