@@ -51,14 +51,15 @@ const PlaceData = observer((props: propsType) => {
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const CHIPS: string[] = [
     '전체',
+    '놀이공원',
     '쇼핑몰',
     '공원',
-    '골목 및 거리',
+    '한강',
+    '관광 명소',
     '지하철',
-    '궁궐',
-    '테마파크',
-    '마을',
-    '강변',
+    '거리',
+    '복합문화공간',
+    '불꽃축제',
   ];
   const SELECTED_CHIP_STYLE: { border: string; color: string; backgroundColor: string } = {
     border: `2px solid ${isDarkTheme ? palette.white : palette.black}`,

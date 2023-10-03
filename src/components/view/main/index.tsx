@@ -111,8 +111,8 @@ const Main = observer(() => {
           if (!next.population) return -1;
           const prevLevel = statusArr.indexOf(prev.population.level);
           const nextLevel = statusArr.indexOf(next.population.level);
-          if (prevLevel > nextLevel) return -1;
-          else if (nextLevel > prevLevel) return 1;
+          if (prevLevel > nextLevel) return 1;
+          else if (nextLevel > prevLevel) return -1;
           return 0;
         }
       )
