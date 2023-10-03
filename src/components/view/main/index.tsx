@@ -1,8 +1,8 @@
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import { CustomDrawer, SearchInput } from 'components/common';
+import { CustomDrawer } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
 import SuggestData from './SuggestData';
@@ -20,6 +20,7 @@ const Main = observer(() => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
+  let timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { LocationStore, CustomDialogStore, ErrorStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,10 +70,13 @@ const Main = observer(() => {
   };
 
   const onDrawerClose = () => {
-    navigate('/');
     setOpenDrawer(false);
-    setSearchValue('');
-    setCurrentPage(<Fragment />);
+    navigate('/');
+    timeoutRef.current = setTimeout(() => {
+      setSearchValue('');
+      setCurrentPage(<></>);
+      setIncludeInput(true);
+    }, 300);
   };
 
   const navigateToHome = () => {
@@ -97,13 +101,22 @@ const Main = observer(() => {
   }, []);
 
   useEffect(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     const newDrawerState: boolean = location.search.length !== 0;
-    setOpenDrawer(newDrawerState);
-    setIncludeInput(!newDrawerState);
-    setCurrentPage(newDrawerState ? <Detail /> : <Fragment />);
-    setSearchValue(newDrawerState ? searchValue : '');
+    if (!newDrawerState) {
+      onDrawerClose();
+      return;
+    }
+    setOpenDrawer(true);
+    setIncludeInput(false);
+    setCurrentPage(<Detail />);
+    setSearchValue(searchValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
+
+  useEffect(() => {
+    return () => clearTimeout(timeoutRef.current ?? undefined);
+  }, []);
 
   useEffect(() => {
     if (searchValue.length === 0 || location.search.length === 0) {
@@ -127,22 +140,14 @@ const Main = observer(() => {
       </SearchBox>
       <PlaceData />
       <CustomDrawer
+        searchValue={searchValue}
+        handleSearchEnter={handleSearchEnter}
+        onDrawerClose={onDrawerClose}
+        handleSearchClick={handleSearchClick}
+        handleSearchValueChange={handleSearchValueChange}
         open={openDrawer}
         onClose={onDrawerClose}
-        searchInput={
-          includeInput ? (
-            <SearchInput
-              searchValue={searchValue}
-              handleSearchEnter={handleSearchEnter}
-              handleDrawerClose={
-                searchValue.length === 0 || !LocationStore.suggestionExists
-                  ? onDrawerClose
-                  : handleSearchClick
-              }
-              handleSearchValueChange={handleSearchValueChange}
-            />
-          ) : undefined
-        }
+        includeInput={includeInput}
         component={currentPage}
       />
       <Fab />

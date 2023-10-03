@@ -1,21 +1,37 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
+import SearchInput from './SearchInput';
 import { Drawer, styled } from '@mui/material';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 
 interface propsType {
+  searchValue: string;
+  handleSearchEnter: (searchWord: string) => void;
+  onDrawerClose: () => void;
+  handleSearchClick: () => void;
+  handleSearchValueChange: (newValue: string) => void;
   open: boolean;
-  searchInput?: JSX.Element;
+  includeInput: boolean;
   component: JSX.Element;
   onClose: () => void;
 }
 
 const CustomDrawer = observer((props: propsType) => {
-  const { open, searchInput = <></>, component, onClose } = props;
+  const {
+    searchValue,
+    handleSearchEnter,
+    onDrawerClose,
+    handleSearchClick,
+    handleSearchValueChange,
+    open,
+    includeInput,
+    component,
+    onClose,
+  } = props;
   const drawerRef = useRef<HTMLDivElement>(null);
-  const { ThemeStore } = useStore().MobxStore;
+  const { ThemeStore, LocationStore } = useStore().MobxStore;
   const location = useLocation();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
@@ -33,9 +49,19 @@ const CustomDrawer = observer((props: propsType) => {
       open={open}
       anchor='right'
       onClose={onClose}
-      transitionDuration={0}
     >
-      {searchInput}
+      {includeInput && (
+        <SearchInput
+          searchValue={searchValue}
+          handleSearchEnter={handleSearchEnter}
+          handleDrawerClose={
+            searchValue.length === 0 || !LocationStore.suggestionExists
+              ? onDrawerClose
+              : handleSearchClick
+          }
+          handleSearchValueChange={handleSearchValueChange}
+        />
+      )}
       {component}
     </CustomMuiDrawer>
   );
