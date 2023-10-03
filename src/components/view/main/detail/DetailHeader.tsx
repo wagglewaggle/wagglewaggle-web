@@ -36,9 +36,9 @@ const DetailHeader = observer((props: propsType) => {
     setBgPath(
       `${require(`assets/detailBg/${ThemeStore.theme}/${
         bgPaths[locationData?.name || ''] || 'Street'
-      }/${locationData?.populations[0].level || 'NORMAL'}.png`)}`
+      }/${locationData?.population.level || 'NORMAL'}.png`)}`
     );
-  }, [ThemeStore.theme, locationData?.name, locationData?.populations]);
+  }, [ThemeStore.theme, locationData?.name, locationData?.population]);
 
   return (
     <>

@@ -8,17 +8,17 @@ import { PlaceDataType, ScreenType } from 'types/typeBundle';
 import { palette, locationNames } from 'constants/';
 
 interface propsType {
-  placeData: PlaceDataType[];
   searchValue: string;
   handleWordClick: (searchWord: string) => void;
   handleLatestListChange: (newList: string[]) => void;
 }
 
 const SuggestData = observer((props: propsType) => {
-  const { placeData, searchValue, handleWordClick, handleLatestListChange } = props;
+  const { searchValue, handleWordClick, handleLatestListChange } = props;
   const [searchBlockList, setSearchBlockList] = useState<string[]>([]);
   const [suggestionList, setSuggestionList] = useState<PlaceDataType[]>([]);
   const { LocationStore, ScreenSizeStore } = useStore().MobxStore;
+  const { allPlaces } = LocationStore;
 
   const handleRemoveLatestList = (list: string) => {
     const newList: string[] = JSON.parse(JSON.stringify(searchBlockList));
@@ -42,12 +42,12 @@ const SuggestData = observer((props: propsType) => {
   };
 
   const getSuggestionList = useCallback(() => {
-    const newSuggestionList: PlaceDataType[] = placeData.filter((data: PlaceDataType) =>
+    const newSuggestionList: PlaceDataType[] = allPlaces.filter((data: PlaceDataType) =>
       (locationNames[data.name] || data.name).includes(searchValue)
     );
     setSuggestionList(newSuggestionList);
     LocationStore.setSuggestionExists(newSuggestionList.length > 0);
-  }, [placeData, searchValue, LocationStore]);
+  }, [allPlaces, searchValue, LocationStore]);
 
   useEffect(() => {
     getSuggestionList();

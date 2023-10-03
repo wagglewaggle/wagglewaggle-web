@@ -56,7 +56,7 @@ export interface LocationDataType {
   name: string;
   x: number;
   y: number;
-  populations: PopulationType[];
+  population: PopulationType;
   level: StatusType;
   accidents: AccidentType[];
   cctvs: CctvType[];

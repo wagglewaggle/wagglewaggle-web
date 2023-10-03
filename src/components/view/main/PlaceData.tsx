@@ -1,5 +1,5 @@
 // 불꽃 축제 버전에서는 소팅 기능을 사용하지 않습니다.
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 // import { Select, MenuItem, SelectChangeEvent, styled } from '@mui/material';
 // import { Select, MenuItem, styled } from '@mui/material';
@@ -8,8 +8,10 @@ import { styled } from '@mui/material';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard, Footer } from 'components/common';
 import { useStore } from 'stores';
-import { CategoryType, PlaceDataType, ScreenType } from 'types/typeBundle';
+import { PlaceDataType, ScreenType } from 'types/typeBundle';
 import { palette } from 'constants/';
+import { filterPlaceCard } from 'util/';
+import { request } from 'api/request';
 // import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
 
 // const useStyles = makeStyles(() => ({
@@ -35,32 +37,16 @@ import { palette } from 'constants/';
 //   },
 // }));
 
-interface propsType {
-  placeData: PlaceDataType[];
-  handlePlaceDataChange: (newPlaceData: PlaceDataType[]) => void;
-}
-
-const PlaceData = observer((props: propsType) => {
+const PlaceData = observer(() => {
   // const { placeData, handlePlaceDataChange } = props;
-  const { placeData } = props;
   const [renderData, setRenderData] = useState<PlaceDataType[]>([]);
   // const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   // const classes = useStyles();
-  const { ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const [chips, setChips] = useState<string[]>([]);
+  const { LocationStore, ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const { allPlaces } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
-  const CHIPS: string[] = [
-    '전체',
-    '놀이공원',
-    '쇼핑몰',
-    '공원',
-    '한강',
-    '관광 명소',
-    '지하철',
-    '거리',
-    '복합문화공간',
-    '불꽃축제',
-  ];
   const SELECTED_CHIP_STYLE: { border: string; color: string; backgroundColor: string } = {
     border: `2px solid ${isDarkTheme ? palette.white : palette.black}`,
     color: isDarkTheme ? palette.black : palette.white,
@@ -70,6 +56,22 @@ const PlaceData = observer((props: propsType) => {
   const handleClickChip = (chip: string) => {
     setSelectedCategory(chip);
   };
+
+  const getChips = async () => {
+    const response = await request.getCategory();
+    setChips(['전체', ...response?.data.list.map((ele: { type: string }) => ele.type)]);
+  };
+
+  const filterCardsByCategory = useCallback(async () => {
+    if (selectedCategory === '전체') {
+      setRenderData(filterPlaceCard(allPlaces));
+      return;
+    }
+    const params = { populationSort: true, category: selectedCategory };
+    const ktData = (await request.getKtPlaces(params)).data.list;
+    const sktData = (await request.getSktPlaces(params)).data.list;
+    setRenderData(filterPlaceCard([...ktData, ...sktData]));
+  }, [selectedCategory, allPlaces]);
 
   // const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
   //   setPlaceOrder(e.target.value as string);
@@ -91,28 +93,30 @@ const PlaceData = observer((props: propsType) => {
   //   );
   // };
 
-  useEffect(() => {
-    setRenderData(placeData);
-  }, [placeData]);
+  useLayoutEffect(() => {
+    if (chips.length > 0) return;
+    getChips();
+  }, [chips]);
 
   useEffect(() => {
-    const newRenderData: PlaceDataType[] = JSON.parse(JSON.stringify(placeData));
-    setRenderData(
-      newRenderData.filter((place: PlaceDataType) => {
-        const categories: string[] = place.categories.map(
-          (category: CategoryType) => category.type
-        );
-        return selectedCategory === '전체' || categories.includes(selectedCategory);
-      })
-    );
-  }, [placeData, selectedCategory]);
+    filterCardsByCategory();
+    // const newRenderData: PlaceDataType[] = JSON.parse(JSON.stringify(placeData));
+    // setRenderData(
+    //   newRenderData.filter((place: PlaceDataType) => {
+    //     const categories: string[] = place.categories.map(
+    //       (category: CategoryType) => category.type
+    //     );
+    //     return selectedCategory === '전체' || categories.includes(selectedCategory);
+    //   })
+    // );
+  }, [selectedCategory, allPlaces, filterCardsByCategory]);
 
   return (
     <Wrap>
       <ChipsWrap horizontal>
-        {CHIPS.map((chip: string, idx: number) => (
+        {chips.map((chip: string) => (
           <Chip
-            key={`chip-${idx}`}
+            key={chip}
             isDarkTheme={isDarkTheme}
             selectedStyle={selectedCategory === chip ? SELECTED_CHIP_STYLE : {}}
             onClick={() => handleClickChip(chip)}
@@ -250,5 +254,5 @@ const PlacesWrap = styled('div', {
   justifyContent: 'space-between',
   columnGap: 24,
   minWidth: 'fit-content',
-  gridTemplateColumns: screenType === 'mobile' ? '100%' : 'repeat(auto-fit, minmax(348px, 1fr))',
+  gridTemplateColumns: screenType === 'mobile' ? '100%' : 'repeat(2, minmax(348px, 1fr))',
 }));

@@ -9,16 +9,14 @@ import SuggestData from './SuggestData';
 import ResultData from './ResultData';
 import { Detail } from 'components/view';
 import Fab from './fab';
-import { PlaceDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
-import axiosRequest from 'api/axiosRequest';
+import { request } from 'api/request';
 import { palette } from 'constants/';
 import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 
 const Main = observer(() => {
-  const [currentPage, setCurrentPage] = useState<JSX.Element>(<Fragment />);
-  const [placeData, setPlaceData] = useState<PlaceDataType[]>([]);
+  const [currentPage, setCurrentPage] = useState<JSX.Element>(<></>);
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
@@ -33,7 +31,7 @@ const Main = observer(() => {
 
   const handleWordClick = (searchWord: string) => {
     setSearchValue(searchWord);
-    setCurrentPage(<ResultData placeData={placeData} searchWord={searchWord} />);
+    setCurrentPage(<ResultData searchWord={searchWord} />);
   };
 
   const handleSearchEnter = (searchWord: string) => {
@@ -51,7 +49,6 @@ const Main = observer(() => {
         />
       ) : (
         <SuggestData
-          placeData={placeData}
           searchValue={newValue}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
@@ -82,44 +79,12 @@ const Main = observer(() => {
     onDrawerClose();
   };
 
-  const handlePlaceDataChange = (newPlaceData: PlaceDataType[]) => {
-    setPlaceData(JSON.parse(JSON.stringify(newPlaceData)));
-  };
-
   const initPlaceData = async () => {
     const params = { populationSort: true };
-    const ktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-      'kt-place',
-      params
-    );
-    const sktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-      'skt-place',
-      params
-    );
+    const ktData = await request.getKtPlaces(params);
+    const sktData = await request.getSktPlaces(params);
     if (!ktData || !sktData) return;
-    const statusArr: string[] = [
-      'VERY_RELAXATION',
-      'RELAXATION',
-      'NORMAL',
-      'CROWDED',
-      'VERY_CROWDED',
-    ];
-    setPlaceData(
-      [...ktData.data.list, ...sktData.data.list].sort(
-        (prev: PlaceDataType, next: PlaceDataType) => {
-          if (!prev.population) return 1;
-          if (!next.population) return -1;
-          const prevLevel = statusArr.indexOf(prev.population.level);
-          const nextLevel = statusArr.indexOf(next.population.level);
-          if (prevLevel > nextLevel) return 1;
-          else if (nextLevel > prevLevel) return -1;
-          return 0;
-        }
-      )
-    );
-    [...ktData.data.list, ...sktData.data.list].forEach((data: PlaceDataType) => {
-      LocationStore.setCategories(data.name, data.categories);
-    });
+    LocationStore.setAllPlaces([...ktData.data.list, ...sktData.data.list]);
   };
 
   useEffect(() => {
@@ -160,7 +125,7 @@ const Main = observer(() => {
         <EmptySpace />
         <SearchIcon onClick={handleSearchClick} />
       </SearchBox>
-      <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
+      <PlaceData />
       <CustomDrawer
         open={openDrawer}
         onClose={onDrawerClose}

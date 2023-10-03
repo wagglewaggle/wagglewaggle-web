@@ -10,7 +10,7 @@ import Fab from '../fab';
 import { useStore } from 'stores';
 import { LocationDataType, ScreenType } from 'types/typeBundle';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
-import axiosRequest from 'api/axiosRequest';
+import { request } from 'api/request';
 
 const Detail = observer(() => {
   const [locationData, setLocationData] = useState<LocationDataType | null>(null);
@@ -29,19 +29,20 @@ const Detail = observer(() => {
     if (location.search.length === 0) return;
     const placeName: string = decodeURI(location.search).replace('?name=', '');
     LocationStore.setPlaceName(placeName);
-    const requestType: string = locationRequestTypes.skt.includes(
+    const requestType: 'skt' | 'kt' = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName
     )
-      ? 'skt-place'
-      : 'kt-place';
+      ? 'skt'
+      : 'kt';
     const pathnameArr: string[] = location.pathname.split('/');
     const placeId: string = pathnameArr[pathnameArr.length - 1];
     if (!Number(placeId)) {
       navigate('/');
       return;
     }
-    const response: { data: LocationDataType } | undefined = await axiosRequest(
-      `${requestType}/${placeId}`
+    const response: { data: LocationDataType } | undefined = await request.getLocationDetail(
+      requestType,
+      placeId
     );
     if (!response) return;
     setLocationData(response.data);

@@ -5,7 +5,7 @@ import { PlaceCard } from 'components/common';
 import { PlaceDataType } from 'types/typeBundle';
 import { palette, locationNames, districts } from 'constants/';
 import { useStore } from 'stores';
-import axiosRequest from 'api/axiosRequest';
+import { request } from 'api/request';
 
 const RelatedLocations = observer(() => {
   const [places, setPlaces] = useState<PlaceDataType[]>([]);
@@ -19,8 +19,8 @@ const RelatedLocations = observer(() => {
     )
       return;
     type responseType = { data: { ktPlaces: PlaceDataType[]; sktPlaces: PlaceDataType[] } };
-    const response: responseType | undefined = await axiosRequest(
-      `location/${districts[locationNames[LocationStore.placeName] || LocationStore.placeName]}`
+    const response: responseType | undefined = await request.getLocationData(
+      districts[locationNames[LocationStore.placeName] || LocationStore.placeName]
     );
     if (!response) return;
     setPlaces(
@@ -36,13 +36,11 @@ const RelatedLocations = observer(() => {
 
   return (
     <>
-      {places.length === 0 ? (
-        <></>
-      ) : (
+      {places.length > 0 && (
         <Wrap isDarkTheme={isDarkTheme}>
           <Header>주변 장소 현황</Header>
-          {places.map((place: PlaceDataType, idx: number) => (
-            <PlaceCard key={`related-locations-${idx}`} place={place} />
+          {places.map((place: PlaceDataType) => (
+            <PlaceCard key={place.name} place={place} />
           ))}
         </Wrap>
       )}
