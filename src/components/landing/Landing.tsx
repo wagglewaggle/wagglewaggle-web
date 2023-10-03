@@ -11,7 +11,7 @@ import pcBg from 'assets/landing/landing-firework-pc.png';
 export default observer(() => {
   const lottieContainer = useRef<HTMLDivElement>(null);
   const { ScreenSizeStore } = useStore().MobxStore;
-  const { screenType } = ScreenSizeStore;
+  const { screenType, screenWidth } = ScreenSizeStore;
 
   const handleClickButton = () => {
     window.open(
@@ -37,7 +37,13 @@ export default observer(() => {
   return (
     <>
       <S.Wrap>
-        <S.BackgroundImage bgImage={screenType === 'pc' ? pcBg : mobileBg} />
+        <S.BackgroundWrap>
+          <S.BackgroundImage
+            screenWidth={screenWidth}
+            src={screenType === 'pc' ? pcBg : mobileBg}
+            alt='landing-bg'
+          />
+        </S.BackgroundWrap>
         <S.Lottie ref={lottieContainer} screenType={screenType} />
         <S.Logo />
         <S.Content>
@@ -45,7 +51,7 @@ export default observer(() => {
             {`여의도 불꽃 축제\n눈치 싸움에${screenType === 'mobile' ? '\n' : ' '}성공하고 싶다면?`}
           </S.Title>
           <S.Description screenType={screenType}>
-            와글와글에서는 여의도 불꽃 축제 명당의혼잡도를 한눈에 확인할 수 있어요.
+            와글와글에서는 여의도 불꽃 축제 명당의 혼잡도를 한눈에 확인할 수 있어요.
           </S.Description>
           <S.Description screenType={screenType}>
             와글와글은 불꽃 축제가 열리는 <strong>2023년10월 7일 오전 12시</strong>에 오픈될

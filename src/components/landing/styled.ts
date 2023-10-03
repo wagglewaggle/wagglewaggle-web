@@ -11,17 +11,21 @@ export const Wrap = styled('div')({
   overflow: 'hidden',
 });
 
-export const BackgroundImage = styled('div', {
-  shouldForwardProp: (prop: string) => prop !== 'bgImage',
-})<{ bgImage: string }>(({ bgImage }) => ({
+export const BackgroundWrap = styled('div')({
   position: 'absolute',
   top: 0,
-  left: 0,
-  width: '100vw',
+  bottom: 0,
+  left: '-200%',
+  right: '-200%',
+  textAlign: 'center',
+  overflow: 'hidden',
+});
+
+export const BackgroundImage = styled('img', {
+  shouldForwardProp: (prop: string) => prop !== 'screenWidth',
+})<{ screenWidth: number }>(({ screenWidth }) => ({
+  width: screenWidth > 1580 ? '100vw' : 'auto',
   height: '100vh',
-  backgroundImage: `url(${bgImage})`,
-  backgroundSize: 'cover',
-  zIndex: 1,
 }));
 
 export const Lottie = styled('div', {
@@ -40,7 +44,7 @@ export const Lottie = styled('div', {
 export const Logo = styled(Icon)({
   position: 'absolute',
   top: '1rem',
-  left: '2.5rem',
+  left: '1.5rem',
   zIndex: 2,
 });
 
@@ -72,9 +76,9 @@ export const Description = styled('div', {
 })<{ screenType: ScreenType }>(({ screenType }) => ({
   margin: '0 auto',
   maxWidth: screenType === 'mobile' ? '18.438rem' : 'unset',
-  fontSize: screenType === 'pc' ? '1.5rem' : '1.125rem',
+  fontSize: screenType === 'pc' ? '1.25rem' : '1.125rem',
   fontWeight: 500,
-  lineHeight: `${screenType === 'pc' ? 2 : 1.5}rem`,
+  lineHeight: `${screenType === 'pc' ? 1.75 : 1.5}rem`,
   textAlign: 'center',
   whiteSpace: 'normal',
   wordWrap: 'break-word',
