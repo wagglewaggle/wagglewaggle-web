@@ -4,10 +4,11 @@ import { ReactComponent as Icon } from 'assets/icons/logo-icon.svg';
 import type { ScreenType } from 'types/typeBundle';
 
 export const Wrap = styled('div')({
+  position: 'relative',
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-  height: '100vh',
+  height: 'calc(100vh + 8rem)',
   overflow: 'hidden',
 });
 
@@ -26,6 +27,7 @@ export const BackgroundImage = styled('img', {
 })<{ screenWidth: number }>(({ screenWidth }) => ({
   width: screenWidth > 1580 ? '100vw' : 'auto',
   height: '100vh',
+  overflow: 'hidden',
 }));
 
 export const Lottie = styled('div', {

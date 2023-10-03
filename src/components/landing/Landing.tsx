@@ -65,8 +65,8 @@ export default observer(() => {
             <span>오픈 알림 신청</span>
           </S.CustomButton>
         </S.Content>
+        <Footer />
       </S.Wrap>
-      <Footer />
     </>
   );
 });
