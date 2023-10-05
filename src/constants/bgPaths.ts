@@ -104,4 +104,5 @@ export const bgPaths: { [key: string]: BgType } = {
   서강대교: 'HanRiver',
   '사육신 역사공원': 'HanRiver',
   '중앙대·흑석역': 'HanRiver',
+  서촌: 'Street',
 };

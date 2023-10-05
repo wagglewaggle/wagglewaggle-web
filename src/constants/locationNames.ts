@@ -41,4 +41,5 @@ export const locationNames: { [key: string]: string } = {
   강서한강공원: '강서 한강공원',
   광나루한강공원: '광나루 한강공원',
   'DDP(동대문디자인플라자)': '동대문디자인플라자 DDP',
+  서촌: '서촌 한옥마을',
 };
