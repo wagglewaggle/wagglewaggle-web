@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { IconButton, styled } from '@mui/material';
-import { palette, geometry, urlPaths, locationNames, locationRequestTypes } from 'constants/';
+import { palette, geometry, urlPaths, locationNames } from 'constants/';
 import { LocationDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
@@ -39,9 +39,7 @@ const LocationInformation = observer((props: propsType) => {
   const highlightMap = useCallback(() => {
     if (!locationData) return null;
     const locationName = locationData.name;
-    if (locationRequestTypes.skt.includes(locationNames[locationData.name] || locationData.name)) {
-      return null;
-    }
+    if (!geometry[locationName]?.coordinates) return null;
     const coordinates: [number, number][][] | [number, number][][][] =
       geometry[locationName].coordinates;
     const geometryType: 'Polygon' | 'MultiPolygon' = geometry[locationName].type;
