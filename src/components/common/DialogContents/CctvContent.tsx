@@ -3,10 +3,11 @@ import { observer } from 'mobx-react';
 import ReactPlayer from 'react-player';
 import { IconButton, styled } from '@mui/material';
 import { useStore } from 'stores';
-import { palette } from 'constants/';
+import { palette, cctvBg } from 'constants/';
 import { CctvType } from 'types/typeBundle';
 import leftIcon from 'assets/icons/previous-icon.svg';
 import rightIcon from 'assets/icons/next-icon.svg';
+import { ReactComponent as RightUp } from 'assets/icons/right-up.svg';
 
 type PropsType = {
   isDialog?: boolean;
@@ -15,8 +16,9 @@ type PropsType = {
 const CctvContent = observer((props: PropsType) => {
   const { isDialog } = props;
   const [cctvIdx, setCctvIdx] = useState<number>(0);
-  const { CustomDialogStore, ThemeStore } = useStore().MobxStore;
+  const { CustomDialogStore, LocationStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const { placeName } = LocationStore;
   const SELECTED_CIRCLE_STYLE: { backgroundColor: string } = {
     backgroundColor: isDarkTheme ? palette.white : palette.black,
   };
@@ -36,11 +38,29 @@ const CctvContent = observer((props: PropsType) => {
     setCctvIdx(cctvIdx + 1);
   };
 
+  const handleKbsClick = () => {
+    window.open(url, '_blank');
+  };
+
   return (
     <Wrap>
       <PlayerWrap>
         {isUtic && <UticInfo>경찰청 (UTIC) 제공</UticInfo>}
-        <ReactPlayer playing muted width={375} height={209} url={url} />
+        {isKbs ? (
+          <>
+            <KbsWrap
+              src={cctvBg[placeName ?? ''][CustomDialogStore?.cctvList[cctvIdx]?.cctvname ?? '']}
+              alt='kbs-image'
+              onClick={handleKbsClick}
+            />
+            <LinkButton onClick={handleKbsClick}>
+              더보기
+              <RightUp />
+            </LinkButton>
+          </>
+        ) : (
+          <ReactPlayer playing muted width={375} height={209} url={url} />
+        )}
       </PlayerWrap>
       <DescriptionWrap>
         <CustomIconButton cloudy={cctvIdx === 0} disabled={cctvIdx === 0} onClick={moveToPrevCctv}>
@@ -88,6 +108,26 @@ const PlayerWrap = styled('div')({
   width: '100%',
   height: 209,
   backgroundColor: palette.black,
+});
+
+const KbsWrap = styled('img')({
+  width: 375,
+  height: 209,
+  cursor: 'pointer',
+});
+
+const LinkButton = styled('div')({
+  position: 'absolute',
+  display: 'flex',
+  alignItems: 'center',
+  borderRadius: 100,
+  padding: '8px 14px 8px 16px',
+  fontSize: 14,
+  fontWeight: 600,
+  lineHeight: '20px',
+  backgroundColor: palette.grey[700],
+  gap: 2,
+  cursor: 'pointer',
 });
 
 const UticInfo = styled('span')({
