@@ -128,6 +128,7 @@ const Header = styled('div')({
   '& span': {
     fontSize: 18,
     fontWeight: 600,
+    lineHeight: '1.25rem',
   },
 });
 
@@ -185,10 +186,12 @@ const StatusDescription = styled('div')({
   },
 });
 
-const CommentsWrap = styled('div', {
+const CommentsWrap = styled('span', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
 })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: palette.grey[isDarkTheme ? 400 : 500],
+  fontWeight: 400,
+  lineHeight: '1.25rem',
 }));
 
 const CustomDivider = styled('hr')({

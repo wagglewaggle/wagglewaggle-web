@@ -30,13 +30,15 @@ const CctvContent = observer(() => {
 
   return (
     <Wrap>
-      <ReactPlayer
-        playing
-        muted
-        width={'20rem'}
-        height={200}
-        url={CustomDialogStore?.cctvList[cctvIdx]?.src || ''}
-      />
+      <PlayerWrap>
+        <ReactPlayer
+          playing
+          muted
+          width={375}
+          height={209}
+          url={CustomDialogStore?.cctvList[cctvIdx]?.src || ''}
+        />
+      </PlayerWrap>
       <DescriptionWrap>
         <CustomIconButton cloudy={cctvIdx === 0} disabled={cctvIdx === 0} onClick={moveToPrevCctv}>
           <img src={leftIcon} alt='left' />
@@ -69,22 +71,35 @@ export default CctvContent;
 const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
+  width: '100%',
   gap: 16,
   '& button': {
     padding: 0,
   },
 });
 
+const PlayerWrap = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  height: 209,
+  backgroundColor: palette.black,
+});
+
 const DescriptionWrap = styled('div')({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  margin: '0 1.5rem 1rem',
 });
 
 const Content = styled('span')({
   position: 'relative',
-  fontSize: 14,
+  fontSize: '0.875rem',
   fontWeight: 400,
+  color: palette.white,
+  lineHeight: '1.25rem',
   zIndex: 2,
 });
 
@@ -95,11 +110,14 @@ const CustomIconButton = styled(IconButton, {
 }));
 
 const PageCircleWrap = styled('div')({
+  position: 'absolute',
+  top: '15rem',
+  left: 0,
   display: 'flex',
   justifyContent: 'center',
-  marginTop: 8,
   width: '100%',
-  gap: 8,
+  gap: '0.5rem',
+  zIndex: 5,
 });
 
 const PageCircle = styled('div', {

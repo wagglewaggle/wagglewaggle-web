@@ -8,8 +8,10 @@ export const HeaderArea = styled('div')({
   padding: '0.75rem 1rem',
   width: 'calc(100% - 2rem)',
   height: '2rem',
+  color: palette.white,
   fontSize: '1.125rem',
   fontWeight: 600,
+  backgroundColor: palette.grey[700],
 });
 
 export const ContentArea = styled('img')({
@@ -39,7 +41,6 @@ export const CctvWrap = styled('div')({
   alignItems: 'center',
   justifyContent: 'center',
   marginBottom: '0.5rem',
-  height: '100%',
   backgroundColor: palette.grey[700],
   '& iframe': { backgroundColor: palette.grey[500] },
 });
