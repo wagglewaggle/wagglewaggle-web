@@ -17,7 +17,7 @@ const PlaceCard = observer((props: propsType) => {
   const [symbol, setSymbol] = useState<string>('');
   const { LocationStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
-  const primaryCategories: string[] = useMemo(() => ['강변', '공원', '궁궐'], []);
+  const primaryCategories: string[] = useMemo(() => ['불꽃축제', '강변', '공원', '궁궐'], []);
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handlePlaceCardClick = () => {
@@ -25,9 +25,18 @@ const PlaceCard = observer((props: propsType) => {
     navigate(`/detail/${place.idx}?name=${place.name}`);
   };
 
+  const placeSpecificCategory = (prev: string, next: string) => {
+    const primaryCategoryName = '불꽃축제';
+    if (prev === primaryCategoryName) return -1;
+    if (next === primaryCategoryName) return 1;
+    return 0;
+  };
+
   useEffect(() => {
     if (!place.categories) return;
-    const categoryList: string[] = place.categories.map((category: CategoryType) => category.type);
+    const categoryList: string[] = place.categories
+      .map((category: CategoryType) => category.type)
+      .sort(placeSpecificCategory);
     setCategories(categoryList.join(', '));
     const addedSymbol: string[] = [];
     primaryCategories.forEach((category: string) => {

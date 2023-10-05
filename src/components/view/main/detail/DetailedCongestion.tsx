@@ -70,7 +70,7 @@ const DetailedCongestion = observer((props: propsType) => {
             </CommentsWrap>
           </StatusDescription>
         </StatusLeft>
-        <PlaceStatus status={locationData?.population.level || undefined} />
+        <PlaceStatus status={locationData?.population?.level || undefined} />
       </StatusCard>
       {locationData?.roadTraffic?.type && (
         <StatusCard variant='traffic'>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { observer } from 'mobx-react';
+import ReactPlayer from 'react-player';
 import { IconButton, styled } from '@mui/material';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
@@ -7,20 +8,13 @@ import { CctvType } from 'types/typeBundle';
 import leftIcon from 'assets/icons/previous-icon.svg';
 import rightIcon from 'assets/icons/next-icon.svg';
 
-type PropsType = {
-  isHeaderContent?: boolean;
-};
-
-const CctvContent = observer((props: PropsType) => {
-  const { isHeaderContent } = props;
+const CctvContent = observer(() => {
   const [cctvIdx, setCctvIdx] = useState<number>(0);
-  const { CustomDialogStore, ScreenSizeStore, ThemeStore } = useStore().MobxStore;
-  const { screenType } = ScreenSizeStore;
+  const { CustomDialogStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const SELECTED_CIRCLE_STYLE: { backgroundColor: string } = {
     backgroundColor: isDarkTheme ? palette.white : palette.black,
   };
-  const shouldWidthBeShortened = screenType === 'mobile' && !isHeaderContent;
 
   const handleCircleClick = (idx: number) => {
     setCctvIdx(idx);
@@ -36,12 +30,12 @@ const CctvContent = observer((props: PropsType) => {
 
   return (
     <Wrap>
-      <iframe
-        title='CCTV Dialog'
-        src={CustomDialogStore?.cctvList[cctvIdx]?.src || ''}
-        width={320 - (shouldWidthBeShortened ? 68 : 0)}
-        height={220}
-        frameBorder={0}
+      <ReactPlayer
+        playing
+        muted
+        width={'20rem'}
+        height={200}
+        url={CustomDialogStore?.cctvList[cctvIdx]?.src || ''}
       />
       <DescriptionWrap>
         <CustomIconButton cloudy={cctvIdx === 0} disabled={cctvIdx === 0} onClick={moveToPrevCctv}>

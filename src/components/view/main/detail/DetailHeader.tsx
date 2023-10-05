@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { bgPaths } from 'constants/';
+import { bgPaths, locationNames } from 'constants/';
 import { CctvContent } from 'components/common/DialogContents';
 import { LocationDataType } from 'types/typeBundle';
 import { H } from './styled';
@@ -36,7 +36,7 @@ const DetailHeader = observer((props: propsType) => {
     setBgPath(
       `${require(`assets/detailBg/${ThemeStore.theme}/${
         bgPaths[locationData?.name || ''] || 'Street'
-      }/${locationData?.population.level || 'NORMAL'}.png`)}`
+      }/${locationData?.population?.level || 'NORMAL'}.png`)}`
     );
   }, [ThemeStore.theme, locationData?.name, locationData?.population]);
 
@@ -46,12 +46,12 @@ const DetailHeader = observer((props: propsType) => {
         <H.CustomIconButton isDarkTheme={isDarkTheme} onClick={handleBackClick}>
           <img src={leftIcon} alt='left' />
         </H.CustomIconButton>
-        {locationData?.name}
+        {locationNames[locationData?.name ?? ''] ?? locationData?.name}
         <H.Dummy />
       </H.HeaderArea>
       {AB_TEST_VARIANT === 1 && cctvList.length > 0 ? (
         <H.CctvWrap>
-          <CctvContent isHeaderContent />
+          <CctvContent />
         </H.CctvWrap>
       ) : (
         <H.ContentArea src={bgPath === '' ? undefined : bgPath} alt='Header' />
