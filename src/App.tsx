@@ -1,5 +1,6 @@
 import { useLayoutEffect, useEffect, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { GlobalStyles, styled } from '@mui/material';
@@ -69,6 +70,9 @@ const App = observer(() => {
 
   return (
     <Wrap isDarkTheme={isDarkTheme}>
+      <Helmet>
+        <meta http-equiv='Content-Security-Policy' content='upgrade-insecure-requests' />
+      </Helmet>
       <GlobalStyles styles={scrollbarDesign} />
       <CreateStore.Provider value={{ MobxStore }}>
         <ServiceWrap ref={ref} status={sessionStorage.getItem(projectStatusSessionStorageKey)}>
