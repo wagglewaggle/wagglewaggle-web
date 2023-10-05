@@ -84,7 +84,7 @@ const CustomDialog = observer(() => {
           ) : variant === 'accident' ? (
             <AccidentContent />
           ) : (
-            <CctvContent />
+            <CctvContent isDialog />
           )}
         </CustomContent>
         {variant === 'accident' && <AccidentEmpty isDarkTheme={isDarkTheme} />}

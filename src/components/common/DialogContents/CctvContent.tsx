@@ -8,7 +8,12 @@ import { CctvType } from 'types/typeBundle';
 import leftIcon from 'assets/icons/previous-icon.svg';
 import rightIcon from 'assets/icons/next-icon.svg';
 
-const CctvContent = observer(() => {
+type PropsType = {
+  isDialog?: boolean;
+};
+
+const CctvContent = observer((props: PropsType) => {
+  const { isDialog } = props;
   const [cctvIdx, setCctvIdx] = useState<number>(0);
   const { CustomDialogStore, ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -52,7 +57,7 @@ const CctvContent = observer(() => {
           <img src={rightIcon} alt='right' />
         </CustomIconButton>
       </DescriptionWrap>
-      <PageCircleWrap>
+      <PageCircleWrap isDialog={isDialog}>
         {CustomDialogStore.cctvList.map((_: CctvType, idx: number) => (
           <PageCircle
             isDarkTheme={isDarkTheme}
@@ -109,8 +114,10 @@ const CustomIconButton = styled(IconButton, {
   opacity: cloudy ? 0.3 : undefined,
 }));
 
-const PageCircleWrap = styled('div')({
-  position: 'absolute',
+const PageCircleWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDialog',
+})<{ isDialog?: boolean }>(({ isDialog }) => ({
+  position: isDialog ? 'unset' : 'absolute',
   top: '15rem',
   left: 0,
   display: 'flex',
@@ -118,7 +125,7 @@ const PageCircleWrap = styled('div')({
   width: '100%',
   gap: '0.5rem',
   zIndex: 5,
-});
+}));
 
 const PageCircle = styled('div', {
   shouldForwardProp: (prop: string) => !['isDarkTheme', 'selectedCircleStyle'].includes(prop),
