@@ -20,6 +20,9 @@ const CctvContent = observer((props: PropsType) => {
   const SELECTED_CIRCLE_STYLE: { backgroundColor: string } = {
     backgroundColor: isDarkTheme ? palette.white : palette.black,
   };
+  const url = CustomDialogStore?.cctvList[cctvIdx]?.src;
+  const isUtic =
+    !url.startsWith('https://www.youtube.com') && !url.startsWith('https://md.kbs.co.kr');
 
   const handleCircleClick = (idx: number) => {
     setCctvIdx(idx);
@@ -36,6 +39,7 @@ const CctvContent = observer((props: PropsType) => {
   return (
     <Wrap>
       <PlayerWrap>
+        {isUtic && <UticInfo>경찰청 (UTIC) 제공</UticInfo>}
         <ReactPlayer
           playing
           muted
@@ -90,6 +94,14 @@ const PlayerWrap = styled('div')({
   width: '100%',
   height: 209,
   backgroundColor: palette.black,
+});
+
+const UticInfo = styled('span')({
+  position: 'absolute',
+  top: '4.5rem',
+  color: palette.white,
+  fontSize: '0.75rem',
+  fontWeight: 500,
 });
 
 const DescriptionWrap = styled('div')({
