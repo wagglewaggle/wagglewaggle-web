@@ -9,7 +9,7 @@ import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard, Footer } from 'components/common';
 import { useStore } from 'stores';
 import { PlaceDataType, ScreenType } from 'types/typeBundle';
-import { palette } from 'constants/';
+import { palette, chipIcons } from 'constants/';
 import { filterPlaceCard } from 'util/';
 import { request } from 'api/request';
 // import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
@@ -57,10 +57,24 @@ const PlaceData = observer(() => {
     setSelectedCategory(chip);
   };
 
-  const getChips = async () => {
-    const response = await request.getCategory();
-    setChips(['전체', ...response?.data.list.map((ele: { type: string }) => ele.type)]);
+  const sortChips = (prev: string, next: string) => {
+    const primaryCategoryName = '불꽃축제';
+    const secondaryCategoryName = '전체';
+    if (prev === primaryCategoryName) return -1;
+    if (next === primaryCategoryName) return 1;
+    if (prev === secondaryCategoryName) return -1;
+    if (next === secondaryCategoryName) return 1;
+    if (prev > next) return 1;
+    if (prev < next) return -1;
+    return 0;
   };
+
+  const getChips = useCallback(async () => {
+    const response = await request.getCategory();
+    setChips(
+      ['전체', ...response?.data.list.map((ele: { type: string }) => ele.type)].sort(sortChips)
+    );
+  }, []);
 
   const filterCardsByCategory = useCallback(async () => {
     if (selectedCategory === '전체') {
@@ -96,7 +110,7 @@ const PlaceData = observer(() => {
   useLayoutEffect(() => {
     if (chips.length > 0) return;
     getChips();
-  }, [chips]);
+  }, [chips, getChips]);
 
   useEffect(() => {
     filterCardsByCategory();
@@ -114,20 +128,21 @@ const PlaceData = observer(() => {
   return (
     <Wrap>
       <ChipsWrap horizontal>
-        {chips.map((chip: string) => (
+        {chips.map((chip, idx) => (
           <Chip
             key={chip}
             isDarkTheme={isDarkTheme}
             selectedStyle={selectedCategory === chip ? SELECTED_CHIP_STYLE : {}}
             onClick={() => handleClickChip(chip)}
           >
+            <img src={chipIcons[chip]} alt={chip} />
             {chip}
           </Chip>
         ))}
       </ChipsWrap>
       <SubHeader>
         <SubHeaderLeft>
-          🔥 불꽃 축제 명당
+          🔥 장소
           <SubHeaderLength>{renderData.length}</SubHeaderLength>
         </SubHeaderLeft>
         {/* <CustomSelect
@@ -196,6 +211,7 @@ const Chip = styled('div', {
   fontWeight: 600,
   border: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
   color: palette.grey[isDarkTheme ? 400 : 500],
+  gap: '0.25rem',
   ...selectedStyle,
 }));
 

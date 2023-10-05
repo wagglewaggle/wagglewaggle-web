@@ -52,7 +52,6 @@ const App = observer(() => {
     if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer') return;
     if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'released') return;
     sessionStorage.setItem(projectStatusSessionStorageKey, 'released');
-    sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
   }, [projectStatusSessionStorageKey]);
 
   useEffect(() => {
