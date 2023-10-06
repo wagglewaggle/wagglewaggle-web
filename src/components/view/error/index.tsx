@@ -6,10 +6,10 @@ import { Footer } from 'components/common';
 import { useStore } from 'stores';
 import { palette } from 'constants/';
 import lottie from 'lottie-web';
-import logo from 'assets/icons/logo-icon.svg';
-import searchIcon from 'assets/icons/search-icon.svg';
-import refreshIcon from 'assets/icons/refresh-icon.svg';
-import rightIcon from 'assets/icons/right-icon.svg';
+import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
+import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
+import { ReactComponent as RefreshIcon } from 'assets/icons/refresh-icon.svg';
+import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 
 const Error = observer(() => {
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -54,9 +54,9 @@ const Error = observer(() => {
   return (
     <Wrap>
       <Search>
-        <img src={logo} alt='logo' onClick={handleMoveHome} />
+        <Logo onClick={handleMoveHome} />
         <SearchBox />
-        <img src={searchIcon} alt='search' />
+        <SearchIcon />
       </Search>
       <ErrorWrap>
         <Lottie ref={lottieContainer}></Lottie>
@@ -68,14 +68,14 @@ const Error = observer(() => {
           <div onClick={handleRefresh}>
             새로 고침
             <IconButton>
-              <img src={refreshIcon} alt='refresh' />
+              <RefreshIcon />
             </IconButton>
           </div>
         )}
         <div onClick={handleMoveHome}>
           홈으로 이동
           <IconButton>
-            <img src={rightIcon} alt='right' />
+            <RightIcon />
           </IconButton>
         </div>
       </Buttons>
@@ -157,8 +157,8 @@ const Buttons = styled('div')({
     padding: 0,
     height: 19,
   },
-  '& img': {
-    width: 16,
-    height: 16,
+  '& svg': {
+    width: 20,
+    height: 20,
   },
 });

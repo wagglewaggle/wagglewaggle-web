@@ -63,6 +63,11 @@ const CustomDialog = observer(() => {
       isDarkTheme={isDarkTheme}
       open={open}
       onClose={closeDialog}
+      slotProps={{
+        backdrop: {
+          style: { backgroundColor: `rgba(0, 0, 0, ${variant === 'intro' ? 0.8 : 0.5})` },
+        },
+      }}
     >
       <CloseButtonWrap width={dialogWidth} variant={variant}>
         <IconButton onClick={closeDialog}>
@@ -84,7 +89,7 @@ const CustomDialog = observer(() => {
           ) : variant === 'accident' ? (
             <AccidentContent />
           ) : (
-            <CctvContent />
+            <CctvContent isDialog />
           )}
         </CustomContent>
         {variant === 'accident' && <AccidentEmpty isDarkTheme={isDarkTheme} />}
@@ -116,22 +121,7 @@ const CustomDialogWrap = styled(Dialog, {
     width: `${width - (variant === 'cctv' ? 48 : variant === 'intro' ? 56 : 40)}px`,
     height: variant === 'cctv' ? '320px' : 'skip',
     overflow: 'auto',
-    '& img': {
-      filter: isDarkTheme ? 'none' : 'invert(1)',
-    },
-    '&::-webkit-scrollbar': {
-      width: '10px',
-      color: palette.grey[isDarkTheme ? 500 : 300],
-      background: isDarkTheme ? palette.grey[700] : palette.white,
-    },
-    '&::-webkit-scrollbar-thumb': {
-      borderLeft: '2px solid transparent',
-      boxShadow: `inset 0 0 10px 10px ${isDarkTheme ? palette.grey[700] : palette.white}`,
-      background: palette.grey[isDarkTheme ? 500 : 300],
-    },
-    '&::-webkit-scrollbar-track': {
-      background: isDarkTheme ? palette.grey[700] : palette.white,
-    },
+    '& img': { filter: isDarkTheme ? 'none' : 'invert(1)' },
   },
 }));
 

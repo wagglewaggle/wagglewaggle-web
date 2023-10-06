@@ -41,7 +41,7 @@ const DetailedCongestion = observer((props: propsType) => {
 
   useEffect(() => {
     const newTimePassed: number = Math.round(
-      (new Date().getTime() - new Date(locationData?.populations[0]?.updatedDate || '').getTime()) /
+      (new Date().getTime() - new Date(locationData?.population?.updatedDate || '').getTime()) /
         60000
     );
     setTimePassed(
@@ -66,11 +66,11 @@ const DetailedCongestion = observer((props: propsType) => {
           <StatusDescription>
             <span>인구 현황</span>
             <CommentsWrap isDarkTheme={isDarkTheme}>
-              {COMMENTS_BY_STATUS[locationData?.populations[0]?.level || 'NORMAL']}
+              {COMMENTS_BY_STATUS[locationData?.population?.level || 'NORMAL']}
             </CommentsWrap>
           </StatusDescription>
         </StatusLeft>
-        <PlaceStatus status={locationData?.populations[0].level || undefined} />
+        <PlaceStatus status={locationData?.population?.level || undefined} />
       </StatusCard>
       {locationData?.roadTraffic?.type && (
         <StatusCard variant='traffic'>
@@ -128,6 +128,7 @@ const Header = styled('div')({
   '& span': {
     fontSize: 18,
     fontWeight: 600,
+    lineHeight: '1.25rem',
   },
 });
 
@@ -185,10 +186,12 @@ const StatusDescription = styled('div')({
   },
 });
 
-const CommentsWrap = styled('div', {
+const CommentsWrap = styled('span', {
   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
 })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: palette.grey[isDarkTheme ? 400 : 500],
+  fontWeight: 400,
+  lineHeight: '1.25rem',
 }));
 
 const CustomDivider = styled('hr')({

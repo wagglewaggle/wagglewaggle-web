@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as S from './styled';
+import { useOptimize } from 'util/';
 import { palette } from 'constants/';
 
 type PropsType = {
@@ -9,13 +10,23 @@ type PropsType = {
 const Fab = (props: PropsType) => {
   const { tooltipOff } = props;
   const [openTooltip, setOpenTooltip] = useState<boolean>(true);
+  const AB_TEST_VARIANT = useOptimize();
 
   const handleCloseClick = () => {
     setOpenTooltip(false);
   };
 
+  const handleClickMovePage = () => {
+    window.open(
+      AB_TEST_VARIANT === 0
+        ? 'https://docs.google.com/forms/d/e/1FAIpQLSeuWiDM-JmQO8jYih4rxlbwzoSEx31rGyfrYOtN6ezYb5YLFA/viewform?usp=sf_link'
+        : 'https://docs.google.com/forms/d/e/1FAIpQLSdXxVFrhcAYeNghxrtVy0JA4AJwpDFOl4eCcR8E1pUBG1r7WQ/viewform?usp=sf_link',
+      '_blank'
+    );
+  };
+
   const floatingButtonElement = (
-    <S.FloatingButton>
+    <S.FloatingButton onClick={handleClickMovePage}>
       <S.ChatIcon />
     </S.FloatingButton>
   );
@@ -56,6 +67,13 @@ const tooltipProps = {
       '&:before': {
         backgroundColor: palette.white,
       },
+    },
+  },
+  popper: {
+    sx: {
+      zIndex: 1150,
+      boxShadow:
+        '0px 3px 5px -1px rgba(0,0,0,0.2), 0px 6px 10px 0px rgba(0,0,0,0.14), 0px 1px 18px 0px rgba(0,0,0,0.12)',
     },
   },
 };

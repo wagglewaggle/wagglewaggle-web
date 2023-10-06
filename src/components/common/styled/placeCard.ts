@@ -45,6 +45,7 @@ export const PlaceName = styled('span')({
 });
 
 export const PlaceCategory = styled('span')({
+  color: palette.grey[400],
   fontSize: 14,
   fontWeight: 400,
 });

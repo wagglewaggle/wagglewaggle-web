@@ -1,65 +1,48 @@
-// 불꽃 축제 버전에서는 소팅 기능을 사용하지 않습니다.
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
-// import { Select, MenuItem, SelectChangeEvent, styled } from '@mui/material';
-// import { Select, MenuItem, styled } from '@mui/material';
-import { styled } from '@mui/material';
-// import makeStyles from '@mui/styles/makeStyles';
+import { Select, MenuItem, SelectChangeEvent, styled } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { PlaceCard, Footer } from 'components/common';
 import { useStore } from 'stores';
-import { CategoryType, PlaceDataType, ScreenType } from 'types/typeBundle';
-import { palette } from 'constants/';
-// import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
+import { PlaceDataType, ScreenType } from 'types/typeBundle';
+import { palette, chipIcons } from 'constants/';
+import { filterPlaceCard } from 'util/';
+import { request } from 'api/request';
+import { ReactComponent as DownIcon } from 'assets/icons/down-icon.svg';
 
-// const useStyles = makeStyles(() => ({
-//   menu: {
-//     marginTop: 8,
-//     '& ul': {
-//       display: 'flex',
-//       flexDirection: 'column',
-//       padding: 0,
-//       margin: '20px 24px',
-//       gap: 4,
-//     },
-//     '& li': {
-//       padding: '0 5px',
-//       width: 96,
-//     },
-//     '& .MuiPaper-root': {
-//       display: 'flex',
-//       alignItems: 'center',
-//       width: 144,
-//       height: 'auto',
-//     },
-//   },
-// }));
+const useStyles = makeStyles(() => ({
+  menu: {
+    marginTop: 8,
+    '& ul': {
+      display: 'flex',
+      flexDirection: 'column',
+      padding: 0,
+      margin: '20px 24px',
+      gap: 4,
+    },
+    '& li': {
+      padding: '0 5px',
+      width: 96,
+    },
+    '& .MuiPaper-root': {
+      display: 'flex',
+      alignItems: 'center',
+      width: 144,
+      height: 'auto',
+    },
+  },
+}));
 
-interface propsType {
-  placeData: PlaceDataType[];
-  handlePlaceDataChange: (newPlaceData: PlaceDataType[]) => void;
-}
-
-const PlaceData = observer((props: propsType) => {
-  // const { placeData, handlePlaceDataChange } = props;
-  const { placeData } = props;
+const PlaceData = observer(() => {
   const [renderData, setRenderData] = useState<PlaceDataType[]>([]);
-  // const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
-  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
-  // const classes = useStyles();
-  const { ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
+  const [selectedCategory, setSelectedCategory] = useState<string>('불꽃축제');
+  const classes = useStyles();
+  const [chips, setChips] = useState<string[]>([]);
+  const { LocationStore, ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const { allPlaces } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
-  const CHIPS: string[] = [
-    '전체',
-    '쇼핑몰',
-    '공원',
-    '골목 및 거리',
-    '지하철',
-    '궁궐',
-    '테마파크',
-    '마을',
-    '강변',
-  ];
   const SELECTED_CHIP_STYLE: { border: string; color: string; backgroundColor: string } = {
     border: `2px solid ${isDarkTheme ? palette.white : palette.black}`,
     color: isDarkTheme ? palette.black : palette.white,
@@ -70,62 +53,71 @@ const PlaceData = observer((props: propsType) => {
     setSelectedCategory(chip);
   };
 
-  // const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
-  //   setPlaceOrder(e.target.value as string);
-  //   const statusArr: string[] = [
-  //     'VERY_RELAXATION',
-  //     'RELAXATION',
-  //     'NORMAL',
-  //     'CROWDED',
-  //     'VERY_CROWDED',
-  //   ];
-  //   handlePlaceDataChange(
-  //     placeData.sort((prev: PlaceDataType, next: PlaceDataType) => {
-  //       const prevLevel = statusArr.indexOf(prev.populations[0].level);
-  //       const nextLevel = statusArr.indexOf(next.populations[0].level);
-  //       if (prevLevel > nextLevel) return e.target.value === '복잡한 순' ? -1 : 1;
-  //       else if (nextLevel > prevLevel) return e.target.value === '복잡한 순' ? 1 : -1;
-  //       return 0;
-  //     })
-  //   );
-  // };
+  const sortChips = (prev: string, next: string) => {
+    const primaryCategoryName = '불꽃축제';
+    const secondaryCategoryName = '전체';
+    if (prev === primaryCategoryName) return -1;
+    if (next === primaryCategoryName) return 1;
+    if (prev === secondaryCategoryName) return -1;
+    if (next === secondaryCategoryName) return 1;
+    if (prev > next) return 1;
+    if (prev < next) return -1;
+    return 0;
+  };
 
-  useEffect(() => {
-    setRenderData(placeData);
-  }, [placeData]);
-
-  useEffect(() => {
-    const newRenderData: PlaceDataType[] = JSON.parse(JSON.stringify(placeData));
-    setRenderData(
-      newRenderData.filter((place: PlaceDataType) => {
-        const categories: string[] = place.categories.map(
-          (category: CategoryType) => category.type
-        );
-        return selectedCategory === '전체' || categories.includes(selectedCategory);
-      })
+  const getChips = useCallback(async () => {
+    const response = await request.getCategory();
+    setChips(
+      ['전체', ...response?.data.list.map((ele: { type: string }) => ele.type)].sort(sortChips)
     );
-  }, [placeData, selectedCategory]);
+  }, []);
+
+  const filterCardsByCategory = useCallback(async () => {
+    if (selectedCategory === '전체') {
+      setRenderData(filterPlaceCard(allPlaces, placeOrder === '복잡한 순'));
+      return;
+    }
+    const params = { populationSort: true, category: selectedCategory };
+    const ktData = (await request.getKtPlaces(params)).data.list;
+    const sktData = (await request.getSktPlaces(params)).data.list;
+    setRenderData(filterPlaceCard([...ktData, ...sktData], placeOrder === '복잡한 순'));
+  }, [selectedCategory, allPlaces, placeOrder]);
+
+  const handleChangeSelect = (e: SelectChangeEvent<unknown>) => {
+    setPlaceOrder(e.target.value as string);
+    setRenderData(filterPlaceCard(renderData, placeOrder === '복잡한 순'));
+  };
+
+  useLayoutEffect(() => {
+    if (chips.length > 0) return;
+    getChips();
+  }, [chips, getChips]);
+
+  useEffect(() => {
+    filterCardsByCategory();
+  }, [selectedCategory, allPlaces, filterCardsByCategory]);
 
   return (
     <Wrap>
       <ChipsWrap horizontal>
-        {CHIPS.map((chip: string, idx: number) => (
+        {chips.map((chip, idx) => (
           <Chip
-            key={`chip-${idx}`}
+            key={chip}
             isDarkTheme={isDarkTheme}
             selectedStyle={selectedCategory === chip ? SELECTED_CHIP_STYLE : {}}
             onClick={() => handleClickChip(chip)}
           >
+            <img src={chipIcons[chip]} alt={chip} />
             {chip}
           </Chip>
         ))}
       </ChipsWrap>
       <SubHeader>
         <SubHeaderLeft>
-          🔥 불꽃 축제 명당
+          🔥 장소
           <SubHeaderLength>{renderData.length}</SubHeaderLength>
         </SubHeaderLeft>
-        {/* <CustomSelect
+        <CustomSelect
           isDarkTheme={isDarkTheme}
           onChange={handleChangeSelect}
           value={placeOrder}
@@ -150,7 +142,7 @@ const PlaceData = observer((props: propsType) => {
               {menu}
             </CustomMenuItem>
           ))}
-        </CustomSelect> */}
+        </CustomSelect>
       </SubHeader>
       <PlacesWrap screenType={ScreenSizeStore.screenType}>
         {renderData.map((place: PlaceDataType, idx: number) => (
@@ -191,6 +183,7 @@ const Chip = styled('div', {
   fontWeight: 600,
   border: `1px solid ${palette.grey[isDarkTheme ? 600 : 300]}`,
   color: palette.grey[isDarkTheme ? 400 : 500],
+  gap: '0.25rem',
   ...selectedStyle,
 }));
 
@@ -211,36 +204,36 @@ const SubHeaderLength = styled('div')({
   marginLeft: 5,
 });
 
-// const CustomSelect = styled(Select, {
-//   shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-// })<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
-//   color: isDarkTheme ? palette.white : palette.black,
-//   '& div': {
-//     fontSize: 14,
-//     fontWeight: 600,
-//   },
-//   '& span': {
-//     transform: 'translateX(10px)',
-//   },
-//   '& svg': {
-//     right: 0,
-//     width: 16,
-//     height: 16,
-//   },
-//   '& fieldset': {
-//     display: 'none',
-//   },
-//   '& .MuiSelect-select': {
-//     padding: 0,
-//   },
-//   '& path': {
-//     fill: isDarkTheme ? palette.white : palette.black,
-//   },
-// }));
+const CustomSelect = styled(Select, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+  color: isDarkTheme ? palette.white : palette.black,
+  '& div': {
+    fontSize: 14,
+    fontWeight: 600,
+  },
+  '& span': {
+    transform: 'translateX(10px)',
+  },
+  '& svg': {
+    right: 0,
+    width: 16,
+    height: 16,
+  },
+  '& fieldset': {
+    display: 'none',
+  },
+  '& .MuiSelect-select': {
+    padding: 0,
+  },
+  '& path': {
+    fill: isDarkTheme ? palette.white : palette.black,
+  },
+}));
 
-// const CustomMenuItem = styled(MenuItem)({
-//   fontWeight: 600,
-// });
+const CustomMenuItem = styled(MenuItem)({
+  fontWeight: 600,
+});
 
 const PlacesWrap = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'screenType',
@@ -249,5 +242,5 @@ const PlacesWrap = styled('div', {
   justifyContent: 'space-between',
   columnGap: 24,
   minWidth: 'fit-content',
-  gridTemplateColumns: screenType === 'mobile' ? '100%' : 'repeat(auto-fit, minmax(348px, 1fr))',
+  gridTemplateColumns: screenType === 'mobile' ? '100%' : 'repeat(2, minmax(348px, 1fr))',
 }));
