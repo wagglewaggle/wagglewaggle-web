@@ -48,7 +48,9 @@ const CctvContent = observer((props: PropsType) => {
         {isKbs ? (
           <>
             <KbsWrap
-              src={cctvBg[placeName ?? ''][CustomDialogStore?.cctvList[cctvIdx]?.cctvname ?? '']}
+              src={
+                cctvBg?.[placeName ?? '']?.[CustomDialogStore?.cctvList[cctvIdx]?.cctvname ?? '']
+              }
               alt='kbs-image'
               onClick={handleKbsClick}
             />
@@ -62,7 +64,7 @@ const CctvContent = observer((props: PropsType) => {
             title='CCTV Dialog'
             src={url}
             width={320}
-            height={190}
+            height={216}
             frameBorder={0}
             style={{
               display: 'flex',
