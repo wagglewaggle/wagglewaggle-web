@@ -49,7 +49,8 @@ const DetailHeader = observer((props: propsType) => {
         {locationNames[locationData?.name ?? ''] ?? locationData?.name}
         <H.Dummy />
       </H.HeaderArea>
-      {AB_TEST_VARIANT === 1 && cctvList.length > 0 ? (
+      {/* {AB_TEST_VARIANT === 1 && cctvList.length > 0 ? ( */}
+      {cctvList.length > 0 ? (
         <H.CctvWrap>
           <CctvContent />
         </H.CctvWrap>

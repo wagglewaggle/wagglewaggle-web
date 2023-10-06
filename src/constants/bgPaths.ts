@@ -104,6 +104,6 @@ export const bgPaths: Record<string, BgType> = {
   '사육신 역사공원': 'Firework',
   '중앙대·흑석역': 'Firework',
   서촌: 'Tradition',
-  뚝섬역: 'Street',
+  뚝섬역: 'Subway',
   '해방촌·경리단길': 'Street',
 };
