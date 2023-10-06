@@ -72,9 +72,10 @@ export type BgType =
   | 'Department'
   | 'GwangHwa'
   | 'HanRiver'
-  | 'Namsan'
   | 'Palace'
   | 'Park'
   | 'Street'
   | 'Subway'
-  | 'Tradition';
+  | 'Tradition'
+  | 'BlueHouse'
+  | 'Firework';
