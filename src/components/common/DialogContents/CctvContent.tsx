@@ -64,7 +64,7 @@ const CctvContent = observer((props: PropsType) => {
             title='CCTV Dialog'
             src={url}
             width={320}
-            height={216}
+            height={209}
             frameBorder={0}
             style={{
               display: 'flex',
