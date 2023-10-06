@@ -71,7 +71,7 @@ const App = observer(() => {
   return (
     <Wrap isDarkTheme={isDarkTheme}>
       <Helmet>
-        <meta http-equiv='Content-Security-Policy' content='img-src *' />
+        <meta http-equiv='Content-Security-Policy' content='media-src * blob:' />
       </Helmet>
       <GlobalStyles styles={scrollbarDesign} />
       <CreateStore.Provider value={{ MobxStore }}>
