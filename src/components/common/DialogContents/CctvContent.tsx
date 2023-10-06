@@ -45,7 +45,7 @@ const CctvContent = observer((props: PropsType) => {
   return (
     <Wrap>
       <PlayerWrap>
-        {isUtic && <UticInfo>경찰청 (UTIC) 제공</UticInfo>}
+        {isUtic && <UticInfo isDialog={isDialog}>경찰청 (UTIC) 제공</UticInfo>}
         {isKbs ? (
           <>
             <KbsWrap
@@ -58,6 +58,19 @@ const CctvContent = observer((props: PropsType) => {
               <RightUp />
             </LinkButton>
           </>
+        ) : isUtic ? (
+          <iframe
+            title='CCTV Dialog'
+            src={url}
+            width={320}
+            height={190}
+            frameBorder={0}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              background: palette.grey[500],
+            }}
+          />
         ) : (
           <ReactPlayer playing muted width={375} height={209} url={url} />
         )}
@@ -130,13 +143,15 @@ const LinkButton = styled('div')({
   cursor: 'pointer',
 });
 
-const UticInfo = styled('span')({
+const UticInfo = styled('span', {
+  shouldForwardProp: (prop: string) => prop !== 'isDialog',
+})<{ isDialog?: boolean }>(({ isDialog }) => ({
   position: 'absolute',
-  top: '4.5rem',
+  top: `${isDialog ? 1 : 4.5}rem`,
   color: palette.white,
   fontSize: '0.75rem',
   fontWeight: 500,
-});
+}));
 
 const DescriptionWrap = styled('div')({
   display: 'flex',
