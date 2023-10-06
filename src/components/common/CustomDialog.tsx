@@ -63,6 +63,11 @@ const CustomDialog = observer(() => {
       isDarkTheme={isDarkTheme}
       open={open}
       onClose={closeDialog}
+      slotProps={{
+        backdrop: {
+          style: { backgroundColor: `rgba(0, 0, 0, ${variant === 'intro' ? 0.8 : 0.5})` },
+        },
+      }}
     >
       <CloseButtonWrap width={dialogWidth} variant={variant}>
         <IconButton onClick={closeDialog}>

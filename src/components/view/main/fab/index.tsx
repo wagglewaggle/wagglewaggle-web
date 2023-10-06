@@ -69,4 +69,9 @@ const tooltipProps = {
       },
     },
   },
+  popper: {
+    sx: {
+      zIndex: 1250,
+    },
+  },
 };
