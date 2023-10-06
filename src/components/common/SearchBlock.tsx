@@ -53,7 +53,6 @@ const Wrap = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   marginBottom: 24,
-  '& path': { fill: palette.white },
 });
 
 const Header = styled('div')({
