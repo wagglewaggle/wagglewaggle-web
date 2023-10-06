@@ -45,7 +45,6 @@ const CctvContent = observer((props: PropsType) => {
   return (
     <Wrap>
       <PlayerWrap>
-        {isUtic && <UticInfo isDialog={isDialog}>경찰청 (UTIC) 제공</UticInfo>}
         {isKbs ? (
           <>
             <KbsWrap
@@ -142,16 +141,6 @@ const LinkButton = styled('div')({
   gap: 2,
   cursor: 'pointer',
 });
-
-const UticInfo = styled('span', {
-  shouldForwardProp: (prop: string) => prop !== 'isDialog',
-})<{ isDialog?: boolean }>(({ isDialog }) => ({
-  position: 'absolute',
-  top: `${isDialog ? 1 : 4.5}rem`,
-  color: palette.white,
-  fontSize: '0.75rem',
-  fontWeight: 500,
-}));
 
 const DescriptionWrap = styled('div')({
   display: 'flex',
