@@ -70,9 +70,11 @@ const Detail = observer(() => {
       isDarkTheme={isDarkTheme}
     >
       <DetailHeader locationData={locationData} />
-      <DetailedCongestion locationData={locationData} initLocationData={initLocationData} />
+      {locationData?.population && (
+        <DetailedCongestion locationData={locationData} initLocationData={initLocationData} />
+      )}
       <LocationInformation locationData={locationData} />
-      <RelatedLocations />
+      <RelatedLocations locationData={locationData} />
       <MarginArea isDarkTheme={isDarkTheme} />
     </Wrap>
   );

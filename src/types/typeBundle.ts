@@ -61,6 +61,10 @@ export interface LocationDataType {
   accidents: AccidentType[];
   cctvs: CctvType[];
   roadTraffic: TrafficType;
+  locations?: {
+    ktPlaces?: PlaceDataType[];
+    sktPlaces?: PlaceDataType[];
+  };
 }
 
 export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
