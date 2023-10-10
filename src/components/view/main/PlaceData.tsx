@@ -100,7 +100,7 @@ const PlaceData = observer(() => {
   return (
     <Wrap>
       <ChipsWrap horizontal>
-        {chips.map((chip, idx) => (
+        {chips.map((chip) => (
           <Chip
             key={chip}
             isDarkTheme={isDarkTheme}

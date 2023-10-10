@@ -77,7 +77,7 @@ export const Description = styled('div', {
   shouldForwardProp: (prop: string) => prop !== 'screenType',
 })<{ screenType: ScreenType }>(({ screenType }) => ({
   margin: '0 auto',
-  maxWidth: screenType === 'mobile' ? '18.438rem' : 'unset',
+  maxWidth: screenType === 'mobile' ? '19rem' : 'unset',
   fontSize: screenType === 'pc' ? '1.25rem' : '1.125rem',
   fontWeight: 500,
   lineHeight: `${screenType === 'pc' ? 1.75 : 1.5}rem`,

@@ -5,8 +5,8 @@ import { useStore } from 'stores';
 import { Footer } from 'components/common';
 import * as S from './styled';
 import { ReactComponent as Bell } from 'assets/icons/bell.svg';
-import mobileBg from 'assets/landing/landing-firework-mobile.png';
-import pcBg from 'assets/landing/landing-firework-pc.png';
+import mobileBg from 'assets/landing/landing-mobile.png';
+import pcBg from 'assets/landing/landing-pc.png';
 
 export default observer(() => {
   const lottieContainer = useRef<HTMLDivElement>(null);
@@ -15,7 +15,7 @@ export default observer(() => {
 
   const handleClickButton = () => {
     window.open(
-      'https://docs.google.com/forms/d/e/1FAIpQLSd80kqdw5LAvGWEYN1Wz0lvKkbryGDqTEuYKYhfINLQGeOx7Q/viewform?usp=sf_link',
+      'https://docs.google.com/forms/d/e/1FAIpQLScLQZz427IZZOJMsM6srURu91ZhDi0UweMhzgarz1b28ec4Kw/viewform?usp=sf_link',
       '_blank'
     );
   };
@@ -47,15 +47,9 @@ export default observer(() => {
         <S.Lottie ref={lottieContainer} screenType={screenType} />
         <S.Logo />
         <S.Content>
-          <S.Title screenType={screenType}>
-            {`여의도 불꽃 축제\n눈치 싸움에${screenType === 'mobile' ? '\n' : ' '}성공하고 싶다면?`}
-          </S.Title>
+          <S.Title screenType={screenType}>{'크리스마스 이브에\n다시 돌아올게요!'}</S.Title>
           <S.Description screenType={screenType}>
-            와글와글에서는 여의도 불꽃 축제 명당의 혼잡도를 한눈에 확인할 수 있어요.
-          </S.Description>
-          <S.Description screenType={screenType}>
-            와글와글은 불꽃 축제가 열리는 <strong>2023년10월 7일 오전 12시</strong>에 오픈될
-            예정이에요.
+            와글와글은 <strong>2023년 12월 24일 오전 12시</strong>에 다시 돌아올 예정이에요.
           </S.Description>
           <S.Description screenType={screenType}>
             서비스 오픈 시 알림을 받고 싶다면 지금 바로 신청해주세요!
