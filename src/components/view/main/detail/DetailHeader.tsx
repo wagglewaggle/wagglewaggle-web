@@ -1,13 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { IconButton, styled } from '@mui/material';
-import lottie from 'lottie-web';
-import { PlaceStatus } from 'components/common';
-import { palette, locationNames, bgPaths } from 'constants/';
-import { CategoryType, LocationDataType } from 'types/typeBundle';
+import { bgPaths, locationNames } from 'constants/';
+import { CctvContent } from 'components/common/DialogContents';
+import { LocationDataType } from 'types/typeBundle';
+import { H } from './styled';
 import { useStore } from 'stores';
-import DetailLottie from 'assets/lottie/Detail.json';
+import { useOptimize } from 'util/';
 import leftIcon from 'assets/icons/left-icon.svg';
 
 interface propsType {
@@ -16,125 +15,49 @@ interface propsType {
 
 const DetailHeader = observer((props: propsType) => {
   const { locationData } = props;
-  const [categories, setCategories] = useState<string>('');
   const [bgPath, setBgPath] = useState<string>('');
-  const lottieContainer = useRef<HTMLDivElement>(null);
-  const { LocationStore, ThemeStore } = useStore().MobxStore;
+  const { ThemeStore, CustomDialogStore } = useStore().MobxStore;
+  const { cctvList } = CustomDialogStore;
   const navigate = useNavigate();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
+  const AB_TEST_VARIANT = useOptimize();
 
   const handleBackClick = () => {
-    navigate('/main');
+    navigate('/');
   };
 
   useEffect(() => {
-    if (!lottieContainer.current) return;
-    lottie.loadAnimation({
-      container: lottieContainer.current,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      animationData: DetailLottie,
-    });
-  }, []);
+    if (!locationData?.cctvs) return;
+    CustomDialogStore.setCctvLists(locationData.cctvs);
+  }, [CustomDialogStore, locationData?.cctvs]);
 
   useEffect(() => {
     if (!bgPaths[locationData?.name || '']) return;
     setBgPath(
-      `url(${require(`assets/detailBg/${ThemeStore.theme}/${
+      `${require(`assets/detailBg/${ThemeStore.theme}/${
         bgPaths[locationData?.name || ''] || 'Street'
-      }/${locationData?.populations[0].level || 'NORMAL'}.png`)})`
+      }/${locationData?.population?.level || 'NORMAL'}.png`)}`
     );
-  }, [ThemeStore.theme, locationData?.name, locationData?.populations]);
-
-  useEffect(() => {
-    if (!locationData?.name || !LocationStore.categories[locationData.name]) return;
-    setCategories(
-      LocationStore.categories[locationData.name]
-        .map((category: CategoryType) => category.type)
-        .join(', ')
-    );
-  }, [locationData?.name, LocationStore.categories]);
+  }, [ThemeStore.theme, locationData?.name, locationData?.population]);
 
   return (
-    <Wrap bgPath={bgPath === '' ? undefined : bgPath} ref={lottieContainer}>
-      <ButtonArea>
-        <CustomIconButton isDarkTheme={isDarkTheme} onClick={handleBackClick}>
+    <>
+      <H.HeaderArea>
+        <H.CustomIconButton isDarkTheme={isDarkTheme} onClick={handleBackClick}>
           <img src={leftIcon} alt='left' />
-        </CustomIconButton>
-      </ButtonArea>
-      <CategoryName isDarkTheme={isDarkTheme}>{categories}</CategoryName>
-      <StatusWrap>
-        <Status>
-          {`지금 ${locationNames[locationData?.name || ''] || locationData?.name || ''}에
-          사람이 `}
-          <PlaceStatus
-            status={locationData?.populations[0].level || undefined}
-            comments={{
-              VERY_RELAXATION: '거의 없어요.',
-              RELAXATION: '조금 있어요.',
-              NORMAL: '적당해요.',
-              CROWDED: '많아요.',
-              VERY_CROWDED: '너무 많아요.',
-            }}
-          />
-        </Status>
-      </StatusWrap>
-    </Wrap>
+        </H.CustomIconButton>
+        {locationNames[locationData?.name ?? ''] ?? locationData?.name}
+        <H.Dummy />
+      </H.HeaderArea>
+      {AB_TEST_VARIANT === 1 && cctvList.length > 0 ? (
+        <H.CctvWrap>
+          <CctvContent />
+        </H.CctvWrap>
+      ) : (
+        <H.ContentArea src={bgPath === '' ? undefined : bgPath} alt='Header' />
+      )}
+    </>
   );
 });
 
 export default DetailHeader;
-
-const Wrap = styled('div')<{ bgPath: string | undefined }>(({ bgPath }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '0 24px',
-  height: 448,
-  backgroundImage: bgPath,
-  backgroundSize: 'cover',
-  backgroundRepeat: 'no-repeat',
-  backgroundPositionX: 'center',
-  overflowX: 'hidden',
-  '& svg': {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '767px !important',
-    height: '432px !important',
-  },
-}));
-
-const ButtonArea = styled('div')({
-  padding: '12px 0',
-  zIndex: 1,
-  '& button': {
-    padding: 0,
-    width: 32,
-    height: 32,
-    justifyContent: 'flex-start',
-  },
-});
-
-const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
-  filter: isDarkTheme ? 'none' : 'invert(1)',
-}));
-
-const CategoryName = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
-  margin: '8px 0',
-  color: palette.grey[isDarkTheme ? 400 : 500],
-  fontSize: 12,
-  fontWeight: 500,
-}));
-
-const StatusWrap = styled('div')({
-  display: 'flex',
-  justifyContent: 'space-between',
-  whiteSpace: 'pre-line',
-  lineHeight: '32px',
-});
-
-const Status = styled('div')({
-  fontSize: 24,
-  fontWeight: 600,
-});

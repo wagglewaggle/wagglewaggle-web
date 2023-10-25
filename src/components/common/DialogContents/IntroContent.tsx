@@ -1,27 +1,11 @@
 import { styled } from '@mui/material';
-import rightIcon from 'assets/icons/right-icon.svg';
 
 const IntroContent = () => {
-  const openSurveyPage = () => {
-    window.open(
-      'https://docs.google.com/forms/d/e/1FAIpQLSenqtgHZbuI5RIOYXzYE4217OcZco2Uxb44xl_zHQ_DQAj9Iw/viewform',
-      '_blank'
-    );
-  };
-
   return (
     <>
-      <Title>와글와글에게 여러분의 목소리를 들려주세요.</Title>
+      <Title>{`2023년 여의도 불꽃 축제를\n와글와글과 함께 즐겨보세요.`}</Title>
       <Content>
-        와글와글을 더욱 더 발전시키기 위해 사용자 인터뷰 대상자를 모집합니다. 참여해주신 분들에겐
-        소정의 사례금을 드립니다.
-        <br />
-        많은 참여 부탁드립니다 🐰
-        <br />
-        <br />
-        <Survey onClick={openSurveyPage}>
-          참여하기 <img src={rightIcon} alt='right' />
-        </Survey>
+        {`‘와글와글’을 통해 서울 여의도 불꽃 축제를 즐길 수 있는 인기 장소별 인구 혼잡 현황을 확인해보세요 👨‍👩‍👧‍👦\n\n*일시 : 2023.10.07 오후 1시 ~ 10시`}
       </Content>
     </>
   );
@@ -30,25 +14,17 @@ const IntroContent = () => {
 export default IntroContent;
 
 const Title = styled('div')({
-  marginBottom: '16px',
-  fontSize: 18,
+  marginBottom: '1rem',
+  fontSize: '1.125rem',
   fontWeight: 600,
+  whiteSpace: 'pre-line',
   wordBreak: 'keep-all',
-  lineHeight: '24px',
+  lineHeight: '1.5rem',
 });
 
 const Content = styled('div')({
-  lineHeight: '20px',
-});
-
-const Survey = styled('span')({
-  display: 'flex',
-  alignItems: 'center',
-  fontWeight: 700,
-  gap: 4,
-  cursor: 'pointer',
-  '& img': {
-    width: 16,
-    height: 16,
-  },
+  fontSize: '0.875rem',
+  lineHeight: '1.25rem',
+  whiteSpace: 'pre-line',
+  wordBreak: 'keep-all',
 });

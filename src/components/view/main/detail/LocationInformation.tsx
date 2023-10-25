@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { IconButton, styled } from '@mui/material';
-import { palette, geometry, urlPaths, locationNames, locationRequestTypes } from 'constants/';
+import { palette, geometry, urlPaths, locationNames } from 'constants/';
 import { LocationDataType } from 'types/typeBundle';
 import { useStore } from 'stores';
 import navigationIcon from 'assets/icons/navigation-icon.svg';
@@ -39,9 +39,7 @@ const LocationInformation = observer((props: propsType) => {
   const highlightMap = useCallback(() => {
     if (!locationData) return null;
     const locationName = locationData.name;
-    if (locationRequestTypes.skt.includes(locationNames[locationData.name] || locationData.name)) {
-      return null;
-    }
+    if (!geometry[locationName]?.coordinates) return null;
     const coordinates: [number, number][][] | [number, number][][][] =
       geometry[locationName].coordinates;
     const geometryType: 'Polygon' | 'MultiPolygon' = geometry[locationName].type;
@@ -145,7 +143,9 @@ const LocationInformation = observer((props: propsType) => {
 
 export default LocationInformation;
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -163,7 +163,9 @@ const Header = styled('div')({
   fontWeight: 600,
 });
 
-const MapWrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const MapWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   flexDirection: 'column',
   borderRadius: 4,
@@ -200,12 +202,16 @@ const Name = styled('div')({
   fontWeight: 600,
 });
 
-const Address = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Address = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: palette.grey[isDarkTheme ? 400 : 500],
   fontWeight: 400,
 }));
 
-const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomIconButton = styled(IconButton, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   border: `1px solid ${isDarkTheme ? palette.white : palette.black}`,
   padding: '3px',
   '& img': {
@@ -218,7 +224,9 @@ const NavigationIcon = styled('img')({
   height: 16,
 });
 
-const InfoWrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const InfoWrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',

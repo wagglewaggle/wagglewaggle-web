@@ -57,11 +57,11 @@ const SearchData = observer((props: propsType) => {
 
 export default SearchData;
 
-const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number }>(
-  ({ screenType, screenWidth }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '5px 24px 35px',
-    width: screenType === 'mobile' ? screenWidth - 48 : 352,
-  })
-);
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => !['screenType', 'screenWidth'].includes(prop),
+})<{ screenType: ScreenType; screenWidth: number }>(({ screenType, screenWidth }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '5px 24px 35px',
+  width: screenType === 'mobile' ? screenWidth - 48 : 352,
+}));

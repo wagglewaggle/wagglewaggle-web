@@ -9,7 +9,7 @@ import RelatedLocations from './RelatedLocations';
 import { useStore } from 'stores';
 import { LocationDataType, ScreenType } from 'types/typeBundle';
 import { palette, locationNames, locationRequestTypes } from 'constants/';
-import axiosRequest from 'api/axiosRequest';
+import { request } from 'api/request';
 
 const Detail = observer(() => {
   const [locationData, setLocationData] = useState<LocationDataType | null>(null);
@@ -28,19 +28,20 @@ const Detail = observer(() => {
     if (location.search.length === 0) return;
     const placeName: string = decodeURI(location.search).replace('?name=', '');
     LocationStore.setPlaceName(placeName);
-    const requestType: string = locationRequestTypes.skt.includes(
+    const requestType: 'skt' | 'kt' = locationRequestTypes.skt.includes(
       locationNames[placeName] || placeName
     )
-      ? 'skt-place'
-      : 'kt-place';
+      ? 'skt'
+      : 'kt';
     const pathnameArr: string[] = location.pathname.split('/');
     const placeId: string = pathnameArr[pathnameArr.length - 1];
     if (!Number(placeId)) {
-      navigate('/main');
+      navigate('/');
       return;
     }
-    const response: { data: LocationDataType } | undefined = await axiosRequest(
-      `${requestType}/${placeId}`
+    const response: { data: LocationDataType } | undefined = await request.getLocationDetail(
+      requestType,
+      placeId
     );
     if (!response) return;
     setLocationData(response.data);
@@ -69,9 +70,11 @@ const Detail = observer(() => {
       isDarkTheme={isDarkTheme}
     >
       <DetailHeader locationData={locationData} />
-      <DetailedCongestion locationData={locationData} initLocationData={initLocationData} />
+      {locationData?.population && (
+        <DetailedCongestion locationData={locationData} initLocationData={initLocationData} />
+      )}
       <LocationInformation locationData={locationData} />
-      <RelatedLocations />
+      <RelatedLocations locationData={locationData} />
       <MarginArea isDarkTheme={isDarkTheme} />
     </Wrap>
   );
@@ -79,7 +82,9 @@ const Detail = observer(() => {
 
 export default Detail;
 
-const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number; isDarkTheme: boolean }>(
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => !['screenType', 'screenWidth', 'isDarkTheme'].includes(prop),
+})<{ screenType: ScreenType; screenWidth: number; isDarkTheme: boolean }>(
   ({ screenType, screenWidth, isDarkTheme }) => ({
     display: 'flex',
     flexDirection: 'column',
@@ -88,7 +93,9 @@ const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number; isDark
   })
 );
 
-const MarginArea = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const MarginArea = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   height: '64px',
-  backgroundColor: isDarkTheme ? palette.black : palette.white,
+  backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,
 }));

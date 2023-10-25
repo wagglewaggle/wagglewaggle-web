@@ -1,10 +1,11 @@
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconButton, styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
 import { LocationDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
+import { useOptimize } from 'util/';
 import { ReactComponent as RefreshIcon } from 'assets/icons/refresh-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import carIcon from 'assets/icons/car-icon.svg';
@@ -32,6 +33,7 @@ const DetailedCongestion = observer((props: propsType) => {
     서행: '이동 시간이 소요될 수 있어요',
     정체: '이동하기 힘들어요',
   };
+  const AB_TEST_VARIANT = useOptimize();
 
   const handleOpenDialog = () => {
     CustomDialogStore.openCctvDialog(locationData?.cctvs || []);
@@ -39,7 +41,7 @@ const DetailedCongestion = observer((props: propsType) => {
 
   useEffect(() => {
     const newTimePassed: number = Math.round(
-      (new Date().getTime() - new Date(locationData?.populations[0]?.updatedDate || '').getTime()) /
+      (new Date().getTime() - new Date(locationData?.population?.updatedDate || '').getTime()) /
         60000
     );
     setTimePassed(
@@ -64,11 +66,11 @@ const DetailedCongestion = observer((props: propsType) => {
           <StatusDescription>
             <span>인구 현황</span>
             <CommentsWrap isDarkTheme={isDarkTheme}>
-              {COMMENTS_BY_STATUS[locationData?.populations[0]?.level || 'NORMAL']}
+              {COMMENTS_BY_STATUS[locationData?.population?.level || 'NORMAL']}
             </CommentsWrap>
           </StatusDescription>
         </StatusLeft>
-        <PlaceStatus status={locationData?.populations[0].level || undefined} />
+        <PlaceStatus status={locationData?.population?.level || undefined} />
       </StatusCard>
       {locationData?.roadTraffic?.type && (
         <StatusCard variant='traffic'>
@@ -87,14 +89,14 @@ const DetailedCongestion = observer((props: propsType) => {
           />
         </StatusCard>
       )}
-      {(locationData?.cctvs || []).length > 0 && (
-        <Fragment>
+      {AB_TEST_VARIANT === 0 && (locationData?.cctvs || []).length > 0 && (
+        <>
           <CustomDivider />
           <CustomButton isDarkTheme={isDarkTheme} onClick={handleOpenDialog}>
             CCTV
             <RightIcon />
           </CustomButton>
-        </Fragment>
+        </>
       )}
     </Wrap>
   );
@@ -102,7 +104,9 @@ const DetailedCongestion = observer((props: propsType) => {
 
 export default DetailedCongestion;
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -124,6 +128,7 @@ const Header = styled('div')({
   '& span': {
     fontSize: 18,
     fontWeight: 600,
+    lineHeight: '1.25rem',
   },
 });
 
@@ -144,7 +149,9 @@ const CustomRefreshIcon = styled(RefreshIcon)({
   height: 16,
 });
 
-const StatusCard = styled('div')<{ variant: 'person' | 'traffic' }>(({ variant }) => ({
+const StatusCard = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'variant',
+})<{ variant: 'person' | 'traffic' }>(({ variant }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -179,8 +186,12 @@ const StatusDescription = styled('div')({
   },
 });
 
-const CommentsWrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CommentsWrap = styled('span', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   color: palette.grey[isDarkTheme ? 400 : 500],
+  fontWeight: 400,
+  lineHeight: '1.25rem',
 }));
 
 const CustomDivider = styled('hr')({
@@ -188,7 +199,9 @@ const CustomDivider = styled('hr')({
   border: `1px solid ${palette.grey[600]}`,
 });
 
-const CustomButton = styled(Button)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomButton = styled(Button, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   justifyContent: 'space-between',
   padding: '12px 0',
   width: '100%',

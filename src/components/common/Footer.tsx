@@ -38,7 +38,7 @@ const Footer = observer(() => {
           링크가 복사되었습니다.
         </LinkCopyPopup>
       ) : (
-        <TeamName>© 2022 Team EXIT</TeamName>
+        <TeamName>© Team EXIT</TeamName>
       )}
       <HiddenLink ref={copyLinkRef} value={window.location.href} onChange={() => {}} />
     </Wrap>
@@ -54,9 +54,12 @@ const Wrap = styled('div')({
   justifyContent: 'flex-end',
   alignItems: 'center',
   paddingTop: 48,
+  backgroundColor: palette.grey[800],
 });
 
-const Buttons = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Buttons = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   width: 191,
@@ -68,7 +71,9 @@ const Buttons = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   },
 }));
 
-const LinkCopyPopup = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const LinkCopyPopup = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

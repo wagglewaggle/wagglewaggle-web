@@ -19,6 +19,5 @@ export const locationRequestTypes: { [key: string]: string[] } = {
     '스타필드 고양',
     '스타필드 안성',
     '현대백화점 판교점',
-    '어린이대공원',
   ],
 };

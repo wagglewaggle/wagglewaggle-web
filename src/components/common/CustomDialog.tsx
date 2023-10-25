@@ -15,10 +15,11 @@ const CustomDialog = observer(() => {
   const [dialogHeight, setDialogHeight] = useState<number>(408);
   const lottieContainer = useRef<HTMLDivElement>(null);
   const { ScreenSizeStore, CustomDialogStore, ThemeStore } = useStore().MobxStore;
+  const { variant, open } = CustomDialogStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const closeDialog = () => {
-    if (CustomDialogStore.variant === 'intro') {
+    if (variant === 'intro') {
       sessionStorage.setItem('@wagglewaggle_intro_popup_open', 'false');
     }
     CustomDialogStore.setOpen(false);
@@ -40,63 +41,59 @@ const CustomDialog = observer(() => {
   }, [ScreenSizeStore.screenType, lottieContainer.current]);
 
   useEffect(() => {
-    if (ScreenSizeStore.screenType === 'mobile' && CustomDialogStore.variant === 'cctv') {
+    if (ScreenSizeStore.screenType === 'mobile' && variant === 'cctv') {
       setDialogWidth(300);
       return;
     }
     setDialogWidth(
-      (ScreenSizeStore.screenType === 'mobile' ? 295 : 408) -
-        (CustomDialogStore.variant === 'cctv' ? 40 : 0)
+      (ScreenSizeStore.screenType === 'mobile' ? 295 : 408) - (variant === 'cctv' ? 40 : 0)
     );
-  }, [ScreenSizeStore.screenType, CustomDialogStore.variant]);
+  }, [ScreenSizeStore.screenType, variant]);
 
   useEffect(() => {
-    setDialogHeight(
-      CustomDialogStore.variant === 'intro'
-        ? 492
-        : CustomDialogStore.variant === 'accident'
-        ? 408
-        : 360
-    );
-  }, [CustomDialogStore.variant]);
+    setDialogHeight(variant === 'intro' ? 492 : variant === 'accident' ? 408 : 390);
+  }, [variant]);
 
   return (
     <CustomDialogWrap
       width={dialogWidth}
       height={dialogHeight}
-      variant={CustomDialogStore.variant}
+      variant={variant}
       screenType={ScreenSizeStore.screenType}
       isDarkTheme={isDarkTheme}
-      open={CustomDialogStore.open}
+      open={open}
       onClose={closeDialog}
+      slotProps={{
+        backdrop: {
+          style: { backgroundColor: `rgba(0, 0, 0, ${variant === 'intro' ? 0.8 : 0.5})` },
+        },
+      }}
     >
-      <CloseButtonWrap width={dialogWidth} variant={CustomDialogStore.variant}>
+      <CloseButtonWrap width={dialogWidth} variant={variant}>
         <IconButton onClick={closeDialog}>
           <img src={closeIcon} alt='close' />
         </IconButton>
       </CloseButtonWrap>
       <DialogPart
         isDarkTheme={isDarkTheme}
-        variant={CustomDialogStore.variant}
-        width={dialogWidth - (CustomDialogStore.variant === 'intro' ? 16 : 0)}
+        variant={variant}
+        width={dialogWidth - (variant === 'intro' ? 16 : 0)}
       >
         <DialogTitle>
-          {CustomDialogStore.variant === 'intro' && <CustomIcon src={logo} alt='logo' />}
-          {CustomDialogStore.variant === 'accident' && (
-            <CustomIcon src={accidentIcon} alt='accident' />
-          )}
+          {variant === 'intro' && <CustomIcon src={logo} alt='logo' />}
+          {variant === 'accident' && <CustomIcon src={accidentIcon} alt='accident' />}
         </DialogTitle>
-        <CustomContent width={dialogWidth} variant={CustomDialogStore.variant}>
-          {CustomDialogStore.variant === 'intro' ? (
+        <CustomContent width={dialogWidth} variant={variant}>
+          {variant === 'intro' ? (
             <IntroContent />
-          ) : CustomDialogStore.variant === 'accident' ? (
+          ) : variant === 'accident' ? (
             <AccidentContent />
           ) : (
-            <CctvContent />
+            <CctvContent isDialog />
           )}
         </CustomContent>
-        {CustomDialogStore.variant === 'accident' && <AccidentEmpty isDarkTheme={isDarkTheme} />}
-        {CustomDialogStore.variant === 'intro' && <Lottie ref={lottieContainer} />}
+        {variant === 'accident' && <AccidentEmpty isDarkTheme={isDarkTheme} />}
+        {variant === 'intro' && <Lottie ref={lottieContainer} />}
       </DialogPart>
     </CustomDialogWrap>
   );
@@ -104,7 +101,10 @@ const CustomDialog = observer(() => {
 
 export default CustomDialog;
 
-const CustomDialogWrap = styled(Dialog)<{
+const CustomDialogWrap = styled(Dialog, {
+  shouldForwardProp: (prop: string) =>
+    !['width', 'height', 'variant', 'screenType', 'isDarkTheme'].includes(prop),
+})<{
   width: number;
   height: number;
   variant: 'intro' | 'accident' | 'cctv';
@@ -112,52 +112,38 @@ const CustomDialogWrap = styled(Dialog)<{
   isDarkTheme: boolean;
 }>(({ width, height, variant, screenType, isDarkTheme }) => ({
   '& .MuiPaper-root': {
-    height: 492,
+    height: `${height - (screenType === 'mobile' && variant === 'intro' ? 12 : 0)}px`,
     backgroundColor: 'transparent',
     boxShadow: 'none',
     overflow: 'hidden',
-    maxHeight: `${height - (screenType === 'mobile' && variant === 'intro' ? 12 : 0)}px`,
   },
   '& .MuiDialogContent-root': {
     width: `${width - (variant === 'cctv' ? 48 : variant === 'intro' ? 56 : 40)}px`,
-    height: variant === 'cctv' ? 'fit-content' : 'skip',
+    height: variant === 'cctv' ? '320px' : 'skip',
     overflow: 'auto',
-    '& img': {
-      filter: isDarkTheme ? 'none' : 'invert(1)',
-    },
-    '&::-webkit-scrollbar': {
-      width: '10px',
-      color: palette.grey[isDarkTheme ? 500 : 300],
-      background: isDarkTheme ? palette.grey[700] : palette.white,
-    },
-    '&::-webkit-scrollbar-thumb': {
-      borderLeft: '2px solid transparent',
-      boxShadow: `inset 0 0 10px 10px ${isDarkTheme ? palette.grey[700] : palette.white}`,
-      background: palette.grey[isDarkTheme ? 500 : 300],
-    },
-    '&::-webkit-scrollbar-track': {
-      background: isDarkTheme ? palette.grey[700] : palette.white,
-    },
+    '& img': { filter: isDarkTheme ? 'none' : 'invert(1)' },
   },
 }));
 
-const CloseButtonWrap = styled('div')<{ width: number; variant: 'intro' | 'accident' | 'cctv' }>(
-  ({ width, variant }) => ({
-    padding: 0,
-    width: `${width - (variant === 'intro' ? 8 : 0)}px`,
-    textAlign: 'end',
-    backgroundColor: 'transparent',
-    '& button': {
-      padding: '0 0 16px 0',
-    },
-    '& img': {
-      width: '32px',
-      height: '32px',
-    },
-  })
-);
+const CloseButtonWrap = styled('div', {
+  shouldForwardProp: (prop: string) => !['width', 'variant'].includes(prop),
+})<{ width: number; variant: 'intro' | 'accident' | 'cctv' }>(({ width, variant }) => ({
+  padding: 0,
+  width: `${width - (variant === 'intro' ? 8 : 0)}px`,
+  textAlign: 'end',
+  backgroundColor: 'transparent',
+  '& button': {
+    padding: '0 0 16px 0',
+  },
+  '& img': {
+    width: '32px',
+    height: '32px',
+  },
+}));
 
-const DialogPart = styled('div')<{
+const DialogPart = styled('div', {
+  shouldForwardProp: (prop: string) => !['width', 'variant', 'isDarkTheme'].includes(prop),
+})<{
   isDarkTheme: boolean;
   variant: 'intro' | 'accident' | 'cctv';
   width: number;
@@ -181,7 +167,9 @@ const DialogPart = styled('div')<{
   },
 }));
 
-const CustomContent = styled(DialogContent)<{
+const CustomContent = styled(DialogContent, {
+  shouldForwardProp: (prop: string) => !['width', 'variant'].includes(prop),
+})<{
   width: number;
   variant: 'intro' | 'accident' | 'cctv';
 }>(({ width, variant }) => ({
@@ -196,7 +184,9 @@ const CustomContent = styled(DialogContent)<{
   },
 }));
 
-const AccidentEmpty = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const AccidentEmpty = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   height: '20px',
   width: '100%',
   backgroundColor: isDarkTheme ? palette.grey[700] : palette.white,

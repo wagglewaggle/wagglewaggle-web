@@ -42,17 +42,13 @@ const SearchInput = observer((props: propsType) => {
         <CustomLeftArrowIcon />
       </CustomIconButton>
       <CustomTextField
+        isDarkTheme={isDarkTheme}
         type='text'
         autoFocus
         value={searchValue}
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}
         placeholder="'강남역'를 입력해보세요"
-        sx={{
-          '& ::placeholder': {
-            color: palette.grey[isDarkTheme ? 400 : 500],
-          },
-        }}
       />
       {searchValue.length > 0 && <CustomCloseIcon handleIconClick={handleIconClick} />}
     </Wrap>
@@ -61,7 +57,9 @@ const SearchInput = observer((props: propsType) => {
 
 export default SearchInput;
 
-const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -71,7 +69,9 @@ const Wrap = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   height: 32,
 }));
 
-const CustomIconButton = styled(IconButton)<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const CustomIconButton = styled(IconButton, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   padding: 0,
   '& path': {
     fill: isDarkTheme ? palette.white : palette.black,
@@ -85,13 +85,16 @@ const CustomLeftArrowIcon = styled(LeftArrowIcon)({
   },
 });
 
-const CustomTextField = styled(TextField)({
+const CustomTextField = styled(TextField, {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   justifyContent: 'center',
   borderRadius: 25,
   width: '100%',
   height: 48,
   '& input': {
+    color: isDarkTheme ? palette.white : palette.black,
     padding: '12.5px 0 12.5px 14px',
     fontSize: 14,
     fontWeight: 400,
@@ -105,4 +108,7 @@ const CustomTextField = styled(TextField)({
   '& fieldset': {
     display: 'none',
   },
-});
+  '& ::placeholder': {
+    color: palette.grey[isDarkTheme ? 400 : 500],
+  },
+}));

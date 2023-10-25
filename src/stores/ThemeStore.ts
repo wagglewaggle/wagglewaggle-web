@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 
 export class ThemeStore {
-  theme: 'dark' | 'light' = 'light';
+  theme: 'dark' | 'light' = 'dark';
 
   constructor() {
     makeAutoObservable(this);

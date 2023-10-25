@@ -4,30 +4,30 @@ import { styled } from '@mui/material';
 import { PlaceCard } from 'components/common';
 import { useStore } from 'stores';
 import lottie from 'lottie-web';
-import axiosRequest from 'api/axiosRequest';
+import { request } from 'api/request';
 import { PlaceDataType, ScreenType } from 'types/typeBundle';
 import { palette, locationNames, districts } from 'constants/';
 
 interface propsType {
-  placeData: PlaceDataType[];
   searchWord: string;
 }
 
 const ResultData = observer((props: propsType) => {
-  const { placeData, searchWord } = props;
+  const { searchWord } = props;
   const [resultData, setResultData] = useState<PlaceDataType[]>([]);
   const [relatedData, setRelatedData] = useState<PlaceDataType[]>([]);
   const lottieContainer = useRef<HTMLDivElement>(null);
-  const { ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const { LocationStore, ScreenSizeStore, ThemeStore } = useStore().MobxStore;
+  const { allPlaces } = LocationStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const getSuggestionList = useCallback(async () => {
     setResultData(
-      placeData.filter((data: PlaceDataType) =>
+      allPlaces.filter((data: PlaceDataType) =>
         (locationNames[data.name] || data.name).includes(searchWord)
       )
     );
-  }, [placeData, searchWord]);
+  }, [allPlaces, searchWord]);
 
   const pushPlaceData = (
     places: PlaceDataType[],
@@ -47,7 +47,7 @@ const ResultData = observer((props: propsType) => {
     const newPlaces: string[] = [];
     resultData.forEach(async (data: PlaceDataType, idx: number) => {
       if (!districts[data.name]) return;
-      const response = await axiosRequest(`location/${districts[data.name]}`);
+      const response = await request.getLocationData(districts[data.name]);
       if (!response?.data?.ktPlaces || !response?.data?.sktPlaces) return;
       pushPlaceData(response.data.ktPlaces, newPlaces, newRelatedData);
       pushPlaceData(response.data.sktPlaces, newPlaces, newRelatedData);
@@ -128,15 +128,15 @@ const ResultData = observer((props: propsType) => {
 
 export default ResultData;
 
-const Wrap = styled('div')<{ screenType: ScreenType; screenWidth: number }>(
-  ({ screenType, screenWidth }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '5px 24px 35px',
-    width: screenType === 'mobile' ? screenWidth - 48 : 352,
-  })
-);
+const Wrap = styled('div', {
+  shouldForwardProp: (prop: string) => !['screenType', 'screenWidth'].includes(prop),
+})<{ screenType: ScreenType; screenWidth: number }>(({ screenType, screenWidth }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '5px 24px 35px',
+  width: screenType === 'mobile' ? screenWidth - 48 : 352,
+}));
 
 const Empty = styled('div')({
   margin: '40px 0 24px',
@@ -155,7 +155,9 @@ const EmptyComment = styled('div')({
   fontWeight: 600,
 });
 
-const EmptySuggestion = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const EmptySuggestion = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   margin: '8px 0 64px',
   color: palette.grey[isDarkTheme ? 400 : 500],
   fontSize: 14,

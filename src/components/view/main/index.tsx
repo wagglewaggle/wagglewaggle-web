@@ -1,31 +1,27 @@
-import { Fragment, useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
-import { CustomDrawer, SearchInput } from 'components/common';
+import { CustomDrawer } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
 import SuggestData from './SuggestData';
 import ResultData from './ResultData';
 import { Detail } from 'components/view';
-import lottie from 'lottie-web';
-import MainLottie from 'assets/lottie/Main.json';
-import { PlaceDataType, ScreenType } from 'types/typeBundle';
+import Fab from './fab';
 import { useStore } from 'stores';
-import axiosRequest from 'api/axiosRequest';
+import { request } from 'api/request';
 import { palette } from 'constants/';
 import { ReactComponent as Logo } from 'assets/icons/logo-icon.svg';
 import { ReactComponent as SearchIcon } from 'assets/icons/search-icon.svg';
 
 const Main = observer(() => {
-  const [currentPage, setCurrentPage] = useState<JSX.Element>(<Fragment />);
-  const [placeData, setPlaceData] = useState<PlaceDataType[]>([]);
+  const [currentPage, setCurrentPage] = useState<JSX.Element>(<></>);
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
-  const lottieContainer = useRef<HTMLDivElement>(null);
-  const { ScreenSizeStore, LocationStore, CustomDialogStore, ErrorStore, ThemeStore } =
-    useStore().MobxStore;
+  let timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { LocationStore, CustomDialogStore, ErrorStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
   const location = useLocation();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
@@ -36,7 +32,7 @@ const Main = observer(() => {
 
   const handleWordClick = (searchWord: string) => {
     setSearchValue(searchWord);
-    setCurrentPage(<ResultData placeData={placeData} searchWord={searchWord} />);
+    setCurrentPage(<ResultData searchWord={searchWord} />);
   };
 
   const handleSearchEnter = (searchWord: string) => {
@@ -54,7 +50,6 @@ const Main = observer(() => {
         />
       ) : (
         <SuggestData
-          placeData={placeData}
           searchValue={newValue}
           handleWordClick={handleWordClick}
           handleLatestListChange={handleLatestListChange}
@@ -75,52 +70,25 @@ const Main = observer(() => {
   };
 
   const onDrawerClose = () => {
-    navigate('/main');
     setOpenDrawer(false);
-    setSearchValue('');
-    setCurrentPage(<Fragment />);
+    navigate('/');
+    timeoutRef.current = setTimeout(() => {
+      setSearchValue('');
+      setCurrentPage(<></>);
+      setIncludeInput(true);
+    }, 300);
   };
 
   const navigateToHome = () => {
     onDrawerClose();
   };
 
-  const handlePlaceDataChange = (newPlaceData: PlaceDataType[]) => {
-    setPlaceData(JSON.parse(JSON.stringify(newPlaceData)));
-  };
-
   const initPlaceData = async () => {
     const params = { populationSort: true };
-    const ktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-      'kt-place',
-      params
-    );
-    const sktData: { data: { list: PlaceDataType[] } } | undefined = await axiosRequest(
-      'skt-place',
-      params
-    );
+    const ktData = await request.getKtPlaces(params);
+    const sktData = await request.getSktPlaces(params);
     if (!ktData || !sktData) return;
-    const statusArr: string[] = [
-      'VERY_RELAXATION',
-      'RELAXATION',
-      'NORMAL',
-      'CROWDED',
-      'VERY_CROWDED',
-    ];
-    setPlaceData(
-      [...ktData.data.list, ...sktData.data.list].sort(
-        (prev: PlaceDataType, next: PlaceDataType) => {
-          const prevLevel = statusArr.indexOf(prev.populations[0].level);
-          const nextLevel = statusArr.indexOf(next.populations[0].level);
-          if (prevLevel > nextLevel) return -1;
-          else if (nextLevel > prevLevel) return 1;
-          return 0;
-        }
-      )
-    );
-    [...ktData.data.list, ...sktData.data.list].forEach((data: PlaceDataType) => {
-      LocationStore.setCategories(data.name, data.categories);
-    });
+    LocationStore.setAllPlaces([...ktData.data.list, ...sktData.data.list]);
   };
 
   useEffect(() => {
@@ -133,24 +101,22 @@ const Main = observer(() => {
   }, []);
 
   useEffect(() => {
-    if (!lottieContainer.current) return;
-    lottie.loadAnimation({
-      container: lottieContainer.current,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      animationData: MainLottie,
-    });
-  }, []);
-
-  useEffect(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     const newDrawerState: boolean = location.search.length !== 0;
-    setOpenDrawer(newDrawerState);
-    setIncludeInput(!newDrawerState);
-    setCurrentPage(newDrawerState ? <Detail /> : <Fragment />);
-    setSearchValue(newDrawerState ? searchValue : '');
+    if (!newDrawerState) {
+      onDrawerClose();
+      return;
+    }
+    setOpenDrawer(true);
+    setIncludeInput(false);
+    setCurrentPage(<Detail />);
+    setSearchValue(searchValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
+
+  useEffect(() => {
+    return () => clearTimeout(timeoutRef.current ?? undefined);
+  }, []);
 
   useEffect(() => {
     if (searchValue.length === 0 || location.search.length === 0) {
@@ -166,36 +132,26 @@ const Main = observer(() => {
   }, [ErrorStore.statusCode, navigate]);
 
   return (
-    <>
-      <SearchWrap>
-        <SearchBox isDarkTheme={isDarkTheme}>
-          <Logo onClick={navigateToHome} />
-          <EmptySpace />
-          <SearchIcon onClick={handleSearchClick} />
-        </SearchBox>
-        <PlaceData placeData={placeData} handlePlaceDataChange={handlePlaceDataChange} />
-        <CustomDrawer
-          open={openDrawer}
-          onClose={onDrawerClose}
-          searchInput={
-            includeInput ? (
-              <SearchInput
-                searchValue={searchValue}
-                handleSearchEnter={handleSearchEnter}
-                handleDrawerClose={
-                  searchValue.length === 0 || !LocationStore.suggestionExists
-                    ? onDrawerClose
-                    : handleSearchClick
-                }
-                handleSearchValueChange={handleSearchValueChange}
-              />
-            ) : undefined
-          }
-          component={currentPage}
-        />
-      </SearchWrap>
-      <Lottie screenType={ScreenSizeStore.screenType} ref={lottieContainer} />
-    </>
+    <SearchWrap>
+      <SearchBox isDarkTheme={isDarkTheme}>
+        <Logo onClick={navigateToHome} />
+        <EmptySpace />
+        <SearchIcon onClick={handleSearchClick} />
+      </SearchBox>
+      <PlaceData />
+      <CustomDrawer
+        searchValue={searchValue}
+        handleSearchEnter={handleSearchEnter}
+        onDrawerClose={onDrawerClose}
+        handleSearchClick={handleSearchClick}
+        handleSearchValueChange={handleSearchValueChange}
+        open={openDrawer}
+        onClose={onDrawerClose}
+        includeInput={includeInput}
+        component={currentPage}
+      />
+      <Fab />
+    </SearchWrap>
   );
 });
 
@@ -208,7 +164,9 @@ const SearchWrap = styled('div')({
   zIndex: 2,
 });
 
-const SearchBox = styled('div')<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
+const SearchBox = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
+})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '0 24px',
@@ -231,15 +189,3 @@ const EmptySpace = styled('div')({
   flexGrow: 1,
   height: '100%',
 });
-
-const Lottie = styled('div')<{ screenType: ScreenType }>(({ screenType }) => ({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: 1720,
-  height: '100%',
-  overflow: 'hidden',
-  zIndex: 1,
-  opacity: 0.7,
-  transform: `translateX(${screenType === 'mobile' ? '-280px' : 0})`,
-}));

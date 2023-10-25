@@ -14,10 +14,10 @@ export interface PlaceDataType {
   idx: number;
   name: string;
   categories: CategoryType[];
-  poiId: number;
+  poiId?: number;
   x: number;
   y: number;
-  populations: PopulationType[];
+  population?: PopulationType;
 }
 
 export interface LocationInfoType {
@@ -56,11 +56,15 @@ export interface LocationDataType {
   name: string;
   x: number;
   y: number;
-  populations: PopulationType[];
+  population: PopulationType;
   level: StatusType;
   accidents: AccidentType[];
   cctvs: CctvType[];
   roadTraffic: TrafficType;
+  locations?: {
+    ktPlaces?: PlaceDataType[];
+    sktPlaces?: PlaceDataType[];
+  };
 }
 
 export type StatusType = 'VERY_RELAXATION' | 'RELAXATION' | 'NORMAL' | 'CROWDED' | 'VERY_CROWDED';
@@ -72,9 +76,10 @@ export type BgType =
   | 'Department'
   | 'GwangHwa'
   | 'HanRiver'
-  | 'Namsan'
   | 'Palace'
   | 'Park'
   | 'Street'
   | 'Subway'
-  | 'Tradition';
+  | 'Tradition'
+  | 'BlueHouse'
+  | 'Firework';
