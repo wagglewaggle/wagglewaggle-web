@@ -49,7 +49,7 @@ export default observer(() => {
         <S.Content>
           <S.Title screenType={screenType}>{'크리스마스 이브에\n다시 돌아올게요!'}</S.Title>
           <S.Description screenType={screenType}>
-            와글와글은 <strong>2023년 12월 24일 오전 12시</strong>에 다시 돌아올 예정이에요.
+            와글와글은 <strong>2023년 12월 22일 오전 12시</strong>에 다시 돌아올 예정이에요.
           </S.Description>
           <S.Description screenType={screenType}>
             서비스 오픈 시 알림을 받고 싶다면 지금 바로 신청해주세요!
