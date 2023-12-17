@@ -20,6 +20,6 @@ export const chipIcons: Record<string, string> = {
   지하철: subway,
   거리: street,
   복합문화공간: culture,
-  불꽃축제: firework,
+  '크리스마스 핫플': firework,
   경기장: stadium,
 };

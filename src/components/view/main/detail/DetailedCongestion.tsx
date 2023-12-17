@@ -5,7 +5,6 @@ import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
 import { LocationDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
-import { useOptimize } from 'util/';
 import { ReactComponent as RefreshIcon } from 'assets/icons/refresh-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import carIcon from 'assets/icons/car-icon.svg';
@@ -33,7 +32,6 @@ const DetailedCongestion = observer((props: propsType) => {
     서행: '이동 시간이 소요될 수 있어요',
     정체: '이동하기 힘들어요',
   };
-  const AB_TEST_VARIANT = useOptimize();
 
   const handleOpenDialog = () => {
     CustomDialogStore.openCctvDialog(locationData?.cctvs || []);
@@ -89,7 +87,7 @@ const DetailedCongestion = observer((props: propsType) => {
           />
         </StatusCard>
       )}
-      {AB_TEST_VARIANT === 0 && (locationData?.cctvs || []).length > 0 && (
+      {(locationData?.cctvs || []).length > 0 && (
         <>
           <CustomDivider />
           <CustomButton isDarkTheme={isDarkTheme} onClick={handleOpenDialog}>

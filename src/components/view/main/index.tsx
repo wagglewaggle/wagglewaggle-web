@@ -8,7 +8,6 @@ import SearchData from './SearchData';
 import SuggestData from './SuggestData';
 import ResultData from './ResultData';
 import { Detail } from 'components/view';
-import Fab from './fab';
 import { useStore } from 'stores';
 import { request } from 'api/request';
 import { palette } from 'constants/';
@@ -150,7 +149,6 @@ const Main = observer(() => {
         includeInput={includeInput}
         component={currentPage}
       />
-      <Fab />
     </SearchWrap>
   );
 });

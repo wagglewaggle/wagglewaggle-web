@@ -17,7 +17,7 @@ const PlaceCard = observer((props: propsType) => {
   const [symbol, setSymbol] = useState<string>('');
   const { LocationStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
-  const primaryCategories: string[] = useMemo(() => ['불꽃축제', '한강', '공원', '궁궐'], []);
+  const primaryCategories: string[] = useMemo(() => ['한강', '공원', '궁궐'], []);
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
 
   const handlePlaceCardClick = () => {
@@ -26,10 +26,10 @@ const PlaceCard = observer((props: propsType) => {
   };
 
   const placeSpecificCategory = (prev: string, next: string) => {
-    const primaryCategoryName = '불꽃축제';
+    const primaryCategoryName = '크리스마스 핫플';
     const secondaryCategoryName = '한강';
-    if (prev === primaryCategoryName) return -1;
-    if (next === primaryCategoryName) return 1;
+    if (prev === primaryCategoryName) return 1;
+    if (next === primaryCategoryName) return -1;
     if (prev === secondaryCategoryName) return -1;
     if (next === secondaryCategoryName) return 1;
     return 0;
