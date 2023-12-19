@@ -44,3 +44,15 @@ export const CctvWrap = styled('div')({
   backgroundColor: palette.grey[700],
   '& iframe': { backgroundColor: palette.grey[500] },
 });
+
+export const Lottie = styled('div', {
+  shouldForwardProp: (prop: string) => prop !== 'isCctv',
+})<{ isCctv: boolean }>(({ isCctv }) => ({
+  position: 'absolute',
+  top: '3.5rem',
+  display: isCctv ? 'none' : 'unset',
+  width: '100%',
+  height: '19.5rem',
+  zIndex: 1,
+  overflow: 'hidden',
+}));
