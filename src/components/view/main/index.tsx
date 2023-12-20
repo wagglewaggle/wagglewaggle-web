@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { styled } from '@mui/material';
+import lottie from 'lottie-web';
+import MainLottie from 'assets/lottie/Main.json';
 import { CustomDrawer } from 'components/common';
 import PlaceData from './PlaceData';
 import SearchData from './SearchData';
@@ -19,6 +21,7 @@ const Main = observer(() => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [includeInput, setIncludeInput] = useState<boolean>(false);
+  const lottieContainer = useRef<HTMLDivElement>(null);
   let timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { LocationStore, CustomDialogStore, ErrorStore, ThemeStore } = useStore().MobxStore;
   const navigate = useNavigate();
@@ -130,6 +133,18 @@ const Main = observer(() => {
     navigate(ErrorStore.statusCode === 404 ? '/not-found' : '/error');
   }, [ErrorStore.statusCode, navigate]);
 
+  useEffect(() => {
+    if (!lottieContainer.current) return;
+    lottie.loadAnimation({
+      container: lottieContainer.current,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: MainLottie,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lottieContainer.current]);
+
   return (
     <SearchWrap>
       <SearchBox isDarkTheme={isDarkTheme}>
@@ -149,6 +164,7 @@ const Main = observer(() => {
         includeInput={includeInput}
         component={currentPage}
       />
+      <Lottie ref={lottieContainer} />
     </SearchWrap>
   );
 });
@@ -186,4 +202,13 @@ const SearchBox = styled('div', {
 const EmptySpace = styled('div')({
   flexGrow: 1,
   height: '100%',
+});
+
+const Lottie = styled('div')({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100vw',
+  height: '100vh',
+  zIndex: -1,
 });
