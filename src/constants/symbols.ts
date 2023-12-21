@@ -6,7 +6,6 @@ import subway from 'assets/symbols/subway.svg';
 import themePark from 'assets/symbols/theme-park.svg';
 import hanRiver from 'assets/symbols/han-river.svg';
 import culture from 'assets/symbols/culture.svg';
-import firework from 'assets/symbols/firework.svg';
 
 export const symbols: { [key: string]: string } = {
   놀이공원: themePark,
@@ -17,5 +16,4 @@ export const symbols: { [key: string]: string } = {
   지하철: subway,
   거리: street,
   복합문화공간: culture,
-  불꽃축제: firework,
 };

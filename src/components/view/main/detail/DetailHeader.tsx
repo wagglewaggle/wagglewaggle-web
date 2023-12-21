@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { bgPaths, locationNames } from 'constants/';
-import { CctvContent } from 'components/common/DialogContents';
 import { LocationDataType } from 'types/typeBundle';
+import { CctvContent } from 'components/common/DialogContents';
 import { H } from './styled';
 import { useStore } from 'stores';
-import { useOptimize } from 'util/';
 import leftIcon from 'assets/icons/left-icon.svg';
 
 interface propsType {
@@ -20,7 +19,6 @@ const DetailHeader = observer((props: propsType) => {
   const { cctvList } = CustomDialogStore;
   const navigate = useNavigate();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
-  const AB_TEST_VARIANT = useOptimize();
 
   const handleBackClick = () => {
     navigate('/');
@@ -49,7 +47,7 @@ const DetailHeader = observer((props: propsType) => {
         {locationNames[locationData?.name ?? ''] ?? locationData?.name}
         <H.Dummy />
       </H.HeaderArea>
-      {AB_TEST_VARIANT === 1 && cctvList.length > 0 ? (
+      {cctvList.length > 0 ? (
         <H.CctvWrap>
           <CctvContent />
         </H.CctvWrap>

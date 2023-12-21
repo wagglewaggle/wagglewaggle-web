@@ -37,7 +37,7 @@ const useStyles = makeStyles(() => ({
 const PlaceData = observer(() => {
   const [renderData, setRenderData] = useState<PlaceDataType[]>([]);
   const [placeOrder, setPlaceOrder] = useState<string>('복잡한 순');
-  const [selectedCategory, setSelectedCategory] = useState<string>('불꽃축제');
+  const [selectedCategory, setSelectedCategory] = useState<string>('크리스마스 핫플');
   const classes = useStyles();
   const [chips, setChips] = useState<string[]>([]);
   const { LocationStore, ScreenSizeStore, ThemeStore } = useStore().MobxStore;
@@ -54,7 +54,7 @@ const PlaceData = observer(() => {
   };
 
   const sortChips = (prev: string, next: string) => {
-    const primaryCategoryName = '불꽃축제';
+    const primaryCategoryName = '크리스마스 핫플';
     const secondaryCategoryName = '전체';
     if (prev === primaryCategoryName) return -1;
     if (next === primaryCategoryName) return 1;

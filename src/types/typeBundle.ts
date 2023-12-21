@@ -82,4 +82,4 @@ export type BgType =
   | 'Subway'
   | 'Tradition'
   | 'BlueHouse'
-  | 'Firework';
+  | 'Christmas';

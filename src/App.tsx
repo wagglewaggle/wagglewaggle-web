@@ -1,11 +1,10 @@
-// import { useLayoutEffect, useEffect, useMemo } from 'react';
-import { useEffect, useMemo } from 'react';
-// import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useLayoutEffect, useEffect, useMemo } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import useResizeObserver from 'use-resize-observer';
 import { GlobalStyles, styled } from '@mui/material';
 import { CustomDialog } from 'components/common';
-// import { Main, Error } from './components/view';
+import { Main, Error } from './components/view';
 import { Landing } from 'components/landing';
 import { CreateStore, RootStore } from 'stores';
 import { ScreenType } from 'types/typeBundle';
@@ -17,7 +16,7 @@ const App = observer(() => {
   const { ScreenSizeStore, ThemeStore } = MobxStore;
   const { ref, width } = useResizeObserver();
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
-  // const projectStatusSessionStorageKey = useMemo(() => '@wagglewaggle_project_status', []);
+  const projectStatusSessionStorageKey = useMemo(() => '@wagglewaggle_project_status', []);
 
   const scrollbarDesign = useMemo(
     () => ({
@@ -49,12 +48,11 @@ const App = observer(() => {
     metaEl.setAttribute('content', newContentArr.join(', '));
   };
 
-  // 랜딩페이지 기간에는 세션스토리지 기능을 차단합니다.
-  // useLayoutEffect(() => {
-  //   if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer') return;
-  //   if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'released') return;
-  //   sessionStorage.setItem(projectStatusSessionStorageKey, 'released');
-  // }, [projectStatusSessionStorageKey]);
+  useLayoutEffect(() => {
+    if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer') return;
+    if (sessionStorage.getItem(projectStatusSessionStorageKey) === 'released') return;
+    sessionStorage.setItem(projectStatusSessionStorageKey, 'released');
+  }, [projectStatusSessionStorageKey]);
 
   useEffect(() => {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
@@ -74,8 +72,7 @@ const App = observer(() => {
       <GlobalStyles styles={scrollbarDesign} />
       <CreateStore.Provider value={{ MobxStore }}>
         <ServiceWrap ref={ref} status='timer'>
-          <Landing />
-          {/* {sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer' ? (
+          {sessionStorage.getItem(projectStatusSessionStorageKey) === 'timer' ? (
             <Landing />
           ) : (
             <BrowserRouter>
@@ -87,7 +84,7 @@ const App = observer(() => {
                 <Route path='/*' element={<Navigate to='/not-found' />} />
               </Routes>
             </BrowserRouter>
-          )} */}
+          )}
         </ServiceWrap>
         <CustomDialog />
       </CreateStore.Provider>

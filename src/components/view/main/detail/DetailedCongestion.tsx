@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { Button, IconButton, styled } from '@mui/material';
+import { IconButton, styled } from '@mui/material';
 import { PlaceStatus } from 'components/common';
 import { useStore } from 'stores';
 import { LocationDataType } from 'types/typeBundle';
 import { palette } from 'constants/';
-import { useOptimize } from 'util/';
 import { ReactComponent as RefreshIcon } from 'assets/icons/refresh-icon.svg';
 import personIcon from 'assets/icons/person-icon.svg';
 import carIcon from 'assets/icons/car-icon.svg';
-import { ReactComponent as RightIcon } from 'assets/icons/right-icon.svg';
 
 interface propsType {
   locationData: LocationDataType | null;
@@ -19,7 +17,7 @@ interface propsType {
 const DetailedCongestion = observer((props: propsType) => {
   const { locationData, initLocationData } = props;
   const [timePassed, setTimePassed] = useState<string>('');
-  const { CustomDialogStore, ThemeStore } = useStore().MobxStore;
+  const { ThemeStore } = useStore().MobxStore;
   const isDarkTheme: boolean = ThemeStore.theme === 'dark';
   const COMMENTS_BY_STATUS: { [key: string]: string } = {
     VERY_RELAXATION: '날아다닐 수 있어요',
@@ -32,11 +30,6 @@ const DetailedCongestion = observer((props: propsType) => {
     원활: '날아다닐 수 있어요',
     서행: '이동 시간이 소요될 수 있어요',
     정체: '이동하기 힘들어요',
-  };
-  const AB_TEST_VARIANT = useOptimize();
-
-  const handleOpenDialog = () => {
-    CustomDialogStore.openCctvDialog(locationData?.cctvs || []);
   };
 
   useEffect(() => {
@@ -88,15 +81,6 @@ const DetailedCongestion = observer((props: propsType) => {
             comments={{ 원활: '원활', 서행: '서행', 정체: '정체' }}
           />
         </StatusCard>
-      )}
-      {AB_TEST_VARIANT === 0 && (locationData?.cctvs || []).length > 0 && (
-        <>
-          <CustomDivider />
-          <CustomButton isDarkTheme={isDarkTheme} onClick={handleOpenDialog}>
-            CCTV
-            <RightIcon />
-          </CustomButton>
-        </>
       )}
     </Wrap>
   );
@@ -192,19 +176,4 @@ const CommentsWrap = styled('span', {
   color: palette.grey[isDarkTheme ? 400 : 500],
   fontWeight: 400,
   lineHeight: '1.25rem',
-}));
-
-const CustomDivider = styled('hr')({
-  width: '100%',
-  border: `1px solid ${palette.grey[600]}`,
-});
-
-const CustomButton = styled(Button, {
-  shouldForwardProp: (prop: string) => prop !== 'isDarkTheme',
-})<{ isDarkTheme: boolean }>(({ isDarkTheme }) => ({
-  justifyContent: 'space-between',
-  padding: '12px 0',
-  width: '100%',
-  color: isDarkTheme ? palette.white : palette.black,
-  fontWeight: 600,
 }));
