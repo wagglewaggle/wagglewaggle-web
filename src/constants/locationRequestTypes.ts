@@ -1,7 +1,5 @@
 export const locationRequestTypes: { [key: string]: string[] } = {
   skt: [
-    '롯데월드 잠실점',
-    '에버랜드',
     '롯데월드몰',
     '타임스퀘어',
     '더현대 서울',
